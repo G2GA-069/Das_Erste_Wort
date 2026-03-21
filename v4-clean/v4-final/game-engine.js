@@ -237,7 +237,7 @@
   function addReadingTime() {
     if (page.type !== 'chapter' && page.type !== 'prologue') return;
 
-    const content = document.querySelector('.content') || document.querySelector('.container');
+    const content = document.querySelector('.content') || document.querySelector('.page-wrapper') || document.querySelector('.container');
     if (!content) return;
 
     const text = content.innerText || content.textContent;
@@ -516,7 +516,7 @@
     });
 
     // Ensure content sits above canvas
-    const content = document.querySelector('.content') || document.querySelector('.container');
+    const content = document.querySelector('.content') || document.querySelector('.page-wrapper') || document.querySelector('.container');
     if (content) {
       const z = parseInt(window.getComputedStyle(content).zIndex);
       if (isNaN(z) || z < 1) {
@@ -640,7 +640,7 @@
     // Add "Continue Where You Left Off" banner
     if (save.lastChapter > 0) {
       const heroSection = document.querySelector('.hero') || document.querySelector('[class*="hero"]');
-      const insertPoint = heroSection ? heroSection.nextSibling : document.querySelector('.content')?.firstChild;
+      const insertPoint = heroSection ? heroSection.nextSibling : (document.querySelector('.content') || document.querySelector('.page-wrapper'))?.firstChild;
 
       if (insertPoint && insertPoint.parentNode) {
         const banner = document.createElement('div');
