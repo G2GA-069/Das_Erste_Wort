@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080812">
+<title>Das erste Wort — Interlude: Der Spiegel</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --lamplight: #e8a44a;
+        --ink-black: #080812;
+        --text-light: #c8c4b8;
+        --text-muted: #8a8678;
+        --gold-dark: #8a6a3a;
+        --mirror-blue: #4a5a8a;
+        --mirror-silver: #a8b0c8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+        font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+        font-size: 1.25rem;
+        line-height: 1.85;
+        background: var(--ink-black);
+        color: var(--text-light);
+    }
+
+    body { padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+
+    /* ===== CANVASES ===== */
+    #mirror-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    #text-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 6s ease;
+    }
+    #text-canvas.visible { opacity: 0.7; }
+
+    .progress-bar {
+        position: fixed; top: 0; left: 0;
+        height: 2px; background: var(--mirror-silver);
+        width: 0%; z-index: 200; transition: width 0.3s ease;
+    }
+
+    .g2g-brand {
+        position: fixed; top: 0; right: 0; z-index: 200;
+        padding: 12px 16px; opacity: 0.35; transition: opacity 0.3s;
+    }
+    .g2g-brand:hover { opacity: 0.8; }
+    .g2g-brand a {
+        text-decoration: none; font-family: 'Cormorant Garamond', serif;
+        font-size: 0.7rem; letter-spacing: 0.15em;
+        color: rgba(180,140,220,0.7); text-transform: uppercase;
+    }
+
+    /* ===== STORY ===== */
+    .story {
+        position: relative; z-index: 10;
+        max-width: 720px; margin: 0 auto;
+        padding: 0 24px 40px;
+    }
+
+    /* ===== TITLE ===== */
+    .interlude-title {
+        min-height: 100vh;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        text-align: center; padding: 40px 24px;
+        position: relative; z-index: 10;
+    }
+
+    .interlude-label {
+        font-size: 0.8rem; letter-spacing: 0.4em;
+        text-transform: uppercase; color: rgba(168,176,200,0.3);
+        opacity: 0; animation: fadeUp 2s ease 0.5s forwards;
+    }
+
+    .interlude-name {
+        font-size: 3rem; font-weight: 300;
+        color: var(--mirror-silver); letter-spacing: 0.06em;
+        margin-top: 12px; opacity: 0;
+        animation: fadeUp 2.5s ease 1s forwards;
+        text-shadow: 0 0 40px rgba(168,176,200,0.15);
+    }
+
+    .interlude-translation {
+        font-size: 1.1rem; font-weight: 300; font-style: italic;
+        color: rgba(168,176,200,0.3); letter-spacing: 0.15em;
+        margin-top: 8px; opacity: 0;
+        animation: fadeUp 2s ease 1.8s forwards;
+    }
+
+    .interlude-scroll-hint {
+        position: absolute; bottom: 40px; left: 50%;
+        transform: translateX(-50%); font-size: 0.875rem;
+        font-style: italic; color: rgba(168,176,200,0.2);
+        letter-spacing: 0.15em; opacity: 0;
+        animation: hintPulse 3s ease 3.5s infinite;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes hintPulse {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 0.4; }
+    }
+
+    /* ===== SCENES ===== */
+    .scene {
+        margin-bottom: 80px; opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+    .scene.visible { opacity: 1; transform: translateY(0); }
+    .scene p {
+        font-size: 1.25rem; line-height: 1.9;
+        margin-bottom: 1.5em; color: var(--text-light);
+    }
+    .scene p:last-child { margin-bottom: 0; }
+
+    .scene.dissolving p { color: #a8a8b8; }
+    .scene.threshold p { color: #b0a8b8; }
+    .scene.mirror p { color: var(--mirror-silver); }
+    .scene.deep p { color: #c0b8a8; }
+
+    .scene em { font-style: italic; }
+
+    .frame-german {
+        color: var(--lamplight);
+        font-style: italic; font-weight: 500;
+    }
+
+    /* Reflected text — upside down, fading */
+    .reflected-text {
+        text-align: center;
+        margin: 60px 0;
+        opacity: 0;
+        transition: opacity 2s ease;
+    }
+    .reflected-text.visible { opacity: 1; }
+    .reflected-text .original {
+        font-size: 1.6rem; font-style: italic;
+        color: var(--lamplight); margin-bottom: 8px;
+    }
+    .reflected-text .reflection {
+        font-size: 1.6rem; font-style: italic;
+        color: rgba(168,176,200,0.2);
+        transform: scaleY(-1);
+        display: block;
+        filter: blur(1px);
+    }
+
+    .divider {
+        text-align: center; margin: 60px 0;
+        color: var(--mirror-silver); font-size: 1.5rem;
+        letter-spacing: 12px; opacity: 0;
+        transition: opacity 1s ease;
+    }
+    .divider.visible { opacity: 0.3; }
+
+    /* Mirror line — a horizontal shimmer */
+    .mirror-line {
+        text-align: center; margin: 80px 0;
+        opacity: 0; transition: opacity 2s ease;
+    }
+    .mirror-line.visible { opacity: 1; }
+    .mirror-line-inner {
+        display: inline-block;
+        width: 200px; height: 1px;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(168,176,200,0.4),
+            rgba(232,164,74,0.3),
+            rgba(168,176,200,0.4),
+            transparent
+        );
+        animation: shimmer 4s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+        0%, 100% { opacity: 0.3; transform: scaleX(0.8); }
+        50% { opacity: 1; transform: scaleX(1.2); }
+    }
+
+    .continue-section {
+        text-align: center; margin-top: 80px;
+        padding: 40px 20px 60px; opacity: 0;
+        transition: opacity 1s ease;
+    }
+    .continue-section.visible { opacity: 1; }
+    .continue-link {
+        display: inline-block; padding: 14px 44px;
+        border: 1px solid var(--mirror-silver);
+        color: var(--mirror-silver);
+        text-decoration: none; font-family: 'Cormorant Garamond', serif;
+        font-size: 1.125rem; letter-spacing: 3px;
+        transition: all 0.3s ease;
+    }
+    .continue-link:hover {
+        background: rgba(168,176,200,0.08);
+        box-shadow: 0 0 30px rgba(168,176,200,0.08);
+        color: #c8c4d8;
+    }
+    .back-link {
+        display: inline-block; margin-top: 24px;
+        color: rgba(212,202,187,0.25); font-size: 0.8rem;
+        text-decoration: none; letter-spacing: 0.1em;
+        transition: color 0.3s;
+    }
+    .back-link:hover { color: rgba(212,202,187,0.5); }
+
+    @media (max-width: 768px) {
+        .story { padding: 0 18px 30px; }
+        .scene p { font-size: 18px !important; line-height: 1.85; }
+        .scene { margin-bottom: 60px; }
+        .interlude-name { font-size: 2.4rem; }
+    }
+    @media (max-width: 380px) {
+        .scene p { font-size: 16px !important; }
+        .interlude-name { font-size: 2rem; }
+    }
+
+    .g2g-footer {
+        text-align: center; padding: 30px 20px 40px;
+        font-size: 0.7rem; letter-spacing: 0.15em;
+        color: rgba(180,140,220,0.25); position: relative; z-index: 10;
+    }
+    .g2g-footer a { color: rgba(180,140,220,0.4); text-decoration: none; transition: color 0.3s; }
+    .g2g-footer a:hover { color: rgba(180,140,220,0.7); }
+</style>
+</head>
+<body>
+
+<div class="g2g-brand">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener">G2G Advisory</a>
+</div>
+
+<canvas id="mirror-canvas"></canvas>
+<canvas id="text-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ===== TITLE ===== -->
+<div class="interlude-title">
+    <div class="interlude-label">Interlude</div>
+    <div class="interlude-name">Der Spiegel</div>
+    <div class="interlude-translation">The Mirror</div>
+    <div class="interlude-scroll-hint">scroll to continue</div>
+</div>
+
+<!-- ===== THE STORY ===== -->
+<div class="story">
+
+    <!-- SCENE 1 -->
+    <div class="scene dissolving" data-phase="dissolving">
+        <p>You can no longer feel the stone.</p>
+        <p>This is the first thing you notice — or rather, the first thing you notice you've stopped noticing. The step beneath you, the cold hardness that pressed into your thighs and the base of your spine — it was there, and now it isn't. Not gone. Just... irrelevant. Like the sound of your own breathing. Like the colour of the walls.</p>
+        <p>When did the walls change colour?</p>
+    </div>
+
+    <div class="divider">. . .</div>
+
+    <!-- SCENE 2 -->
+    <div class="scene dissolving" data-phase="dissolving">
+        <p>You lift your eyes from the book and the courtyard is not what it was.</p>
+        <p>The bricks are still there — you think. If you focus, you can see them. But they're translucent now, as if the walls have been soaked in water and the water has turned to light. Through them — <em>through</em> them — you can see other things. Shapes. Not London shapes. Not rooftops and drainpipes and satellite dishes. These shapes are older. Forests. Workshops. The interior of a church, candlelit, where someone is writing at a desk with terrible patience.</p>
+        <p>You blink. The walls are just walls again. Brick. Mortar. A drain in the corner. Ordinary.</p>
+        <p>You blink again. The forest is back.</p>
+    </div>
+
+    <!-- SCENE 3 -->
+    <div class="scene threshold" data-phase="threshold">
+        <p>Something happened in those twenty chapters. Something the book did to you, or — more unsettling — something you did to yourself by reading them.</p>
+        <p>You took apart words. You held the pieces up to the light. <span class="frame-german">Ver-</span> and <span class="frame-german">un-</span> and <span class="frame-german">auf-</span> and <span class="frame-german">aus-</span> — you learned that these weren't arbitrary syllables. They were <em>tools</em>. Small, ancient, impossibly productive tools that could take any word and remake it. Transform it. Negate it. Open it. Complete it.</p>
+        <p>And now the tools are in your hands.</p>
+        <p>That's what's different. That's why the walls are thinning. You're no longer reading about the language from outside. You're inside the machinery now, and the machinery is running, and the gears are turning in your head whether the book is open or not.</p>
+    </div>
+
+    <div class="mirror-line"><div class="mirror-line-inner"></div></div>
+
+    <!-- SCENE 4 -->
+    <div class="scene mirror" data-phase="mirror">
+        <p>You look at the open page and see your own reflection.</p>
+        <p>Not literally — the page is paper, not glass. But the words on it are doing something strange. They're describing you. Not by name, not with details. But the patterns they're teaching — the way <span class="frame-german">Zusammensetzung</span> means "together-setting," the way <span class="frame-german">Verwandlung</span> means "transformation" — these words are mirrors. They describe what they do. And what they do is what's happening to you.</p>
+        <p>You are being <em>zusammengesetzt</em>. Put together. Assembled from pieces that were always there but never connected.</p>
+    </div>
+
+    <!-- REFLECTED TEXT -->
+    <div class="reflected-text" id="reflectedText">
+        <div class="original">Zusammensetzung</div>
+        <div class="reflection">Zusammensetzung</div>
+    </div>
+
+    <!-- SCENE 5 -->
+    <div class="scene mirror" data-phase="mirror">
+        <p>The old man's face appears.</p>
+        <p>Not in the courtyard — not behind you, not at the mouth of the alley. In the book. In the margin of a page, between a prefix table and a compound-noun diagram. A face drawn in the same ink as the text, with the same careful hand. Round spectacles. Thin hair. Eyes that catch the light.</p>
+        <p>Or is it your face? The ink lines are ambiguous — they could be wrinkles or they could be young. The spectacles might be spectacles or might be your own eyes, wide with something you can't name.</p>
+        <p>You turn the page. The face is gone. Just text. Just patterns. Just the beautiful, relentless machinery of a language teaching itself to a mind that's finally ready to receive it.</p>
+    </div>
+
+    <div class="divider">. . .</div>
+
+    <!-- SCENE 6 -->
+    <div class="scene deep" data-phase="deep">
+        <p>Outside — if there still is an outside — London is doing what it does. Somewhere a pub is closing. Somewhere a couple is arguing softly about whose turn it is to walk the dog. Somewhere a night bus is pulling away from a stop with its doors still hissing shut. The city is vast and indifferent and alive, and it has no idea that in a courtyard it has forgotten, behind walls that are becoming transparent, a person is being rewritten by a book.</p>
+    </div>
+
+    <!-- SCENE 7 -->
+    <div class="scene deep" data-phase="deep">
+        <p>The next section of the book is different again.</p>
+        <p>You can feel it before you see it — a change in weight, as if the pages ahead are denser. The prefix workshop gave you tools. Now the book is going to teach you how to build. Grammar. Structure. The architecture of thought in German — the way verbs wait at the end of clauses like punchlines, the way cases mark relationships with surgical precision, the way the whole beautiful machine fits together.</p>
+        <p>You know this will be harder. The prefixes were gifts — small keys that unlocked hundreds of words at once. Grammar is different. Grammar asks you to think differently. To hold the verb in your mind while the meaning assembles itself around it, and to trust — the way the language trusts — that the end of the sentence will make everything clear.</p>
+    </div>
+
+    <!-- SCENE 8 -->
+    <div class="scene deep">
+        <p>But you've come this far.</p>
+        <p>The stone step is gone. The rain is a memory. The courtyard walls are showing you things that haven't existed for centuries, and the book in your hands is warm and patient and endlessly, endlessly generous. It has given you the history. It has given you the tools. Now it's going to give you the blueprints.</p>
+        <p>The voice you heard before — the one from the thin place between the courtyard and the sky — is louder now. Not louder, exactly. <em>Closer</em>. It's not between the sky and the walls anymore. It's between the pages and your eyes. It says:</p>
+        <p style="text-align:center;font-style:italic;color:#a8b0c8;font-size:1.4rem;margin:1.5em 0;"><span class="frame-german">Komm weiter.</span></p>
+        <p style="text-align:center;font-style:italic;color:rgba(168,176,200,0.4);font-size:1rem;">Come further.</p>
+    </div>
+
+    <div class="mirror-line"><div class="mirror-line-inner"></div></div>
+
+    <!-- SCENE 9 -->
+    <div class="scene deep">
+        <p>You turn the page.</p>
+        <p>The architecture begins.</p>
+    </div>
+
+    <!-- CONTINUE -->
+    <div class="continue-section" id="continueSection">
+        <a href="chapter47.html" class="continue-link">Enter the Architecture</a>
+        <div>
+            <a href="index.html" class="back-link">← Back to contents</a>
+        </div>
+    </div>
+</div>
+
+<div class="g2g-footer">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener">A G2G Advisory Project</a> · Das erste Wort
+</div>
+
+<script>
+// ===== MIRROR CANVAS — floating reflective particles =====
+const mirrorCanvas = document.getElementById('mirror-canvas');
+const mirrorCtx = mirrorCanvas.getContext('2d');
+const textCanvas = document.getElementById('text-canvas');
+const textCtx = textCanvas.getContext('2d');
+
+let particles = [];
+let floatingLetters = [];
+let scrollProgress = 0;
+
+function resizeCanvases() {
+    const w = window.innerWidth, h = window.innerHeight;
+    mirrorCanvas.width = textCanvas.width = w;
+    mirrorCanvas.height = textCanvas.height = h;
+}
+
+// Mirror particles — silvery-blue motes that drift and reflect
+function initParticles() {
+    resizeCanvases();
+    const count = window.innerWidth > 600 ? 80 : 40;
+    particles = [];
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: Math.random() * mirrorCanvas.width,
+            y: Math.random() * mirrorCanvas.height,
+            radius: Math.random() * 2 + 0.5,
+            baseOpacity: Math.random() * 0.3 + 0.05,
+            speedX: (Math.random() - 0.5) * 0.3,
+            speedY: (Math.random() - 0.5) * 0.2,
+            phase: Math.random() * Math.PI * 2,
+            // Some gold, mostly silver-blue
+            isGold: Math.random() > 0.82
+        });
+    }
+}
+
+function drawMirrorParticles(time) {
+    mirrorCtx.clearRect(0, 0, mirrorCanvas.width, mirrorCanvas.height);
+
+    // Subtle vertical gradient — darker at top, hint of reflection at bottom
+    const bgGrad = mirrorCtx.createLinearGradient(0, 0, 0, mirrorCanvas.height);
+    bgGrad.addColorStop(0, 'rgba(8, 8, 18, 0)');
+    bgGrad.addColorStop(0.6, 'rgba(20, 24, 40, 0.02)');
+    bgGrad.addColorStop(1, 'rgba(40, 48, 70, 0.04)');
+    mirrorCtx.fillStyle = bgGrad;
+    mirrorCtx.fillRect(0, 0, mirrorCanvas.width, mirrorCanvas.height);
+
+    const centerX = mirrorCanvas.width / 2;
+    const centerY = mirrorCanvas.height / 2;
+
+    for (let p of particles) {
+        const pulse = Math.sin(time * 0.001 + p.phase) * 0.5 + 0.5;
+        const opacity = p.baseOpacity * (0.4 + 0.6 * pulse);
+
+        // Particles drift toward center as scroll progresses
+        const drift = scrollProgress * 0.0003;
+        p.x += p.speedX + (centerX - p.x) * drift;
+        p.y += p.speedY + (centerY - p.y) * drift;
+
+        // Wrap around
+        if (p.x < -10) p.x = mirrorCanvas.width + 10;
+        if (p.x > mirrorCanvas.width + 10) p.x = -10;
+        if (p.y < -10) p.y = mirrorCanvas.height + 10;
+        if (p.y > mirrorCanvas.height + 10) p.y = -10;
+
+        const color = p.isGold
+            ? `rgba(232, 164, 74, ${opacity})`
+            : `rgba(168, 176, 200, ${opacity})`;
+
+        mirrorCtx.beginPath();
+        mirrorCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        mirrorCtx.fillStyle = color;
+        mirrorCtx.fill();
+
+        // Glow
+        if (p.radius > 1.2) {
+            mirrorCtx.beginPath();
+            mirrorCtx.arc(p.x, p.y, p.radius * 4, 0, Math.PI * 2);
+            mirrorCtx.fillStyle = p.isGold
+                ? `rgba(232, 164, 74, ${opacity * 0.08})`
+                : `rgba(168, 176, 200, ${opacity * 0.06})`;
+            mirrorCtx.fill();
+        }
+
+        // Mirror reflection — faint duplicate below center
+        const mirrorY = mirrorCanvas.height - p.y;
+        mirrorCtx.beginPath();
+        mirrorCtx.arc(p.x, mirrorY, p.radius * 0.6, 0, Math.PI * 2);
+        mirrorCtx.fillStyle = p.isGold
+            ? `rgba(232, 164, 74, ${opacity * 0.12})`
+            : `rgba(168, 176, 200, ${opacity * 0.1})`;
+        mirrorCtx.fill();
+    }
+}
+
+// Floating letters — German morphemes drifting off the page
+const morphemes = ['ver-', 'un-', 'auf-', 'aus-', 'ein-', 'ab-', '-ung', '-heit', '-keit', '-schaft', '-lich', '-bar', '-ig', '-er', '-in', 'zer-', 'ent-', 'be-', 'er-', 'ge-'];
+
+function initFloatingLetters() {
+    floatingLetters = [];
+    const count = window.innerWidth > 600 ? 15 : 8;
+    for (let i = 0; i < count; i++) {
+        floatingLetters.push({
+            text: morphemes[Math.floor(Math.random() * morphemes.length)],
+            x: Math.random() * textCanvas.width,
+            y: Math.random() * textCanvas.height,
+            speedY: -(Math.random() * 0.3 + 0.1),
+            speedX: (Math.random() - 0.5) * 0.2,
+            opacity: 0,
+            maxOpacity: Math.random() * 0.15 + 0.05,
+            size: Math.random() * 16 + 12,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+}
+
+function drawFloatingLetters(time) {
+    textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+    textCtx.font = '300 italic 14px "Cormorant Garamond", serif';
+
+    for (let letter of floatingLetters) {
+        letter.y += letter.speedY;
+        letter.x += letter.speedX + Math.sin(time * 0.0005 + letter.phase) * 0.2;
+
+        // Fade in then out
+        const cycle = (time * 0.0003 + letter.phase) % (Math.PI * 2);
+        letter.opacity = letter.maxOpacity * Math.max(0, Math.sin(cycle));
+
+        if (letter.y < -30) {
+            letter.y = textCanvas.height + 30;
+            letter.x = Math.random() * textCanvas.width;
+            letter.text = morphemes[Math.floor(Math.random() * morphemes.length)];
+        }
+
+        textCtx.font = `300 italic ${letter.size}px "Cormorant Garamond", serif`;
+        textCtx.fillStyle = `rgba(168, 176, 200, ${letter.opacity})`;
+        textCtx.fillText(letter.text, letter.x, letter.y);
+    }
+}
+
+// ===== MAIN LOOP =====
+function animate(timestamp) {
+    drawMirrorParticles(timestamp);
+    drawFloatingLetters(timestamp);
+    requestAnimationFrame(animate);
+}
+
+// ===== SCROLL =====
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+
+            const phase = entry.target.dataset.phase;
+            if (phase === 'mirror' || phase === 'deep') {
+                textCanvas.classList.add('visible');
+            }
+        }
+    });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.scene, .divider, .reflected-text, .mirror-line, .continue-section').forEach(el => {
+    observer.observe(el);
+});
+
+window.addEventListener('scroll', () => {
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress = window.scrollY;
+    const pct = scrollHeight > 0 ? (scrollProgress / scrollHeight) * 100 : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// ===== INIT =====
+window.addEventListener('resize', resizeCanvases);
+initParticles();
+initFloatingLetters();
+animate(0);
+</script>
+</body>
+</html>

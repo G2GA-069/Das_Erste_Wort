@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Epilogue: Das letzte Wort</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --dawn-dark: #080810;
+    --dawn-blue: #1a2a4a;
+    --dawn-gold: #c89a50;
+    --dawn-honey: #d4a850;
+    --night: #0a0e1a;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --bookshop-amber: #8b6f47;
+    --warm-amber: #6a4e2c;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--dawn-dark);
+  }
+
+  body {
+    background: linear-gradient(135deg, #080810 0%, #0a1020 30%, #1a2a3a 60%, #2a4a5a 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- CANVAS & PARTICLES --- */
+  #particle-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- PROGRESS BAR --- */
+  #progressBar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--german), var(--dawn-honey));
+    width: 0%;
+    z-index: 200;
+    transition: width 0.3s ease;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2.5s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2.5s ease 1.3s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2.5s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--german), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .narrative.german-dialogue {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--german);
+    text-align: center;
+    margin: 2.5em 0;
+    letter-spacing: 0.02em;
+    line-height: 2;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: #f4c67a;
+    border-bottom-color: #f4c67a;
+  }
+
+  /* --- BOOK MOMENT --- */
+  .book-moment {
+    text-align: center;
+    margin: 80px 0;
+    padding: 40px 20px;
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 1.5s ease, transform 1.5s ease;
+  }
+
+  .book-moment.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .book-illustration {
+    display: inline-block;
+    position: relative;
+    margin: 40px 0;
+  }
+
+  .book-glow {
+    position: absolute;
+    top: -40px; left: -40px;
+    right: -40px; bottom: -40px;
+    background: radial-gradient(ellipse, rgba(232,164,74,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 2s ease;
+    pointer-events: none;
+    animation: warmPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes warmPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+  }
+
+  .book-moment.visible .book-glow {
+    opacity: 0.6;
+  }
+
+  .book-closed {
+    position: relative;
+    display: inline-block;
+    width: 200px;
+    max-width: 60vw;
+    background: linear-gradient(160deg, #2a1a0a 0%, #1a0e04 40%, #0e0804 100%);
+    border: 2px solid #8a6a3a;
+    padding: 0;
+    box-shadow:
+      0 8px 40px rgba(0,0,0,0.6),
+      0 2px 8px rgba(138,106,58,0.15),
+      inset 0 0 20px rgba(232,164,74,0.02);
+    aspect-ratio: 2/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--german);
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    transition: all 0.8s ease;
+    overflow: hidden;
+  }
+
+  .book-closed::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(138,106,58,0.02) 2px,
+      rgba(138,106,58,0.02) 3px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .book-closed::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 12px; height: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .book-text {
+    position: relative;
+    z-index: 3;
+    font-size: 1.2rem;
+  }
+
+  /* --- SUNRISE GRADIENT --- */
+  .sunrise-section {
+    position: relative;
+  }
+
+  .sunrise-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(to bottom,
+      #080810 0%,
+      #0a1020 25%,
+      #1a3a5a 50%,
+      #3a6a8a 70%,
+      #c89a50 100%
+    );
+    background-attachment: fixed;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 3s ease;
+  }
+
+  .sunrise-section.visible .sunrise-bg {
+    opacity: 1;
+  }
+
+  /* --- BOOKSHOP WARMTH --- */
+  .bookshop-section {
+    position: relative;
+  }
+
+  .bookshop-glow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 40%, rgba(232,164,74,0.3) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 2s ease;
+  }
+
+  .bookshop-section.visible .bookshop-glow {
+    opacity: 1;
+  }
+
+  /* --- RAIN GENTLE --- */
+  #rain-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.3rem;
+    letter-spacing: 12px;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  .divider.visible {
+    opacity: 0.5;
+  }
+
+  /* --- FINAL MESSAGE --- */
+  .final-message {
+    text-align: center;
+    margin: 100px 0 40px;
+    padding: 40px 20px;
+    opacity: 0;
+    animation: fadeUp 2s ease 5s forwards;
+  }
+
+  .final-message p {
+    font-size: 1.1rem;
+    color: rgba(212, 202, 187, 0.6);
+    margin-bottom: 1em;
+  }
+
+  .final-message .final-german {
+    font-size: 1.5rem;
+    color: var(--german);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin: 2em 0;
+  }
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 80px;
+    opacity: 0;
+    animation: fadeUp 2s ease 6s forwards;
+  }
+
+  .nav-btn {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .nav-btn:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--german);
+    transform: translateY(-2px);
+  }
+
+  /* --- G2G BRANDING --- */
+  .g2g-brand {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 200;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+
+  .g2g-brand:hover {
+    opacity: 0.7;
+  }
+
+  .g2g-brand a {
+    display: block;
+    width: 40px;
+    height: 40px;
+  }
+
+  .g2g-brand svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* --- FOOTER --- */
+  .footer {
+    text-align: center;
+    margin-top: 120px;
+    padding: 40px 20px;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.9rem;
+    opacity: 0;
+    animation: fadeUp 2s ease 7s forwards;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    .content {
+      padding: 40px 16px 100px;
+    }
+
+    .title-screen h1 {
+      font-size: 2.5rem;
+    }
+
+    .narrative {
+      font-size: 1.1rem;
+    }
+
+    .narrative.german-dialogue {
+      font-size: 1.2rem;
+    }
+
+    .nav-section {
+      flex-direction: column;
+    }
+
+    .nav-btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .content {
+      padding: 30px 12px 80px;
+    }
+
+    .title-screen h1 {
+      font-size: 2rem;
+    }
+
+    .title-screen .subtitle {
+      font-size: 1.1rem;
+    }
+
+    .narrative {
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    body {
+      font-size: 1rem;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- G2G Branding -->
+<div class="g2g-brand">
+  <a href="https://www.g2gadvisory.co.uk" title="G2G Advisory">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g2g-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.9" />
+        </linearGradient>
+      </defs>
+      <rect x="12" y="12" width="96" height="96" rx="12" fill="url(#g2g-gradient)"/>
+      <text x="60" y="75" font-family="Cormorant Garamond, serif" font-size="32" font-weight="600" text-anchor="middle" fill="white" letter-spacing="2">G2G</text>
+    </svg>
+  </a>
+</div>
+
+<!-- Progress Bar -->
+<div id="progressBar"></div>
+
+<!-- Canvas for particles -->
+<canvas id="particle-canvas"></canvas>
+<canvas id="rain-canvas"></canvas>
+
+<!-- Main Content -->
+<div class="content">
+
+  <!-- Title Screen -->
+  <div class="title-screen">
+    <div class="chapter-label">Epilogue</div>
+    <h1>Das letzte Wort</h1>
+    <p class="subtitle">The Last Word</p>
+    <p class="scroll-hint">Scroll to finish the story · <span>↓</span></p>
+  </div>
+
+  <!-- Scene 1: The book closes -->
+  <div class="scene" data-scene="1">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      The last page goes blank. For a moment—just a breath—there is nothing. Then ink blooms across the white. Not words. Just ink, spreading like a living thing, like flowers blooming in fast-motion. And slowly, so slowly you can almost hear it, a single word writes itself in the old angular letters from the cover—the letters from that first night in the courtyard.
+    </p>
+    <p class="narrative">
+      Your name. Not in English. In German. Exactly the way Goethe might have written it. Exactly the way the speakers around the fire would have spoken it.
+    </p>
+    <p class="narrative">
+      Then the book closes. Gently. Like an exhale. Like the last breath of a dream that knows it's time to let you go.
+    </p>
+  </div>
+
+  <!-- Scene 2: The fire fades -->
+  <div class="scene" data-scene="2">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      The fire is dying. The embers—those bright orange hearts that have been burning for a hundred chapters—begin to fade to grey. The steppe around you begins to dissolve. Not disappearing. Dissolving. Like watercolour bleeding into white.
+    </p>
+    <p class="narrative">
+      The speakers around the fire turn away, one by one. They are not leaving. They are fading. The way a dream fades when you know you're waking up. When the real world is calling you back.
+    </p>
+    <p class="narrative">
+      The last face to turn is the one who has been waiting for you. The ancient speaker. They smile—a smile that has waited a thousand years. They mouth a word you cannot quite hear. Then they are gone.
+    </p>
+  </div>
+
+  <!-- Scene 3: The courtyard returns -->
+  <div class="scene" data-scene="3">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      The courtyard returns. Brick by brick. The iron fire escape above. The stone step beneath you. Your hands—cold now—holding a book that has gone cool. The weight is different. Lighter. As if the words have climbed out of the pages and into you instead.
+    </p>
+    <p class="narrative">
+      You look around. The courtyard is exactly as it was. But you are not the same.
+    </p>
+  </div>
+
+  <!-- Scene 4: Dawn -->
+  <div class="scene sunrise-section" data-scene="4">
+    <div class="sunrise-bg"></div>
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      The sky beyond the courtyard walls is not grey anymore.
+    </p>
+    <p class="narrative emphasis">
+      It is the colour of old honey. The colour of a London dawn that happens only once a season—when the clouds thin just enough to let gold through.
+    </p>
+    <p class="narrative">
+      First light. The first light you have seen since you sat down to read.
+    </p>
+  </div>
+
+  <!-- Scene 5: The walk back -->
+  <div class="scene" data-scene="5">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      You stand. Your legs are stiff. You walk out of the courtyard and into streets that are the same streets and are entirely different.
+    </p>
+    <p class="narrative">
+      A café sign: <span class="german-word" onclick="speakGerman('Frühstück')">Frühstück</span>. You know it means breakfast—but more than that, you know <em>why</em>. <em>Früh</em> (early) + <em>Stück</em> (piece). An early piece. The first piece of the day. You see the word and it opens like a flower. A small, bright flower that has been waiting in the corner of your vision your whole life.
+    </p>
+    <p class="narrative">
+      A street sign: <span class="german-word" onclick="speakGerman('Einbahnstraße')">Einbahnstraße</span>. One-way street. <em>Ein</em> + <em>Bahn</em> + <em>Straße</em>. You hear the compounds singing. The city is singing to you in a language you are only just beginning to understand.
+    </p>
+  </div>
+
+  <!-- Gentle rain begins -->
+  <div class="scene" data-scene="5b">
+    <p class="narrative">
+      The rain has started again. Of course it has—this is London. But it doesn't feel the same. It's not the grey, angry rain of before. It's gentle. Almost tender. Like the city itself is saying welcome home.
+    </p>
+  </div>
+
+  <!-- Scene 6: Finding the alley -->
+  <div class="scene" data-scene="6">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      You walk back the way you came—or the way you think you came. The streets look different in dawn light. But then: the narrow alley. The cobblestones, worn smooth by centuries of footsteps. The sign creaking overhead.
+    </p>
+    <p class="narrative">
+      Gold letters on dark wood.
+    </p>
+    <p class="narrative emphasis">
+      "Books."
+    </p>
+  </div>
+
+  <!-- Scene 7: The bookshop -->
+  <div class="scene bookshop-section" data-scene="7">
+    <div class="bookshop-glow"></div>
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      The door is open. The same heavy oak. The same brass handle worn smooth by ten thousand hands. You push it gently.
+    </p>
+    <p class="narrative">
+      The bell chimes. The same high, delicate sound.
+    </p>
+    <p class="narrative">
+      The warmth hits you: paper and dust and maybe cinnamon. Maybe something older than cinnamon. The smell of stories. The smell of every book that has ever waited for its reader.
+    </p>
+    <p class="narrative">
+      Nothing has changed. Everything has changed.
+    </p>
+  </div>
+
+  <!-- Scene 8: The old man -->
+  <div class="scene" data-scene="8">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      He is there. Behind the counter. Reading. He doesn't look up when you enter. Then he does. Over the top of his spectacles. And he says, very quietly:
+    </p>
+    <p class="narrative german-dialogue">
+      Ah. Du bist fertig.
+    </p>
+    <p class="narrative">
+      Not in English. In German. And you understand him perfectly. Every vowel. Every consonant. Every layer of meaning beneath the words.
+    </p>
+    <p class="narrative small">
+      You're finished.
+    </p>
+  </div>
+
+  <!-- Scene 9: The return -->
+  <div class="scene" data-scene="9">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      You place the book on the counter. The leather is cool again. The gold letters have stopped glowing. It looks like an ordinary old book. A book that has been waiting on a shelf for a very long time.
+    </p>
+    <p class="narrative">
+      "It tends to find its way back," the old man says. He places it on the shelf—and you notice: the shelf is full of books in other languages. Dozens. Chinese characters. Arabic script. Japanese. Korean. Russian. Each one with a cover that glows, ever so slightly. Each one waiting for its reader.
+    </p>
+    <p class="narrative">
+      "They all come back," he says. "Always."
+    </p>
+  </div>
+
+  <!-- Book illustration moment -->
+  <div class="book-moment" data-scene="10">
+    <div class="book-glow"></div>
+    <div class="book-illustration">
+      <div class="book-closed">
+        <div class="book-text">Das erste Wort</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 10: The departure -->
+  <div class="scene" data-scene="11">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      You turn to leave. The bell chimes. At the door, the old man's voice stops you:
+    </p>
+    <p class="narrative german-dialogue">
+      Das letzte Wort...
+    </p>
+    <p class="narrative">
+      You stop. You turn. He's looking at you over those spectacles, and there's something in his expression—not a smile, exactly, but the ghost of one. The kind of expression that has waited a very long time. That has seen readers come and go, each one returning changed.
+    </p>
+    <p class="narrative german-dialogue">
+      ...ist immer der Anfang.
+    </p>
+    <p class="narrative small">
+      The last word is always the beginning.
+    </p>
+  </div>
+
+  <!-- Scene 11: London -->
+  <div class="scene" data-scene="12">
+    <div class="scene-marker"></div>
+    <p class="narrative">
+      You step outside. The rain continues. It doesn't feel the same anymore. The grey isn't just grey now. It's the colour between colours. The space where languages live before they become words. The gap between silence and speech.
+    </p>
+    <p class="narrative">
+      You pull your jacket tighter and walk into the morning. The city hums around you in a language you're only just beginning to hear. <span class="german-word" onclick="speakGerman('Guten Morgen')">Guten Morgen</span>. <span class="german-word" onclick="speakGerman('Guten Morgen')">Good morning</span>.
+    </p>
+    <p class="narrative">
+      It's time to start again. To listen more carefully. To hear the old languages singing beneath the new ones.
+    </p>
+    <p class="narrative">
+      It's time to learn to speak.
+    </p>
+  </div>
+
+  <!-- Final reflection -->
+  <div class="final-message">
+    <p>And somewhere on a shelf, in a bookshop that may or may not exist,</p>
+    <p>a book grows warm again.</p>
+    <p class="final-german">Es wartet.</p>
+    <p style="font-size: 0.95rem; color: rgba(212, 202, 187, 0.5); margin-top: 3em;">It waits.</p>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-section">
+    <a href="prologue.html" class="nav-btn">← Back to the Beginning</a>
+    <a href="index.html" class="nav-btn">Contents</a>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  A G2G Advisory Project · 100 chapters · 4 phases · 6,000 years
+</div>
+
+<script>
+
+  // ===== PROGRESS BAR =====
+  function updateProgressBar() {
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = window.scrollY;
+    const percent = (scrolled / scrollHeight) * 100;
+    document.getElementById('progressBar').style.width = percent + '%';
+  }
+
+  window.addEventListener('scroll', updateProgressBar);
+  updateProgressBar();
+
+  // ===== PARTICLE CANVAS (Golden motes drifting up) =====
+  const particleCanvas = document.getElementById('particle-canvas');
+  const particleCtx = particleCanvas.getContext('2d');
+
+  particleCanvas.width = window.innerWidth;
+  particleCanvas.height = window.innerHeight;
+
+  let particles = [];
+
+  class GoldenParticle {
+    constructor() {
+      this.x = Math.random() * particleCanvas.width;
+      this.y = particleCanvas.height;
+      this.size = Math.random() * 2 + 0.5;
+      this.opacity = Math.random() * 0.4 + 0.1;
+      this.speed = Math.random() * 0.3 + 0.1;
+      this.sway = Math.random() * 0.02 - 0.01;
+      this.swayAmount = 0;
+    }
+
+    update() {
+      this.y -= this.speed;
+      this.swayAmount += this.sway;
+      this.x += Math.sin(this.swayAmount) * 0.5;
+      this.opacity *= 0.98;
+    }
+
+    draw() {
+      particleCtx.fillStyle = `rgba(200, 154, 80, ${this.opacity})`;
+      particleCtx.beginPath();
+      particleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      particleCtx.fill();
+    }
+  }
+
+  function animateParticles() {
+    particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+    if (Math.random() < 0.15) {
+      particles.push(new GoldenParticle());
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw();
+
+      if (particles[i].opacity < 0.01 || particles[i].y < 0) {
+        particles.splice(i, 1);
+      }
+    }
+
+    requestAnimationFrame(animateParticles);
+  }
+
+  animateParticles();
+
+  // ===== RAIN CANVAS (Gentle mist) =====
+  const rainCanvas = document.getElementById('rain-canvas');
+  const rainCtx = rainCanvas.getContext('2d');
+
+  rainCanvas.width = window.innerWidth;
+  rainCanvas.height = window.innerHeight;
+
+  let rainDrops = [];
+
+  class RainDrop {
+    constructor() {
+      this.x = Math.random() * rainCanvas.width;
+      this.y = Math.random() * rainCanvas.height - rainCanvas.height;
+      this.length = Math.random() * 15 + 5;
+      this.opacity = Math.random() * 0.15 + 0.05;
+      this.speed = Math.random() * 2 + 1;
+      this.angle = 0.15;
+    }
+
+    update() {
+      this.y += this.speed;
+      this.x += this.angle;
+
+      if (this.y > rainCanvas.height) {
+        this.y = -this.length;
+        this.x = Math.random() * rainCanvas.width;
+      }
+    }
+
+    draw() {
+      rainCtx.strokeStyle = `rgba(212, 202, 187, ${this.opacity})`;
+      rainCtx.lineWidth = 0.8;
+      rainCtx.lineCap = 'round';
+      rainCtx.beginPath();
+      rainCtx.moveTo(this.x, this.y);
+      rainCtx.lineTo(this.x - this.angle * this.length, this.y + this.length);
+      rainCtx.stroke();
+    }
+  }
+
+  function initRain() {
+    for (let i = 0; i < 40; i++) {
+      rainDrops.push(new RainDrop());
+    }
+  }
+
+  function animateRain() {
+    rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+    rainDrops.forEach(drop => {
+      drop.update();
+      drop.draw();
+    });
+
+    requestAnimationFrame(animateRain);
+  }
+
+  initRain();
+  animateRain();
+
+  // ===== SCENE VISIBILITY ON SCROLL =====
+  const scenes = document.querySelectorAll('.scene, .title-screen, .book-moment, .sunrise-section, .bookshop-section, .final-message, .nav-section');
+
+  function checkSceneVisibility() {
+    scenes.forEach(scene => {
+      const rect = scene.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.75 && rect.bottom > 0) {
+        scene.classList.add('visible');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', checkSceneVisibility);
+  checkSceneVisibility();
+
+  // ===== SPEAK GERMAN =====
+  function speakGerman(word) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = 'de-DE';
+      utterance.rate = 0.85;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  // ===== WINDOW RESIZE =====
+  window.addEventListener('resize', () => {
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+    rainCanvas.width = window.innerWidth;
+    rainCanvas.height = window.innerHeight;
+  });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>Das erste Wort — Interlude III: The Fire</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #080810;
+    --night-mid: #0f0c08;
+    --night-light: #1a0e08;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --lamplight: #e8a44a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #080810;
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0810 0%, #0f0c08 30%, #1a0e08 70%, #2a1810 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- FIRE CANVAS --- */
+  #fireCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .interlude-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- FRAME GERMAN WORDS --- */
+  .frame-german {
+    color: var(--lamplight);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .frame-german:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 60px;
+  }
+
+  .end-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .next-chapter {
+    margin-top: 24px;
+    font-size: 1.1rem;
+    color: var(--fire);
+    font-style: italic;
+  }
+
+  /* --- PROGRESS BAR --- */
+  #progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--fire), var(--fire-glow));
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.1s ease;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    .title-screen h1 { font-size: 2.8rem; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.15rem; }
+    .content { padding: 40px 20px 80px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 2.2rem; }
+    .title-screen .subtitle { font-size: 1rem; }
+    .narrative { font-size: 1.05rem; }
+  }
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .nav-btn:hover {
+    border-color: #e8a44a;
+    background: rgba(232, 164, 74, 0.08);
+  }
+
+  .nav-btn.next {
+    margin-left: auto;
+    background: rgba(232, 164, 74, 0.08);
+  }
+
+  @media (max-width: 600px) {
+    .nav-section { flex-direction: column; }
+  }
+
+  /* --- FOOTER --- */
+  .footer {
+    text-align: center;
+    padding: 20px 0 40px;
+    opacity: 0.25;
+  }
+
+  .footer a {
+    text-decoration: none;
+    color: rgba(180, 140, 220, 0.6);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+  <div id="progressBar"></div>
+  <canvas id="fireCanvas"></canvas>
+
+  <div class="content">
+
+    <!-- ==================== TITLE SCREEN ==================== -->
+    <div class="scene" id="scene-title" style="opacity: 1; transform: translateY(0);">
+      <div class="title-screen">
+        <span class="interlude-label">Interlude III</span>
+        <h1>Das Feuer</h1>
+        <span class="subtitle">The Fire</span>
+        <p class="scroll-hint">
+          <span>↓</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== SCENE 1: EYES CLOSED, EYES OPEN ==================== -->
+    <div class="scene" id="scene1">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        You close your eyes.
+      </p>
+
+      <p class="narrative">
+        The rain is gone. The courtyard walls fade. The bookshop, the London street, the hands that took the book—all of it dissolves like ash in wind. There is only darkness and the weight of the book still in your hands. You can feel its pages, warm now, almost alive.
+      </p>
+
+      <p class="narrative">
+        You open your eyes.
+      </p>
+
+      <p class="narrative">
+        You are standing in grass that reaches your knees. The steppe stretches in every direction to the horizon. Above, the night sky burns with ancient stars—more stars than you have ever seen. The constellations are unfamiliar. This is not the London sky. This is not any sky you know.
+      </p>
+
+      <p class="narrative">
+        Ahead, perhaps two hundred paces away, a fire burns.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 2: YOU HAVE BEEN HERE BEFORE ==================== -->
+    <div class="scene" id="scene2">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        You have been here before. This is the steppe from the very first chapter. The same vast emptiness. The same smell of smoke and earth. The same fire, perhaps—burning since six thousand years ago, kept alive across millennia by voices speaking into the darkness.
+      </p>
+
+      <p class="narrative">
+        But something is different. Last time, you were a visitor. A reader. An outsider peering into the world of the book, watching speakers whose language was foreign, whose thoughts moved like patterns you could trace but not yet understand.
+      </p>
+
+      <p class="narrative">
+        Now you are something else. The language is inside you. Not words that you must memorize, but architecture. The bones of thought itself.
+      </p>
+
+      <p class="narrative">
+        You take a step toward the fire. The grass whispers beneath your feet.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 3: THE CIRCLE ==================== -->
+    <div class="scene" id="scene3">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        As you draw closer, you see them: a circle of people seated around the flames. Five, perhaps six. Their faces are lit by the orange glow. They are speaking, passing words between them like coals.
+      </p>
+
+      <p class="narrative">
+        And for the first time—you understand them.
+      </p>
+
+      <p class="narrative">
+        Not every word. Your knowledge is still forming, still crystalline and sharp. But the structures hold. You hear a verb and your mind knows where it will go—at the end of the sentence, in the perfect German way, bringing meaning into focus. You hear a nominative and an accusative and you know who does what. The cases are not arbitrary signals anymore; they are a map of meaning. The genitive shows possession. The dative shows relationship. Grammar, which once felt like a foreign cage, is now—somehow—the very shape of thought itself.
+      </p>
+
+      <p class="narrative">
+        One of them notices you. She does not start. She does not seem surprised. She simply nods, as if she has been waiting.
+      </p>
+
+      <p class="narrative emphasis">
+        "Komm weiter," she says. Come further. Enter the circle.
+      </p>
+
+      <p class="narrative">
+        And you do.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 4: THE FIRE IN DETAIL ==================== -->
+    <div class="scene" id="scene4">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        The fire is ancient and alive. The wood has burned down to coals—deep orange and glowing amber, arranged in a shape that seems both random and deliberate. Flame licks upward in colors you have no names for. Bright gold that might be the fire itself, or light made visible. Red so deep it is almost purple. White-gold at the very heart where the heat is greatest.
+      </p>
+
+      <p class="narrative">
+        The smoke rises in curves and spirals, and there is a moment—a suspended moment between one breath and the next—where the smoke seems to form words. Not German words. Older. PIE roots, their voices rising like smoke into the ancient sky.
+      </p>
+
+      <p class="narrative">
+        The heat on your face is strange. It feels exactly like the heat of the book in your hands. You cannot tell which is which anymore. The fire in the steppe and the fire of the pages are the same fire. The book is not a description of this place. It <em>is</em> this place. And you are in both, always, simultaneously.
+      </p>
+
+      <p class="narrative">
+        The woman who greeted you passes you something. A cup, perhaps. The liquid inside is dark and steaming. You drink. It tastes like iron and words and centuries.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 5: THE BOOK GROWS THIN ==================== -->
+    <div class="scene" id="scene5">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        You notice, for the first time, how light the book has become. You look at it in your hands—yes, it is definitely lighter. The pages you have read have not accumulated. They have been <em>consumed</em>. Burned. Fed into the fire of understanding.
+      </p>
+
+      <p class="narrative">
+        You flip forward, trying to see how much remains.
+      </p>
+
+      <p class="narrative">
+        There is still much to read. But not as much as there once was. You are past the midpoint now. You can feel it.
+      </p>
+
+      <p class="narrative">
+        What comes next? You can sense it the way you sense the heat of the fire—without looking directly at it. The final section of the book. The one the woman called the <span class="frame-german" onclick="speakGerman('Schmiede')">Schmiede</span>. The forge.
+      </p>
+
+      <p class="narrative">
+        It will not be like the chapters before. Not history. Not tools. Not blueprints for understanding. This section will be different. It will be the place where words are shaped by heat and repetition. Where strong verbs will not yield their patterns easily. Where particles will demand to be learned not through logic but through use. Where idioms will refuse translation, insisting instead on feeling.
+      </p>
+
+      <p class="narrative">
+        The hardest part remains. You know this without knowing how you know.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 6: THE VOICE IS YOURS ==================== -->
+    <div class="scene" id="scene6">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        The woman speaks again. More words. And you understand: she is asking a question. Her face is lit by the firelight, curious and patient.
+      </p>
+
+      <p class="narrative">
+        You open your mouth to answer. The words come—not English words with German pronunciations, but real German words, shaped by your mouth in the German way. Your voice sounds strange to you. Older. Like you are speaking from a deeper place than your usual self.
+      </p>
+
+      <p class="narrative">
+        And as you speak, something shifts. You realize: the voice has always been yours. The one that whispered in Interlude I when the book changed shape. The one that urged you forward in Interlude II. The voice that seemed to come from outside, from the book, from the steppe, from centuries of speakers—it was always your own voice calling yourself deeper.
+      </p>
+
+      <p class="narrative">
+        The book did not choose you. You chose it. Stole it, in fact, from that London bookshop. Fled to the courtyard. Opened it not because you had to, but because you could not do anything else.
+      </p>
+
+      <p class="narrative">
+        You are the one making this journey.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 7: THE FIGURE BY THE FIRE ==================== -->
+    <div class="scene" id="scene7">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        A figure across the circle leans forward. The firelight catches their face. For a moment—just a moment—you recognize them. Not by name. Not by face, really. But by presence. It is the old man from the margin of the book. The one who appeared in Interlude II, his face pale against the dark ink.
+      </p>
+
+      <p class="narrative">
+        He is looking directly at you. His eyes are very bright. Ancient. Kind.
+      </p>
+
+      <p class="narrative">
+        He does not smile, but his expression is something like recognition. As if he has been waiting for this moment. As if he has always known you would come here, would sit by this fire, would understand—finally—that the architecture of the language is the architecture of thought, and that both are the architecture of yourself.
+      </p>
+
+      <p class="narrative">
+        He nods, slowly, and returns his gaze to the fire.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 8: THE FIRE BRIGHTENS ==================== -->
+    <div class="scene" id="scene8">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">
+        The fire burns brighter. Not in a sudden way, but gradually, as if something deeper is catching light. The heat intensifies. The coals shift and rearrange themselves. A piece of wood that has been barely smoldering suddenly erupts in flame.
+      </p>
+
+      <p class="narrative">
+        The woman who first spoke to you gestures toward the fire. She says a single word. <span class="frame-german" onclick="speakGerman('Bereit')">Bereit</span>. Ready.
+      </p>
+
+      <p class="narrative">
+        And you are. You have learned the shape of the language. Now you must learn its fire.
+      </p>
+    </div>
+
+    <!-- ==================== SCENE 9: THE TURN OF THE PAGE ==================== -->
+    <div class="scene" id="scene9">
+      <div class="scene-marker"></div>
+
+      <p class="narrative emphasis">
+        You turn the page. The forging begins.
+      </p>
+
+      <p class="narrative small" style="text-align: center; margin-top: 2em;">
+        ———<br>
+        <br>
+        The steppe fades. The fire remains.
+      </p>
+    </div>
+
+    <!-- ==================== CHAPTER END ==================== -->
+    <div class="scene" id="scene-end">
+      <div class="chapter-end">
+        <div class="end-line"></div>
+        <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+          End of Interlude III
+        </p>
+        <p class="narrative small" style="text-align: center;">
+          You have traversed three phases of becoming.<br>
+          History became language. Language became architecture.<br>
+          Now comes the heat. The repetition. The things that cannot be explained, only forged.
+        </p>
+        <div class="next-chapter">
+          Enter the Forge: Chapter 79 — Die starken Verben I
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <a href="interlude2.html" class="nav-btn">← Interlude II</a>
+      <a href="chapter79.html" class="nav-btn next">Chapter 79 →</a>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener">
+      A G2G Advisory Project · Das erste Wort
+    </a>
+  </div>
+
+  <script>
+
+  // --- FIRE CANVAS WITH EMBERS, STARS, AND AURORA ---
+  const canvas = document.getElementById('fireCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let stars = [];
+  let time = 0;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    if (stars.length === 0) {
+      generateStars();
+    }
+  }
+
+  function generateStars() {
+    stars = [];
+    const starCount = window.innerWidth < 600 ? 80 : 150;
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * (canvas.height * 0.7),
+        radius: Math.random() * 1.2 + 0.3,
+        opacity: Math.random() * 0.7 + 0.3,
+        twinkleSpeed: Math.random() * 0.02 + 0.005
+      });
+    }
+  }
+
+  function emitParticles(count = 15) {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height * 0.65;
+
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.random() - 0.5) * Math.PI * 0.8;
+      const speed = Math.random() * 3 + 1.5;
+      const size = Math.random() * 2.5 + 0.8;
+
+      particles.push({
+        x: centerX + (Math.random() - 0.5) * 40,
+        y: centerY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 0.3,
+        radius: size,
+        opacity: Math.random() * 0.8 + 0.3,
+        lifespan: Math.random() * 200 + 150,
+        age: 0,
+        colorIndex: Math.random()
+      });
+    }
+  }
+
+  function drawStars() {
+    stars.forEach(star => {
+      const twinkle = Math.sin(time * star.twinkleSpeed) * 0.3 + 0.7;
+      ctx.fillStyle = `rgba(232, 220, 200, ${star.opacity * twinkle})`;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function drawAurora() {
+    const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    const auroraOpacity = Math.max(0, Math.sin(scroll * Math.PI + time * 0.0002) * 0.08);
+
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    gradient.addColorStop(0, `rgba(74, 180, 120, 0)`);
+    gradient.addColorStop(0.3, `rgba(74, 180, 120, ${auroraOpacity})`);
+    gradient.addColorStop(0.5, `rgba(120, 80, 180, ${auroraOpacity * 0.8})`);
+    gradient.addColorStop(0.7, `rgba(74, 180, 120, ${auroraOpacity})`);
+    gradient.addColorStop(1, `rgba(74, 180, 120, 0)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height * 0.25);
+  }
+
+  function drawFrame(frameTime) {
+    time = frameTime;
+
+    // Dark background
+    ctx.fillStyle = 'rgba(8, 8, 16, 0.4)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height * 0.65;
+
+    // Fire glow (grows with scroll)
+    const glowIntensity = 0.1 + scroll * 0.35;
+    const glowRadius = 350 + scroll * 150;
+
+    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, glowRadius);
+    gradient.addColorStop(0, `rgba(232, 164, 74, ${glowIntensity * 0.6})`);
+    gradient.addColorStop(0.3, `rgba(196, 93, 44, ${glowIntensity * 0.3})`);
+    gradient.addColorStop(1, `rgba(26, 14, 8, 0)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Stars
+    drawStars();
+
+    // Aurora
+    drawAurora();
+
+    // Particles (embers)
+    particles = particles.filter(p => p.age < p.lifespan);
+    particles.forEach(p => {
+      p.x += p.vx * (0.98 - scroll * 0.1);
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.age++;
+
+      const fadeOut = 1 - (p.age / p.lifespan);
+      const alpha = p.opacity * fadeOut;
+
+      let r, g, b;
+      if (p.colorIndex < 0.4) {
+        r = 255; g = Math.round(200 - p.colorIndex * 300); b = 80;
+      } else if (p.colorIndex < 0.7) {
+        r = 232; g = Math.round(140 - (p.colorIndex - 0.4) * 120); b = 44;
+      } else {
+        r = Math.round(196 - (p.colorIndex - 0.7) * 200); g = 70; b = 30;
+      }
+
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Slight glow
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.4})`;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    });
+
+    requestAnimationFrame(drawFrame);
+  }
+
+  // Initialize
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  requestAnimationFrame(drawFrame);
+
+  // Emit particles periodically
+  setInterval(() => {
+    emitParticles(window.innerWidth < 600 ? 8 : 15);
+  }, 400);
+
+  // --- SCROLL PROGRESS BAR ---
+  window.addEventListener('scroll', () => {
+    const h = document.body.scrollHeight - window.innerHeight;
+    const pct = (window.scrollY / h) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+  });
+
+  // --- SCENE REVEAL ON SCROLL ---
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.scene').forEach(scene => {
+    observer.observe(scene);
+  });
+
+  // --- AUDIO PRONUNCIATION ---
+  function speakGerman(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'de-DE';
+      utterance.rate = 0.85;
+      const voices = window.speechSynthesis.getVoices();
+      const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+      if (deVoice) utterance.voice = deVoice;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+
+  </script>
+
+</body>
+</html>

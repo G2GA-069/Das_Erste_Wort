@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a12">
+<title>Das erste Wort — Interlude: Die Atempause</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --rain-grey: #6a7a8a;
+        --london-dark: #0a0a12;
+        --lamplight: #e8a44a;
+        --lamplight-dim: rgba(232,164,74,0.15);
+        --bookshop-warm: #2a1f14;
+        --parchment: #d4c5a0;
+        --ink-black: #0a0a12;
+        --text-light: #c8c4b8;
+        --text-muted: #8a8678;
+        --gold-dark: #8a6a3a;
+        --gold-bright: #d4a84a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+        font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+        font-size: 1.25rem;
+        line-height: 1.85;
+        background: var(--ink-black);
+        color: var(--text-light);
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    /* ===== CANVASES ===== */
+    #rain-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    #stars-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 8s ease;
+    }
+
+    #stars-canvas.visible { opacity: 1; }
+
+    /* Book glow layer */
+    #glow-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 4s ease;
+    }
+    #glow-canvas.visible { opacity: 1; }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar {
+        position: fixed;
+        top: 0; left: 0;
+        height: 2px;
+        background: var(--lamplight);
+        width: 0%;
+        z-index: 200;
+        transition: width 0.3s ease;
+    }
+
+    /* ===== G2G BRANDING ===== */
+    .g2g-brand {
+        position: fixed;
+        top: 0; right: 0;
+        z-index: 200;
+        padding: 12px 16px;
+        opacity: 0.35;
+        transition: opacity 0.3s;
+    }
+    .g2g-brand:hover { opacity: 0.8; }
+    .g2g-brand a {
+        text-decoration: none;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        color: rgba(180,140,220,0.7);
+        text-transform: uppercase;
+    }
+
+    /* ===== MAIN STORY ===== */
+    .story {
+        position: relative;
+        z-index: 10;
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px 40px;
+    }
+
+    /* ===== TITLE SECTION ===== */
+    .interlude-title {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px 24px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .interlude-label {
+        font-size: 0.8rem;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: rgba(200,196,184,0.25);
+        opacity: 0;
+        animation: fadeUp 2s ease 0.5s forwards;
+    }
+
+    .interlude-name {
+        font-size: 3rem;
+        font-weight: 300;
+        color: var(--lamplight);
+        letter-spacing: 0.06em;
+        margin-top: 12px;
+        opacity: 0;
+        animation: fadeUp 2.5s ease 1s forwards;
+    }
+
+    .interlude-translation {
+        font-size: 1.1rem;
+        font-weight: 300;
+        font-style: italic;
+        color: rgba(200,196,184,0.35);
+        letter-spacing: 0.15em;
+        margin-top: 8px;
+        opacity: 0;
+        animation: fadeUp 2s ease 1.8s forwards;
+    }
+
+    .interlude-scroll-hint {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.875rem;
+        font-style: italic;
+        color: rgba(200,196,184,0.2);
+        letter-spacing: 0.15em;
+        opacity: 0;
+        animation: hintPulse 3s ease 3.5s infinite;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes hintPulse {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 0.4; }
+    }
+
+    /* ===== SCENES ===== */
+    .scene {
+        margin-bottom: 80px;
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+    .scene.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .scene p {
+        font-size: 1.25rem;
+        line-height: 1.9;
+        margin-bottom: 1.5em;
+        color: var(--text-light);
+    }
+    .scene p:last-child { margin-bottom: 0; }
+
+    /* Atmosphere */
+    .scene.rain p { color: #9a96a0; }
+    .scene.clearing p { color: #a8a4a0; }
+    .scene.warmth p { color: #d4c5a0; }
+    .scene.stillness p { color: #b8b4a8; }
+    .scene.gold p { color: #c8bca0; }
+
+    .scene em { color: inherit; font-style: italic; }
+
+    /* German words in the frame story — not clickable, but gold */
+    .frame-german {
+        color: var(--lamplight);
+        font-style: italic;
+        font-weight: 500;
+    }
+
+    /* ===== DIVIDERS ===== */
+    .divider {
+        text-align: center;
+        margin: 60px 0;
+        color: var(--rain-grey);
+        font-size: 1.5rem;
+        letter-spacing: 12px;
+        opacity: 0;
+        transition: opacity 1s ease;
+    }
+    .divider.visible { opacity: 0.4; }
+
+    /* ===== THE BOOK (held in hands) ===== */
+    .book-in-hands {
+        text-align: center;
+        margin: 60px 0;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: opacity 1.5s ease, transform 1.5s ease;
+    }
+    .book-in-hands.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .book-svg-container {
+        display: inline-block;
+        position: relative;
+    }
+
+    /* ===== BREATH ANIMATION (the pause) ===== */
+    .breath-circle {
+        text-align: center;
+        margin: 80px 0;
+        opacity: 0;
+        transition: opacity 2s ease;
+    }
+    .breath-circle.visible { opacity: 1; }
+
+    .breath-ring {
+        display: inline-block;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 1px solid rgba(232,164,74,0.2);
+        animation: breathe 6s ease-in-out infinite;
+        position: relative;
+    }
+
+    .breath-ring::after {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 4px; height: 4px;
+        border-radius: 50%;
+        background: var(--lamplight);
+        box-shadow: 0 0 20px rgba(232,164,74,0.4);
+    }
+
+    @keyframes breathe {
+        0%, 100% { transform: scale(0.8); border-color: rgba(232,164,74,0.1); }
+        50% { transform: scale(1.2); border-color: rgba(232,164,74,0.35); }
+    }
+
+    /* ===== CONTINUE LINK ===== */
+    .continue-section {
+        text-align: center;
+        margin-top: 80px;
+        padding: 40px 20px 60px;
+        opacity: 0;
+        transition: opacity 1s ease;
+    }
+    .continue-section.visible { opacity: 1; }
+
+    .continue-link {
+        display: inline-block;
+        padding: 14px 44px;
+        border: 1px solid var(--lamplight);
+        color: var(--lamplight);
+        text-decoration: none;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.125rem;
+        letter-spacing: 3px;
+        transition: all 0.3s ease;
+    }
+    .continue-link:hover {
+        background: rgba(232,164,74,0.1);
+        box-shadow: 0 0 30px rgba(232,164,74,0.1);
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 24px;
+        color: rgba(212,202,187,0.25);
+        font-size: 0.8rem;
+        text-decoration: none;
+        letter-spacing: 0.1em;
+        transition: color 0.3s ease;
+    }
+    .back-link:hover { color: rgba(212,202,187,0.5); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .story { padding: 0 18px 30px; }
+        .scene p { font-size: 18px !important; line-height: 1.85; }
+        .scene { margin-bottom: 60px; }
+        .interlude-name { font-size: 2.4rem; }
+    }
+
+    @media (max-width: 380px) {
+        .scene p { font-size: 16px !important; }
+        .interlude-name { font-size: 2rem; }
+    }
+
+    /* ===== FOOTER ===== */
+    .g2g-footer {
+        text-align: center;
+        padding: 30px 20px 40px;
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        color: rgba(180,140,220,0.25);
+        position: relative;
+        z-index: 10;
+    }
+    .g2g-footer a {
+        color: rgba(180,140,220,0.4);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .g2g-footer a:hover { color: rgba(180,140,220,0.7); }
+</style>
+</head>
+<body>
+
+<div class="g2g-brand">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener">G2G Advisory</a>
+</div>
+
+<canvas id="rain-canvas"></canvas>
+<canvas id="stars-canvas"></canvas>
+<canvas id="glow-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ===== TITLE ===== -->
+<div class="interlude-title">
+    <div class="interlude-label">Interlude</div>
+    <div class="interlude-name">Die Atempause</div>
+    <div class="interlude-translation">The Breathing Space</div>
+    <div class="interlude-scroll-hint">scroll to continue</div>
+</div>
+
+<!-- ===== THE STORY ===== -->
+<div class="story">
+
+    <!-- SCENE 1: THE RETURN -->
+    <div class="scene rain" data-phase="rain">
+        <p>You look up.</p>
+        <p>It takes you a moment to remember where you are. The stone step beneath you. The rusted fire escape above. The courtyard walls, dark brick slick with — no. Not slick. They're dry. When did the brick dry?</p>
+        <p>You look at your hands. The book is open in your lap, warm as a living thing, the gold-tinged pages catching light from a source you can't identify. Your fingers are trembling — not from cold. From something else. From the six thousand years that just passed beneath them.</p>
+    </div>
+
+    <div class="divider">. . .</div>
+
+    <!-- SCENE 2: THE RAIN HAS STOPPED -->
+    <div class="scene clearing" data-phase="clearing">
+        <p>The rain has stopped.</p>
+        <p>You're not sure when it happened. You remember the drumming on the iron above you, the hiss and splash of London doing what London does. But at some point — somewhere between the Romans and the monks, between the marketplace and the printing press — the drumming faded, and you didn't notice. You were too deep inside.</p>
+        <p>Now the courtyard is quiet. The kind of quiet that has weight to it. Not silence — you can still hear the city, faintly, somewhere beyond these walls. A bus changing gears. A siren, blocks away, rising and falling like a breath. But here, in this doorway, the quiet is close and warm, like a hand on your shoulder.</p>
+    </div>
+
+    <!-- SCENE 3: TIME HAS PASSED -->
+    <div class="scene stillness" data-phase="clearing">
+        <p>How long have you been reading?</p>
+        <p>Your phone is in your pocket. You could check. But your hands don't want to leave the book — not yet — and there's something about this moment that feels like it shouldn't be measured. The way a held breath doesn't count as time. The way a dream has no clock.</p>
+        <p>Above the courtyard walls, the sky has changed. When you sat down it was the colour of wet slate — that specific London grey that isn't even trying to be anything else. Now it's darker. Deeper. The clouds have thinned in places, and through the gaps you can see — not quite stars. Not yet. But the suggestion of them. The sky remembering that it has depth.</p>
+    </div>
+
+    <div class="divider">. . .</div>
+
+    <!-- SCENE 4: WHAT THE BOOK DID -->
+    <div class="scene warmth" data-phase="stars">
+        <p>You close your eyes and what you see is not darkness but language.</p>
+        <p>The sound shifts move behind your eyelids like constellations. <em>P</em> becoming <em>PF</em> becoming <em>FF</em> — you can see it now, the way a river branches and keeps flowing. <em>Wasser</em> and <em>water</em>, <em>Vater</em> and <em>father</em>, <em>Apfel</em> and <em>apple</em> — not translations but <em>echoes</em>, the same voice speaking across a valley of centuries. You heard them all. You heard them <em>change</em>.</p>
+        <p>Twenty-six chapters. Twenty-six rooms in a house you didn't know existed. And in each room, a window onto the same landscape — the long, slow, beautiful mutation of a language that started as breath and became a civilization.</p>
+    </div>
+
+    <!-- SCENE 5: THE BOOK CHANGES -->
+    <div class="scene warmth" data-phase="stars">
+        <p>You look down at the book. The page you stopped on is the last of a section — you can tell by the way the text thins at the bottom, like a path reaching a clearing. And the next page — </p>
+        <p>The next page is different.</p>
+        <p>Not the words. The words are still German, still English, still the same careful hand that's been guiding you since the steppe. But the <em>shape</em> of them has changed. The stories have given way to something else — something more structural, more mechanical. Diagrams where there were once landscapes. Prefixes where there were once battles. The book is showing you the machinery now. The gears behind the words.</p>
+        <p>It's like looking at a clock after someone has removed the face.</p>
+    </div>
+
+    <div class="divider">. . .</div>
+
+    <!-- THE BREATH -->
+    <div class="breath-circle" id="breathCircle">
+        <div class="breath-ring"></div>
+    </div>
+
+    <!-- SCENE 6: SOMETHING HAS CHANGED IN YOU -->
+    <div class="scene gold" data-phase="glow">
+        <p>Something has changed in you and you can feel it.</p>
+        <p>It's not knowledge — not exactly. It's more like a door has opened in a room you've lived in your whole life, and behind it is another room that was always there. The room where <em>night</em> and <span class="frame-german">Nacht</span> are the same word. The room where <em>brother</em> and <span class="frame-german">Bruder</span> are the same mouth speaking a thousand years apart.</p>
+        <p>You didn't learn German. Not in the way you learned anything at school — the grinding repetition, the flashcards, the grammar tables that looked like prison bars. What happened in those twenty-six chapters was something else. The book showed you a language you already carried. It just showed you where to look.</p>
+    </div>
+
+    <!-- SCENE 7: THE VOICE -->
+    <div class="scene gold" data-phase="glow">
+        <p>And then — faintly, so faintly you might be imagining it — you hear something.</p>
+        <p>Not from the street. Not from the book. From somewhere between the two — from the thin place where the courtyard walls meet the sky, where the last raindrop fell and the first star is trying to appear. A voice. Not the old man's voice. Not yours. Something older.</p>
+        <p>It says a word. One word. You don't catch it — not quite — it dissolves before your ear can hold it, like a name called across water. But the shape of it stays. The <em>feeling</em> of it. A prefix, maybe. Or a root. Something small and generative, like a seed.</p>
+        <p>You look at the book. The next page is waiting.</p>
+    </div>
+
+    <div class="divider">. . .</div>
+
+    <!-- SCENE 8: THE DECISION -->
+    <div class="scene stillness" data-phase="glow">
+        <p>You could stop here.</p>
+        <p>You could close the book, slip it back inside your jacket, stand up, walk back into London. The rain has stopped. The night is almost gentle. You could go home, make tea, sit in your own chair and think about what you've read. That would be reasonable. That's what a reasonable person would do.</p>
+        <p>But the book is warm. And the page is waiting. And somewhere in the distance, that voice — or whatever it was — is still hovering at the edge of hearing, like a word on the tip of your tongue. Like the answer to a question you didn't know you'd asked.</p>
+        <p>You pull your jacket tighter. Not against the cold this time — against the strange, fierce joy of knowing that the next room is right there. That you only have to turn the page.</p>
+    </div>
+
+    <!-- SCENE 9: THE TURN -->
+    <div class="scene gold">
+        <p>You turn the page.</p>
+        <p>The machinery begins.</p>
+    </div>
+
+    <!-- CONTINUE -->
+    <div class="continue-section" id="continueSection">
+        <a href="chapter27.html" class="continue-link">Enter the Workshop</a>
+        <div>
+            <a href="index.html" class="back-link">← Back to contents</a>
+        </div>
+    </div>
+
+</div>
+
+<div class="g2g-footer">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener">A G2G Advisory Project</a> · Das erste Wort
+</div>
+
+<script>
+// ===== RAIN CANVAS (fades out as you scroll) =====
+const rainCanvas = document.getElementById('rain-canvas');
+const rainCtx = rainCanvas.getContext('2d');
+const starsCanvas = document.getElementById('stars-canvas');
+const starsCtx = starsCanvas.getContext('2d');
+const glowCanvas = document.getElementById('glow-canvas');
+const glowCtx = glowCanvas.getContext('2d');
+
+let drops = [];
+let rainOpacity = 0.6; // Start lighter than prologue — the rain is already easing
+let stars = [];
+let glowPulse = 0;
+
+function resizeCanvases() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    rainCanvas.width = starsCanvas.width = glowCanvas.width = w;
+    rainCanvas.height = starsCanvas.height = glowCanvas.height = h;
+}
+
+// ===== RAIN (lighter, ending) =====
+function initRain() {
+    resizeCanvases();
+    const count = window.innerWidth > 600 ? 120 : 60; // Fewer drops — rain is ending
+    drops = [];
+    for (let i = 0; i < count; i++) {
+        drops.push({
+            x: Math.random() * rainCanvas.width,
+            y: Math.random() * rainCanvas.height,
+            length: Math.random() * 14 + 6,
+            speed: Math.random() * 3 + 2,
+            opacity: Math.random() * 0.12 + 0.03,
+            wind: Math.random() * 0.4 + 0.1
+        });
+    }
+}
+
+function drawRain() {
+    rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+    if (rainOpacity <= 0.01) { requestAnimationFrame(drawRain); return; }
+
+    for (let drop of drops) {
+        rainCtx.beginPath();
+        rainCtx.moveTo(drop.x, drop.y);
+        rainCtx.lineTo(drop.x + drop.wind * 2, drop.y + drop.length);
+        rainCtx.strokeStyle = 'rgba(150, 165, 190, ' + (drop.opacity * rainOpacity) + ')';
+        rainCtx.lineWidth = 0.6;
+        rainCtx.stroke();
+
+        drop.y += drop.speed;
+        drop.x += drop.wind;
+
+        if (drop.y > rainCanvas.height) {
+            drop.y = -drop.length;
+            drop.x = Math.random() * rainCanvas.width;
+        }
+    }
+    requestAnimationFrame(drawRain);
+}
+
+// ===== STARS (appear as rain fades) =====
+function initStars() {
+    const count = window.innerWidth > 600 ? 200 : 100;
+    stars = [];
+    for (let i = 0; i < count; i++) {
+        stars.push({
+            x: Math.random() * starsCanvas.width,
+            y: Math.random() * starsCanvas.height * 0.7, // Mostly upper sky
+            radius: Math.random() * 1.5 + 0.3,
+            baseOpacity: Math.random() * 0.6 + 0.2,
+            twinkleSpeed: Math.random() * 0.02 + 0.005,
+            twinklePhase: Math.random() * Math.PI * 2,
+            color: Math.random() > 0.85
+                ? `rgba(232, 164, 74, ` // Gold stars (rare)
+                : Math.random() > 0.7
+                    ? `rgba(180, 170, 200, ` // Lavender
+                    : `rgba(200, 196, 184, `  // Warm white
+        });
+    }
+}
+
+function drawStars(time) {
+    starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+
+    for (let star of stars) {
+        const twinkle = Math.sin(time * star.twinkleSpeed + star.twinklePhase);
+        const opacity = star.baseOpacity * (0.6 + 0.4 * twinkle);
+
+        starsCtx.beginPath();
+        starsCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        starsCtx.fillStyle = star.color + opacity + ')';
+        starsCtx.fill();
+
+        // Subtle glow on brighter stars
+        if (star.radius > 1) {
+            starsCtx.beginPath();
+            starsCtx.arc(star.x, star.y, star.radius * 3, 0, Math.PI * 2);
+            starsCtx.fillStyle = star.color + (opacity * 0.1) + ')';
+            starsCtx.fill();
+        }
+    }
+}
+
+// ===== BOOK GLOW (warm radial pulse from center-bottom) =====
+function drawGlow(time) {
+    glowCtx.clearRect(0, 0, glowCanvas.width, glowCanvas.height);
+
+    const cx = glowCanvas.width / 2;
+    const cy = glowCanvas.height * 0.7;
+    const pulse = Math.sin(time * 0.001) * 0.03 + 0.12;
+
+    const grad = glowCtx.createRadialGradient(cx, cy, 0, cx, cy, glowCanvas.width * 0.5);
+    grad.addColorStop(0, `rgba(232, 164, 74, ${pulse})`);
+    grad.addColorStop(0.4, `rgba(232, 164, 74, ${pulse * 0.3})`);
+    grad.addColorStop(1, 'rgba(232, 164, 74, 0)');
+
+    glowCtx.fillStyle = grad;
+    glowCtx.fillRect(0, 0, glowCanvas.width, glowCanvas.height);
+}
+
+// ===== MAIN ANIMATION LOOP =====
+let animTime = 0;
+function animate(timestamp) {
+    animTime = timestamp || 0;
+    drawStars(animTime);
+    drawGlow(animTime);
+    requestAnimationFrame(animate);
+}
+
+// ===== SCROLL-DRIVEN PHASE TRANSITIONS =====
+let currentPhase = 'rain';
+
+function updatePhase(phase) {
+    if (phase === currentPhase) return;
+    currentPhase = phase;
+
+    if (phase === 'clearing' || phase === 'stars' || phase === 'glow') {
+        // Fade rain
+        const fadeRain = setInterval(() => {
+            rainOpacity -= 0.008;
+            if (rainOpacity <= 0) { rainOpacity = 0; clearInterval(fadeRain); }
+        }, 50);
+    }
+
+    if (phase === 'stars' || phase === 'glow') {
+        starsCanvas.classList.add('visible');
+    }
+
+    if (phase === 'glow') {
+        glowCanvas.classList.add('visible');
+    }
+}
+
+// ===== SCROLL REVEAL =====
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+
+            const phase = entry.target.dataset.phase;
+            if (phase) updatePhase(phase);
+        }
+    });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.scene, .divider, .book-in-hands, .breath-circle, .continue-section').forEach(el => {
+    observer.observe(el);
+});
+
+// ===== PROGRESS BAR =====
+function updateProgress() {
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = window.scrollY;
+    const progress = scrollHeight > 0 ? (scrolled / scrollHeight) * 100 : 0;
+    document.getElementById('progressBar').style.width = progress + '%';
+}
+window.addEventListener('scroll', updateProgress);
+
+// ===== INIT =====
+window.addEventListener('resize', resizeCanvases);
+initRain();
+initStars();
+drawRain();
+animate();
+</script>
+</body>
+</html>
