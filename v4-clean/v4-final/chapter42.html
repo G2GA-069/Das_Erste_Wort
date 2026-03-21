@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 42: Der Anfang (The Beginning)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --workshop: #d4a574;
+    --gold: #d4af37;
+    --silver: #c0c0c0;
+    --copper: #b87333;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  #workshop-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- CONTENT WRAPPER --- */
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  @media (max-width: 640px) {
+    .page-wrapper {
+      padding: 30px 18px 60px;
+    }
+    body { font-size: 1.1rem; }
+  }
+
+  /* --- PROGRESS BAR --- */
+  #progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--gold), var(--silver), var(--copper));
+    transition: width 0.1s ease-out;
+    z-index: 999;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-screen h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.4s forwards;
+    margin-bottom: 1em;
+  }
+
+  .title-screen .title-de {
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1.5em;
+    font-style: italic;
+  }
+
+  .title-screen .description {
+    font-size: 1.3rem;
+    max-width: 600px;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--workshop), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .speak-btn {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--fire);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: auto;
+  }
+
+  .speak-btn:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+  }
+
+  .speak-btn.speaking {
+    background: rgba(232, 164, 74, 0.3);
+    color: var(--fire-glow);
+  }
+
+  /* --- DIVIDER --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 1.3rem;
+    letter-spacing: 0.3em;
+  }
+
+  /* --- QUIZ --- */
+  .quiz-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    display: none;
+  }
+
+  .quiz-section.show {
+    display: block;
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .quiz-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+
+  .quiz-header p {
+    color: rgba(212, 202, 187, 0.6);
+    font-size: 1rem;
+  }
+
+  .quiz-item {
+    margin-bottom: 28px;
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+  }
+
+  .quiz-item.correct {
+    background: rgba(74, 140, 74, 0.15);
+  }
+
+  .quiz-item.incorrect {
+    background: rgba(196, 93, 44, 0.15);
+  }
+
+  .quiz-question {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    color: var(--text-bright);
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    padding: 12px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    border-color: var(--fire);
+    background: rgba(232, 164, 74, 0.08);
+  }
+
+  .quiz-option input {
+    margin-right: 10px;
+  }
+
+  .quiz-option.selected {
+    border-color: var(--fire);
+    background: rgba(232, 164, 74, 0.15);
+  }
+
+  .quiz-option.correct {
+    border-color: #4a8c4a;
+    background: rgba(74, 140, 74, 0.15);
+  }
+
+  .quiz-option.incorrect {
+    border-color: #c45d2c;
+    background: rgba(196, 93, 44, 0.15);
+  }
+
+  .quiz-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .quiz-nav button {
+    flex: 1;
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 14px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover:not(:disabled) {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.1rem;
+    color: var(--german);
+    font-weight: 600;
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.85rem;
+    color: var(--english);
+    margin-top: 4px;
+  }
+
+  /* --- NAVIGATION --- */
+  .chapter-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 0 20px;
+    margin-top: 60px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .nav-button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .nav-button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .nav-button.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .chapter-counter {
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.1em;
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div id="progressBar"></div>
+<canvas id="workshop-canvas"></canvas>
+
+<div class="page-wrapper">
+
+  <!-- ==================== TITLE SCREEN ==================== -->
+  <div class="title-screen" id="titleScreen">
+    <p class="chapter-label">Chapter Forty-Two</p>
+    <h1>The Beginning</h1>
+    <p class="title-de">Der Anfang</p>
+    <p class="description">Three paths converge. Three particles flow together. Three spatial prefixes unlock the doors to hundreds of verbs. Where does an action begin? Where does it happen? Where do we stand in relation to others? These ancient prepositions became the prefixes that shape German's most common verbs.</p>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 1: THE RIVERS FLOWING TOGETHER ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine three rivers flowing from three different mountains. One flows from the north, carrying gold in its current. One flows from the east, carrying silver. One flows from the south, carrying copper. For hundreds of miles they flow separately, carving their own valleys, sustaining their own villages, singing their own songs. But then the valleys converge. The three rivers meet.
+    </p>
+
+    <p class="narrative">
+      At the place where they meet, something remarkable happens. The three currents do not erase each other. Instead, they mingle. The gold and silver and copper swirl together in a single stream, creating colors that existed in neither river alone. And from that single stream flows something stronger, something more powerful, something that carries all three currents forward.
+    </p>
+
+    <p class="narrative">
+      This is the image of <span class="german-word" data-speak="true">an-</span>, <span class="german-word" data-speak="true">bei-</span>, and <span class="german-word" data-speak="true">mit-</span>. Three spatial prefixes that flow from three different origins in Proto-Germanic. Three directions encoded into the very structure of how German speakers understood the world. Where is it? At (an). Where does it relate to me? By/near (bei). In what relation do we stand? With (mit). These simple spatial concepts became the basis for hundreds of verbs, for ways of thinking about action, participation, and connection that are so deeply embedded in German that native speakers barely notice them at all.
+    </p>
+
+    <p class="narrative emphasis">
+      This chapter is about convergence. It is about how spatial thinking becomes abstract thinking, and how the oldest prepositions in a language become the most productive prefixes.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE PREFIX AN- ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-card="an">an-</span> begins in space. It means "at," "on," "toward." When you say something is "an der Wand" (on the wall), you are using the preposition <span class="german-word" data-speak="true">an</span> to place something in a spatial location. But watch what happens when this spatial word becomes a prefix.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="anfangen">Anfangen</span> is "to begin," or more literally, "to grab at." From <span class="german-word" data-speak="true">fangen</span> (to catch, to seize), with <span class="german-word" data-speak="true">an-</span> (at, toward): you grab at something, you seize the beginning of an action. The spatial becomes temporal. The physical act of grasping becomes the abstract concept of starting.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="ankommen">Ankommen</span> is "to arrive," or more precisely, "to come-at." From <span class="german-word" data-speak="true">kommen</span> (to come), with <span class="german-word" data-speak="true">an-</span> (at, toward): you come toward a destination. You are moving through space toward a specific point. This is not vague arrival, but arrival with direction and intention, arrival at a place.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="anrufen">Anrufen</span> is "to call" or "to telephone," literally "to call-at." From <span class="german-word" data-speak="true">rufen</span> (to call, to shout), with <span class="german-word" data-speak="true">an-</span> (at, toward): your voice is directed toward a specific person. You are not calling into the void. You are calling at someone, calling in their direction, calling to establish contact.
+    </p>
+
+    <!-- AN card -->
+    <div class="ety-card" id="card-an">
+      <div class="word-header">
+        <span class="word-main">an-</span>
+        <span class="word-pron">/an/</span>
+      </div>
+      <div class="word-meaning">prefix — spatial location "at," "on," "toward"; temporal meaning "at the beginning"; directional meaning "to, toward, at"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₂enH-</span>
+        <span class="bridge-note">— root meaning "to be at a location"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">on</span>
+        <span class="bridge-note">— related, though English lost the separate prefix use</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">an-</span>
+        <span class="bridge-note">— inseparable prefix; originally a preposition meaning "at, on, toward"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">在 / 向</span>
+        <span class="bridge-note">— zài / xiàng — "at location" and "toward direction" — similar spatial concepts</span>
+      </div>
+      <div class="story">
+        The prefix <em>an-</em> preserves one of the oldest spatial concepts in Indo-European: the idea of being AT a location or moving TOWARD it. It appears in many Germanic languages and is related to English "on." When <em>an-</em> became a prefix attached to verbs, it retained this spatial meaning but transformed it: temporal beginning (anfangen), spatial arrival (ankommen), directional communication (anrufen). The spatial → abstract transformation shows how languages build complex meanings from simple physical experiences. A German speaker saying "Ich fange an zu arbeiten" (I begin to work) is literally saying "I grab-at to work," preserving that ancient image of seizing the beginning of an action.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The key insight: <span class="german-word" data-speak="true">an-</span> is always about DIRECTION, about TARGETING, about POINTING AT. Whether you are arriving (ankommen), calling (anrufen), looking (anschauen), or beginning (anfangen), the prefix carries this sense of directionality. Something is aimed at, moved toward, or seized at its starting point.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE PREFIX BEI- ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-card="bei">bei-</span> is often harder for English speakers to understand because English has largely lost it as a productive prefix. But in German, it means "by," "near," "with," "together with." It is about proximity and association. When you are at someone's house, you are <span class="german-word" data-speak="true">bei</span> them — not "at" them, but "by" them, "near" them, "in their presence."
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="beibringen">Beibringen</span> is "to teach," literally "to bring-by" or "to bring-near." From <span class="german-word" data-speak="true">bringen</span> (to bring), with <span class="german-word" data-speak="true">bei-</span> (by, near, with): when you teach someone something, you bring knowledge near to them, you place it in proximity to their mind. Teaching is not imposing knowledge from above; it is bringing it alongside someone, making it available to them.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="beitragen">Beitragen</span> is "to contribute," literally "to carry-by" or "to bring-alongside." From <span class="german-word" data-speak="true">tragen</span> (to carry, to bear), with <span class="german-word" data-speak="true">bei-</span> (by, alongside): when you contribute to a project, you carry something alongside the others' work. You are not leading; you are walking alongside, adding your effort to the collective effort.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="beispiel">Beispiel</span> is "example," but the word itself is a fossil of this old <span class="german-word" data-speak="true">bei-</span> prefix. The <span class="german-word" data-speak="true">spiel</span> part (from "Spiel," game or play) gets a <span class="german-word" data-speak="true">bei-</span> prefix, creating the word for "something played alongside," "something shown nearby," "an example played out next to the concept."
+    </p>
+
+    <!-- BEI card -->
+    <div class="ety-card" id="card-bei">
+      <div class="word-header">
+        <span class="word-main">bei-</span>
+        <span class="word-pron">/baɪ̯/</span>
+      </div>
+      <div class="word-meaning">prefix — proximity "by," "near," "alongside"; association "together with"; assistance "to help"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₂enti-</span>
+        <span class="bridge-note">— root meaning "opposite, before, in front of"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">by</span>
+        <span class="bridge-note">— cognate; English preserved this as a preposition but lost it as a productive prefix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">bei-</span>
+        <span class="bridge-note">— separable prefix in some contexts; literally "by, near, with"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">跟 / 和</span>
+        <span class="bridge-note">— gēn / hé — "together with," "alongside" — association and proximity</span>
+      </div>
+      <div class="story">
+        The prefix <em>bei-</em> encodes a different spatial relationship than <em>an-</em>. Where <em>an-</em> is about targeting and direction, <em>bei-</em> is about being present alongside. It is about proximity, not pursuit. The word <em>Beispiel</em> (example) reveals the ancient thinking: an example is something "played alongside" the main concept, something that illuminates by analogy. In compounds like <em>beibringen</em> (to teach), the prefix carries the sense of making something available nearby, placing knowledge within reach. This is fundamentally different from the directed motion of <em>an-</em>. The <em>bei-</em> prefix suggests cooperation, assistance, and presence rather than targeting and direction.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The key insight: <span class="german-word" data-speak="true">bei-</span> is about ASSOCIATION, about BEING ALONGSIDE, about MAKING AVAILABLE. Whether you are teaching (beibringen), contributing (beitragen), or providing an example (Beispiel), the prefix carries this sense of proximity and cooperation.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE PREFIX MIT- ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-card="mit">mit-</span> means "with," "together," "co-." It is the most explicitly relational of the three prefixes. Where <span class="german-word" data-speak="true">an-</span> points toward a target and <span class="german-word" data-speak="true">bei-</span> suggests proximity, <span class="german-word" data-speak="true">mit-</span> explicitly indicates togetherness, shared action, mutual participation.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="mitmachen">Mitmachen</span> is "to participate," literally "to make-with." From <span class="german-word" data-speak="true">machen</span> (to make, to do), with <span class="german-word" data-speak="true">mit-</span> (with, together): when you participate in something, you make alongside others. You are not making independently; you are making together with them, your actions intertwined with theirs.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="mitnehmen">Mitnehmen</span> is "to take along," literally "to take-with." From <span class="german-word" data-speak="true">nehmen</span> (to take), with <span class="german-word" data-speak="true">mit-</span> (with, together): you take something or someone with you. The prefix transforms a solitary action (taking) into a shared action (taking-along, including).
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="mitglied">Mitglied</span> is "member," literally "with-limb." From <span class="german-word" data-speak="true">Glied</span> (limb, member), with <span class="german-word" data-speak="true">mit-</span> (with, together): a member is a limb that functions with the body. You are not an independent limb; you are a limb connected to and functioning as part of a larger organism. The metaphor is ancient but profound.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="mitleid">Mitleid</span> is "compassion" or "sympathy," literally "with-suffering." From <span class="german-word" data-speak="true">Leid</span> (suffering, sorrow), with <span class="german-word" data-speak="true">mit-</span> (with, together): compassion is not pity from above. It is suffering-with, the act of standing alongside someone in their pain, of sharing their emotional burden. The prefix makes the meaning precise: you feel their feeling, you suffer their suffering, you are present with them in their distress.
+    </p>
+
+    <!-- MIT card -->
+    <div class="ety-card" id="card-mit">
+      <div class="word-header">
+        <span class="word-main">mit-</span>
+        <span class="word-pron">/mɪt/</span>
+      </div>
+      <div class="word-meaning">prefix — togetherness "with," "together"; co-action "co-"; shared experience "together with"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*meti-</span>
+        <span class="bridge-note">— root meaning "with," "in the middle"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">mid</span>
+        <span class="bridge-note">— cognate; preserved in "amidst" but no longer productive as a standalone prefix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">mit-</span>
+        <span class="bridge-note">— separable prefix; meaning "with, together, co-"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">一起 / 同</span>
+        <span class="bridge-note">— yīqǐ / tóng — "together," "same" — expressing togetherness and sameness</span>
+      </div>
+      <div class="story">
+        The prefix <em>mit-</em> is the most explicitly relational and democratic of these three spatial prefixes. Where <em>an-</em> emphasizes direction and <em>bei-</em> emphasizes proximity, <em>mit-</em> emphasizes integration and shared action. The word <em>Mitleid</em> (compassion/sympathy) is a perfect example: it captures the German understanding that true compassion is not feeling pity FOR someone, but suffering WITH them, standing alongside them in their pain. This word structure reveals how the language encodes a particular moral stance: empathy as shared experience, not pity as superiority. When you <em>mitmachen</em> (participate), you are not helping from outside; you are making WITH others, your actions mingled with theirs. The prefix makes the togetherness explicit, unavoidable, central to the meaning.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The key insight: <span class="german-word" data-speak="true">mit-</span> is about TOGETHERNESS, about SHARED ACTION, about STANDING ALONGSIDE. Whether you are participating (mitmachen), taking someone along (mitnehmen), being a member (Mitglied), or showing compassion (Mitleid), the prefix carries this sense of integration and mutual participation.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THREE PREFIXES, MANY LANGUAGES ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now let us look at what Chinese does with similar concepts. The Chinese language does not use prefixes in the way that German does. It is largely non-inflectional. But it builds similar ideas of directionality, proximity, and togetherness through different grammatical means — through word order, through aspectual particles, through the choice of which verb to use.
+    </p>
+
+    <p class="narrative">
+      The word <span class="german-word" data-speak="true">参加</span> (cānjiā) in Chinese means "to participate." It is built from two characters: 参 (cān) meaning "to join, to attend" and 加 (jiā) meaning "to add, to join." The concept is spatial and relational: you are adding yourself to a situation, joining a group. The German <span class="german-word" data-speak="true">mitmachen</span> and the Chinese <span class="german-word" data-speak="true">参加</span> arrive at the same idea through different paths: participation as joining, as adding oneself to a collective action.
+    </p>
+
+    <p class="narrative">
+      The word <span class="german-word" data-speak="true">同情</span> (tóngqíng) in Chinese means "sympathy" or "compassion." It is built from two characters: 同 (tóng) meaning "same" and 情 (qíng) meaning "feeling, emotion." So "compassion" in Chinese is literally "same-feeling," the feeling that is the same as another's. The German <span class="german-word" data-speak="true">Mitleid</span> (with-suffering) and the Chinese <span class="german-word" data-speak="true">同情</span> (same-feeling) are describing the same human experience from slightly different angles, but both encode the essential idea that compassion means emotional alignment with another person.
+    </p>
+
+    <p class="narrative">
+      This is one of the great wonders of comparative linguistics: different languages, with completely different grammatical systems, with different ways of building words, can still converge on the same conceptual insights. The spatial and relational thinking that German encodes in its prefixes, Chinese encodes through other means. But both languages recognize that compassion is not an external judgment; it is a shared emotional state.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: RECOGNIZING THE PATTERN ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      By now, you can recognize these prefixes in many common German words. Look at the list below. For each word, the spatial prefix is there, working silently, transforming the root verb into a new meaning. The spatial has become the abstract. The preposition has become a tool for building verbs.
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="anfangen">Anfangen</span> — to begin [an- (at, toward) + fangen (to catch)] — you grab at the beginning
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="ankommen">Ankommen</span> — to arrive [an- (at, toward) + kommen (to come)] — you come at your destination
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="anrufen">Anrufen</span> — to call, to phone [an- (at, toward) + rufen (to call)] — you call at someone
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="beibringen">Beibringen</span> — to teach [bei- (by, near) + bringen (to bring)] — you bring knowledge near
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="beitragen">Beitragen</span> — to contribute [bei- (by, near) + tragen (to carry)] — you carry alongside others
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="beispiel">Beispiel</span> — example [bei- (by, near) + Spiel (play/game)] — a game played nearby, shown alongside
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="mitmachen">Mitmachen</span> — to participate [mit- (with) + machen (to make)] — you make with others
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="mitnehmen">Mitnehmen</span> — to take along [mit- (with) + nehmen (to take)] — you take together with someone
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="mitglied">Mitglied</span> — member [mit- (with) + Glied (limb)] — a limb that functions with others
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-card="mitleid">Mitleid</span> — compassion [mit- (with) + Leid (suffering)] — suffering together with another
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE GRAMMAR OF SPATIAL THINKING ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Here is the profound insight: German took three ancient spatial prepositions (at, by, with) and used them as tools to create hundreds of different verbs from simple roots. The spatial thinking became abstract thinking. The concrete experience of standing in relation to others became the grammar for expressing action, participation, and emotional alignment.
+    </p>
+
+    <p class="narrative">
+      When you learn German, you are not just learning a new language. You are learning a particular way of thinking about space, about relationship, about how actions connect to locations and to other people. These prefixes are so fundamental, so basic, that they shape how German speakers perceive and describe the world.
+    </p>
+
+    <p class="narrative">
+      A German speaker saying "Ich nehme dich mit" (I take you with) is making something explicit that English speakers must infer. The prefix <span class="german-word" data-speak="true">mit-</span> is there in the word itself, inseparable, undeniable. You are not simply being taken somewhere; you are being taken ALONG, your presence is built into the verb structure itself.
+    </p>
+
+    <p class="narrative">
+      This is the power of prefixes. They are not optional decorations on verbs. They are fundamental tools that transform meaning, that encode relationships, that make explicit what other languages must explain through context and word order. Three rivers — three spatial concepts — flowing together into thousands of verbs, carrying the sediment of ancient human thought about how we stand in relation to each other and to the world.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: THE VISUAL METAPHOR ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      Spatial prefixes are not abstractions from a linguist's textbook. They are pictures. They are concrete images that German speakers carry in their minds when they use these words.
+    </p>
+
+    <p class="narrative">
+      An- is a vector pointing toward a target. Anfangen is reaching for the beginning. Ankommen is a path leading to a destination. Anrufen is a voice directed at someone across distance.
+    </p>
+
+    <p class="narrative">
+      Bei- is a figure standing next to another. Beibringen is bringing knowledge close enough to touch. Beitragen is walking alongside, adding your effort to a collective task. Beispiel is a picture painted next to the main concept, illuminating it by proximity and analogy.
+    </p>
+
+    <p class="narrative">
+      Mit- is hands held, arms linked, hearts intertwined. Mitmachen is dancing together. Mitnehmen is moving forward with someone you choose not to leave behind. Mitglied is a body in which each limb knows itself as part of a whole. Mitleid is two people breathing the same sorrow, sharing the same pain.
+    </p>
+
+    <p class="narrative">
+      These images are not just poetic. They are the actual thinking patterns that the language preserves. When you understand the spatial meaning of these prefixes, you understand not just the grammar, but the worldview embedded in the grammar itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 9: FROM PREPOSITION TO PREFIX ==================== -->
+  <div class="scene" id="scene9">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      How does a preposition become a prefix? The transformation is not sudden. It is gradual, hidden, a process that happens over centuries of language use.
+    </p>
+
+    <p class="narrative">
+      In very old Germanic, these spatial words were used as prepositions. They came before nouns: "an der Wand" (on the wall), "bei dem Haus" (by the house), "mit dem Freund" (with the friend). But as German evolved, speakers began to attach these prepositions directly to verbs. A phrase like "an fangen" (to catch at) gradually merged into "anfangen" (to begin). What was once two words became one word. What was once a grammatical phrase became a prefix.
+    </p>
+
+    <p class="narrative">
+      This is called grammaticalization, and it is one of the fundamental processes by which languages change and evolve. Words lose their independence, become bound to other words, transform their meaning as they transform their position in the sentence structure.
+    </p>
+
+    <p class="narrative">
+      The same process happened in English and other Germanic languages, but to a lesser degree. English has largely lost its productive prefix system. We still have remnants: "a-" in "arise," "awake," but these are fossilized, no longer productive tools for building new words. German, by contrast, has kept these prefixes alive and vigorous. A German speaker can understand a new word built with <span class="german-word" data-speak="true">an-</span> or <span class="german-word" data-speak="true">mit-</span> instantly, because the prefix-verb system is still a living, breathing tool.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 10: THE BEGINNING CONTAINS THE WHOLE ==================== -->
+  <div class="scene" id="scene10">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      This chapter is titled "The Beginning" for a reason. These three spatial prefixes are only the beginning. In the chapters ahead, you will encounter more prefixes: <span class="german-word" data-speak="true">vor-</span> (before), <span class="german-word" data-speak="true">nach-</span> (after), <span class="german-word" data-speak="true">über-</span> (over), <span class="german-word" data-speak="true">unter-</span> (under), and others. Each one carries its own spatial meaning. Each one has transformed its ancient preposional meaning into an abstract tool for building verbs.
+    </p>
+
+    <p class="narrative">
+      But before you move on, understand this: the three prefixes you have learned in this chapter are among the most fundamental in German. They appear in hundreds of common words. They encode basic spatial relationships that every human understands: there is a target (an-), there is proximity (bei-), there is togetherness (mit-). These are not abstract grammatical concepts. These are pictures of how we stand in relation to others and to the world.
+    </p>
+
+    <p class="narrative">
+      The ancient Indo-European speakers who created these words were thinking spatially, thinking about their bodies moving through space, thinking about how to express their relationship to other people and to the objects around them. That thinking, encoded in these prefixes, is still alive in German today, still shaping how German speakers understand and describe reality.
+    </p>
+
+    <p class="narrative emphasis">
+      When you master these three prefixes, you will recognize them in countless German words. When you understand the spatial thinking behind them, you will understand not just the grammar, but a whole way of thinking about the world.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">388 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(45%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:45%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 388 words across 42 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">87 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(60%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:60%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 87 patterns and grammar rules across 42 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="word-collection" id="wordCollection">
+    <h3>Words from Der Anfang (The Beginning)</h3>
+    <div class="collected-words" id="collectedWords">
+      <div class="collected-word" data-word="anfangen">
+        <div class="cw-german">anfangen</div>
+        <div class="cw-english">begin</div>
+      </div>
+      <div class="collected-word" data-word="ankommen">
+        <div class="cw-german">ankommen</div>
+        <div class="cw-english">arrive</div>
+      </div>
+      <div class="collected-word" data-word="anrufen">
+        <div class="cw-german">anrufen</div>
+        <div class="cw-english">call</div>
+      </div>
+      <div class="collected-word" data-word="beibringen">
+        <div class="cw-german">beibringen</div>
+        <div class="cw-english">teach</div>
+      </div>
+      <div class="collected-word" data-word="beitragen">
+        <div class="cw-german">beitragen</div>
+        <div class="cw-english">contribute</div>
+      </div>
+      <div class="collected-word" data-word="beispiel">
+        <div class="cw-german">Beispiel</div>
+        <div class="cw-english">example</div>
+      </div>
+      <div class="collected-word" data-word="mitmachen">
+        <div class="cw-german">mitmachen</div>
+        <div class="cw-english">participate</div>
+      </div>
+      <div class="collected-word" data-word="mitnehmen">
+        <div class="cw-german">mitnehmen</div>
+        <div class="cw-english">take along</div>
+      </div>
+      <div class="collected-word" data-word="mitglied">
+        <div class="cw-german">Mitglied</div>
+        <div class="cw-english">member</div>
+      </div>
+      <div class="collected-word" data-word="mitleid">
+        <div class="cw-german">Mitleid</div>
+        <div class="cw-english">compassion</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-section" id="quizSection">
+    <div class="quiz-header">
+      <h2>Check Your Understanding</h2>
+      <p>Test your mastery of Der Anfang. 80% required to continue.</p>
+    </div>
+    <div id="quizContainer"></div>
+    <div class="quiz-nav">
+      <button id="quizPrev">← Previous</button>
+      <button id="quizNext">Next →</button>
+    </div>
+    <div class="quiz-score" id="quizScore"></div>
+    <div class="post-quiz-summary" id="postQuizSummary"></div>
+    <div class="quiz-reset">
+      <button id="resetQuiz">Reset Quiz</button>
+    </div>
+  </div>
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <div class="chapter-nav">
+    <a href="chapter41.html" class="nav-button">← Chapter 41</a>
+    <span class="chapter-counter">42 / 46</span>
+    <a href="chapter43.html" class="nav-button">Chapter 43 →</a>
+  </div>
+
+</div>
+
+<script>
+/* --- CANVAS ANIMATION: THREE CONVERGING RIVERS --- */
+const canvas = document.getElementById('workshop-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Three colors for three rivers
+const COLORS = [
+  { base: '#d4af37', name: 'gold', rgb: 'rgba(212, 175, 55, ' },    // an-
+  { base: '#c0c0c0', name: 'silver', rgb: 'rgba(192, 192, 192, ' }, // bei-
+  { base: '#b87333', name: 'copper', rgb: 'rgba(184, 115, 51, ' }   // mit-
+];
+
+class RiverParticle {
+  constructor(river) {
+    this.river = river; // 0, 1, or 2
+    this.age = 0;
+    this.maxAge = Math.random() * 200 + 300;
+
+    // Starting positions: three separate regions converging
+    if (river === 0) { // North (gold)
+      this.x = canvas.width * 0.3 + Math.random() * 100 - 50;
+      this.y = -50 + Math.random() * 100;
+    } else if (river === 1) { // East (silver)
+      this.x = canvas.width + 50 - Math.random() * 100;
+      this.y = canvas.height * 0.4 + Math.random() * 100 - 50;
+    } else { // South (copper)
+      this.x = canvas.width * 0.7 + Math.random() * 100 - 50;
+      this.y = canvas.height + 50 - Math.random() * 100;
+    }
+
+    this.size = Math.random() * 2 + 0.8;
+    this.opacity = Math.random() * 0.4 + 0.2;
+  }
+
+  update() {
+    this.age++;
+
+    // Movement toward convergence point (center of screen)
+    const convergeX = canvas.width / 2;
+    const convergeY = canvas.height / 2;
+    const dx = convergeX - this.x;
+    const dy = convergeY - this.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance > 5) {
+      const speed = 0.3 + (this.age / this.maxAge) * 0.5;
+      this.x += (dx / distance) * speed;
+      this.y += (dy / distance) * speed;
+    }
+
+    // Fade effect
+    this.opacity = this.opacity * 0.98;
+
+    return this.age < this.maxAge && this.opacity > 0.01;
+  }
+
+  draw(ctx) {
+    const color = COLORS[this.river];
+    ctx.fillStyle = color.rgb + this.opacity + ')';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+const particleCount = window.innerWidth < 768 ?
+  Math.floor((canvas.width * canvas.height) / 10000) :
+  Math.floor((canvas.width * canvas.height) / 6000);
+
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new RiverParticle(i % 3));
+}
+
+function drawConvergencePoint() {
+  const time = Date.now() * 0.0005;
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 40 + Math.sin(time) * 10;
+
+  // Draw three glowing circles for each river meeting point
+  COLORS.forEach((color, i) => {
+    const angle = (Math.PI * 2 / 3) * i + time;
+    const x = centerX + Math.cos(angle) * 80;
+    const y = centerY + Math.sin(angle) * 80;
+
+    ctx.strokeStyle = color.rgb + '0.15)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 0.6, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+
+  // Central convergence glow
+  const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+  gradient.addColorStop(0, 'rgba(232, 164, 74, 0.2)');
+  gradient.addColorStop(1, 'rgba(232, 164, 74, 0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+}
+
+function animate() {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.02)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Update and draw particles
+  particles = particles.filter(p => p.update());
+  particles.forEach(p => p.draw(ctx));
+
+  // Add new particles
+  if (particles.length < particleCount) {
+    particles.push(new RiverParticle(particles.length % 3));
+  }
+
+  drawConvergencePoint();
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* --- PROGRESS BAR --- */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+/* --- SCENE OBSERVER --- */
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+/* --- ETYMOLOGY CARDS --- */
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+/* --- AUDIO PRONUNCIATION --- */
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.textContent = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+/* --- QUIZ DATA --- */
+const quizData = [
+  {
+    question: 'What is the primary spatial meaning of the prefix "an-"?',
+    options: [
+      'Direction toward a target',
+      'Proximity and association',
+      'Togetherness and shared action',
+      'Moving away or separating'
+    ],
+    correct: 0,
+    explanation: 'The "an-" prefix comes from spatial thinking about direction and targeting, as seen in ankommen (to arrive at) and anrufen (to call at).'
+  },
+  {
+    question: 'Which word best demonstrates the "bei-" prefix meaning "to bring near"?',
+    options: [
+      'anfangen',
+      'beibringen',
+      'mitnehmen',
+      'ankommen'
+    ],
+    correct: 1,
+    explanation: '"Beibringen" literally means "to bring-by" or "to bring-near," which is how teaching works—bringing knowledge within reach of the student.'
+  },
+  {
+    question: 'What does "Mitglied" literally mean?',
+    options: [
+      'With-time',
+      'With-activity',
+      'With-limb',
+      'With-friend'
+    ],
+    correct: 2,
+    explanation: '"Mitglied" (member) comes from "mit-" (with) + "Glied" (limb). A member is a limb that functions as part of a larger body.'
+  },
+  {
+    question: 'Which prefix emphasizes togetherness and shared action?',
+    options: [
+      'an-',
+      'bei-',
+      'mit-',
+      'ver-'
+    ],
+    correct: 2,
+    explanation: 'The "mit-" prefix explicitly indicates "with" and togetherness. Words like "mitmachen" (to participate) and "Mitleid" (compassion/shared suffering) show this.'
+  },
+  {
+    question: 'In the Chinese word 同情 (tóngqíng) meaning "sympathy," what is similar to German "Mitleid"?',
+    options: [
+      'Both use the prefix "mit-"',
+      'Both express "same-feeling" or "shared emotional state"',
+      'Both are verbs instead of nouns',
+      'Both come from the same language family'
+    ],
+    correct: 1,
+    explanation: '同情 is literally "same-feeling" while "Mitleid" is "with-suffering." Both languages independently arrived at the concept that compassion means emotional alignment or shared emotional experience.'
+  },
+  {
+    question: 'What is "Beispiel" composed of?',
+    options: [
+      '"bei-" (by) + "spiel" (play/game)',
+      '"be-" (being) + "spiel" (game)',
+      '"bel-" (beautiful) + "spiel" (music)',
+      '"bei-" (both) + "spiel" (speech)'
+    ],
+    correct: 0,
+    explanation: '"Beispiel" is composed of "bei-" (by, near) + "spiel" (play). An example is something "played alongside" the concept, shown nearby.'
+  },
+  {
+    question: 'How has German preserved its prefix system differently from English?',
+    options: [
+      'German simplified all prefixes; English kept them complex',
+      'German kept productive prefix-verb systems alive; English largely lost this',
+      'Both languages use prefixes equally well',
+      'English kept more prefixes than German'
+    ],
+    correct: 1,
+    explanation: 'English has largely lost productive prefix use (we have fossilized remnants like "a-" in "arise"), while German still actively uses prefixes to build new verbs systematically.'
+  },
+  {
+    question: 'What grammatical process describes how a preposition becomes a prefix?',
+    options: [
+      'Inflection',
+      'Phonetic erosion',
+      'Grammaticalization',
+      'Semantic drift'
+    ],
+    correct: 2,
+    explanation: 'Grammaticalization is the process where independent words (like prepositions) gradually become bound to other words, losing independence but gaining grammatical function.'
+  },
+  {
+    question: 'Which statement best describes the spatial→abstract transformation in German prefixes?',
+    options: [
+      'Spatial meanings completely disappear when used as prefixes',
+      'Spatial meanings become irrelevant to understanding the verb',
+      'Spatial meanings transform into abstract concepts while preserving the underlying logic',
+      'German speakers are unaware of the original spatial meanings'
+    ],
+    correct: 2,
+    explanation: 'The spatial thinking is preserved in the abstract: "ankommen" (arrive) literally is "come-at," "mitmachen" (participate) is literally "make-with." The spatial logic shapes the abstract meaning.'
+  },
+  {
+    question: 'What does "mitmachen" most literally translate to?',
+    options: [
+      'To undo making',
+      'To make-with (participate)',
+      'To make again',
+      'To make against'
+    ],
+    correct: 1,
+    explanation: '"Mitmachen" is "mit-" (with) + "machen" (to make). The prefix makes the shared action explicit: you are not making independently, but making together with others.'
+  },
+  {
+    question: 'Which of these verbs uses the "an-" prefix?',
+    options: [
+      'beibringen',
+      'mitnehmen',
+      'ankommen',
+      'mitmachen'
+    ],
+    correct: 2,
+    explanation: '"Ankommen" uses the "an-" prefix meaning "at, toward" + "kommen" (to come). It literally means "to come at" your destination.'
+  },
+  {
+    question: 'How do the three river metaphor and the three prefixes connect?',
+    options: [
+      'They are completely unrelated metaphors',
+      'Three rivers represent three different directions, like three prefixes encode three different spatial relationships',
+      'Rivers only work in poetry, not in linguistics',
+      'Metaphors are just decorations and do not explain grammar'
+    ],
+    correct: 1,
+    explanation: 'The three converging rivers (gold, silver, copper) represent the three spatial prefixes flowing together: an- (direction/targeting), bei- (proximity/association), mit- (togetherness/shared action).'
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let answered = new Array(quizData.length).fill(false);
+
+function displayQuestion() {
+  const question = quizData[currentQuestion];
+  const container = document.getElementById('quizContainer');
+
+  container.innerHTML = `
+    <div class="quiz-item ${answered[currentQuestion] ? (answers[currentQuestion] === question.correct ? 'correct' : 'incorrect') : ''}">
+      <div class="quiz-question">${currentQuestion + 1}. ${question.question}</div>
+      <div class="quiz-options">
+        ${question.options.map((option, i) => `
+          <label class="quiz-option ${answers[currentQuestion] === i ? 'selected' : ''} ${answered[currentQuestion] ? (i === question.correct ? 'correct' : (i === answers[currentQuestion] ? 'incorrect' : '')) : ''}">
+            <input type="radio" name="answer" value="${i}" ${answers[currentQuestion] === i ? 'checked' : ''} ${answered[currentQuestion] ? 'disabled' : ''}>
+            ${option}
+          </label>
+        `).join('')}
+      </div>
+      ${answered[currentQuestion] ? `<p style="margin-top: 16px; color: rgba(212, 202, 187, 0.7); font-size: 0.95rem; line-height: 1.6;">${question.explanation}</p>` : ''}
+    </div>
+  `;
+
+  if (!answered[currentQuestion]) {
+    container.querySelectorAll('.quiz-option').forEach((label, i) => {
+      label.addEventListener('click', () => {
+        answers[currentQuestion] = i;
+        answered[currentQuestion] = true;
+        displayQuestion();
+        updateNav();
+        checkQuizCompletion();
+      });
+    });
+  }
+
+  updateNav();
+}
+
+function updateNav() {
+  document.getElementById('quizPrev').disabled = currentQuestion === 0;
+  document.getElementById('quizNext').disabled = currentQuestion === quizData.length - 1;
+}
+
+document.getElementById('quizPrev').addEventListener('click', () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    displayQuestion();
+  }
+});
+
+document.getElementById('quizNext').addEventListener('click', () => {
+  if (currentQuestion < quizData.length - 1) {
+    currentQuestion++;
+    displayQuestion();
+  }
+});
+
+function checkQuizCompletion() {
+  if (answered.every(a => a)) {
+    const correct = answers.reduce((count, ans, i) => count + (ans === quizData[i].correct ? 1 : 0), 0);
+    const percentage = Math.round((correct / quizData.length) * 100);
+
+    document.getElementById('quizScore').textContent = `Score: ${correct}/${quizData.length} (${percentage}%)`;
+
+    if (percentage >= 80) {
+      document.getElementById('postQuizSummary').classList.add('show');
+      document.getElementById('postQuizSummary').innerHTML = `
+        <strong>Excellent!</strong> You have mastered the spatial prefixes of Chapter 42. You understand how <em>an-</em> (direction), <em>bei-</em> (proximity), and <em>mit-</em> (togetherness) shape German verbs. You are ready to move forward. Phase 1 taught you to HEAR German. Phase 2 teaches you to SEE THROUGH it. These prefixes are the windows through which you see the underlying logic of the language.
+      `;
+
+      // Show word collection
+      setTimeout(() => {
+        document.getElementById('wordCollection').classList.add('show');
+        document.querySelectorAll('.collected-word').forEach((word, i) => {
+          setTimeout(() => word.classList.add('show'), i * 100);
+        });
+      }, 500);
+    } else {
+      document.getElementById('postQuizSummary').classList.add('show');
+      document.getElementById('postQuizSummary').innerHTML = `
+        <strong>Keep studying.</strong> You scored ${percentage}%. Review the etymology cards for the words you missed, and try the quiz again. Understanding these three fundamental prefixes will unlock hundreds of German verbs.
+      `;
+    }
+  }
+}
+
+document.getElementById('resetQuiz').addEventListener('click', () => {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  answered = new Array(quizData.length).fill(false);
+  document.getElementById('quizScore').textContent = '';
+  document.getElementById('postQuizSummary').classList.remove('show');
+  document.getElementById('wordCollection').classList.remove('show');
+  displayQuestion();
+});
+
+// Show quiz when page loads
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('quizSection').classList.add('show');
+    displayQuestion();
+  }, 500);
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

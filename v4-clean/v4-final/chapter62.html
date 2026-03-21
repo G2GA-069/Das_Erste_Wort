@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 62: Das Verb am Ende</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --fire: #e8a44a; --fire-glow: #f4c67a; --ember: #c45d2c; --night: #0a0e1a; --night-mid: #131a2e;
+  --night-light: #1c2640; --star: #e8dcc8; --text: #d4cabb; --text-bright: #efe8db;
+  --german: #e8a44a; --chinese: #c49a6c; --english: #8a9bae; --pie: #9b8ec4; --order: #d4a574;
+}
+html { scroll-behavior: smooth; background: var(--night); }
+body {
+  background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+  background-attachment: fixed; color: var(--text); font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem; line-height: 1.85; overflow-x: hidden; -webkit-text-size-adjust: 100%; min-height: 100dvh;
+}
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, var(--fire), var(--fire-glow));
+  width: 0%; z-index: 999; }
+.content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 60px 24px 120px; }
+.title-screen { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; text-align: center; padding: 40px 20px; }
+.title-screen .chapter-number { font-size: 3.5rem; font-weight: 700; color: var(--fire);
+  opacity: 0; animation: fadeUp 2s ease 0.4s forwards; }
+.title-screen h1 { font-size: 3.2rem; font-weight: 500; color: var(--text-bright);
+  opacity: 0; animation: fadeUp 2s ease 0.7s forwards; margin-bottom: 0.5em; }
+.title-screen .subtitle { font-size: 1.3rem; font-weight: 300; font-style: italic; color: var(--order);
+  opacity: 0; animation: fadeUp 2s ease 1.1s forwards; margin-bottom: 2em; }
+.scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3);
+  font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 3em; }
+.scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+.scene.visible { opacity: 1; transform: translateY(0); }
+.scene-marker { display: block; width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--fire), transparent); margin: 0 auto 40px; }
+.narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+.narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center;
+  font-style: italic; margin: 2em 0; }
+.narrative.small { font-size: 1.05rem; color: rgba(212, 202, 187, 0.6); line-height: 1.7; }
+.german-word { color: var(--german); font-weight: 600; cursor: pointer;
+  border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; }
+.german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+.canvas-container { background: linear-gradient(135deg, rgba(26, 35, 55, 0.4), rgba(15, 20, 35, 0.4));
+  border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 24px; margin: 32px 0;
+  display: flex; justify-content: center; align-items: center; min-height: 400px; }
+canvas { display: block; width: 100%; max-width: 100%; height: auto; }
+.sentence-diagram { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 10px; padding: 24px; margin: 24px 0; font-family: 'Courier New', monospace; font-size: 1rem;
+  overflow-x: auto; color: var(--text-bright); line-height: 1.8; }
+.sentence-diagram .label { color: var(--order); font-weight: 600; }
+.grammar-table { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 10px; padding: 24px; margin: 32px 0; overflow-x: auto; }
+.grammar-table table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+.grammar-table th, .grammar-table td { padding: 12px 16px; text-align: left;
+  border-bottom: 1px solid rgba(232, 164, 74, 0.1); color: var(--text); }
+.grammar-table th { background: rgba(232, 164, 74, 0.08); color: var(--fire); font-weight: 600;
+  text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; }
+.grammar-table tr:hover td { background: rgba(232, 164, 74, 0.05); }
+.divider { text-align: center; margin: 60px 0; color: rgba(232, 164, 74, 0.3); font-size: 1.5rem; letter-spacing: 0.5em; }
+.aside-box { background: rgba(212, 168, 180, 0.06); border-left: 2px solid rgba(212, 168, 180, 0.3);
+  padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  line-height: 1.7; color: rgba(212, 202, 187, 0.8); }
+.aside-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--order); margin-bottom: 8px; }
+.example-sentence { background: rgba(232, 164, 74, 0.05); border-left: 3px solid var(--fire);
+  padding: 16px 20px; margin: 16px 0; font-size: 1.1rem; color: var(--text-bright); font-style: italic; }
+.example-translation { padding-left: 20px; color: rgba(212, 202, 187, 0.7); font-size: 1rem;
+  font-style: normal; margin-top: 6px; }
+.example-german { color: var(--german); font-weight: 600; }
+.content-section { margin-bottom: 48px; }
+.content-section h2 { font-size: 1.8rem; color: var(--fire); margin-bottom: 24px;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(232, 164, 74, 0.2); }
+.content-section h3 { font-size: 1.4rem; color: var(--order); margin-bottom: 16px; margin-top: 28px;
+  padding-bottom: 8px; border-bottom: 1px solid rgba(212, 168, 180, 0.15); }
+.quiz-container { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.12); border-radius: 16px; padding: 40px 32px; margin: 60px 0; }
+.quiz-question { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.08);
+  border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+.quiz-question.hidden { display: none; }
+.quiz-option { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2);
+  color: var(--text); padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif; font-size: 1rem; text-align: left; }
+.quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+.quiz-nav button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25);
+  color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1rem; padding: 12px 28px;
+  border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-score { text-align: center; font-size: 1.3rem; color: var(--fire-glow); margin: 24px 0; font-weight: 500; }
+.chapter-end { text-align: center; margin: 80px 0 40px; padding-top: 40px;
+  border-top: 1px solid rgba(232, 164, 74, 0.15); color: rgba(212, 202, 187, 0.5); }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="content">
+  <div class="title-screen">
+    <div class="chapter-number">62</div>
+    <h1>Das Verb am Ende</h1>
+    <div class="subtitle">Word Order: The V2 Rule and the Verbal Bracket</div>
+    <div class="scroll-hint"><span>↓</span> Scroll to begin</div>
+  </div>
+
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+    <div class="narrative">
+      This chapter covers the single most important grammatical rule in German—the rule that defines the language at its core. It is the rule that makes German feel foreign to English speakers, yet it is also the rule that explains nearly everything about German sentence structure. It is the V2 rule: the rule that in main clauses, the conjugated verb always comes in the second position.
+    </div>
+    <div class="narrative emphasis">
+      V2 = Verb in the Second Position. In every German main clause, the conjugated verb comes second, not first and not last.
+    </div>
+    <div class="narrative small">
+      This rule is so fundamental, so deep, that linguists believe it goes back to Proto-Indo-European itself, the ancient language from which German, English, Latin, Sanskrit, and most European languages descended. German has preserved this ancient rule; English has abandoned it. This one fact explains more about German grammar than any other single insight.
+    </div>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="canvas" width="750" height="380"></canvas>
+  </div>
+
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <div class="content-section">
+      <h2>The V2 Rule: The Foundation of German Word Order</h2>
+      <div class="narrative">
+        Every German main clause follows the V2 rule. Here is what it means: the conjugated verb comes in the second position of the sentence. This is not the second word—it is the second position, a position that can contain a word or a phrase.
+      </div>
+
+      <div class="example-sentence">
+        <strong>Ich kaufe ein Buch.</strong>
+        <div class="example-translation">I buy a book. [Subject first, verb second]</div>
+      </div>
+
+      <div class="narrative small">
+        This is the basic pattern: subject (position 1) → conjugated verb (position 2) → object/complement (position 3+). But now watch what happens when we change the word order:
+      </div>
+
+      <div class="example-sentence">
+        <strong>Gestern kaufe ich ein Buch.</strong>
+        <div class="example-translation">Yesterday I buy a book. [Adverb first, verb second]</div>
+      </div>
+
+      <div class="narrative small">
+        The adverb "gestern" (yesterday) has moved to position 1. But the verb kaufe is still in position 2. The subject "ich" has moved to position 3. This is the magic of the V2 rule: you can move almost any element to the first position, but the verb stays in position 2.
+      </div>
+
+      <div class="example-sentence">
+        <strong>Das Buch kaufe ich gestern.</strong>
+        <div class="example-translation">The book, I buy yesterday. [Object first, verb second]</div>
+      </div>
+
+      <div class="narrative small">
+        Now the object "das Buch" is in position 1 for emphasis. The verb is still in position 2. The subject is now in position 3. This is V2 in action: the verb's position is fixed, but the position 1 slot is flexible. This flexibility is what allows German speakers to create emphasis, focus, and topical variation while maintaining strict grammatical structure.
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">The V2 Principle</div>
+        <div>
+          The conjugated verb ALWAYS comes in position 2 in main clauses. Position 1 can contain any constituent: subject, object, adverb, prepositional phrase, infinitive, etc. Position 2 is reserved for the conjugated verb. Everything after position 2 is the predicate.
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Sentence Diagrams: Seeing V2 in Action</h3>
+      <div class="narrative">
+        Here are the same three sentences diagrammed to show how the V2 rule constrains the structure:
+      </div>
+
+      <div class="sentence-diagram">
+        <strong>Ich kaufe ein Buch.</strong><br>
+        <span class="label">Pos 1 (Subject):</span> Ich<br>
+        <span class="label">Pos 2 (Verb):</span> kaufe ← ALWAYS HERE<br>
+        <span class="label">Pos 3+:</span> ein Buch
+      </div>
+
+      <div class="sentence-diagram">
+        <strong>Gestern kaufe ich ein Buch.</strong><br>
+        <span class="label">Pos 1 (Time Adverb):</span> Gestern<br>
+        <span class="label">Pos 2 (Verb):</span> kaufe ← ALWAYS HERE<br>
+        <span class="label">Pos 3+:</span> ich ein Buch
+      </div>
+
+      <div class="sentence-diagram">
+        <strong>Das Buch kaufe ich gestern.</strong><br>
+        <span class="label">Pos 1 (Object):</span> Das Buch<br>
+        <span class="label">Pos 2 (Verb):</span> kaufe ← ALWAYS HERE<br>
+        <span class="label">Pos 3+:</span> ich gestern
+      </div>
+
+      <div class="narrative">
+        Notice that in all three sentences, the verb kaufe occupies position 2. What changes is what fills position 1 and what follows position 2. This flexibility within constraint is the essence of V2.
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="content-section">
+      <h2>The Verbal Bracket (Satzklammer)</h2>
+      <div class="narrative">
+        There is another critical rule that works hand-in-hand with V2: in German, compound verb forms create what is called the "verbal bracket" or <span class="german-word">Satzklammer</span>. The conjugated auxiliary verb comes in position 2 (following V2), and the non-conjugated verb forms (infinitive, past participle) come at the end of the clause, creating a bracket that encloses the entire predicate.
+      </div>
+
+      <div class="example-sentence">
+        <strong>Ich habe gestern das Buch gelesen.</strong>
+        <div class="example-translation">I have yesterday the book read. (I read the book yesterday.)</div>
+      </div>
+
+      <div class="narrative small">
+        Here, "habe" (position 2) and "gelesen" (end of clause) form the verbal bracket: habe...gelesen. Everything between them (gestern das Buch) is inside the bracket. This is the Satzklammer.
+      </div>
+
+      <div class="sentence-diagram">
+        <strong>Ich habe gestern das Buch gelesen.</strong><br>
+        <span class="label">Pos 2 (Auxiliary):</span> habe ↓<br>
+        <span class="label">Middle (inside the bracket):</span> gestern das Buch<br>
+        <span class="label">End (past participle):</span> gelesen ↑<br>
+        The bracket: habe...gelesen
+      </div>
+
+      <div class="example-sentence">
+        <strong>Du wirst morgen nach Berlin fahren.</strong>
+        <div class="example-translation">You will tomorrow to Berlin drive. (You will drive to Berlin tomorrow.)</div>
+      </div>
+
+      <div class="sentence-diagram">
+        <strong>Du wirst morgen nach Berlin fahren.</strong><br>
+        <span class="label">Pos 2 (Auxiliary):</span> wirst ↓<br>
+        <span class="label">Middle:</span> morgen nach Berlin<br>
+        <span class="label">End (infinitive):</span> fahren ↑<br>
+        The bracket: wirst...fahren
+      </div>
+
+      <div class="narrative small">
+        The verbal bracket is one of the most distinctive features of German. It means that when you read a German sentence, you cannot fully understand the meaning until you reach the end, because the verb information is split: the auxiliary at position 2 and the full verb information at the end. This is fundamentally different from English, where the main verb comes early and completes the thought.
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Reading German: A Different Brain Process</div>
+        <div>
+          Because of the verbal bracket, German readers must hold information in suspense until the end of the clause. This is not a flaw—it is a feature. It allows German to create complex nested structures and to position emphasis strategically. But it does mean that reading German requires a different cognitive strategy than reading English.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="scene" id="scene3">
+      <div class="scene-marker"></div>
+
+      <div class="content-section">
+        <h2>V2 in Main Clauses vs. Verb-Final in Subordinate Clauses</h2>
+        <div class="narrative">
+          The V2 rule applies only to main clauses. In subordinate clauses (introduced by words like <span class="german-word">weil</span>, <span class="german-word">dass</span>, <span class="german-word">obwohl</span>), the verb moves to the END of the clause. This is the verb-final rule, and it is the second pillar of German word order.
+        </div>
+
+        <div class="example-sentence">
+          <strong>Main clause:</strong> Ich kaufe das Buch.<br>
+          <strong>Subordinate clause:</strong> ...weil ich das Buch kaufe.<br>
+          <div class="example-translation">...because I the book buy. (because I buy the book)</div>
+        </div>
+
+        <div class="narrative small">
+          In the main clause, the verb kaufe is in position 2. In the subordinate clause introduced by weil, the same verb moves to the end. This is a dramatic structural change that marks the difference between independence and dependence.
+        </div>
+
+        <div class="example-sentence">
+          <strong>Ich weiß, dass du Deutsch lernst.</strong>
+          <div class="example-translation">I know that you German learn. (I know that you are learning German.)</div>
+        </div>
+
+        <div class="narrative small">
+          The main clause "Ich weiß" follows V2 (weiß in position 2). The subordinate clause "dass du Deutsch lernst" has the verb at the end (lernst).
+        </div>
+
+        <div class="sentence-diagram">
+          <strong>Ich weiß, dass du Deutsch lernst.</strong><br>
+          <span class="label">Main clause: V2 order</span><br>
+          Pos 1: Ich | Pos 2: weiß | Pos 3: dass du Deutsch lernst<br><br>
+          <span class="label">Subordinate clause: Verb-Final</span><br>
+          Pos 1: dass | Pos 2: du | Pos 3: Deutsch | END: lernst ↑
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>Common Subordinating Conjunctions (Verb-Final Context)</h3>
+        <div class="narrative">
+          These words introduce subordinate clauses where the verb goes to the end:
+        </div>
+        <div class="grammar-table">
+          <table>
+            <thead>
+              <tr>
+                <th>German</th>
+                <th>Meaning</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>weil</strong></td>
+                <td>because</td>
+                <td>Ich gehe, weil ich müde <strong>bin</strong>.</td>
+              </tr>
+              <tr>
+                <td><strong>dass</strong></td>
+                <td>that</td>
+                <td>Ich weiß, dass er morgen <strong>kommt</strong>.</td>
+              </tr>
+              <tr>
+                <td><strong>obwohl</strong></td>
+                <td>although</td>
+                <td>Obwohl er krank ist, <strong>geht</strong> er arbeiten. (inversion for emphasis)</td>
+              </tr>
+              <tr>
+                <td><strong>wenn</strong></td>
+                <td>if; when</td>
+                <td>Wenn ich Zeit <strong>habe</strong>, rufe ich dich an.</td>
+              </tr>
+              <tr>
+                <td><strong>als</strong></td>
+                <td>when (past); as</td>
+                <td>Als ich klein <strong>war</strong>, spielte ich viel.</td>
+              </tr>
+              <tr>
+                <td><strong>ob</strong></td>
+                <td>whether</td>
+                <td>Ich frage mich, ob er <strong>kommt</strong>.</td>
+              </tr>
+              <tr>
+                <td><strong>damit</strong></td>
+                <td>so that; in order that</td>
+                <td>Ich arbeite, damit ich Geld <strong>verdiene</strong>.</td>
+              </tr>
+              <tr>
+                <td><strong>nachdem</strong></td>
+                <td>after</td>
+                <td>Nachdem ich gegessen <strong>habe</strong>, gehe ich spazieren.</td>
+              </tr>
+              <tr>
+                <td><strong>bevor</strong></td>
+                <td>before</td>
+                <td>Bevor ich schlafen <strong>gehe</strong>, lese ich.</td>
+              </tr>
+              <tr>
+                <td><strong>während</strong></td>
+                <td>while; during</td>
+                <td>Während ich <strong>arbeite</strong>, musst du warten.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="narrative small">
+          All of these conjunctions trigger the verb-final word order in the subordinate clause they introduce. This is a completely consistent rule: if you see one of these conjunctions, you know the verb is coming at the end of that clause.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>Side-by-Side Comparison: Main vs. Subordinate</h3>
+        <div class="narrative">
+          Here are five sentences shown in both main clause (V2) and subordinate clause (verb-final) form:
+        </div>
+
+        <div class="grammar-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Sentence Meaning</th>
+                <th>Main Clause (V2)</th>
+                <th>Subordinate Clause (Verb-Final)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>I read a book</td>
+                <td><strong>Ich lese ein Buch.</strong><br><em>(verb in pos 2)</em></td>
+                <td>...weil <strong>ich ein Buch lese</strong>.<br><em>(verb at end)</em></td>
+              </tr>
+              <tr>
+                <td>She comes tomorrow</td>
+                <td><strong>Sie kommt morgen.</strong><br><em>(verb in pos 2)</em></td>
+                <td>...dass <strong>sie morgen kommt</strong>.<br><em>(verb at end)</em></td>
+              </tr>
+              <tr>
+                <td>He has finished the work</td>
+                <td><strong>Er hat die Arbeit fertig.</strong><br><em>(auxiliary in pos 2)</em></td>
+                <td>...obwohl <strong>er die Arbeit fertig hat</strong>.<br><em>(auxiliary at end)</em></td>
+              </tr>
+              <tr>
+                <td>We will go to Berlin</td>
+                <td><strong>Wir werden nach Berlin fahren.</strong><br><em>(auxiliary in pos 2)</em></td>
+                <td>...wenn <strong>wir nach Berlin fahren werden</strong>.<br><em>(auxiliary at end)</em></td>
+              </tr>
+              <tr>
+                <td>They understood the problem</td>
+                <td><strong>Sie haben das Problem verstanden.</strong><br><em>(auxiliary in pos 2)</em></td>
+                <td>...nachdem <strong>sie das Problem verstanden haben</strong>.<br><em>(auxiliary at end)</em></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="narrative small">
+          Notice the pattern: the conjugated verb or auxiliary moves from position 2 (in main clauses) to the end (in subordinate clauses). Everything else stays relatively the same. The word order shift marks grammatical dependency.
+        </div>
+      </div>
+
+      <div class="divider">❋</div>
+
+      <div class="content-section">
+        <h2>Understanding Position vs. Word</h2>
+        <div class="narrative">
+          A critical distinction in understanding V2 is the difference between position and word. The V2 rule says "the verb comes in position 2," not "the verb is the second word." This is crucial because a position can contain a phrase or multiple words.
+        </div>
+
+        <div class="example-sentence">
+          <strong>Der Mann mit dem Hut kauft ein Buch.</strong>
+          <div class="example-translation">The man with the hat buys a book.</div>
+        </div>
+
+        <div class="narrative small">
+          Here, "Der Mann mit dem Hut" is a noun phrase that fills position 1. It contains four words, but it is one position. The verb "kauft" is still in position 2 (not the second word, but the second position).
+        </div>
+
+        <div class="example-sentence">
+          <strong>Der Mann mit dem Hut, der im Park sitzt, kauft ein Buch.</strong>
+          <div class="example-translation">The man with the hat, who sits in the park, buys a book.</div>
+        </div>
+
+        <div class="narrative small">
+          Even with a relative clause inserted for clarity, the verb "kauft" remains in position 2. This shows that V2 is about structural position, not word count. Understanding this distinction is essential to parsing complex German sentences.
+        </div>
+
+        <div class="aside-box">
+          <div class="aside-title">Position vs. Word</div>
+          <div>
+            A position can contain: a single word, a noun phrase, a prepositional phrase, an adverbial clause, or any other constituent. What matters for V2 is that the conjugated verb occupies position 2, regardless of how many words fill position 1.
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">❋</div>
+
+      <div class="content-section">
+        <h2>Why This Matters: The Ancient History of Word Order</h2>
+        <div class="narrative">
+          The V2 rule in main clauses and verb-final in subordinates is not a modern invention. Linguists believe this pattern goes back to Proto-Indo-European, the ancient language spoken around 4000-6000 years ago. When English and German diverged from Latin and from each other, they carried this rule with them.
+        </div>
+
+        <div class="narrative">
+          But over the centuries, English ABANDONED the V2 rule. Modern English is primarily SVO (Subject-Verb-Object). You cannot say "Yesterday went I to the store" in English; you must say "I went to the store yesterday." English lost the flexibility that V2 provides.
+        </div>
+
+        <div class="narrative">
+          German, however, PRESERVED the V2 rule. German kept the ancient pattern and still uses it as the foundation of its grammar. This is why German feels so foreign to English speakers: it preserved a feature that English lost. But it is also why learning V2 is so revelatory: once you understand it, you understand German sentence structure in a way that is almost mathematical in its consistency.
+        </div>
+
+        <div class="aside-box">
+          <div class="aside-title">Three Languages, Three Word Order Strategies</div>
+          <div>
+            <strong>Chinese (Mandarin):</strong> Strictly SVO. No verb movement at all. "我 明天 去 北京" (I tomorrow go Beijing) — the verb always comes between subject and object. Chinese word order is immobile.<br><br>
+            <strong>English:</strong> Mostly SVO, but preserves V2 in questions: "Have you eaten?" (auxiliary in position 1, subject in position 2). Otherwise, verb position is fixed.<br><br>
+            <strong>German:</strong> Full V2 in main clauses, verb-final in subordinates. Complete word order flexibility within strict grammatical constraints.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>The V2/Verb-Final Distinction as Language Preservation</h3>
+        <div class="narrative">
+          Linguists call the V2 pattern "Non-Configurationality" or "Free Word Order within V2 Constraints." It is found in many old Indo-European languages that have not undergone language change as dramatically as English. German is special because it maintained this ancient system almost unchanged.
+        </div>
+
+        <div class="narrative">
+          Old English, spoken 1000+ years ago, had similar V2 properties. "Then said the king..." was normal Old English word order. But as English evolved, particularly after the Norman Conquest when French influence entered the language, the V2 rule gradually weakened. Modern English locked verb position to the second word-position regardless of structure.
+        </div>
+
+        <div class="narrative small">
+          This is not a difference in sophistication—both English and German are equally complex languages. It is a difference in the direction language change took. German conserved; English innovated. Both are valid paths. But for a learner, understanding this deep historical difference helps explain why German word order feels so alien yet so logical.
+        </div>
+      </div>
+
+      <div class="divider">❋</div>
+
+      <div class="content-section">
+        <h2>Complex Sentence Examples with Full Analysis</h2>
+
+        <div class="content-section">
+          <h3>Example 1: Simple V2 Main Clause with Time Adverb First</h3>
+          <div class="narrative">
+            <strong>Morgen gehe ich ins Kino.</strong> (Tomorrow I go to-the cinema.)
+          </div>
+          <div class="sentence-diagram">
+            Pos 1: Morgen (time adverb, for emphasis/topic)<br>
+            Pos 2: gehe (conjugated verb, V2)<br>
+            Pos 3+: ich ins Kino (subject + prepositional phrase)<br>
+            <br>
+            <em>The verb "gehe" is in position 2, exactly where V2 requires. By putting the time adverb first, the speaker emphasizes that this is happening tomorrow.</em>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Example 2: Compound Verb with Verbal Bracket</h3>
+          <div class="narrative">
+            <strong>Ich habe gestern in Berlin meinen Bruder besucht.</strong> (I have yesterday in Berlin my brother visited.)
+          </div>
+          <div class="sentence-diagram">
+            Pos 1: Ich (subject)<br>
+            Pos 2: habe (auxiliary, V2) ↓<br>
+            Pos 3+: gestern in Berlin meinen Bruder (time + location + object)<br>
+            END: besucht (past participle) ↑<br>
+            <br>
+            <em>The verbal bracket: habe...besucht. Everything between is inside the bracket. This bracket structure is essential to understanding German complex sentences.</em>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Example 3: Subordinate Clause with Verb-Final</h3>
+          <div class="narrative">
+            <strong>Ich weiß, dass mein Bruder morgen kommt.</strong> (I know that my brother tomorrow comes.)
+          </div>
+          <div class="sentence-diagram">
+            <strong>Main clause:</strong> Ich weiß<br>
+            Pos 1: Ich | Pos 2: weiß (V2) | Pos 3: dass...<br>
+            <br>
+            <strong>Subordinate clause:</strong> dass mein Bruder morgen kommt<br>
+            Pos 1: dass (conjunction) | Pos 2: mein (possessive) | Pos 3: Bruder | Pos 4: morgen | END: kommt (verb) ↑<br>
+            <br>
+            <em>The subordinate clause verb is at the end. This marking makes it clear that this clause depends on the main clause.</em>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Example 4: Object in Position 1 for Emphasis</h3>
+          <div class="narrative">
+            <strong>Das Buch habe ich gelesen, obwohl es schwierig war.</strong> (The book have I read, although it difficult was.)
+          </div>
+          <div class="sentence-diagram">
+            <strong>Main clause:</strong><br>
+            Pos 1: Das Buch (object, fronted for emphasis)<br>
+            Pos 2: habe (auxiliary, V2) ↓<br>
+            Pos 3: ich (subject)<br>
+            END: gelesen (past participle) ↑<br>
+            <br>
+            <strong>Subordinate clause:</strong> obwohl es schwierig war<br>
+            Pos 1: obwohl | Pos 2: es | Pos 3: schwierig | END: war<br>
+            <br>
+            <em>By fronting "das Buch" to position 1, the speaker emphasizes the book specifically. The verb stays in position 2. This is V2 flexibility at work.</em>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Example 5: Nested Subordinate Clauses</h3>
+          <div class="narrative">
+            <strong>Ich glaube, dass er gesagt hat, dass er morgen kommt.</strong> (I believe that he said has that he tomorrow comes.)
+          </div>
+          <div class="sentence-diagram">
+            <strong>Main:</strong> Ich glaube<br>
+            Pos 2: glaube (V2)<br>
+            <br>
+            <strong>First subordinate:</strong> dass er gesagt hat<br>
+            Pos 1: dass | Pos 2: er | Pos 3: gesagt | END: hat (verb)<br>
+            <br>
+            <strong>Second subordinate (nested):</strong> dass er morgen kommt<br>
+            Pos 1: dass | Pos 2: er | Pos 3: morgen | END: kommt (verb)<br>
+            <br>
+            <em>Each level of subordination ends with its verb. Subordinate clauses can be nested, each one with verb-final structure.</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">❋</div>
+
+      <div class="content-section">
+        <h2>Questions and Commands: Special Cases of V2</h2>
+        <div class="narrative">
+          The V2 rule extends even to questions and commands. Questions use a modified V2 where the verb comes in position 1 (V1), forcing the subject to position 2. Commands also follow a verb-prominent pattern. These variations still show the influence of the V2 principle.
+        </div>
+
+        <div class="example-sentence">
+          <strong>Gehst du ins Kino?</strong>
+          <div class="example-translation">Go you to-the cinema? (Do you go to the cinema?)</div>
+        </div>
+
+        <div class="narrative small">
+          In questions, the finite verb moves to position 1, and the subject follows in position 2. This is called "V1 order" or "inversion," but it is really a variation on V2: the verb is still in the second position from the listener's perspective, now at the very beginning to signal a question.
+        </div>
+
+        <div class="example-sentence">
+          <strong>Komm bitte!</strong>
+          <div class="example-translation">Come please! (imperative command)</div>
+        </div>
+
+        <div class="narrative small">
+          In commands, the verb comes first (the infinitive stem). This is the most verb-prominent position, appropriate to the urgency and directness of a command.
+        </div>
+
+        <div class="grammar-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Sentence Type</th>
+                <th>Word Order Pattern</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Statement (Declarative)</strong></td>
+                <td>V2: Subject - Verb - Object</td>
+                <td>Ich kaufe ein Buch.</td>
+              </tr>
+              <tr>
+                <td><strong>Question (Interrogative)</strong></td>
+                <td>V1: Verb - Subject - Object</td>
+                <td>Kaufe ich ein Buch?</td>
+              </tr>
+              <tr>
+                <td><strong>Command (Imperative)</strong></td>
+                <td>V1: Verb - Object</td>
+                <td>Kauf ein Buch!</td>
+              </tr>
+              <tr>
+                <td><strong>Subordinate Clause</strong></td>
+                <td>Verb-Final: Subject - Object - Verb</td>
+                <td>...weil ich ein Buch kaufe.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="narrative small">
+          Notice that all these variations place the verb in a prominent position: V2 in statements, V1 in questions, verb-final in subordinates. The verb's position is never random—it always carries grammatical information about the sentence type and clause type.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>Yes/No Questions vs. Information Questions</h3>
+        <div class="narrative">
+          German distinguishes between two types of questions using word order:
+        </div>
+
+        <div class="example-sentence">
+          <strong>Gehst du ins Kino?</strong>
+          <div class="example-translation">Go you to-the cinema? (Yes/no question)</div>
+        </div>
+
+        <div class="narrative small">
+          This is a yes/no question. The verb is in position 1, and the subject follows. The intonation rises, signaling a question.
+        </div>
+
+        <div class="example-sentence">
+          <strong>Wann gehst du ins Kino?</strong>
+          <div class="example-translation">When go you to-the cinema? (Information question)</div>
+        </div>
+
+        <div class="narrative small">
+          This is an information question (asking for specific information). It begins with a question word (wann = when), followed by V2 order (verb in position 2, subject in position 3). Even in questions, the V2 principle shows up: the question word fills position 1, the verb comes in position 2.
+        </div>
+
+        <div class="grammar-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Question Type</th>
+                <th>Pattern</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Yes/No Question</td>
+                <td>V1 - Subject - ...</td>
+                <td>Gehst du morgen?</td>
+              </tr>
+              <tr>
+                <td>Information Question</td>
+                <td>Question Word - V2 - Subject - ...</td>
+                <td>Wann gehst du?</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="divider">❋</div>
+
+      <div class="content-section">
+        <h2>The Verbal Bracket in Complex Sentences</h2>
+        <div class="narrative">
+          The verbal bracket becomes increasingly important and visible in longer, more complex sentences. Understanding how the bracket works is essential to reading German fluently.
+        </div>
+
+        <div class="example-sentence">
+          <strong>Ich werde dir morgen, nachdem ich mit meinem Bruder gesprochen habe, ein detailliertes Plan zeigen.</strong>
+          <div class="example-translation">I will you tomorrow, after I with my brother spoken have, a detailed plan show.</div>
+        </div>
+
+        <div class="sentence-diagram">
+          Pos 1: Ich<br>
+          Pos 2: werde ↓ (auxiliary)<br>
+          Pos 3+: dir morgen, nachdem ich mit meinem Bruder gesprochen habe, ein detailliertes Plan<br>
+          END: zeigen ↑ (infinitive)<br>
+          <br>
+          The verbal bracket: werde...zeigen<br>
+          Everything between is inside the bracket.
+        </div>
+
+        <div class="narrative small">
+          In this sentence, the main verb phrase is split: "werde" at position 2 and "zeigen" at the end. Even though there is a subordinate clause (nachdem ich mit meinem Bruder gesprochen habe) embedded in the middle, it doesn't break the bracket. The bracket encloses everything that is part of the main clause.
+        </div>
+
+        <div class="narrative">
+          This is why Germans can nest complex sentences within the verbal bracket. The bracket structure allows for extreme complexity while maintaining clarity about which verbs and elements belong to which clause.
+        </div>
+      </div>
+
+      <div class="divider">❋</div>
+
+      <div class="content-section">
+        <h2>The Philosophical Meaning of V2</h2>
+        <div class="narrative">
+          The V2 rule reveals something profound about how language works. Word order is not arbitrary. It is not merely functional (putting the important information first). Word order carries grammatical and semantic meaning. When German moves an element to position 1, that movement is deliberate: it signals emphasis, focus, topic-hood, or discourse connection.
+        </div>
+
+        <div class="narrative">
+          The V2 rule demonstrates that grammar is not a set of restrictions but a set of resources. Within the constraints of V2, enormous variation is possible. You can start with the subject, or the object, or the adverb, or the location, or any other element. The V2 rule enables this flexibility by establishing a fixed point (position 2 for the verb) around which everything else can move.
+        </div>
+
+        <div class="narrative emphasis">
+          Grammar constrains but does not limit. Rules enable rather than restrict. The V2 rule is the proof: it is a rigid rule that creates infinite possibilities.
+        </div>
+
+        <div class="narrative small">
+          This is also why the verb-final subordinate clause exists. By moving the verb to the end of subordinate clauses, German marks them as dependent. The position of the verb encodes the clause's status in the larger sentence structure. This is elegant: one grammatical feature (word order) carries two pieces of information (which verb form and what kind of clause).
+        </div>
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">V2 in Daily German</div>
+        <div>
+          When Germans speak, they are constantly exploiting the V2 rule. Questions invert to V2-like structures: "Gehst du morgen ins Kino?" (Go you tomorrow to-the cinema?). Commands use V2: "Komm bitte!" (Come please!). Even casual speech demonstrates V2 flexibility: speakers put different elements first depending on what they want to emphasize or what the discourse context demands. V2 is not theoretical—it is the living structure of how Germans construct sentences every moment.
+        </div>
+      </div>
+
+      <div class="divider">❋</div>
+
+      <div class="content-section">
+        <h2>Learning Word Order as Linguistic Architecture</h2>
+        <div class="narrative">
+          When you learn the V2 rule and the verb-final rule, you are not just learning grammar rules. You are learning the fundamental architecture of how German structures thought and meaning. Word order in German is not merely a way to mark relationships between words—it is a system that encodes grammatical status, emphasis, focus, and discourse function.
+        </div>
+
+        <div class="narrative">
+          Consider the English sentence: "I will read the book tomorrow." The meaning is clear, the structure is fixed. The verb comes after the subject. There is little variation possible without sounding archaic. Now consider German: "Ich werde das Buch morgen lesen" uses the basic order, but so do these alternatives, each with a different emphasis or discourse context:
+        </div>
+
+        <div class="example-sentence">
+          <strong>Das Buch werde ich morgen lesen.</strong> (The book specifically, I will read tomorrow.)
+        </div>
+
+        <div class="example-sentence">
+          <strong>Morgen werde ich das Buch lesen.</strong> (Tomorrow specifically, I will read the book.)
+        </div>
+
+        <div class="example-sentence">
+          <strong>Lesen werde ich das Buch morgen — irgendwann!</strong> (Read it I will tomorrow — eventually!)
+        </div>
+
+        <div class="narrative small">
+          Each version places a different element in position 1, creating different emphasis. English cannot do this flexibly; it would have to resort to stress or intonation or additional words. German uses word order itself to create nuance. This is the power of V2: it is a flexible system that allows precise control over discourse emphasis within strict grammatical structure.
+        </div>
+
+        <div class="narrative">
+          This is also why learning V2 is revelatory: once you understand that position 1 is for topic/focus and position 2 is always the verb, you can parse even very long, complex German sentences. The V2 rule gives you a reliable anchor point. You know where to look for the conjugated verb. You know that everything before it is the topic or emphasis, and everything after (until the next finite verb) is the predicate.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>The Mental Processing of V2</h3>
+        <div class="narrative">
+          Neuroscience research shows that native German speakers process sentences by looking for the finite verb in position 2, using it as a structural anchor. Learners who understand V2 report that their comprehension and reading speed improve dramatically. Why? Because instead of waiting until the end of a sentence to understand the action (as might happen with a complex sentence), you can quickly locate the main verb by expecting it in position 2.
+        </div>
+
+        <div class="narrative small">
+          This explains why focusing on V2 and verb-final structure is so important for developing real fluency. It is not just a grammar rule; it is a cognitive strategy that native speakers use automatically. By learning V2 explicitly, you are learning to think like a German speaker.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>V2 Across Germanic Languages</h3>
+        <div class="narrative">
+          The V2 rule is not unique to German. Other Germanic languages preserve it to varying degrees:
+        </div>
+
+        <div class="grammar-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Language</th>
+                <th>V2 Status</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>German</strong></td>
+                <td>Full V2 in main clauses, verb-final in subordinates</td>
+                <td>Morgen fahre ich. Weil ich fahre.</td>
+              </tr>
+              <tr>
+                <td><strong>Dutch</strong></td>
+                <td>Full V2 in main clauses, verb-final in subordinates</td>
+                <td>Morgen ga ik. Omdat ik ga.</td>
+              </tr>
+              <tr>
+                <td><strong>Yiddish</strong></td>
+                <td>Full V2 system (descended from German)</td>
+                <td>Morgen gey ikh. Vayl ikh gey.</td>
+              </tr>
+              <tr>
+                <td><strong>Icelandic</strong></td>
+                <td>Full V2 in main clauses</td>
+                <td>Í morgun fer ég. (Tomorrow go I.)</td>
+              </tr>
+              <tr>
+                <td><strong>English</strong></td>
+                <td>Lost V2, mostly SVO with V2 remnant in questions</td>
+                <td>I go tomorrow. Do I go? (V2 only in questions)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="narrative small">
+          German and Dutch are the most similar, maintaining full V2. Yiddish, which descended from German dialects, also preserves the system. Icelandic keeps V2 but has lost the strict verb-final subordinate rule. English has largely abandoned V2 except in questions ("Have you eaten?"), where it survives as a fossil of the old system.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>The Bridge: Why Understanding Word Order Changes Everything</h2>
+        <div class="narrative">
+          Many learners approach German grammar as a series of isolated rules: "the dative takes these prepositions," "adjectives agree with nouns," "the genitive shows possession." But word order is different. Word order is the SYSTEM that holds everything together. Once you understand V2, you understand:
+        </div>
+
+        <div class="aside-box">
+          <div>
+            <strong>Why separable verbs work the way they do:</strong> The prefix comes at the END of the clause, forming a bracket with the verb stem at position 2. This is the verbal bracket again.
+          </div>
+          <div style="margin-top: 12px;">
+            <strong>Why cases matter:</strong> Cases mark grammatical roles, but word order reinforces those roles. V2 lets you move elements around while cases keep their functions clear.
+          </div>
+          <div style="margin-top: 12px;">
+            <strong>Why subordinate clauses feel different:</strong> The verb-final structure marks dependence structurally, not just through conjunctions.
+          </div>
+          <div style="margin-top: 12px;">
+            <strong>Why reading German requires a different strategy:</strong> You must read to the end of the clause (or to the verb) to understand the full meaning, then read the complements. German structure requires you to navigate suspense.
+          </div>
+        </div>
+
+        <div class="narrative">
+          Word order is not a detail of German grammar. It is the skeleton upon which all other grammar hangs. Master V2 and verb-final, and you have grasped something fundamental about how German structures language.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" id="scene-quiz">
+    <div class="divider">❋</div>
+    <div class="quiz-container">
+      <h3>Master Word Order: 12-Question Quiz</h3>
+      <div id="quiz-questions"></div>
+      <div id="quiz-score"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" id="scene-end">
+    <div class="divider">✦</div>
+    <div class="chapter-end">
+      <p>You have learned the V2 rule—the most fundamental rule of German grammar. You understand how it allows flexibility within constraint. You recognize the verbal bracket and how it structures complex sentences. You see why subordinate clauses move the verb to the end, and you understand this as a mark of grammatical dependence.</p>
+      <p style="margin-top: 24px;">Most importantly, you now see German word order not as a collection of arbitrary rules, but as an elegant system preserved from Proto-Indo-European itself. You have touched the ancient roots of language.</p>
+      <div style="margin-top: 32px; font-size: 1.15rem; color: var(--fire);">→ You have completed the foundation of German grammar. All other rules follow from these principles.</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <a href="chapter61.html" class="nav-btn">← Chapter 61</a>
+    <a href="chapter63.html" class="nav-btn next">Chapter 63 →</a>
+  </div>
+
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What does the V2 rule state?",
+    options: ["The verb comes first", "The verb comes second", "The verb comes third", "The verb comes last"],
+    correct: 1,
+    explanation: "V2 = Verb in the Second position. In main clauses, the conjugated verb is ALWAYS in position 2, regardless of what fills position 1."
+  },
+  {
+    question: "In 'Gestern kaufe ich ein Buch,' where is the verb?",
+    options: ["Position 1", "Position 2", "Position 3", "Position 4"],
+    correct: 1,
+    explanation: "The verb 'kaufe' is in position 2. Position 1 is filled by the time adverb 'gestern'. This is V2 in action."
+  },
+  {
+    question: "What is the Satzklammer (verbal bracket)?",
+    options: ["A punctuation rule", "A case ending", "A structure where the finite verb and non-finite verb forms bracket the predicate", "A word order exception"],
+    correct: 2,
+    explanation: "The Satzklammer is the verbal bracket. The auxiliary verb comes in position 2, and the infinitive/past participle comes at the end, bracketing everything in between."
+  },
+  {
+    question: "In subordinate clauses introduced by 'weil' or 'dass,' where does the verb go?",
+    options: ["Position 1", "Position 2", "Position 3", "At the end of the clause"],
+    correct: 3,
+    explanation: "In subordinate clauses, the conjugated verb goes to the END. This is the verb-final rule, which marks the clause as dependent."
+  },
+  {
+    question: "What distinguishes a main clause from a subordinate clause in German word order?",
+    options: ["The verb's position: V2 in main, verb-final in subordinates", "The use of different tenses", "The number of words", "The presence of a subject"],
+    correct: 0,
+    explanation: "The key difference is word order. Main clauses follow V2 (verb in position 2). Subordinates have verb-final order. This marks grammatical dependence."
+  },
+  {
+    question: "Which language preserved the V2 rule from Proto-Indo-European?",
+    options: ["English", "French", "German", "Spanish"],
+    correct: 2,
+    explanation: "German preserved the V2 rule. English abandoned it centuries ago and became primarily SVO. This is why German word order feels so different."
+  },
+  {
+    question: "In the sentence 'Ich habe das Buch gelesen,' what forms the verbal bracket?",
+    options: ["Ich...gelesen", "habe...gelesen", "das...gelesen", "Ich...habe"],
+    correct: 1,
+    explanation: "The bracket is 'habe...gelesen'. The auxiliary 'habe' is in position 2, and the past participle 'gelesen' is at the end. They bracket the object 'das Buch'."
+  },
+  {
+    question: "Can you fronted an object to position 1 in German while maintaining V2?",
+    options: ["No, it would break the rule", "Yes, V2 allows any element in position 1 as long as the verb stays in position 2", "Only if it's a pronoun", "Only in questions"],
+    correct: 1,
+    explanation: "Yes! V2 flexibility allows any element (subject, object, adverb, etc.) to move to position 1 for emphasis, as long as the verb remains in position 2."
+  },
+  {
+    question: "What is the verb-final rule?",
+    options: ["All verbs come at the end of sentences", "Verbs in subordinate clauses come at the end", "Only infinitives come at the end", "Verbs never change position"],
+    correct: 1,
+    explanation: "The verb-final rule states that in subordinate clauses (introduced by weil, dass, obwohl, etc.), the conjugated verb comes at the end of the clause."
+  },
+  {
+    question: "Which subordinating conjunction introduces a verb-final subordinate clause?",
+    options: ["und (and)", "oder (or)", "weil (because)", "aber (but)"],
+    correct: 2,
+    explanation: "'Weil' is a subordinating conjunction that triggers verb-final order: '...weil ich das Buch lese.' (Und, oder, aber are coordinating conjunctions and don't change word order.)"
+  },
+  {
+    question: "What does the different word order between main and subordinate clauses mark?",
+    options: ["The difference between past and present", "The difference between singular and plural", "The difference between independence and dependence", "The difference between active and passive"],
+    correct: 2,
+    explanation: "Word order marks grammatical status: V2 in main (independent) clauses, verb-final in subordinates (dependent clauses). One grammatical feature carries this information."
+  },
+  {
+    question: "Why is V2 considered a feature of ancient Indo-European?",
+    options: ["It was invented in the Middle Ages", "Linguists believe it goes back to Proto-Indo-European, thousands of years ago", "It was created by Goethe", "It's a modern invention"],
+    correct: 1,
+    explanation: "The V2 pattern is believed to originate from Proto-Indo-European, the ancient ancestor language of most European languages. German preserved this ancient feature."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+    let html = `<div style="font-size: 1.1rem; color: var(--text-bright); margin-bottom: 16px; font-weight: 500;">${idx + 1}. ${q.question}</div><div style="display: flex; flex-direction: column; gap: 10px;">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = currentQuestion === 0;
+  nextBtn.textContent = currentQuestion === quizData.length - 1 ? 'Submit Quiz' : 'Next →';
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) score++;
+  });
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">V2 mastered! You have grasped the foundation of German grammar. ✓</p>';
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: rgba(212, 202, 187, 0.6);">Review the V2 rule and verb-final subordinates. The examples will help clarify the patterns.</p>';
+  }
+}
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// Canvas animation: Puzzle pieces that rearrange to show V2 transformation
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 750;
+canvas.height = 380;
+
+function drawCanvas() {
+  const time = Date.now() * 0.0005;
+
+  // Background
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.5)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw puzzle pieces representing sentence components
+  const pieces = [
+    { label: 'Subj', x: 50, baseX: 50, y: 150, color: '#e8a44a' },
+    { label: 'Verb', x: 200, baseX: 200, y: 150, color: '#d4a8b4' },
+    { label: 'Obj', x: 400, baseX: 400, y: 150, color: '#d4a574' },
+    { label: 'Time', x: 550, baseX: 550, y: 150, color: '#9b8ec4' }
+  ];
+
+  const cycle = (time * 2) % 3;
+
+  pieces.forEach((p, idx) => {
+    let displayX = p.baseX;
+    let displayY = p.y;
+
+    if (cycle < 1) {
+      // V2 normal order
+      if (idx === 0) displayX = p.baseX;
+      else if (idx === 1) displayX = p.baseX;
+      else if (idx === 2) displayX = p.baseX;
+      else displayX = p.baseX;
+    } else if (cycle < 2) {
+      // Reordering: Time to front
+      const t = (cycle - 1);
+      if (idx === 0) displayX = p.baseX + (200 - p.baseX) * t;
+      else if (idx === 3) displayX = p.baseX - (550 - 50) * t;
+    } else {
+      // Front position with Time first
+      if (idx === 0) displayX = 200;
+      else if (idx === 3) displayX = 50;
+    }
+
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = 0.6;
+    ctx.fillRect(displayX - 30, displayY - 20, 60, 40);
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = 'rgba(239, 232, 219, 0.8)';
+    ctx.font = 'bold 12px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.label, displayX, displayY);
+
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(displayX - 30, displayY - 20, 60, 40);
+  });
+
+  // Draw V2 indicator
+  ctx.fillStyle = 'rgba(232, 164, 74, 0.3)';
+  ctx.font = '14px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('V2: Verb Always in Position 2', canvas.width / 2, 50);
+
+  requestAnimationFrame(drawCanvas);
+}
+
+drawCanvas();
+
+// German text-to-speech
+document.querySelectorAll('.german-word').forEach(el => {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const text = this.textContent;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  });
+});
+
+initializeQuiz();
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">548 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(64%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:64%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 548 words across 62 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">111 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(76%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:76%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 111 patterns and grammar rules across 62 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 69: Je mehr, desto besser</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --conjunction: #d9a77a;
+    --scholarly-blue: #1a3a52;
+    --warm-gold: #c9a961;
+  }
+
+  html { scroll-behavior: smooth; background: #0a0e1a; }
+  body {
+    background: linear-gradient(to bottom, var(--scholarly-blue) 0%, var(--night) 30%, var(--night-mid) 60%, var(--warm-gold) 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+  }
+
+  #chart-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible { opacity: 1; transform: translateY(0); }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .vocab-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+  }
+
+  .vocab-card.open {
+    max-height: 1200px;
+    opacity: 1;
+  }
+
+  .vocab-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .vocab-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .vocab-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--english);
+  }
+
+  .vocab-card .pronunciation {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+  }
+
+  .vocab-card .word-content {
+    margin-top: 12px;
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.85);
+    line-height: 1.7;
+  }
+
+  .vocab-card .usage-note {
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 2px solid rgba(232, 164, 74, 0.2);
+    padding: 12px 16px;
+    margin-top: 12px;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+
+  .grammar-box {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 28px 0;
+    font-size: 1rem;
+    color: var(--text-bright);
+  }
+
+  .grammar-box .rule-title {
+    font-size: 1.2rem;
+    color: #f4c67a;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .example-pair {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 2px solid #e8a44a;
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+  }
+
+  .example-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #e8a44a;
+    margin-bottom: 4px;
+  }
+
+  .example-text {
+    color: var(--text-bright);
+    font-weight: 500;
+  }
+
+  .example-translation {
+    font-size: 0.95rem;
+    color: var(--english);
+    margin-top: 8px;
+  }
+
+  .aside-box {
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #e8a44a;
+    margin-bottom: 8px;
+  }
+
+  .comparative-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .comparative-cell {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .comparative-cell-title {
+    font-weight: 600;
+    color: #f4c67a;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+
+  .comparative-content {
+    font-size: 1.1rem;
+    color: rgba(212, 202, 187, 0.95);
+    font-weight: 500;
+  }
+
+  .formation-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+    font-size: 0.95rem;
+  }
+
+  .formation-row {
+    display: contents;
+  }
+
+  .formation-cell {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    padding: 12px 16px;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .formation-cell.header {
+    font-weight: 600;
+    color: var(--fire);
+    background: rgba(232, 164, 74, 0.12);
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled { opacity: 0.5; }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #f4c67a;
+    margin: 24px 0;
+  }
+
+  .post-quiz-summary {
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    display: none;
+  }
+
+  .post-quiz-summary.show { display: block; }
+
+  .nav-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(232, 164, 74, 0.15);
+  }
+
+  .nav-link {
+    color: var(--fire);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--fire-glow);
+  }
+
+  .chapter-number {
+    color: rgba(232, 164, 74, 0.5);
+  }
+
+  @media (max-width: 768px) {
+    .comparative-table, .formation-table {
+      grid-template-columns: 1fr;
+    }
+    .title-screen h1 { font-size: 2.5rem; }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="chart-canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 69</div>
+    <h1 data-speak="true">Je mehr, desto besser</h1>
+    <p class="subtitle" data-speak="true">Comparatives & Superlatives</p>
+    <p class="scroll-hint" data-speak="true">Bigger, Better, Best<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">
+      In human language, we measure and rank the world around us. Comparative and superlative forms are the grammatical tools that let us say "this is better than that" or "this is the best of all." In German, these formations follow elegant, predictable patterns that reveal the language's deep structure. When you say <span class="german-word" data-card="größer">größer</span> (bigger), you're invoking a comparative that compares two entities. When you say <span class="german-word" data-card="am_größten">am größten</span> (biggest), you're marking the superlative extreme.
+    </p>
+    <p class="narrative" data-speak="true">
+      This chapter teaches you to build comparisons and express extremes with precision. You'll learn how regular adjectives transform, discover the irregular forms that appear most frequently, and master the elegant <span class="german-word" data-card="je_desto">je...desto</span> construction that expresses proportional relationships. By the end, you'll be able to rank anything, compare any two things, and express your strongest preferences in German.
+    </p>
+  </div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      The Three Degrees of Adjectives
+    </p>
+
+    <p class="narrative" data-speak="true">
+      Every adjective in German exists in three forms, representing three levels of intensity or comparison. Understanding these three degrees is fundamental to expressing nuance in German.
+    </p>
+
+    <div class="comparative-table">
+      <div class="comparative-cell">
+        <div class="comparative-cell-title" data-speak="true">Positive</div>
+        <div class="comparative-content" data-speak="true">groß</div>
+        <div style="font-size: 0.85rem; color: rgba(212,202,187,0.6); margin-top: 8px;">big</div>
+      </div>
+
+      <div class="comparative-cell">
+        <div class="comparative-cell-title" data-speak="true">Comparative</div>
+        <div class="comparative-content" data-speak="true">größer</div>
+        <div style="font-size: 0.85rem; color: rgba(212,202,187,0.6); margin-top: 8px;">bigger</div>
+      </div>
+
+      <div class="comparative-cell">
+        <div class="comparative-cell-title" data-speak="true">Superlative</div>
+        <div class="comparative-content" data-speak="true">am größten</div>
+        <div style="font-size: 0.85rem; color: rgba(212,202,187,0.6); margin-top: 8px;">biggest</div>
+      </div>
+
+      <div class="comparative-cell">
+        <div class="comparative-cell-title" data-speak="true">Positive</div>
+        <div class="comparative-content" data-speak="true">klein</div>
+        <div style="font-size: 0.85rem; color: rgba(212,202,187,0.6); margin-top: 8px;">small</div>
+      </div>
+
+      <div class="comparative-cell">
+        <div class="comparative-cell-title" data-speak="true">Comparative</div>
+        <div class="comparative-content" data-speak="true">kleiner</div>
+        <div style="font-size: 0.85rem; color: rgba(212,202,187,0.6); margin-top: 8px;">smaller</div>
+      </div>
+
+      <div class="comparative-cell">
+        <div class="comparative-cell-title" data-speak="true">Superlative</div>
+        <div class="comparative-content" data-speak="true">am kleinsten</div>
+        <div style="font-size: 0.85rem; color: rgba(212,202,187,0.6); margin-top: 8px;">smallest</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Positive: The Base Form</div>
+      <p data-speak="true" style="margin-bottom: 12px;">
+        The positive degree is simply the adjective in its base form. It describes a quality without comparison: <span class="german-word" data-card="schön">schön</span> (beautiful), <span class="german-word" data-card="schnell">schnell</span> (fast), <span class="german-word" data-card="intelligent">intelligent</span> (intelligent).
+      </p>
+      <div class="example-pair">
+        <div class="example-label">Example</div>
+        <div class="example-text" data-speak="true">Das Haus ist schön.</div>
+        <div class="example-translation">The house is beautiful.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Comparative: The -er Suffix</div>
+      <p data-speak="true" style="margin-bottom: 12px;">
+        The comparative degree is formed by adding <span class="german-word" data-card="er">-er</span> to the adjective stem. It always appears with <span class="german-word" data-card="als">als</span> (than) to introduce the comparison.
+      </p>
+      <div class="formation-table">
+        <div class="formation-row">
+          <div class="formation-cell header">Adjective</div>
+          <div class="formation-cell header">Rule</div>
+          <div class="formation-cell header">Comparative</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">schnell</div>
+          <div class="formation-cell" data-speak="true">+ -er</div>
+          <div class="formation-cell" data-speak="true">schneller</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">schön</div>
+          <div class="formation-cell" data-speak="true">+ -er</div>
+          <div class="formation-cell" data-speak="true">schöner</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">alt</div>
+          <div class="formation-cell" data-speak="true">+ -er → ä</div>
+          <div class="formation-cell" data-speak="true">älter</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">groß</div>
+          <div class="formation-cell" data-speak="true">+ -er → ö</div>
+          <div class="formation-cell" data-speak="true">größer</div>
+        </div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example</div>
+        <div class="example-text" data-speak="true">Dieses Haus ist schneller zu bauen als jenes.</div>
+        <div class="example-translation">This house is faster to build than that one.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Superlative: The am...sten Construction</div>
+      <p data-speak="true" style="margin-bottom: 12px;">
+        The superlative degree is formed with <span class="german-word" data-card="am">am</span> + adjective + <span class="german-word" data-card="sten">-sten</span>. This marks the absolute extreme or highest degree. The superlative is used to identify the single best, worst, biggest, smallest, etc. in a group.
+      </p>
+      <div class="formation-table">
+        <div class="formation-row">
+          <div class="formation-cell header">Adjective</div>
+          <div class="formation-cell header">Rule</div>
+          <div class="formation-cell header">Superlative</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">schnell</div>
+          <div class="formation-cell" data-speak="true">am + ... + -sten</div>
+          <div class="formation-cell" data-speak="true">am schnellsten</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">schön</div>
+          <div class="formation-cell" data-speak="true">am + ... + -sten</div>
+          <div class="formation-cell" data-speak="true">am schönsten</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">alt</div>
+          <div class="formation-cell" data-speak="true">am + ... + -sten → ä</div>
+          <div class="formation-cell" data-speak="true">am ältesten</div>
+        </div>
+        <div class="formation-row">
+          <div class="formation-cell" data-speak="true">lang</div>
+          <div class="formation-cell" data-speak="true">am + ... + -sten → ä</div>
+          <div class="formation-cell" data-speak="true">am längsten</div>
+        </div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example</div>
+        <div class="example-text" data-speak="true">Das ist das schönste Haus in der Stadt.</div>
+        <div class="example-translation">That is the most beautiful house in the city.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Umlaut Changes in Comparatives & Superlatives
+    </p>
+
+    <p class="narrative" data-speak="true">
+      German has a distinctive feature: many single-syllable adjectives containing the vowels a, o, or u shift to their umlaut forms (ä, ö, ü) when forming comparatives and superlatives. This is not optional—it's a consistent rule that affects the most common adjectives.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Vowels That Take Umlauts</div>
+      <p data-speak="true" style="margin-bottom: 20px;">
+        When an adjective is one syllable and contains a, o, or u, the umlaut typically appears in the comparative and superlative forms:
+      </p>
+
+      <div class="example-pair">
+        <div class="example-label">a → ä</div>
+        <div class="example-text" data-speak="true">alt (old) → älter → am ältesten</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">a → ä</div>
+        <div class="example-text" data-speak="true">lang (long) → länger → am längsten</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">a → ä</div>
+        <div class="example-text" data-speak="true">stark (strong) → stärker → am stärksten</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">o → ö</div>
+        <div class="example-text" data-speak="true">groß (big) → größer → am größten</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">o → ö</div>
+        <div class="example-text" data-speak="true">hoch (high) → höher → am höchsten</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">u → ü</div>
+        <div class="example-text" data-speak="true">kurz (short) → kürzer → am kürzesten</div>
+      </div>
+
+      <div class="aside-title" style="margin-top: 20px;">IMPORTANT NOTE</div>
+      <p data-speak="true" style="font-size: 0.95rem; color: rgba(212,202,187,0.8); margin-top: 8px;">
+        Longer adjectives or those with multiple syllables rarely take umlauts: <span class="german-word" data-card="schön">schön</span> (beautiful) → schöner → am schönsten (no umlaut, because it already has ö). When in doubt, check the original vowel—if it's a, o, or u in a single-syllable adjective, expect the umlaut.
+      </p>
+    </div>
+  </div>
+
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Irregular Comparatives & Superlatives
+    </p>
+
+    <p class="narrative" data-speak="true">
+      As in English, German has several common adjectives that break the rules. These irregular forms are among the most frequently used words in the language, so learning them is essential. You'll encounter them constantly in conversation, reading, and writing.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">The Six Most Common Irregular Forms</div>
+
+      <div class="example-pair">
+        <div class="example-label">Gut (good) → Besser → Am besten</div>
+        <div class="example-text" data-speak="true">Das ist gut. Das ist besser. Das ist am besten.</div>
+        <div class="example-translation">That's good. That's better. That's the best.</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Schlecht (bad) → Schlechter → Am schlechtesten</div>
+        <div class="example-text" data-speak="true">Das war schlecht. Das war schlechter. Das war am schlechtesten.</div>
+        <div class="example-translation">That was bad. That was worse. That was the worst.</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Viel (much) → Mehr → Am meisten</div>
+        <div class="example-text" data-speak="true">Du hast viel. Du hast mehr. Du hast am meisten.</div>
+        <div class="example-translation">You have much. You have more. You have the most.</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Wenig (little) → Weniger → Am wenigsten</div>
+        <div class="example-text" data-speak="true">Sie haben wenig Zeit. Sie haben weniger Zeit. Sie haben am wenigsten Zeit.</div>
+        <div class="example-translation">They have little time. They have less time. They have the least time.</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Nah (near) → Näher → Am nächsten</div>
+        <div class="example-text" data-speak="true">Das ist nah. Das ist näher. Das ist am nächsten.</div>
+        <div class="example-translation">That is near. That is nearer. That is the nearest.</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Hoch (high) → Höher → Am höchsten</div>
+        <div class="example-text" data-speak="true">Der Berg ist hoch. Er ist höher. Das ist der höchste Berg.</div>
+        <div class="example-translation">The mountain is high. It is higher. That is the highest mountain.</div>
+      </div>
+
+      <div class="aside-title" style="margin-top: 20px;">WHY THESE ARE SPECIAL</div>
+      <p data-speak="true" style="font-size: 0.95rem; color: rgba(212,202,187,0.8); margin-top: 8px;">
+        Irregular forms often come from the language's historical evolution. "Gut/besser/am besten" comes from different roots entirely (gut from Old German, besser from a different root meaning "to improve"). These forms are fossil words—survivors from earlier stages of the language that didn't conform to later regularization patterns.
+      </p>
+    </div>
+  </div>
+
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Using Comparatives: Als vs. Wie
+    </p>
+
+    <p class="narrative" data-speak="true">
+      When you form a comparative, you need to introduce the second element being compared. German offers two distinct conjunctions for this: <span class="german-word" data-card="als">als</span> and <span class="german-word" data-card="wie">wie</span>. Choosing the correct one depends on whether you're expressing inequality (difference) or equality (similarity).
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Als: For Inequality (Unequal Comparison)</div>
+      <p data-speak="true" style="margin-bottom: 12px;">
+        Use <span class="german-word" data-card="als">als</span> when comparing two things that are different in degree or quality. This is the standard conjunction with any comparative form.
+      </p>
+      <div class="example-pair">
+        <div class="example-label">Example 1</div>
+        <div class="example-text" data-speak="true">Ich bin älter als du.</div>
+        <div class="example-translation">I am older than you. (unequal ages)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 2</div>
+        <div class="example-text" data-speak="true">Berlin ist größer als München.</div>
+        <div class="example-translation">Berlin is bigger than Munich. (unequal sizes)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 3</div>
+        <div class="example-text" data-speak="true">Dieser Film ist interessanter als jener.</div>
+        <div class="example-translation">This film is more interesting than that one.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Wie: For Equality (Equal Comparison)</div>
+      <p data-speak="true" style="margin-bottom: 12px;">
+        Use <span class="german-word" data-card="wie">wie</span> when you want to express that two things are equal or similar. It's always paired with <span class="german-word" data-card="so">so</span> before the adjective: <span class="german-word" data-card="so_wie">so...wie</span> (as...as).
+      </p>
+      <div class="example-pair">
+        <div class="example-label">Example 1</div>
+        <div class="example-text" data-speak="true">Ich bin so alt wie du.</div>
+        <div class="example-translation">I am as old as you. (equal ages)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 2</div>
+        <div class="example-text" data-speak="true">Diese Stadt ist so schön wie München.</div>
+        <div class="example-translation">This city is as beautiful as Munich.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 3</div>
+        <div class="example-text" data-speak="true">Er läuft so schnell wie ein Hase.</div>
+        <div class="example-translation">He runs as fast as a rabbit.</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Quick Distinction</div>
+      <p data-speak="true">
+        Comparative (with -er) + <strong>als</strong> = different degree<br>
+        Positive (no -er) + <strong>so...wie</strong> = same degree<br>
+        Think: "<strong>als</strong>" has the letter "L" in "unequaL"
+      </p>
+    </div>
+  </div>
+
+  <div class="scene scene-6">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      The Je...Desto Construction: Proportional Relationships
+    </p>
+
+    <p class="narrative" data-speak="true">
+      One of the most elegant structures in German is the <span class="german-word" data-card="je_desto">je...desto</span> construction, which expresses how two things increase or decrease in tandem. This is how German speakers naturally express cause-and-effect relationships where one variable depends proportionally on another.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Formation & Structure</div>
+      <p data-speak="true" style="margin-bottom: 12px;">
+        The structure uses two comparative forms: one introduced by "je" (the condition) and one introduced by "desto" (the result). Each clause follows subordinate clause rules, with the verb at the end.
+      </p>
+      <div class="example-pair">
+        <div class="example-label">General Pattern</div>
+        <div class="example-text" data-speak="true">Je + comparative, desto/umso + comparative</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 1 — More Practice, Better Results</div>
+        <div class="example-text" data-speak="true">Je mehr du übst, desto besser wird dein Deutsch.</div>
+        <div class="example-translation">The more you practice, the better your German becomes.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 2 — Higher Price, Lower Demand</div>
+        <div class="example-text" data-speak="true">Je höher der Preis, desto geringer die Nachfrage.</div>
+        <div class="example-translation">The higher the price, the lower the demand.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 3 — Earlier Wake-up, More Time</div>
+        <div class="example-text" data-speak="true">Je früher ich aufwache, desto mehr Zeit habe ich.</div>
+        <div class="example-translation">The earlier I wake up, the more time I have.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 4 — Simpler Explanation, Better Understanding</div>
+        <div class="example-text" data-speak="true">Je einfacher die Erklärung, umso besser das Verständnis.</div>
+        <div class="example-translation">The simpler the explanation, the better the understanding.</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Je...Desto vs. Umso</div>
+      <p data-speak="true">
+        "Desto" and "umso" are interchangeable in the second clause. Both mean "the" in this context. Some regions prefer one over the other, but they function identically. You might also see "je...je" in older texts, but modern German prefers "je...desto" or "je...umso".
+      </p>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Verb Placement in Je...Desto Clauses</div>
+      <p data-speak="true" style="margin-bottom: 12px;">
+        Each clause functions as a subordinate clause, so the verb moves to the end. This is critical for correct German word order.
+      </p>
+      <div class="example-pair">
+        <div class="example-label">Analysis of: Je mehr du übst, desto besser wird dein Deutsch.</div>
+        <div style="background: rgba(10,14,26,0.3); padding: 12px; border-radius: 4px; font-size: 0.9rem; margin-top: 8px;" data-speak="true">
+          Clause 1: "Je mehr du übst" (the more you practice) — übst = verb at end<br>
+          Clause 2: "desto besser wird dein Deutsch" (the better your German becomes) — wird = verb at end
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-7">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Practical Applications & Context
+    </p>
+
+    <p class="narrative" data-speak="true">
+      Comparatives and superlatives are among the most natural and frequently used forms in everyday conversation. You'll use them constantly—when describing preferences, ranking possibilities, or expressing extremes. Here are realistic scenarios where these forms appear.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Travel & Description</div>
+      <div class="example-pair">
+        <div class="example-label">Superlative</div>
+        <div class="example-text" data-speak="true">Das war die beste Reise meines Lebens!</div>
+        <div class="example-translation">That was the best trip of my life!</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Comparative</div>
+        <div class="example-text" data-speak="true">Dieses Hotel ist teurer, aber das andere Hotel ist schöner.</div>
+        <div class="example-translation">This hotel is more expensive, but the other hotel is more beautiful.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Personal Preferences</div>
+      <div class="example-pair">
+        <div class="example-label">Expressing Preference</div>
+        <div class="example-text" data-speak="true">Ich mag klassische Musik lieber als elektronische Musik.</div>
+        <div class="example-translation">I like classical music better than electronic music.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Superlative Preference</div>
+        <div class="example-text" data-speak="true">Das ist mein Lieblingsbuch. Ich liebe es am meisten.</div>
+        <div class="example-translation">That's my favorite book. I love it the most.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Comparisons in Arguments</div>
+      <div class="example-pair">
+        <div class="example-label">Je...Desto in Logic</div>
+        <div class="example-text" data-speak="true">Je intelligenter man ist, desto weniger braucht man zu arbeiten.</div>
+        <div class="example-translation">The smarter one is, the less one needs to work.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Cause & Effect</div>
+        <div class="example-text" data-speak="true">Je früher du anfängst, desto schneller erreichst du dein Ziel.</div>
+        <div class="example-translation">The earlier you start, the quicker you reach your goal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-8">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Key Vocabulary: The Core 10 Words of This Chapter
+    </p>
+
+    <p class="narrative" data-speak="true">
+      These ten words form the foundation of comparative and superlative language. Mastering them opens entire categories of expression and gives you flexibility in ranking, comparing, and expressing preferences.
+    </p>
+
+    <div class="vocab-card" data-card="größer">
+      <div class="word-header">
+        <div class="word-main">größer</div>
+        <div class="word-meaning">bigger, larger</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Comparative of "groß" (big). Used to compare two things of different sizes. From Latin "grossus," this word is among the first comparatives learners encounter.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Dies Haus ist größer als jenes." (This house is bigger than that one.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="am_größten">
+      <div class="word-header">
+        <div class="word-main">am größten</div>
+        <div class="word-meaning">biggest, the largest</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Superlative form: the absolute extreme on the scale of size. Used to identify the single biggest entity in a group.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Das ist das größte Problem." (That is the biggest problem.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="besser">
+      <div class="word-header">
+        <div class="word-main">besser</div>
+        <div class="word-meaning">better</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Irregular comparative of "gut" (good). One of the most common adjectives in German. Appears in countless idioms and expressions.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Dein Vorschlag ist besser als meiner." (Your suggestion is better than mine.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="am_besten">
+      <div class="word-header">
+        <div class="word-main">am besten</div>
+        <div class="word-meaning">the best</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Superlative of "gut." Marks the highest quality or most desirable option. A word you'll use constantly when expressing preference or making recommendations.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Das ist am besten für dich." (That is best for you.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="mehr">
+      <div class="word-header">
+        <div class="word-main">mehr</div>
+        <div class="word-meaning">more</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Irregular comparative of "viel" (much, many). Unlike English, German treats "more" as an adjective that must agree with noun gender and case when used attributively.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Ich brauche mehr Zeit." (I need more time.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="am_meisten">
+      <div class="word-header">
+        <div class="word-main">am meisten</div>
+        <div class="word-meaning">the most</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Superlative of "viel." Indicates the maximum amount or quantity. Often used in frequency expressions: "am meisten arbeiten" (work the most).
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Wer arbeitet am meisten?" (Who works the most?)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="weniger">
+      <div class="word-header">
+        <div class="word-main">weniger</div>
+        <div class="word-meaning">less, fewer</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Comparative of "wenig" (little, few). Used to indicate a reduction or lower quantity. A practical word for expressing limitations or decreases.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Das kostet weniger Geld." (That costs less money.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="am_wenigsten">
+      <div class="word-header">
+        <div class="word-main">am wenigsten</div>
+        <div class="word-meaning">the least</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Superlative of "wenig." Marks the minimum or the entity with the smallest amount. Often appears in evaluative contexts.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Das ist am wenigsten wichtig." (That is the least important.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="als">
+      <div class="word-header">
+        <div class="word-main">als</div>
+        <div class="word-meaning">than</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        The conjunction used with comparative adjectives to introduce the second item being compared. Critical for expressing difference or inequality: "größer als" (bigger than).
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Ich bin älter als du." (I am older than you.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="wie">
+      <div class="word-header">
+        <div class="word-main">wie</div>
+        <div class="word-meaning">as, like</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        Used with "so" to express equality: "so...wie" (as...as). Also used for direct comparison or similarity. One of the most versatile words in German.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Ich bin so groß wie du." (I am as tall as you.)
+      </div>
+    </div>
+
+    <div class="vocab-card" data-card="je_desto">
+      <div class="word-header">
+        <div class="word-main">je...desto</div>
+        <div class="word-meaning">the...the (proportional relationship)</div>
+      </div>
+      <div class="word-content" data-speak="true">
+        A paired construction expressing cause-and-effect or proportional relationships. "Je" introduces the condition, "desto" introduces the consequence. Fundamental to German logical expression.
+      </div>
+      <div class="usage-note" data-speak="true">
+        "Je mehr ich lerne, desto besser wird mein Deutsch." (The more I learn, the better my German becomes.)
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-container">
+    <h3 data-speak="true">Chapter 69 Quiz: Comparatives & Superlatives (80% = 12 Questions)</h3>
+
+    <div id="quiz-questions"></div>
+
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+
+    <div class="quiz-score" id="quiz-score"></div>
+
+    <div class="quiz-reset" style="text-align: center; margin-top: 20px;">
+      <button onclick="resetQuiz()" style="background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; padding: 12px 28px; border-radius: 8px; cursor: pointer;">Start Over</button>
+    </div>
+
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+  </div>
+
+  <div class="nav-links">
+    <a href="chapter68.html" class="nav-link"><span class="chapter-number">← Ch 68</span> Prepositions II</a>
+    <a href="chapter70.html" class="nav-link">Reflexive Verbs <span class="chapter-number">Ch 70 →</span></a>
+  </div>
+
+</div>
+
+<script>
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.hasAttribute('data-card')) {
+    const card = document.querySelector('[data-card="' + e.target.getAttribute('data-card') + '"]');
+    if (card && card.classList.contains('vocab-card')) {
+      card.classList.toggle('open');
+    }
+  }
+  if (e.target.hasAttribute('data-speak') && e.target.textContent.trim()) {
+    speakGerman(e.target.textContent);
+  }
+});
+
+const quizData = [
+  { question: "How do you form the comparative in German?", options: ["Add -ly", "Add -er", "Use more", "Use sein"], correct: 1, explanation: "Add -er to the adjective: groß → größer." },
+  { question: "What is the comparative of 'gut'?", options: ["guter", "besser", "gut-er", "mehr gut"], correct: 1, explanation: "'Gut' is irregular: gut → besser → am besten." },
+  { question: "Form the superlative of 'schön':", options: ["schöner", "am schönsten", "schönste", "der schönste"], correct: 1, explanation: "The superlative is 'am' + adjective + '-sten': am schönsten." },
+  { question: "Which word means 'than' in comparisons?", options: ["wie", "als", "oder", "zu"], correct: 1, explanation: "'Als' is used for comparisons of inequality: älter als du." },
+  { question: "What does 'Je mehr, desto besser' mean?", options: ["More or less", "The more, the better", "Better and more", "More questions"], correct: 1, explanation: "This construction expresses proportional relationships: je... desto..." },
+  { question: "Which is a regular comparative?", options: ["besser", "größer", "mehr", "höher"], correct: 1, explanation: "'Größer' is regular; the others are irregular." },
+  { question: "Fill in: 'Ich bin ____ groß wie du.'", options: ["als", "mehr", "so", "sehr"], correct: 2, explanation: "'So' is used with 'wie' for equality: so groß wie (as big as)." },
+  { question: "What is the superlative of 'alt'?", options: ["älter", "am ältesten", "mehr alt", "am altesten"], correct: 1, explanation: "With umlaut: alt → älter → am ältesten." },
+  { question: "Select the correct form: 'Das ist das ____ Buch.'", options: ["besser", "beste", "am beste", "bestest"], correct: 1, explanation: "Superlatives in attributive position use '-e': das beste Buch." },
+  { question: "What is the superlative of 'viel' (much)?", options: ["mehr", "am meisten", "vieler", "vielsten"], correct: 1, explanation: "'Viel' is irregular: viel → mehr → am meisten." },
+  { question: "Which sentence uses comparatives correctly?", options: ["Der Film ist langweiliger als das Buch.", "Der Film ist langweiling als das Buch.", "Der Film langweiliger ist als das Buch.", "Der Film ist langweil-er als Buch."], correct: 0, explanation: "Add -er and use 'als' for comparison: langweiliger als." },
+  { question: "In 'Je mehr du übst, desto besser,' which pattern is used?", options: ["Simple comparison", "Je-desto construction", "Superlative", "Equality"], correct: 1, explanation: "This is the proportional 'je-desto' construction." }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion() {
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+  document.getElementById('quiz-questions').innerHTML = `
+    <div class="quiz-question">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `<div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '') : ''}" onclick="selectAnswer(${i})" data-speak="true">${opt}</div>`).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232,164,74,0.1); font-size: 0.95rem; color: rgba(212,202,187,0.8);" data-speak="true">${q.explanation}</div>` : ''}
+    </div>
+  `;
+  updateNavButtons();
+}
+
+function selectAnswer(i) {
+  if (answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = i;
+  if (i === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) { currentQuestion++; displayQuestion(); }
+  else showScore();
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) { currentQuestion--; displayQuestion(); }
+}
+
+function updateNavButtons() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function showScore() {
+  const pct = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('quiz-summary').classList.add('show');
+  document.getElementById('quiz-summary').innerHTML = `<p data-speak="true"><strong>Quiz Complete!</strong></p><p style="margin-top: 12px;" data-speak="true">Comparisons rank the world—${pct >= 80 ? 'excellent work!' : 'keep practicing!'}</p>`;
+}
+
+function resetQuiz() {
+  currentQuestion = 0; score = 0; answered = {};
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-summary').classList.remove('show');
+  displayQuestion();
+}
+
+const canvas = document.getElementById('chart-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawChart() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const time = Date.now() / 1000;
+
+  // Draw growing bar chart with comparative visualization
+  const barWidth = 40;
+  const barSpacing = 60;
+  const baseY = canvas.height * 0.6;
+
+  for (let i = 0; i < 6; i++) {
+    const heightVariation = Math.sin(time + i * 0.4) * 30;
+    const h = 80 + i * 40 + heightVariation;
+    const x = canvas.width / 2 - (barSpacing * 2.5) + i * barSpacing;
+
+    // Gradient for bars
+    const gradient = ctx.createLinearGradient(0, baseY - h, 0, baseY);
+    gradient.addColorStop(0, `rgba(232, 164, 74, ${0.8 - i * 0.1})`);
+    gradient.addColorStop(1, `rgba(232, 164, 74, ${0.3 - i * 0.05})`);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(x, baseY - h, barWidth, h);
+
+    // Crown on the tallest bar
+    if (i === 5) {
+      ctx.fillStyle = 'rgba(201, 169, 97, 0.9)';
+      ctx.beginPath();
+      ctx.arc(x + barWidth / 2, baseY - h - 15, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText('♔', x + barWidth / 2 - 4, baseY - h - 8);
+    }
+  }
+
+  requestAnimationFrame(drawChart);
+}
+
+drawChart();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(s => observer.observe(s));
+
+displayQuestion();
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">604 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(71%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:71%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 604 words across 69 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">118 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(81%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:81%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 118 patterns across 69 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

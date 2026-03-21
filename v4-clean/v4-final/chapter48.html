@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 48: Ich Bin (I Am)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- MIRROR REFLECTION CANVAS --- */
+  #mirror-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 1000px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CONJUGATION TABLE --- */
+  .conjugation-table {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    font-size: 1rem;
+  }
+
+  .conjugation-table h4 {
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .conj-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+  }
+
+  .conj-row:last-child {
+    border-bottom: none;
+  }
+
+  .conj-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .conj-pronoun {
+    color: rgba(212, 202, 187, 0.6);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .conj-verb {
+    color: var(--fire);
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .conjugation-table { padding: 24px 16px; font-size: 0.95rem; }
+    .conj-row { grid-template-columns: 1fr; gap: 12px; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="mirror-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Forty-Eight</div>
+    <h1>Ich Bin</h1>
+    <div class="subtitle">The Irregular Architecture of Existence</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE MESS ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Look at the verb <span class="german-word" data-speak="true">sein</span> (to be):
+    </p>
+
+    <div class="conjugation-table">
+      <h4>The Present Tense of SEIN (To Be)</h4>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">I</span>
+          <span class="conj-verb">ich bin</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">You (singular)</span>
+          <span class="conj-verb">du bist</span>
+        </div>
+      </div>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">He/She/It</span>
+          <span class="conj-verb">er/sie/es ist</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">We</span>
+          <span class="conj-verb">wir sind</span>
+        </div>
+      </div>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">You (plural)</span>
+          <span class="conj-verb">ihr seid</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">They/You (formal)</span>
+          <span class="conj-verb">sie/Sie sind</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative">
+      Look at English:
+    </p>
+
+    <div class="conjugation-table">
+      <h4>The Present Tense of BE (To Be)</h4>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">I</span>
+          <span class="conj-verb">am</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">You</span>
+          <span class="conj-verb">are</span>
+        </div>
+      </div>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">He/She/It</span>
+          <span class="conj-verb">is</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">We/You/They</span>
+          <span class="conj-verb">are</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative">
+      What is this? Where is the pattern? Why does the verb change so dramatically from person to person? <em>Bin, bist, ist, sind, seid</em> — these don't look like the same word. And <em>am, are, is</em> — these are even more radical departures.
+    </p>
+
+    <p class="narrative emphasis">
+      The verb "to be" is broken. Irregular. Chaotic. Or so it seems.
+    </p>
+
+    <p class="narrative">
+      But this is wrong. The irregularity is not a bug. It's a feature. It's a historical artifact. And understanding it requires us to look deeper — much deeper — into the past.
+    </p>
+
+    <p class="narrative">
+      The verb "to be" is the most fundamental verb in any language. It expresses existence itself — the very fact of being. Because it is so fundamental, it was used billions of times over thousands of years. And because it was used so often, it wore down. The sounds shifted. The forms fragmented. Different roots merged. What should have stayed unified fell apart into irregular pieces.
+    </p>
+
+    <p class="narrative">
+      In fact, <span class="german-word" data-speak="true">sein</span> in German is not even a single root. It's a fusion of multiple ancient roots, each with their own conjugation patterns, smashed together into one verb. This is what happens when a word is used so intensely, so constantly, that sound changes and shifts accumulate faster than in other words.
+    </p>
+
+    <p class="narrative">
+      The irregularity of "to be" is a window into the deepest history of the language.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE ROOTS ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In Proto-Indo-European, there were at least three different roots that all meant something related to "being" or "existing." Over thousands of years, as German evolved, these roots merged into a single verb. But you can still see the traces:
+    </p>
+
+    <p class="narrative">
+      <strong>Root 1: *es-</strong> (The primary root for existence)
+    </p>
+
+    <p class="narrative small">
+      This is the oldest, most basic root. It appears in German in forms like <em>ist</em> (he/she/it is) and <em>sind</em> (they are). The same root gave us English "is" and "essence" — the very nature of something. It's also the root behind Latin "est" and Spanish "es." This root has been used so long that it barely resembles its original form.
+    </p>
+
+    <p class="narrative">
+      <strong>Root 2: *ə-wes-</strong> (To dwell, to live, to be located)
+    </p>
+
+    <p class="narrative small">
+      This root gave us German <em>sein</em> (infinitive form). Notice the <em>s</em> sound preserved in the word. The same root appears in English in forms like "to be" (which has fallen away in modern English but was stronger in Middle English). It means more specifically "to dwell" or "to reside" — existence in a place.
+    </p>
+
+    <p class="narrative">
+      <strong>Root 3: *bh- (or *bheu-)</strong> (To grow, to become)
+    </p>
+
+    <p class="narrative small">
+      This root appears in German <em>bin</em> (I am) and <em>bist</em> (you are). The <em>b</em> sound is preserved. In English, it's hidden, but you can hear it in words like "be" itself and in the old past tense "was." The original meaning was "to grow" or "to become" — the sense that being is a process, a becoming.
+    </p>
+
+    <p class="narrative">
+      So what is <em>sein</em>? It's a merger. It's three ancient roots fused together by the sheer weight of constant use. You are looking at a verb that has been spoken billions of times, shifted by sound changes, reshaped by analogy, and eventually reformed into a new whole. And the seams are still visible.
+    </p>
+
+    <p class="narrative">
+      In Germanic languages, the *bheu- root won dominance. In Romance languages, the *es- root won. In some other Indo-European languages, different roots prevailed. But all of them show the same pattern: "to be" is irregular because it's ancient and fundamental. The more you use a word, the faster it changes.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: BEING IN ACTION ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let's see what we can do with <span class="german-word" data-speak="true">sein</span>:
+    </p>
+
+    <!-- SEIN card -->
+    <div class="ety-card" id="card-sein">
+      <div class="word-header">
+        <span class="word-main">Sein</span>
+        <span class="word-pron">/zaɪn/</span>
+      </div>
+      <div class="word-meaning">to be — the fundamental verb of existence</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ə-wes-, *bheu-, *es-</span>
+        <span class="bridge-note">— three ancient roots merged through time</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">be, am, is, are</span>
+        <span class="bridge-note">— equally irregular in English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">sein (infinitive)</span>
+        <span class="bridge-note">— the most fundamental Germanic verb</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">是</span>
+        <span class="bridge-note">— shì — a single, unchanging form</span>
+      </div>
+      <div class="story">
+        <em>Sein</em> is the infinitive form of "to be." It's the most irregular verb in German, and understanding why requires looking back 6,000 years. The irregularity is not a flaw — it's a trace of history. Because this verb was used so constantly, it wore down differently than other verbs. The three ancient roots that once meant "to exist," "to dwell," and "to become" merged into a single form, but you can still see the three components in the conjugation table: <em>bin, bist, ist, sind, seid</em>. Chinese takes a completely different approach: 是 (shì) never changes. There's no conjugation at all. Both systems work — German has irregular but information-rich forms, while Chinese has regular but less marked forms.
+      </div>
+    </div>
+
+    <!-- ICH BIN card -->
+    <div class="ety-card" id="card-ichbin">
+      <div class="word-header">
+        <span class="word-main">Ich Bin</span>
+        <span class="word-pron">/ɪç bɪn/</span>
+      </div>
+      <div class="word-meaning">I am — the first person assertion of existence</div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">I am</span>
+        <span class="bridge-note">— the same form, almost identical sound</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ə-wes- (dwell) + *bheu- (become)</span>
+        <span class="bridge-note">— the merger of two roots in the present tense</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ich bin</span>
+        <span class="bridge-note">— the first assertion of self, fundamental existential claim</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">我是</span>
+        <span class="bridge-note">— wǒ shì (I am) — two separate, unchanging words</span>
+      </div>
+      <div class="story">
+        <em>Ich bin</em> is one of the first things you learn to say in German. It's the assertion of existence: "I am." But why <em>bin</em> and not something else? Because it comes from the ancient root *bheu-, the root that means "to become," "to grow," "to be." The ancient Germanic peoples understood existence not as a static state but as a process of becoming. When you say <em>Ich bin</em>, you're saying "I am becoming," "I am in the process of existence." German and English share this: <em>am</em> and <em>bin</em> come from the same PIE root. Chinese, meanwhile, simply uses 我是: the pronoun 我 (I) + the verb 是 (is/am). No change, no irregularity. Just clear combination.
+      </div>
+    </div>
+
+    <!-- DU BIST card -->
+    <div class="ety-card" id="card-dubist">
+      <div class="word-header">
+        <span class="word-main">Du Bist</span>
+        <span class="word-pron">/duː bɪst/</span>
+      </div>
+      <div class="word-meaning">you are — addressing one person directly</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*tu (you) + *bheu-s-ti (you become)</span>
+        <span class="bridge-note">— the second person form of the *bheu- root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">you are</span>
+        <span class="bridge-note">— modern English has neutralized this distinction</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">du bist</span>
+        <span class="bridge-note">— intimate singular form, showing respect for the other person</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">你是</span>
+        <span class="bridge-note">— nǐ shì (you are) — the same structure as "I am"</span>
+      </div>
+      <div class="story">
+        <em>Du bist</em> is the second person singular form. The <em>-st</em> ending is a marker of second person that appears in many Germanic languages. It comes from the PIE ending *-si, which marked second person. So <em>du bist</em> literally breaks down as "you" + "(you) become-second-person." German preserves this ending in formal writing and in some dialects, while English has lost it almost entirely. Modern English used to say "thou bist" (in the King James Bible it's "thou art"), but we've flattened everything to just "you are." German maintains the distinction, which is why the second person singular is marked.
+      </div>
+    </div>
+
+    <!-- ER IST card -->
+    <div class="ety-card" id="card-erist">
+      <div class="word-header">
+        <span class="word-main">Er Ist</span>
+        <span class="word-pron">/ɛʁ ɪst/</span>
+      </div>
+      <div class="word-meaning">he is — third person singular assertion</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*es-ti (from *es-, the root for existence)</span>
+        <span class="bridge-note">— third person, but a completely different root than first/second person</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">he is</span>
+        <span class="bridge-note">— same word in English, equally ancient</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">er ist</span>
+        <span class="bridge-note">— notice: completely different from <em>bin</em> and <em>bist</em></span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">他是</span>
+        <span class="bridge-note">— tā shì (he is) — identical structure, no irregularity</span>
+      </div>
+      <div class="story">
+        <em>Er ist</em> is where the irregularity becomes clear. Look: <em>ich bin, du bist, er ist</em>. Two completely different roots! The first two come from *bheu-, the third comes from *es-. Why the switch? In Proto-Germanic, the third person singular had a different conjugation pattern. When these two roots merged — which happened gradually as the language evolved — they didn't merge evenly. The first and second person kept the *bheu- forms, while the third person kept the *es- forms. This is called "suppletion": using forms from completely different roots in the same verb's conjugation. Chinese avoids this by never changing the verb at all: 是 (shì) is always 是.
+      </div>
+    </div>
+
+    <!-- WIR SIND card -->
+    <div class="ety-card" id="card-wirsind">
+      <div class="word-header">
+        <span class="word-main">Wir Sind</span>
+        <span class="word-pron">/vɪʁ zɪnt/</span>
+      </div>
+      <div class="word-meaning">we are — the plural assertion of collective existence</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*es-mes (from *es-, but plural form)</span>
+        <span class="bridge-note">— plural of the *es- root, but with sound changes</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">we are</span>
+        <span class="bridge-note">— same root, but "are" has been extended to plural</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wir sind</span>
+        <span class="bridge-note">— plural form, completely different from singular</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">我们是</span>
+        <span class="bridge-note">— wǒmen shì (we are) — plural marker + unchanged verb</span>
+      </div>
+      <div class="story">
+        <em>Wir sind</em> is the plural form. Notice: it goes back to the *es- root! So we have: <em>ich bin, du bist</em> (from *bheu-), then <em>er ist</em> (from *es-), then <em>wir sind</em> (also from *es-, but plural). It's as if the language couldn't decide which root to use, so it split: first and second person keep *bheu-, third person and plural switch to *es-. This merger happened because *es- was more "productive" in the plural forms. Chinese simply adds a plural marker 们 (men) to the pronoun and leaves the verb unchanged.
+      </div>
+    </div>
+
+    <!-- WAR card -->
+    <div class="ety-card" id="card-war">
+      <div class="word-header">
+        <span class="word-main">War</span>
+        <span class="word-pron">/vaːʁ/</span>
+      </div>
+      <div class="word-meaning">was — the past tense of "to be"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wes-r (from *ə-wes-, the "dwell" root)</span>
+        <span class="bridge-note">— a third root emerges in the past tense!</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">was</span>
+        <span class="bridge-note">— same root, same sound pattern</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">war (ich war, du warst, er war, wir waren)</span>
+        <span class="bridge-note">— yet another set of forms, from yet another root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">是</span>
+        <span class="bridge-note">— shì — the exact same form, unchanged in the past</span>
+      </div>
+      <div class="story">
+        <em>War</em> is the past tense, and it introduces a third root: *wes-, the "dwell" root. So the verb "to be" in German draws from three different ancient roots: *bheu- (become), *es- (exist), and *wes- (dwell). The past tense switched entirely to *wes-. In English, <em>was</em> is equally irregular. In Chinese, past tense doesn't require a change to the verb at all — 是 (shì) works for all tenses. The context makes the time clear. German preserved the full irregularity of Indo-European, showing us three ancient roots layered into one verb.
+      </div>
+    </div>
+
+    <!-- GEWESEN card -->
+    <div class="ety-card" id="card-gewesen">
+      <div class="word-header">
+        <span class="word-main">Gewesen</span>
+        <span class="word-pron">/ɡəˈveːzən/</span>
+      </div>
+      <div class="word-meaning">been — the past participle of "to be"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wes-no- (been, from the *wes- root)</span>
+        <span class="bridge-note">— participle form of the "dwell" root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">been</span>
+        <span class="bridge-note">— same root, same pattern, but English uses it with "have"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">gewesen (I have been = Ich bin gewesen)</span>
+        <span class="bridge-note">— the ge- prefix marks past participles in German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">是</span>
+        <span class="bridge-note">— still shì — no change, even for past participles</span>
+      </div>
+      <div class="story">
+        <em>Gewesen</em> is the past participle. Look at the structure: <em>ge</em> + <em>wesen</em>. The <em>ge</em> prefix is a Germanic marker of past participles. The <em>wesen</em> part comes from the *wes- root. So when you say <em>Ich bin gewesen</em> (I have been), you're using: 1) <em>bin</em> from the *bheu- root (auxiliary verb), 2) <em>gewesen</em> from the *wes- root (main verb). Two ancient roots in a single compound tense! Chinese resolves this by never changing 是 at all. In a compound tense, you simply use the same verb form: 我已经是 (I already am/have been).
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: WHY THIS MATTERS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The irregularity of <span class="german-word" data-speak="true">sein</span> teaches us something fundamental: the most common words change the fastest. The words you use every single day, billions of times, are the ones that wear down, shift, and transform. They're the ones that break the rules, because they're used so much that every sound change, every analogy, every merger and split affects them.
+    </p>
+
+    <p class="narrative">
+      In English, the verb "to be" is equally irregular: I am, you are, he/she/it is, we are, they are. These forms come from different roots, just like in German. It's not a flaw of English or German. It's the same heritage of the Indo-European languages.
+    </p>
+
+    <p class="narrative">
+      Meanwhile, Chinese solved this completely differently. The verb 是 (shì) is regular, unchanging. But Chinese doesn't have grammatical tense or aspect marked on verbs at all. Instead, it uses particles and context. Neither approach is "better" — they're different solutions to the same problem of expressing time and existence.
+    </p>
+
+    <p class="narrative">
+      When you understand why a verb is irregular, it becomes easier to learn. You're not fighting against a mysterious system. You're reading the history of the language, written in its grammar.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== ASIDE BOX ==================== -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">The Auxiliary Verb: What Is It?</div>
+      <p>
+        In German, <em>sein</em> serves double duty: it can be a main verb (I am happy) or an auxiliary verb (I have been there). As an auxiliary, it helps form perfect tenses and passive voice. This is crucial for German grammar. When you say <em>Ich bin gelaufen</em> (I have run/walked), you're using <em>bin</em> as an auxiliary combined with the past participle <em>gelaufen</em>. Some verbs use <em>haben</em> (to have) as an auxiliary, others use <em>sein</em>. There are patterns — intransitive verbs of motion or change usually use <em>sein</em>. But once again, German is being logical: the choice of auxiliary depends on meaning. <em>Sein</em> marks movement or change; <em>haben</em> marks possession or completion.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        If <em>ich bin</em> means "I am," what would <em>ich war</em> mean?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: war is the past tense.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">I was</button>
+        <button class="guess-btn" onclick="guess(this, false)">I will be</button>
+        <button class="guess-btn" onclick="guess(this, false)">I have been</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        Why is the verb "to be" irregular in both German and English?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: it's the most fundamental verb.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">Because English and German are poorly designed languages</button>
+        <button class="guess-btn" onclick="guess(this, true)">Because it was used so constantly that three ancient roots merged into one verb</button>
+        <button class="guess-btn" onclick="guess(this, false)">Because irregular verbs are random</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge of SEIN</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">436 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(51%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:51%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 436 words across 48 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">97 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(66%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:66%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 97 patterns and grammar rules across 48 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Forty-Eight</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">sein</span><span class="cw-english">to be</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">ich bin</span><span class="cw-english">I am</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">du bist</span><span class="cw-english">you are</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">er/sie/es ist</span><span class="cw-english">he/she/it is</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">wir sind</span><span class="cw-english">we are</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">ihr seid</span><span class="cw-english">you (plural) are</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">sie/Sie sind</span><span class="cw-english">they/you (formal) are</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">war</span><span class="cw-english">was</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">gewesen</span><span class="cw-english">been</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Irregularity Tells History</strong> — The verb "to be" is irregular not because the language is broken, but because it's the most fundamental verb. The most commonly used words change the fastest.<br><br>
+      <strong style="color: var(--text-bright);">Three Roots Merged</strong> — German's sein draws from three different PIE roots: *bheu- (become), *es- (exist), and *wes- (dwell). You can see the merger in the conjugation table itself.<br><br>
+      <strong style="color: var(--text-bright);">Suppletion</strong> — Using forms from different roots in the same verb's conjugation is called suppletion. It's common in ancient languages. As languages modernize, they tend to regularize these verbs, but German and English have kept them irregular.<br><br>
+      <strong style="color: var(--text-bright);">Chinese Alternative</strong> — Chinese solves this differently. The verb 是 (shì) never changes, never conjugates. All tense and aspect information comes from particles and context. Both systems work; they're just different evolutionary paths.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Forty-Eight
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Eight words. One verb. Three ancient roots merged through time.<br>
+        The irregular verb "to be" is not a flaw — it's a window into the deepest past.<br>
+        The most fundamental verbs are the most irregular because they are used the most.<br>
+        Every time you say <em>ich bin</em>, you're speaking an ancient language, shaped by thousands of years of constant use.<br>
+        Next, we turn to the second essential verb: having.
+      </p>
+      <div class="next-chapter">
+        Chapter Forty-Nine: Ich Habe — The Verb of Possession
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter47.html" class="nav-btn">← Chapter 47</a>
+    <a href="chapter49.html" class="nav-btn next">Chapter 49 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 48: MIRROR/REFLECTION - SELF-AWARENESS ---
+const canvas = document.getElementById('mirror-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 9000) :
+    Math.floor((canvas.width * canvas.height) / 7000);
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random() * 0.4 + 0.1,
+      speed: Math.random() * 0.1 + 0.05,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.01 + 0.002,
+      direction: Math.random() > 0.5 ? 1 : -1
+    });
+  }
+}
+
+function drawParticles(time) {
+  // Mirror effect: fill with fade and draw reflection
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.06)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const midline = canvas.height / 2;
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw gradient effect of water/mirror
+  const grad = ctx.createLinearGradient(0, midline - 100, 0, midline + 100);
+  grad.addColorStop(0, 'rgba(110, 181, 212, 0.1)');
+  grad.addColorStop(0.5, 'rgba(110, 181, 212, 0.2)');
+  grad.addColorStop(1, 'rgba(110, 181, 212, 0.1)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, midline - 100, canvas.width, 200);
+
+  particles.forEach((p, idx) => {
+    p.x += p.direction * 0.08;
+    p.wobble += p.wobbleSpeed;
+    p.y += Math.sin(p.wobble) * 0.2 + (scroll - 0.5) * 20;
+
+    // Wrap around
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    // Draw particle
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(110, 181, 212, ${p.alpha * (0.5 + 0.5 * Math.sin(time * 0.003 + idx))})`;
+    ctx.fill();
+
+    // Draw reflection below mirror line
+    const reflectY = midline + (midline - p.y);
+    if (reflectY > 0 && reflectY < canvas.height) {
+      ctx.beginPath();
+      ctx.arc(p.x, reflectY, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(110, 181, 212, ${p.alpha * 0.3 * (0.5 + 0.5 * Math.sin(time * 0.003 + idx))})`;
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- AUDIO FOR GERMAN WORDS ---
+function speakGerman(word) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Exactly! You understand the system.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about the history and why verbs become irregular.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "The verb 'to be' (sein) in German comes from how many different Proto-Indo-European roots?",
+    options: ["one root", "two roots", "three roots", "five roots"],
+    correct: 2,
+    explanation: "Sein draws from three different roots: *bheu- (become), *es- (exist), and *wes- (dwell). You can see this in the conjugation: ich bin, du bist (from *bheu-), er ist (from *es-), war (from *wes-)."
+  },
+  {
+    question: "Which of these forms comes from a different PIE root than the others?",
+    options: ["ich bin", "du bist", "er ist", "wir sind"],
+    correct: 2,
+    explanation: "Er ist comes from *es-, while the others come from *bheu-. This is called suppletion: using forms from different roots in the same verb."
+  },
+  {
+    question: "Why is the verb 'to be' irregular in both German and English?",
+    options: ["Because it's a difficult concept", "Because it was used constantly, so sound changes accumulated", "Because Germanic peoples were disorganized", "Because English and German share a design flaw"],
+    correct: 1,
+    explanation: "High-frequency words change fastest because they're used billions of times. Regular verbs are used less often, so they keep their patterns better."
+  },
+  {
+    question: "What does the past participle 'gewesen' literally break down into?",
+    options: ["ge (past prefix) + wesen (from *wes- root)", "ge (past prefix) + sein (to be)", "gew (combined root) + esen (to exist)", "it's one indivisible word"],
+    correct: 0,
+    explanation: "Gewesen = ge- (past participle marker) + wesen (from the *wes- root). This shows how the past participle drew from a different root than the present tense."
+  },
+  {
+    question: "In the sentence 'Ich bin gelaufen' (I have run), what is the grammatical role of 'bin'?",
+    options: ["main verb expressing existence", "auxiliary verb helping form the perfect tense", "past tense marker", "nothing — it's not needed"],
+    correct: 1,
+    explanation: "Here 'bin' is an auxiliary (or helping) verb. 'Gelaufen' is the main verb (to run). The combination bin + gelaufen forms the perfect tense: 'I have run.'"
+  },
+  {
+    question: "Why does Chinese not have irregular verbs like 'to be'?",
+    options: ["Chinese is a simpler language", "Chinese doesn't mark tense on verbs; it uses particles and context instead", "Chinese verbs never change", "Chinese requires regular verbs by law"],
+    correct: 1,
+    explanation: "Chinese solves the problem differently. The verb 是 (shì) is invariant, never changing. Tense, aspect, and mood are expressed through particles and context, not verb conjugation."
+  },
+  {
+    question: "Which root meaning appears in 'ich bin' and 'du bist'?",
+    options: ["*es- (to exist)", "*bheu- (to become)", "*wes- (to dwell)", "all three equally"],
+    correct: 1,
+    explanation: "Ich bin and du bist both come from *bheu-, which meant 'to become' or 'to grow.' This reflects the Germanic understanding of being as a process."
+  },
+  {
+    question: "What is suppletion?",
+    options: ["adding extra letters to a word", "using forms from completely different roots in the same verb's conjugation", "a type of prefix", "an archaic dialect"],
+    correct: 1,
+    explanation: "Suppletion is when a verb's conjugation draws from multiple different roots. 'To be' is a famous example in both English and German."
+  },
+  {
+    question: "Which conjugation of 'sein' switches to the *es- root?",
+    options: ["First person singular (ich bin)", "Second person singular (du bist)", "Third person singular (er ist)", "Second person plural (ihr seid)"],
+    correct: 2,
+    explanation: "Er ist comes from *es-, while the first and second person forms come from *bheu-. This is the most visible point of suppletion in the present tense."
+  },
+  {
+    question: "The 'st' ending in 'du bist' comes from which PIE feature?",
+    options: ["a gender marker", "a second-person singular marker", "a case ending", "nothing — it's random"],
+    correct: 1,
+    explanation: "The -st ending is from PIE *-si, which marked second person. German preserves this marking, while English has lost it (English just says 'you are')."
+  },
+  {
+    question: "Why is 'war' (was) so different from 'bin' (am)?",
+    options: ["German has multiple words for 'to be' and chooses them randomly", "The past tense uses a completely different PIE root (*wes-)", "German speakers forgot how to conjugate 'sein' in the past", "There is no logical reason"],
+    correct: 1,
+    explanation: "War comes from *wes- (dwell), while bin comes from *bheu- (become). The merging of three different roots created different forms for different tenses."
+  },
+  {
+    question: "What does the example 'Ich bin gewesen' demonstrate?",
+    options: ["Perfect grammar", "The same verb using two different roots (bin from *bheu-, gewesen from *wes-)", "That German is easier than English", "Nothing special"],
+    correct: 1,
+    explanation: "This perfect tense example shows suppletion in action: the auxiliary bin comes from *bheu-, while the main verb gewesen comes from *wes-. Two roots in one sentence!"
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>457 words and patterns</strong> across forty-eight chapters. You understand the deep irregularity that underlies the most common verbs. The verb "to be" is irregular not because it's broken, but because it's the most fundamental, most-used verb in language. Three ancient roots merged into one paradigm.</p>
+      <p style="margin-top: 8px;"><strong>Architecture Unlocked:</strong> You can now see that irregularity is a sign of age and frequency. The newer, less common words follow regular patterns. The ancient, fundamental words are irregular. This is how all languages work. Understanding this transforms the verb from a mystery into a historical artifact.</p>
+      <p style="margin-top: 8px;">Next, we explore the second most essential verb: haben (to have). Why is it regular while sein is irregular? Because it's younger, less ancient. It shows us how the language invents new verbs and maintains them in regular patterns.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+initializeQuiz();
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

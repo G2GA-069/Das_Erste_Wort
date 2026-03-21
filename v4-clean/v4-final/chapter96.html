@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 96: Literarisches Deutsch</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --literary: #c4a88a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #2a2a1a 70%, #3a3a2a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- LITERARY CANVAS --- */
+  #literary-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1s forwards;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    animation: bob 2s ease-in-out infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* --- NARRATIVE PROSE --- */
+  .narrative {
+    font-size: 1.15rem;
+    line-height: 1.95;
+    margin-bottom: 1.8em;
+    color: var(--text);
+  }
+
+  .narrative em {
+    color: var(--text-bright);
+    font-style: italic;
+  }
+
+  .narrative strong {
+    color: var(--fire);
+    font-weight: 600;
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .narrative.small {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--english); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- SCENE STRUCTURE --- */
+  .scene {
+    margin-bottom: 80px;
+  }
+
+  .scene-marker {
+    height: 40px;
+    margin-bottom: 40px;
+    background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.2), transparent);
+  }
+
+  .divider {
+    text-align: center;
+    color: rgba(232, 164, 74, 0.3);
+    margin: 60px 0;
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border-left: 4px solid rgba(232, 164, 74, 0.4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 40px 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-title {
+    color: var(--text-bright);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(200, 100, 100, 0.1);
+    border-color: rgba(200, 100, 100, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .quiz-nav button {
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--fire);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .quiz-nav button:hover:not(:disabled) {
+    background: rgba(232, 164, 74, 0.25);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(50, 50, 50, 0.5);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .post-quiz-summary {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid var(--fire);
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+    .scene { margin-bottom: 60px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="literary-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Ninety-Six</div>
+    <h1>Literarisches Deutsch</h1>
+    <div class="subtitle">Literary German</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: KAFKA, MANN, HESSE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a reader opening <em>Die Verwandlung</em> by Franz Kafka. "As Gregor Samsa awoke one morning from uneasy dreams, he found himself transformed in his bed into a gigantic insect." The language is simple, almost flat. But it says something impossible. A man has become a bug. And the prose does not panic. It simply states this impossibility as fact.
+    </p>
+
+    <p class="narrative">
+      This is literary German. It is not the German of everyday speech, nor is it the German of academic papers. It is the German that explores the strange, the beautiful, the broken, the profound. It is German that asks: what if? It is German that seeks to express the inexpressible — the feelings that lie too deep for ordinary words.
+    </p>
+
+    <p class="narrative">
+      German literature has a particular intensity. Think of Thomas Mann's towering sentences, spiraling inward with baroque complexity. Think of Hermann Hesse's spiritual searching, the language reaching always toward transcendence. Think of Rainer Maria Rilke's precision with emotion, every word placed with absolute care. And beyond these — Goethe, Schiller, the Romantics, the Expressionists, the Modernists — all using German to reach toward something beyond language itself.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the language of transformation. Of the soul made visible.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: VERWANDLUNG ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="verwandlung">Verwandlung</span> — transformation. Not merely a change. But a fundamental shift of being. <em>Wand</em> means "to turn." <em>Verwandlung</em> is the noun form — the act of turning, the state of being turned, the transformation itself.
+    </p>
+
+    <p class="narrative">
+      Kafka's title is perfectly chosen. <em>Die Verwandlung</em> — "The Transformation." Not "The Change" or "The Metamorphosis" (though that is the English translation). <em>Verwandlung</em> carries a sense of fundamental alteration. Gregor does not merely change his form. He is transformed. He becomes something other. And the language must find words for this impossible thing.
+    </p>
+
+    <p class="narrative">
+      In literature, <em>Verwandlung</em> is not just physical. It is spiritual, psychological, moral. The hero is transformed by love. By suffering. By understanding. Literary German loves this word because literature itself is about transformation — the reader is transformed by what she reads. The character is transformed by what happens. The world is never the same after the transformation.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: SEHNSUCHT ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In Chapter 13, you encountered <span class="german-word" data-card="sehnsucht">Sehnsucht</span> — longing, yearning, a deep ache of desire. But literary German uses this word at a depth that academic German never reaches. In literature, <em>Sehnsucht</em> is not just wanting something. It is the fundamental condition of being human. It is the ache in the soul that cannot be satisfied.
+    </p>
+
+    <p class="narrative">
+      The Romantic poets especially made <em>Sehnsucht</em> central to their vision. To be human is to yearn for something beyond oneself. The lover yearns for the beloved. The exile yearns for home. The seeker yearns for transcendence. The soul yearns for peace. <em>Sehnsucht</em> is the engine of all great literature. It is what makes characters move. What makes them suffer. What makes them beautiful.
+    </p>
+
+    <p class="narrative">
+      Hermann Hesse's novels are saturated with <em>Sehnsucht</em> — the search for self, for meaning, for spiritual awakening. In <em>Siddhartha</em>, the protagonist is moved by endless <em>Sehnsucht</em> until he finally finds peace by accepting the flow of the river itself. The word captures something uniquely German — this sense that yearning is not a problem to be solved, but a fundamental part of what it means to exist.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE DEEP AND THE BROKEN ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Literary German has words for emotional states that English struggles to capture. Consider <span class="german-word" data-card="abgrund">Abgrund</span> — the abyss. Literally: ab (away) + Grund (ground). The place where the ground falls away. Not just a physical cliff or ravine, but the emotional abyss. The darkness within the soul. The moment when you look into emptiness and cannot find bottom.
+    </p>
+
+    <p class="narrative">
+      And then <span class="german-word" data-card="geborgenheit">Geborgenheit</span> — safety, security, the feeling of being held and protected. <em>Bergen</em> means "to shelter" or "to hide." So <em>Geborgenheit</em> is the state of being sheltered. The opposite of the <em>Abgrund</em>. The comfort of being held. The warmth of belonging.
+    </p>
+
+    <p class="narrative">
+      In German literature, these two words define the emotional landscape. Characters move between the abyss and the shelter. Between moments of terrible isolation and moments of connection. The greatest German literature finds the <em>Geborgenheit</em> hiding within the <em>Abgrund</em>, or shows how <em>Geborgenheit</em> can shatter into <em>Abgrund</em> in a moment.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: TORN AND RISING ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zerrissenheit">Zerrissenheit</span> — being torn. The state of internal division. <em>Reißen</em> means "to tear" or "to rip." <em>Zerrissen</em> is the past participle — torn apart. <em>Zerrissenheit</em> is the noun: the condition of being torn.
+    </p>
+
+    <p class="narrative">
+      This is a characteristically German word. The soul torn between conflicting desires. The mind divided against itself. The heart pulling in opposite directions. German Romanticism and Expressionism are full of this <em>Zerrissenheit</em> — the tortured self, the divided being. Goethe's Faust is the ultimate expression of it: a man torn between knowledge and love, between ambition and humanity, between heaven and hell.
+    </p>
+
+    <p class="narrative">
+      But there is also <span class="german-word" data-card="aufbruch">Aufbruch</span> — the breaking forth, the rising up, the departure. <em>Auf</em> means "up." <em>Bruch</em> means "breaking." <em>Aufbruch</em> is the moment when something breaks open upward. When the caterpillar breaks from its chrysalis. When the dawn breaks. When the soul rises toward transformation.
+    </p>
+
+    <p class="narrative">
+      Literary German is the language of this oscillation: <em>Zerrissenheit</em> and <em>Aufbruch</em>. Tearing and rising. The soul knows no peace, but it also knows the possibility of transcendence.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: TIME AND ETERNITY ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Literature is obsessed with time. With the passing of moments. With the feeling that everything is fleeting. This is captured in <span class="german-word" data-card="verganglichkeit">Vergänglichkeit</span> — transience, impermanence. <em>Vergehen</em> means "to pass away" or "to perish." <em>Vergänglichkeit</em> is the quality of passing away. Everything that lives must die. Everything that exists must pass into non-being.
+    </p>
+
+    <p class="narrative">
+      This sense of <em>Vergänglichkeit</em> haunts German literature. Autumn becomes the supreme poetic season — all things falling, fading, returning to dust. The leaves turn golden and then brown and then fall. Beauty is beautiful precisely because it does not last.
+    </p>
+
+    <p class="narrative">
+      But against <em>Vergänglichkeit</em> stands <span class="german-word" data-card="ewigkeit">Ewigkeit</span> — eternity. That which does not pass. That which endures. The moment that contains forever. In great literature, characters often experience glimpses of <em>Ewigkeit</em> — moments so perfect, so complete, that they seem to exist outside of time. A moment of love. A moment of understanding. A moment of beauty so absolute that it seems eternal.
+    </p>
+
+    <p class="narrative">
+      The greatest German poems hold these two together: <em>Vergänglichkeit</em> and <em>Ewigkeit</em>. The fleeting moment that contains forever. The eternal significance found in transient things. This tension defines the German Romantic vision.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== VOCABULARY CARDS ==================== -->
+
+  <!-- VERWANDLUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-verwandlung">
+      <div class="word-header">
+        <span class="word-main">Verwandlung</span>
+        <span class="word-pron">/fɛɐ̯ˈvantlʊŋ/</span>
+      </div>
+      <div class="word-meaning">transformation — fundamental change of form, nature, or essence</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + wandeln (to turn)</span>
+        <span class="bridge-note">— to turn into something else, to be transformed</span>
+      </div>
+      <div class="story">
+        <em>Verwandlung</em> is the title of Kafka's masterpiece, and it carries weight beyond the physical metamorphosis. In German literature, transformation is always spiritual as well as physical. A character does not merely change; she is transformed. She becomes something fundamentally other. The language of literature requires this word.
+      </div>
+    </div>
+  </div>
+
+  <!-- SEHNSUCHT -->
+  <div class="scene">
+    <div class="ety-card" id="card-sehnsucht">
+      <div class="word-header">
+        <span class="word-main">Sehnsucht</span>
+        <span class="word-pron">/ˈzeːnzʊxt/</span>
+      </div>
+      <div class="word-meaning">longing, yearning — a deep, often bittersweet desire for something distant or unattainable</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Sehn (ache) + Sucht (addiction, longing)</span>
+        <span class="bridge-note">— the addiction to longing, the yearning ache</span>
+      </div>
+      <div class="story">
+        <em>Sehnsucht</em> appears in Chapter 13, but here it reveals its deepest meaning. In German literature and philosophy, <em>Sehnsucht</em> is not a problem but a fundamental condition. It is what drives souls toward transcendence. It is the ache that proves we are alive. Goethe, Heine, Hesse — all made <em>Sehnsucht</em> central to their vision of human existence.
+      </div>
+    </div>
+  </div>
+
+  <!-- ABGRUND -->
+  <div class="scene">
+    <div class="ety-card" id="card-abgrund">
+      <div class="word-header">
+        <span class="word-main">Abgrund</span>
+        <span class="word-pron">/ˈapɡʁʊnt/</span>
+      </div>
+      <div class="word-meaning">abyss, chasm — the place where ground falls away, emptiness, existential void</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ab (away) + Grund (ground)</span>
+        <span class="bridge-note">— the place where the ground falls away, where nothing can be found</span>
+      </div>
+      <div class="story">
+        <em>Abgrund</em> is more than a physical chasm. It is the abyss within the soul. The moment when you look into yourself and find only darkness. Nietzsche wrote: "If you gaze long into the abyss, the abyss also gazes into you." In German literature, characters often stand at the edge of the <em>Abgrund</em>, looking into the void.
+      </div>
+    </div>
+  </div>
+
+  <!-- GEBORGENHEIT -->
+  <div class="scene">
+    <div class="ety-card" id="card-geborgenheit">
+      <div class="word-header">
+        <span class="word-main">Geborgenheit</span>
+        <span class="word-pron">/ɡəˈbɔʁɡənhaɪ̯t/</span>
+      </div>
+      <div class="word-meaning">safety, security, shelter — the feeling of being protected and held, of belonging</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Borg (to shelter) + -heit (state)</span>
+        <span class="bridge-note">— the state of being sheltered, of safety</span>
+      </div>
+      <div class="story">
+        <em>Geborgenheit</em> is the opposite of the <em>Abgrund</em>. It is the child in the mother's arms. The exile finding home. The wanderer finding shelter. In German literature, characters seek <em>Geborgenheit</em> as the ultimate refuge. But true <em>Geborgenheit</em> is rare and fragile — always threatened by the <em>Abgrund</em> that waits below.
+      </div>
+    </div>
+  </div>
+
+  <!-- ZERRISSENHEIT -->
+  <div class="scene">
+    <div class="ety-card" id="card-zerrissenheit">
+      <div class="word-header">
+        <span class="word-main">Zerrissenheit</span>
+        <span class="word-pron">/tsɛˈʁɪsənhaɪ̯t/</span>
+      </div>
+      <div class="word-meaning">being torn, inner division — the state of being split between conflicting desires or ideas</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Riss (tear) + -enheit (state)</span>
+        <span class="bridge-note">— the state of being torn apart, divided</span>
+      </div>
+      <div class="story">
+        <em>Zerrissenheit</em> is the condition of the modern soul. Torn between duty and desire. Between reason and passion. Between self and other. Goethe's Faust embodies <em>Zerrissenheit</em> — a man torn between the desire for knowledge and the desire for love. In German Expressionism, <em>Zerrissenheit</em> becomes almost the defining characteristic of existence.
+      </div>
+    </div>
+  </div>
+
+  <!-- AUFBRUCH -->
+  <div class="scene">
+    <div class="ety-card" id="card-aufbruch">
+      <div class="word-header">
+        <span class="word-main">Aufbruch</span>
+        <span class="word-pron">/ˈaʊ̯fˌbʁʊx/</span>
+      </div>
+      <div class="word-meaning">breaking forth, rising up — the moment of departure, of breaking away, of new beginning</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Auf (up) + Bruch (breaking)</span>
+        <span class="bridge-note">— breaking upward, the moment when something rises</span>
+      </div>
+      <div class="story">
+        <em>Aufbruch</em> is the countermovement to <em>Zerrissenheit</em>. It is the dawn breaking. The butterfly emerging from the chrysalis. The soul rising toward transformation. In literature, <em>Aufbruch</em> often marks a turning point — when the character breaks free from bondage, when new possibility emerges, when the journey begins.
+      </div>
+    </div>
+  </div>
+
+  <!-- VERGÄNGLICHKEIT -->
+  <div class="scene">
+    <div class="ety-card" id="card-verganglichkeit">
+      <div class="word-header">
+        <span class="word-main">Vergänglichkeit</span>
+        <span class="word-pron">/fɛɐ̯ˈɡɛŋlɪçkaɪ̯t/</span>
+      </div>
+      <div class="word-meaning">transience, impermanence — the quality of passing away, of not lasting forever</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Vergehen (to pass away) + -keit (quality)</span>
+        <span class="bridge-note">— the quality of passing, of being temporary</span>
+      </div>
+      <div class="story">
+        <em>Vergänglichkeit</em> haunts German Romantic and Expressionist poetry. All things pass. All beauty fades. The great Romantic poets found profound beauty in this truth. The falling leaf, the dying light, the fleeting moment — all are beautiful precisely because they do not last. This sense of <em>Vergänglichkeit</em> gives depth to German poetry.
+      </div>
+    </div>
+  </div>
+
+  <!-- EWIGKEIT -->
+  <div class="scene">
+    <div class="ety-card" id="card-ewigkeit">
+      <div class="word-header">
+        <span class="word-main">Ewigkeit</span>
+        <span class="word-pron">/ˈeːɪ̯çkaɪ̯t/</span>
+      </div>
+      <div class="word-meaning">eternity — infinite time, that which does not pass, the eternal</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Ewig (eternal) + -keit (quality)</span>
+        <span class="bridge-note">— the quality of being eternal, of lasting forever</span>
+      </div>
+      <div class="story">
+        <em>Ewigkeit</em> stands in tension with <em>Vergänglichkeit</em>. In the greatest moments of literature, characters experience glimpses of eternity — moments so perfect that they seem to transcend time. A perfect love. A moment of understanding. The eternal truth found in the fleeting moment. This paradox is at the heart of German literary vision.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">820 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(96%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:96%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 820 words across 96 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">145 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(100%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 145 patterns and grammar rules across 96 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Ninety-Six</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Verwandlung</span><span class="cw-english">transformation</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Sehnsucht</span><span class="cw-english">longing</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Abgrund</span><span class="cw-english">abyss</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Geborgenheit</span><span class="cw-english">shelter</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Zerrissenheit</span><span class="cw-english">torn-ness</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Aufbruch</span><span class="cw-english">breaking forth</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Vergänglichkeit</span><span class="cw-english">transience</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Ewigkeit</span><span class="cw-english">eternity</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Emotional Precision</strong> — Literary German creates words for feelings that have no English equivalents. <em>Sehnsucht</em>, <em>Geborgenheit</em>, <em>Zerrissenheit</em> capture emotional states in their full complexity.<br><br>
+      <strong style="color: var(--text-bright);">Paradox and Tension</strong> — Great German literature often holds opposites in tension: the abyss and shelter, the fleeting and the eternal, tearing and rising.<br><br>
+      <strong style="color: var(--text-bright);">Spiritual Vocabulary</strong> — German literature is saturated with words about the soul, transcendence, transformation. Language reaches toward what cannot be easily said.<br><br>
+      <strong style="color: var(--text-bright);">The Interior Landscape</strong> — Literary German maps the terrain of the soul with precision. Characters move through emotional landscapes as vividly as they move through physical ones.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Ninety-Six
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Eight words. Eight paths into the soul. When you read German literature — Kafka's strange precision, Mann's baroque complexity, Hesse's spiritual yearning — you are hearing a language refined by centuries of poets and novelists reaching toward the inexpressible.<br>
+        These words cannot be translated. They can only be understood by reading deeply, feeling fully, allowing the language to transform you as you read.
+      </p>
+      <div class="next-chapter">
+        Chapter Ninety-Seven: Zeitungsdeutsch — the language of the newspaper and the streets
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter95.html" class="nav-btn">← Chapter 95</a>
+    <a href="chapter97.html" class="nav-btn next">Chapter 97 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 96: LITERARY GERMAN - TURNING PAGES CANVAS ---
+const canvas = document.getElementById('literary-canvas');
+const ctx = canvas.getContext('2d');
+let pages = [];
+let textParticles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createPages();
+}
+
+function createPages() {
+  pages = [];
+  for (let i = 0; i < 12; i++) {
+    pages.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.2 - 0.1,
+      width: 40 + Math.random() * 60,
+      height: 80 + Math.random() * 100,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.02,
+      alpha: Math.random() * 0.2 + 0.05
+    });
+  }
+
+  textParticles = [];
+  for (let i = 0; i < 30; i++) {
+    textParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.3 - 0.1,
+      alpha: Math.random() * 0.15,
+      size: Math.random() * 8 + 2
+    });
+  }
+}
+
+function drawCanvas(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw pages
+  pages.forEach((page, idx) => {
+    page.x += page.vx;
+    page.y += page.vy;
+    page.rotation += page.rotationSpeed;
+
+    if (page.x < -100) page.x = canvas.width + 100;
+    if (page.x > canvas.width + 100) page.x = -100;
+    if (page.y < -150) page.y = canvas.height + 150;
+    if (page.y > canvas.height + 150) page.y = -150;
+
+    ctx.save();
+    ctx.translate(page.x, page.y);
+    ctx.rotate(page.rotation);
+
+    // Page outline
+    ctx.strokeStyle = `rgba(232, 164, 74, ${page.alpha * (0.5 + scroll * 0.5)})`;
+    ctx.fillStyle = `rgba(232, 164, 74, ${page.alpha * 0.2})`;
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(-page.width / 2, -page.height / 2, page.width, page.height);
+    ctx.strokeRect(-page.width / 2, -page.height / 2, page.width, page.height);
+
+    // Text lines on page
+    for (let i = 0; i < 6; i++) {
+      const lineY = -page.height / 2 + 12 + i * 12;
+      ctx.strokeStyle = `rgba(232, 164, 74, ${page.alpha * 0.5})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-page.width / 2 + 6, lineY);
+      ctx.lineTo(-page.width / 2 + page.width - 6, lineY);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  });
+
+  // Draw text particles floating off pages
+  textParticles.forEach((text, idx) => {
+    text.x += text.vx;
+    text.y += text.vy;
+
+    if (text.x < -50) text.x = canvas.width + 50;
+    if (text.x > canvas.width + 50) text.x = -50;
+    if (text.y < -50) text.y = canvas.height + 50;
+    if (text.y > canvas.height + 50) text.y = -50;
+
+    ctx.fillStyle = `rgba(232, 164, 74, ${text.alpha * (0.3 + scroll * 0.2)})`;
+    ctx.font = text.size + 'px serif';
+    ctx.fillText('•', text.x, text.y);
+  });
+
+  requestAnimationFrame(drawCanvas);
+}
+
+// Update progress bar
+window.addEventListener('scroll', () => {
+  const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+resizeCanvas();
+requestAnimationFrame(drawCanvas);
+window.addEventListener('resize', () => resizeCanvas());
+
+// --- ETYMOLOGY CARD INTERACTION ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const trigger = card.previousElementSibling;
+  if (trigger && trigger.classList.contains('narrative')) {
+    trigger.addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+  }
+});
+
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', (e) => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      card.classList.toggle('open');
+    }
+    e.stopPropagation();
+  });
+});
+
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+// --- QUIZ FUNCTIONALITY ---
+const quizData = [
+  {
+    question: "What is 'Die Verwandlung' by Kafka in English?",
+    options: ["The Waiter", "The Trial", "The Transformation (Metamorphosis)", "The Hunter"],
+    correct: 2,
+    explanation: "Verwandlung literally means 'transformation' and describes Gregor Samsa's change into an insect."
+  },
+  {
+    question: "What does Sehnsucht represent in German literature?",
+    options: ["anger", "a deep, bittersweet yearning for something beyond reach", "laziness", "greed"],
+    correct: 1,
+    explanation: "Sehnsucht is a fundamental German literary concept — the spiritual ache that drives souls toward transcendence."
+  },
+  {
+    question: "How does the Abgrund function in German literature?",
+    options: ["as a physical location", "as merely a ravine", "as the emotional/existential void within the soul", "as a type of building"],
+    correct: 2,
+    explanation: "Abgrund goes beyond physical descriptions to represent the abyss within — the existential emptiness characters fear."
+  },
+  {
+    question: "What is Geborgenheit?",
+    options: ["a type of bread", "safety, shelter, the feeling of being held and protected", "a city", "a disease"],
+    correct: 1,
+    explanation: "Geborgenheit is the opposite of Abgrund — the comfort of being sheltered, of belonging, of being held safely."
+  },
+  {
+    question: "Zerrissenheit describes:",
+    options: ["physical tearing of fabric", "inner division, being torn between conflicting desires", "a type of illness", "criminal behavior"],
+    correct: 1,
+    explanation: "Zerrissenheit refers to the spiritual/psychological state of being torn apart, split between opposing forces."
+  },
+  {
+    question: "What does Aufbruch signify in literature?",
+    options: ["a collapse", "breaking forth, rising up, new beginning", "a funeral", "theft"],
+    correct: 1,
+    explanation: "Aufbruch is the countermovement to Zerrissenheit — the moment of breaking free, when transformation becomes possible."
+  },
+  {
+    question: "How does German literature treat Vergänglichkeit?",
+    options: ["as a problem to solve", "as shameful", "as a profound source of beauty — beauty precisely because it does not last", "as irrelevant"],
+    correct: 2,
+    explanation: "German Romantic poetry finds deep beauty in transience. The falling leaf, the dying light — all are beautiful because they pass."
+  },
+  {
+    question: "What is the relationship between Vergänglichkeit and Ewigkeit?",
+    options: ["they are the same", "they oppose each other", "they exist in tension, with eternal truth found in fleeting moments", "they are unrelated"],
+    correct: 2,
+    explanation: "The greatest German literature holds these in paradox: the eternal found in the transient, forever in the fleeting moment."
+  },
+  {
+    question: "Which German author is most associated with Sehnsucht?",
+    options: ["Schopenhauer", "Hermann Hesse", "Bismarck", "Nietzsche"],
+    correct: 1,
+    explanation: "Hermann Hesse's novels are saturated with Sehnsucht — the spiritual yearning that drives his characters toward awakening."
+  },
+  {
+    question: "How does Verwandlung differ from English 'change'?",
+    options: ["it's the same", "Verwandlung implies fundamental spiritual/essential change, not just modification", "Verwandlung is physical only", "there is no difference"],
+    correct: 1,
+    explanation: "Verwandlung suggests transformation at the deepest level — not merely a change of form but a change of essence."
+  },
+  {
+    question: "What emotional state do the great German writers explore most deeply?",
+    options: ["happiness", "boredom", "the tension between inner division and the possibility of spiritual transformation", "greed"],
+    correct: 2,
+    explanation: "From Goethe's Faust through Expressionism, German literature obsesses over Zerrissenheit and the yearning for Aufbruch."
+  },
+  {
+    question: "In German literary tradition, what makes a moment beautiful?",
+    options: ["its permanence", "its perfection lasting forever", "its combination of beauty and transience — knowing it will pass", "its usefulness"],
+    correct: 2,
+    explanation: "The Romantic understanding sees beauty as deepened by mortality. The falling leaf is beautiful precisely because it falls."
+  },
+  {
+    question: "What does Hesse's 'Siddhartha' emphasize?",
+    options: ["military conquest", "the journey of Sehnsucht toward spiritual awakening", "the importance of wealth", "rejection of nature"],
+    correct: 1,
+    explanation: "Siddhartha is driven throughout by Sehnsucht — the search for meaning that eventually leads to acceptance and peace."
+  },
+  {
+    question: "How does the opening of Kafka's story exemplify literary German?",
+    options: ["it uses simple, flat prose to state something impossible as fact", "it is written in passive voice", "it uses complex metaphors", "it avoids German vocabulary"],
+    correct: 0,
+    explanation: "The understated declaration of impossibility is characteristic of German literary precision — a man transformed into an insect, stated matter-of-factly."
+  },
+  {
+    question: "What is the literary importance of Geborgenheit vs. Abgrund?",
+    options: ["they are unrelated", "they define the emotional landscape that characters navigate", "only Abgrund matters", "only Geborgenheit matters"],
+    correct: 1,
+    explanation: "The greatest German literature traces characters moving between these poles — moments of shelter interrupted by encounters with emptiness."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = currentQuestion === 0;
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) score++;
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.innerHTML = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>938 words</strong> across 96 chapters. You recognize <strong>92 linguistic patterns</strong> spanning millennia.</p>
+      <p style="margin-top: 8px;">Literary German reveals how language reaches beyond the everyday toward the transcendent. These words — Sehnsucht, Abgrund, Geborgenheit — map the interior landscape of the soul.</p>
+    `;
+  }
+}
+
+window.addEventListener('load', () => {
+  const words = document.querySelectorAll('.collected-word');
+  words.forEach((word, idx) => {
+    setTimeout(() => {
+      word.classList.add('show');
+    }, parseInt(word.dataset.delay) || 0);
+  });
+});
+
+initializeQuiz();
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

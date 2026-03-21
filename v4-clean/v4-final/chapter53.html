@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 53: Den Mann</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --acc: #ff6b6b;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #target-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .scene { margin-bottom: 60px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="target-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Fifty-Three</div>
+    <h1>Den Mann</h1>
+    <div class="subtitle">The Accusative Case — Objects and Direct Action</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now we enter the architecture of the cases. German, unlike English, preserves an ancient system that shows the relationship between words through endings. The accusative case is the case of direct objects — the thing being acted upon, the target of the action. If the nominative is the actor, the accusative is what the actor affects.
+    </p>
+
+    <p class="narrative">
+      Imagine an arrow. The nominative is the archer. The accusative is the target. The verb is the flight of the arrow. "Der Mann sieht die Frau" — The man sees the woman. "Der Mann" is nominative (the one who sees). "Die Frau" is accusative (the one who is seen, the object of the action).
+    </p>
+
+    <p class="narrative">
+      But watch what happens with the masculine article. In the nominative, it is "der" (the man). In the accusative, it becomes "den" (the man-object). The article changes. The ending changes. The case changes. And this change is not ornamental — it carries meaning. It tells you who is doing what to whom.
+    </p>
+
+    <p class="narrative emphasis">
+      The accusative case marks what is directly affected by the action. It is the grammar of consequence.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The article system for accusative is deceptively simple. In the masculine, "der" becomes "den". In the feminine, nothing changes — "die" remains "die". In the neuter, nothing changes — "das" remains "das". And in the plural, nothing changes — "die" remains "die". Only the masculine changes.
+    </p>
+
+    <p class="narrative">
+      This is one of the great oddities of German grammar. Why does only the masculine change? Linguists debate this. Some suggest it is a remnant from Proto-Indo-European, where the accusative and nominative masculine forms diverged through ancient sound changes. Others suggest that the masculine, being the most common form for agents and actors, needed to be most clearly marked as object when it appears in object position. The reason is lost to history. What remains is the system: "den" marks the masculine accusative.
+    </p>
+
+    <p class="narrative">
+      And with pronouns, the accusative is equally marked. The nominative "ich" (I) becomes the accusative "mich" (me). The nominative "du" (you) becomes "dich" (you-object). The nominative "er" (he) becomes "ihn" (him). The nominative "sie" (she) becomes "sie" (her — same form as nominative). The nominative "es" (it) becomes "es" (it — same form). The nominative "wir" (we) becomes "uns" (us). The nominative "ihr" (you-plural) becomes "euch" (you-plural-object). The nominative "sie" (they) becomes "sie" (them — same form).
+    </p>
+
+    <!-- DEN card -->
+    <div class="ety-card" id="card-den">
+      <div class="word-header">
+        <span class="word-main">Den</span>
+        <span class="word-pron">/deːn/</span>
+      </div>
+      <div class="word-meaning">the (masculine accusative) — the masculine definite article in accusative case</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*to-</span>
+        <span class="bridge-note">— the ancient demonstrative root, meaning "that" or "the"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">the</span>
+        <span class="bridge-note">— English's definite article, from the same root but without case marking</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Den (accusative), Der (nominative)</span>
+        <span class="bridge-note">— the masculine changes form to show case</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">这个/那个</span>
+        <span class="bridge-note">— zhège/nàge (this/that) — a separate form for each concept, no case system</span>
+      </div>
+      <div class="story">
+        <em>Den</em> is the accusative form of the masculine definite article. The transformation from "der" to "den" is one of the defining features of German grammar. In English, we simply say "the man" whether the man is doing the seeing or being seen. In German, the article itself shifts to show the grammatical relationship. "Der Mann sieht den Jungen" — The man (nominative, the actor) sees the boy (accusative, the one affected). The change from "der" to "den" is not arbitrary. It is meaning encoded into sound.
+      </div>
+    </div>
+
+    <!-- EINEN card -->
+    <div class="ety-card" id="card-einen">
+      <div class="word-header">
+        <span class="word-main">Einen</span>
+        <span class="word-pron">/ˈaɪ̯nən/</span>
+      </div>
+      <div class="word-meaning">a/an (masculine accusative) — the masculine indefinite article in accusative case</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*oi-no-</span>
+        <span class="bridge-note">— one, a single, the origin of "one" and indefinite articles across languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">one / a / an</span>
+        <span class="bridge-note">— English's indefinite article, from the same root as German "ein"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Einen (accusative), Ein (nominative)</span>
+        <span class="bridge-note">— the masculine indefinite article also changes with case</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">一个</span>
+        <span class="bridge-note">— yīge (one + classifier) — numerals used for indefinite reference</span>
+      </div>
+      <div class="story">
+        <em>Einen</em> is the accusative form of the masculine indefinite article. Like "den", it shows the accusative through an ending change. "Ein Mann kauft einen Apfel" — A man buys an apple. The "ein" (nominative) shows the actor. The "einen" (accusative) shows what is directly affected. This distinction, which German preserves in articles and pronouns, is invisible in English but fundamental to how German encodes meaning.
+      </div>
+    </div>
+
+    <!-- IAMERIC PRONOUNS card -->
+    <div class="ety-card" id="card-ihn">
+      <div class="word-header">
+        <span class="word-main">Ihn</span>
+        <span class="word-pron">/iːn/</span>
+      </div>
+      <div class="word-meaning">him (masculine accusative pronoun) — the accusative form of "er" (he)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*hi-</span>
+        <span class="bridge-note">— the masculine singular pronoun root, ancient and widespread</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">him</span>
+        <span class="bridge-note">— English preserves "he/him" distinction for accusative</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Ihn (accusative), Er (nominative)</span>
+        <span class="bridge-note">— the pronoun changes completely, not just the ending</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">他</span>
+        <span class="bridge-note">— tā (he/him) — no distinction between subject and object pronouns</span>
+      </div>
+      <div class="story">
+        <em>Ihn</em> is where the accusative case becomes most visible to English speakers. In English, we still say "he" and "him", preserving the distinction. In German, the change is even more dramatic: "er" becomes "ihn". This is not a small addition of an ending. This is a complete transformation of the word. It shows how seriously German takes the case system — the pronouns themselves reshape to show grammatical relationships.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now consider the philosophical meaning of the accusative. It is the case of direct objects. The thing the action affects. Consider these sentences:
+    </p>
+
+    <p class="narrative small">
+      "Ich esse einen Apfel" — I eat an apple. (The apple is directly affected — it is consumed)<br>
+      "Ich sehe einen Mann" — I see a man. (The man is directly perceived)<br>
+      "Ich liebe eine Frau" — I love a woman. (The woman is directly loved)<br>
+      "Ich verstehe den Sinn" — I understand the meaning. (The meaning is directly comprehended)<br>
+    </p>
+
+    <p class="narrative">
+      In each case, there is a direct relationship between the actor (nominative) and the affected thing (accusative). The nominative is the agent of the action. The accusative is what experiences the action. The verb draws the line between them.
+    </p>
+
+    <p class="narrative">
+      But observe: there are also prepositions that take the accusative. Words like "durch" (through), "für" (for), "gegen" (against), "ohne" (without), "um" (around), "bis" (until). These are called "accusative prepositions." They express the idea of movement toward, or effect on, or goal directed at something. "Für dich" (for you — accusative) suggests something done in the direction of you. "Gegen den Feind" (against the enemy — accusative) suggests action aimed at the enemy. The accusative prepositions extend the logic of the direct object to the prepositional phrase.
+    </p>
+
+    <p class="narrative emphasis">
+      The accusative is the case of consequence. What happens when an action meets the world.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Here is a complete table of the accusative system:
+    </p>
+
+    <p class="narrative small">
+      <strong>Definite Articles (the):</strong><br>
+      Masculine: der → den<br>
+      Feminine: die → die (no change)<br>
+      Neuter: das → das (no change)<br>
+      Plural: die → die (no change)<br>
+    </p>
+
+    <p class="narrative small">
+      <strong>Indefinite Articles (a/an):</strong><br>
+      Masculine: ein → einen<br>
+      Feminine: eine → eine (no change)<br>
+      Neuter: ein → ein (no change)<br>
+      Plural: — (no indefinite plural)<br>
+    </p>
+
+    <p class="narrative small">
+      <strong>Personal Pronouns:</strong><br>
+      ich → mich (I → me)<br>
+      du → dich (you → you)<br>
+      er → ihn (he → him)<br>
+      sie → sie (she → her)<br>
+      es → es (it → it)<br>
+      wir → uns (we → us)<br>
+      ihr → euch (you-plural → you-plural)<br>
+      sie → sie (they → them)<br>
+    </p>
+
+    <p class="narrative">
+      Notice the pattern: only the masculine and the first and third person pronouns show significant change. The feminine article stays the same whether nominative or accusative. The neuter article stays the same. But the masculine article and most pronouns transform. This is one of the deeper peculiarities of German grammar: the language marks what it cares most about distinguishing.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Accusative Forms from Chapter 53</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Den</span><span class="cw-english">the (masc. acc.)</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Einen</span><span class="cw-english">a (masc. acc.)</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Ihn</span><span class="cw-english">him</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Mich</span><span class="cw-english">me</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Dich</span><span class="cw-english">you</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Accusative Case Rules</div>
+      <strong style="color: var(--text-bright);">Direct Objects:</strong> The accusative marks the thing directly affected by the action of the verb.<br><br>
+      <strong style="color: var(--text-bright);">Article Changes:</strong> Only masculine articles change: der → den (definite), ein → einen (indefinite).<br><br>
+      <strong style="color: var(--text-bright);">Pronoun Changes:</strong> All pronouns change in accusative: ich→mich, du→dich, er→ihn, wir→uns, etc.<br><br>
+      <strong style="color: var(--text-bright);">Accusative Prepositions:</strong> durch, für, gegen, ohne, um, bis all take accusative objects.<br><br>
+      <strong style="color: var(--text-bright);">The Philosophy:</strong> The accusative is the grammar of consequence — what happens when action meets the world.
+    </div>
+  </div>
+
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Fifty-Three
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        The accusative case is the case of direct objects — the thing acted upon, the target, the affected. The nominative is the archer. The accusative is the target. Together, they form the fundamental structure of action in German grammar.<br>
+        From den to ihn, the language marks what it means to be directly affected.
+      </p>
+      <div class="next-chapter">
+        Chapter Fifty-Four: Dem Kind — The Dative Case
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter52.html" class="nav-btn">← Chapter 52</a>
+    <a href="chapter54.html" class="nav-btn next">Chapter 54 →</a>
+  </div>
+
+</div>
+
+<script>
+
+const canvas = document.getElementById('target-canvas');
+const ctx = canvas.getContext('2d');
+let arrow = { x: 0, y: 0, angle: 0 };
+let target = { x: 0, y: 0 };
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function drawTarget(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  const archerX = canvas.width * 0.2;
+  const archerY = canvas.height * 0.3;
+  const targetX = canvas.width * 0.8;
+  const targetY = canvas.height * 0.3;
+
+  // Draw archer
+  ctx.fillStyle = 'rgba(155, 142, 196, 0.3)';
+  ctx.beginPath();
+  ctx.arc(archerX, archerY, 20, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(155, 142, 196, 0.5)';
+  ctx.font = '14px "Cormorant Garamond"';
+  ctx.textAlign = 'center';
+  ctx.fillText('Nominative', archerX, archerY + 35);
+
+  // Draw arrow in flight
+  const arrowProgress = (scroll * 1.5) % 1;
+  const arrowX = archerX + (targetX - archerX) * arrowProgress;
+  const arrowY = archerY + Math.sin(arrowProgress * Math.PI) * 30;
+
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(arrowX - 15, arrowY);
+  ctx.lineTo(arrowX + 15, arrowY);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(232, 164, 74, 0.8)';
+  ctx.beginPath();
+  ctx.moveTo(arrowX + 15, arrowY);
+  ctx.lineTo(arrowX + 25, arrowY - 5);
+  ctx.lineTo(arrowX + 25, arrowY + 5);
+  ctx.closePath();
+  ctx.fill();
+
+  // Draw target
+  ctx.strokeStyle = 'rgba(255, 107, 107, 0.6)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(targetX, targetY, 30, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(255, 107, 107, 0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(targetX, targetY, 15, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255, 107, 107, 0.3)';
+  ctx.font = '14px "Cormorant Garamond"';
+  ctx.textAlign = 'center';
+  ctx.fillText('Accusative', targetX, targetY + 45);
+
+  // Connection line
+  ctx.strokeStyle = `rgba(232, 164, 74, ${0.1 + scroll * 0.2})`;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(archerX + 20, archerY);
+  ctx.lineTo(targetX - 30, targetY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  requestAnimationFrame(drawTarget);
+}
+
+resizeCanvas();
+requestAnimationFrame(drawTarget);
+window.addEventListener('resize', resizeCanvas);
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+const quizData = [
+  {
+    question: "What does the accusative case mark?",
+    options: ["the subject of the action", "the direct object affected by the action", "something that belongs to another thing", "the location of an action"],
+    correct: 1,
+    explanation: "The accusative marks direct objects — the things directly affected by the action of the verb."
+  },
+  {
+    question: "What happens to the masculine definite article in the accusative?",
+    options: ["der becomes den", "der becomes das", "der stays the same", "der becomes die"],
+    correct: 0,
+    explanation: "The masculine definite article changes from 'der' (nominative) to 'den' (accusative)."
+  },
+  {
+    question: "How many articles change in the accusative?",
+    options: ["all four (masculine, feminine, neuter, plural)", "only the masculine", "only the feminine", "only the neuter"],
+    correct: 1,
+    explanation: "Only the masculine article changes: der→den. Feminine (die), neuter (das), and plural (die) all stay the same."
+  },
+  {
+    question: "What is the accusative form of the masculine indefinite article?",
+    options: ["ein", "einen", "eines", "einer"],
+    correct: 1,
+    explanation: "The masculine indefinite article changes from 'ein' (nominative) to 'einen' (accusative)."
+  },
+  {
+    question: "What is the accusative form of the pronoun 'er' (he)?",
+    options: ["ihr", "ihn", "ihm", "es"],
+    correct: 1,
+    explanation: "'Er' (he, nominative) becomes 'ihn' (him, accusative)."
+  },
+  {
+    question: "Which of these prepositions takes an accusative object?",
+    options: ["in (location)", "an (location)", "für (for)", "bei (at)"],
+    correct: 2,
+    explanation: "'Für' (for) is an accusative preposition. Many others like 'durch', 'gegen', 'ohne', 'um' also take accusative."
+  },
+  {
+    question: "In the sentence 'Ich sehe einen Mann,' what case is 'einen Mann'?",
+    options: ["nominative", "accusative", "dative", "genitive"],
+    correct: 1,
+    explanation: "'Einen Mann' (a man) is the direct object, so it is in the accusative case."
+  },
+  {
+    question: "What is the accusative form of 'ich' (I)?",
+    options: ["mich", "mir", "mein", "meinen"],
+    correct: 0,
+    explanation: "'Ich' (I, nominative) becomes 'mich' (me, accusative)."
+  },
+  {
+    question: "Why does only the masculine article change in the accusative?",
+    options: ["because feminine and neuter nouns don't have accusatives", "for historical/etymological reasons from Proto-Indo-European", "because only masculine nouns are important", "it's just a random rule"],
+    correct: 1,
+    explanation: "The reason is likely historical, rooted in ancient sound changes from Proto-Indo-European."
+  },
+  {
+    question: "In the sentence 'Du siehst mich,' what is the accusative form?",
+    options: ["Du (you see)", "siehst (you see)", "mich (me)", "all of the above"],
+    correct: 2,
+    explanation: "'Mich' (me) is the direct object in the accusative case. The action of seeing is directed at me."
+  },
+  {
+    question: "Which sentence has both a nominative and accusative noun?",
+    options: ["Das Kind schläft", "Die Mutter liebt das Kind", "Der Mann geht", "Ich esse"],
+    correct: 1,
+    explanation: "In 'Die Mutter liebt das Kind,' 'Die Mutter' is nominative (the lover) and 'das Kind' is accusative (the loved one)."
+  },
+  {
+    question: "What does the accusative reveal about language structure?",
+    options: ["that word order is the most important thing", "that language encodes who acts and what is affected", "that German is illogical", "that the accusative is useless"],
+    correct: 1,
+    explanation: "The accusative shows that German grammar encodes the relationship between the actor and the affected — meaning is in the case system."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Accusative Mastery</strong>
+      <p style="margin-top: 8px;">You understand the accusative case — the grammar of direct objects and consequence. You can identify when nouns change to accusative form and understand what it means: the action has found its target.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+document.querySelectorAll('.german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">476 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(56%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:56%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 476 words across 53 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">102 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(70%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:70%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 102 patterns and grammar rules across 53 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

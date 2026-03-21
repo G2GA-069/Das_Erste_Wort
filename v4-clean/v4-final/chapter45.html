@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 45: Die Brücke (The Bridge)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --fire: #e8a44a; --fire-glow: #f4c67a; --ember: #c45d2c; --night: #0a0e1a;
+  --text: #d4cabb; --text-bright: #efe8db; --german: #e8a44a; --chinese: #c49a6c;
+  --english: #8a9bae; --pie: #9b8ec4; --workshop: #d4a574;
+}
+html { scroll-behavior: smooth; background: var(--night); }
+body {
+  background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.25rem;
+  line-height: 1.85;
+  overflow-x: hidden;
+}
+#workshop-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+.page-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+#progressBar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, #8b4513, #daa520); transition: width 0.1s ease-out; z-index: 999; }
+.title-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 40px; }
+.title-screen h1 { font-size: 4rem; font-weight: 300; color: var(--text-bright); opacity: 0; animation: fadeUp 2s ease 0.4s forwards; margin-bottom: 1em; }
+.title-screen .title-de { font-size: 3.5rem; font-weight: 400; color: var(--german); opacity: 0; animation: fadeUp 2s ease 0.8s forwards; margin-bottom: 1.5em; font-style: italic; }
+.title-screen .description { font-size: 1.3rem; max-width: 600px; color: rgba(212, 202, 187, 0.6); line-height: 1.8; opacity: 0; animation: fadeUp 2s ease 1.2s forwards; margin-bottom: 2em; }
+.title-screen .chapter-label { font-size: 0.9rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(212, 202, 187, 0.4); opacity: 0; animation: fadeUp 2s ease 0.2s forwards; margin-bottom: 0.5em; }
+.scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3); font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 3em; }
+.scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+.scene.visible { opacity: 1; transform: translateY(0); }
+.scene-marker { display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--workshop), transparent); margin: 0 auto 40px; }
+.narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+.narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center; font-style: italic; margin: 2em 0; }
+.narrative.small { font-size: 1.05rem; color: rgba(212, 202, 187, 0.6); line-height: 1.7; }
+.german-word { color: var(--german); font-weight: 600; cursor: pointer; border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; }
+.german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+.german-word.revealed { border-bottom-color: transparent; }
+.aside-box { background: linear-gradient(135deg, rgba(155, 142, 196, 0.08), rgba(196, 154, 108, 0.08)); border-left: 3px solid rgba(232, 164, 74, 0.4); padding: 24px 28px; margin: 40px 0; border-radius: 0 8px 8px 0; font-size: 1.05rem; line-height: 1.75; color: rgba(212, 202, 187, 0.85); }
+.aside-box strong { color: var(--fire-glow); }
+.aside-box .aside-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(232, 164, 74, 0.6); margin-bottom: 12px; display: block; }
+.ety-card { background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95)); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 28px 32px; margin: 24px 0 32px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.5s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+.ety-card.open { max-height: 1200px; opacity: 1; }
+.ety-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.ety-card .word-main { font-size: 2rem; font-weight: 700; color: var(--german); }
+.ety-card .word-pron { font-size: 1rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+.ety-card .word-meaning { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(232, 164, 74, 0.1); }
+.bridge { display: flex; align-items: center; gap: 12px; margin: 10px 0; font-size: 1rem; flex-wrap: wrap; }
+.bridge-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; padding: 2px 8px; border-radius: 4px; min-width: 55px; text-align: center; }
+.bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+.bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+.bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+.bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+.bridge-word { font-size: 1.15rem; font-weight: 500; color: var(--text-bright); }
+.bridge-word.zh { font-family: 'Noto Sans SC', sans-serif; font-size: 1.5rem; }
+.bridge-note { font-size: 0.9rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+.ety-card .story { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232, 164, 74, 0.1); font-size: 1rem; color: rgba(212, 202, 187, 0.75); line-height: 1.7; }
+.speak-btn { background: rgba(232, 164, 74, 0.1); border: 1px solid rgba(232, 164, 74, 0.2); color: var(--fire); font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; margin-left: auto; }
+.speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: var(--fire); }
+.speak-btn.speaking { background: rgba(232, 164, 74, 0.3); color: var(--fire-glow); }
+.divider { text-align: center; margin: 60px 0; color: rgba(212, 202, 187, 0.3); font-size: 1.3rem; letter-spacing: 0.3em; }
+.quiz-section, .word-collection { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(15, 20, 35, 0.95)); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 16px; padding: 40px 32px; margin: 60px 0; display: none; }
+.quiz-section.show, .word-collection.show { display: block; }
+.quiz-header { text-align: center; margin-bottom: 40px; }
+.quiz-header h2 { font-size: 1.5rem; color: var(--text-bright); margin-bottom: 8px; }
+.quiz-header p { color: rgba(212, 202, 187, 0.6); font-size: 1rem; }
+.quiz-item { margin-bottom: 28px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+.quiz-item.correct { background: rgba(74, 140, 74, 0.15); }
+.quiz-item.incorrect { background: rgba(196, 93, 44, 0.15); }
+.quiz-question { font-size: 1.1rem; margin-bottom: 16px; color: var(--text-bright); }
+.quiz-options { display: grid; gap: 10px; }
+.quiz-option { background: rgba(0,0,0,0.3); border: 1px solid rgba(232, 164, 74, 0.15); padding: 12px 16px; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; color: var(--text); }
+.quiz-option:hover { border-color: var(--fire); background: rgba(232, 164, 74, 0.08); }
+.quiz-option input { margin-right: 10px; }
+.quiz-option.selected { border-color: var(--fire); background: rgba(232, 164, 74, 0.15); }
+.quiz-option.correct { border-color: #4a8c4a; background: rgba(74, 140, 74, 0.15); }
+.quiz-option.incorrect { border-color: #c45d2c; background: rgba(196, 93, 44, 0.15); }
+.quiz-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 32px; }
+.quiz-nav button { flex: 1; background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; padding: 14px 24px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.quiz-nav button:hover:not(:disabled) { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+.quiz-score { text-align: center; font-size: 1.3rem; color: var(--fire-glow); margin: 24px 0; font-weight: 500; }
+.post-quiz-summary { background: rgba(155, 142, 196, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3); padding: 24px 28px; margin: 24px 0; border-radius: 0 8px 8px 0; font-size: 1rem; line-height: 1.7; color: rgba(212, 202, 187, 0.8); display: none; }
+.post-quiz-summary.show { display: block; }
+.word-collection h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(232, 164, 74, 0.5); margin-bottom: 24px; }
+.collected-words { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.collected-word { display: flex; flex-direction: column; align-items: center; background: rgba(232, 164, 74, 0.06); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 10px; padding: 14px 20px; min-width: 90px; opacity: 0; transform: scale(0.8); transition: opacity 0.5s ease, transform 0.5s ease; }
+.collected-word.show { opacity: 1; transform: scale(1); }
+.cw-german { font-size: 1.1rem; color: var(--german); font-weight: 600; }
+.cw-english { font-size: 0.85rem; color: var(--english); margin-top: 4px; }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 40px 0 20px; margin-top: 60px; border-top: 1px solid rgba(232, 164, 74, 0.1); }
+.nav-button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2); color: var(--text); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 1rem; transition: all 0.3s ease; display: inline-block; }
+.nav-button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.chapter-counter { text-align: center; font-size: 0.9rem; color: rgba(212, 202, 187, 0.4); letter-spacing: 0.1em; }
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div id="progressBar"></div>
+<canvas id="workshop-canvas"></canvas>
+
+<div class="page-wrapper">
+
+  <div class="title-screen" id="titleScreen">
+    <p class="chapter-label">Chapter Forty-Five</p>
+    <h1>The Bridge</h1>
+    <p class="title-de">Die Brücke</p>
+    <p class="description">Stone by stone, an arch rises across a dark chasm. The bridge assembles itself, each stone finding its place, the whole structure stronger than any single piece. Nine German words teach how ancient prefixes build new meanings. Be-, er-, ge- are the most elusive, the most transformative. They turn intransitive into transitive. They mark achievement. They gather plurality into wholeness. This is the secret architecture of German's power.</p>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A bridge is not built all at once. First comes a single stone, placed with intention. Then another, and another, each one finding its structural role, each one necessary to the whole. When the arch is complete, the bridge that emerges is stronger than any individual stone could be. It connects what was separate. It allows passage where there was only chasm. It transforms geography.
+    </p>
+
+    <p class="narrative">
+      In German, three prefixes operate like stones in this bridge: <span class="german-word" data-speak="true">be-</span>, <span class="german-word" data-speak="true">er-</span>, and <span class="german-word" data-speak="true">ge-</span>. These are the bridge prefixes—the most subtle, the most difficult to understand, yet the most transformative. They do not simply modify meaning like other prefixes. They restructure the very nature of words. A verb that is intransitive—that cannot take a direct object—becomes transitive. An action that is attempted becomes accomplished. Multiple things that are scattered become gathered into unity.
+    </p>
+
+    <p class="narrative">
+      These three prefixes are ancient beyond measure, reaching back into the deepest layers of Proto-Indo-European. They have been worn smooth by millennia of use, their original meanings obscured, their power concentrated into the most economical form. German has preserved them with remarkable fidelity. To master these prefixes is to understand something essential about how human language transforms raw experience into structured meaning.
+    </p>
+
+    <aside class="aside-box">
+      <span class="aside-title">Canvas Meditation: The Assembling Bridge</span>
+      Watch as stone blocks place themselves one by one across a dark chasm. Below, water flows endlessly. The stones arrange themselves with geometric precision, each finding its role in the arch. The bridge glows softly with pale grey light, its structure becoming increasingly complex and complete. This is the visual language of this chapter: assembly, transformation, the structural power of prefixes joining elements into unified wholes. Nothing magical, but architectural. Nothing effortless, but necessary.
+    </aside>
+
+    <p class="narrative emphasis">
+      This chapter teaches the most difficult and most essential lesson: that the smallest prefixes carry the greatest transformative power. Be-, er-, ge- are not decorations. They are the very architecture of meaning.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="beginnen">Beginnen</span> is "to begin," literally "to-in-to begin." The prefix <span class="german-word" data-speak="true">be-</span> means "around," "to," "towards," but when attached to verbs, it does something far more subtle: it marks the transition from intention to action. <span class="german-word" data-card="bekommen">Bekommen</span> is "to receive" or "to get." This is a word that requires careful attention because English speakers often mistake it for "to become" (which in German is <span class="german-word" data-speak="true">werden</span>). Bekommen means to acquire, to obtain, to have something come to you. The <span class="german-word" data-speak="true">be-</span> prefix marks that something moves toward you, is directed toward you.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="beschreiben">Beschreiben</span> is "to describe," literally "to-around-write." Without the <span class="german-word" data-speak="true">be-</span> prefix, <span class="german-word" data-speak="true">schreiben</span> is simply "to write." But with <span class="german-word" data-speak="true">be-</span>, the act of writing becomes the act of writing-around, of circling a subject with words, of delineating it from all sides. Description is not mere writing; it is writing that encompasses, that surrounds its object with precise language.
+    </p>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-speak="true">be-</span> often has the effect of making verbs transitive—giving them the ability to take direct objects where they previously could not. <span class="german-word" data-speak="true">Antwort</span> is a noun meaning "answer." <span class="german-word" data-speak="true">Beantworten</span> means "to answer a question"—the verb that takes the question as its direct object. The <span class="german-word" data-speak="true">be-</span> prefix transforms a noun into a transitive verb, allowing action to flow toward an object.
+    </p>
+
+    <div class="ety-card" id="card-beginnen">
+      <div class="word-header">
+        <span class="word-main">beginnen</span>
+        <span class="word-pron">/bəˈɡɪnən/</span>
+      </div>
+      <div class="word-meaning">verb — to begin, to start, to commence; to undertake an action</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*gʰen-</span>
+        <span class="bridge-note">— "to give birth, to produce" + be- (around) — to begin giving forth</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">begin</span>
+        <span class="bridge-note">— cognate; English preserves the root without the prefix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">be-ginnen</span>
+        <span class="bridge-note">— the be- prefix marks the act of starting as a directed, intentional action</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">开始 (kāishǐ) / 着手</span>
+        <span class="bridge-note">— "open-begin" / "grasp-hand" — both emphasize the initiation of action</span>
+      </div>
+      <div class="story">
+        The word <em>beginnen</em> is deceptively simple, but it reveals how prefixes work to mark transitions in meaning. The root <em>ginnen</em> (which barely survives in modern German except in this word) carries the sense of "giving forth." The prefix <em>be-</em> marks the beginning as a directed action: you do not simply start; you begin-toward, you direct your effort toward the commencement of something. This is why German maintains such a distinction between actions that are aimless and those that are directed: the prefixes mark intention.
+      </div>
+    </div>
+
+    <div class="ety-card" id="card-bekommen">
+      <div class="word-header">
+        <span class="word-main">bekommen</span>
+        <span class="word-pron">/bəˈkɔmən/</span>
+      </div>
+      <div class="word-meaning">verb — to receive, to get, to obtain; to acquire; to come to have; FALSE FRIEND: NOT "to become" (that is werden)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*gʷem- + be-</span>
+        <span class="bridge-note">— "to come" + "to, toward" — to-have-come, to come-into-possession</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">become (different root)</span>
+        <span class="bridge-note">— English false friend: NOT related to English "become"; closer to "come-to"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">be-kommen</span>
+        <span class="bridge-note">— "to-come"; marks something arriving at you, something obtained; CRITICAL: not the word for "to become"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">得到 (dédào) / 获得</span>
+        <span class="bridge-note">— "get-arrive" / "acquire" — emphasizing something coming into your possession</span>
+      </div>
+      <div class="story">
+        <em>Bekommen</em> is famous for being a "false friend" for English learners. It does NOT mean "to become." It means "to receive" or "to get." The confusion arises because both German <em>bekommen</em> and English "become" are related to the root meaning "to come," but German preserved the original "to-get" sense while English evolved it into "to undergo change." In German, <em>sein</em> and <em>werden</em> are the verbs for "being" and "becoming"; <em>bekommen</em> is exclusively about obtaining, acquiring, and receiving. The <em>be-</em> prefix marks that something comes toward you, arrives at you, becomes yours.
+      </div>
+    </div>
+
+    <div class="ety-card" id="card-beschreiben">
+      <div class="word-header">
+        <span class="word-main">beschreiben</span>
+        <span class="word-pron">/bəˈʃʁaɪ̯bən/</span>
+      </div>
+      <div class="word-meaning">verb — to describe, to depict, to set down in words; to characterize; to delineate all aspects</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sker- + be-</span>
+        <span class="bridge-note">— "to write" + "around" — to write around, to circle with description, to encompass</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">scribe (different formation)</span>
+        <span class="bridge-note">— English uses Latin roots for this sense; German uses native Germanic construction</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">be-schreiben</span>
+        <span class="bridge-note">— "around-write"; makes schreiben transitive; description encompasses its object</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">描述 (miáoshù) / 描写</span>
+        <span class="bridge-note">— "sketch-express" / "sketch-depict" — both emphasize comprehensive rendering</span>
+      </div>
+      <div class="story">
+        <em>Beschreiben</em> demonstrates the power of the <em>be-</em> prefix to transform intransitive roots into transitive verbs. The root <em>schreiben</em> (to write) needs a <em>be-</em> prefix to take an object: you don't just "write"; you "write-around" something, encompassing it with language. The prefix suggests that description is an act of surrounding your subject with words, of delineating it from all angles. This is why <em>beschreiben</em> is more precise than simple writing: it implies completeness, comprehensiveness, the encirclement of meaning.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight about be-:</strong> The <span class="german-word" data-speak="true">be-</span> prefix often marks causality, direction, or the acquisition of a quality. It frequently makes verbs transitive, allowing them to take direct objects. It suggests that an action is directed toward something, encompasses something, or results in something coming to you. <span class="german-word" data-speak="true">Be-</span> is the prefix of directed action and arrival.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-speak="true">er-</span> is perhaps the most elusive of all German prefixes. It does not have a simple English equivalent. In its most basic form, <span class="german-word" data-speak="true">er-</span> marks achievement, completion, or the reaching of a goal. <span class="german-word" data-card="erklären">Erklären</span> is "to explain," literally "to-make-clear." The verb <span class="german-word" data-speak="true">klären</span> means "to clarify" or "to clear." With the <span class="german-word" data-speak="true">er-</span> prefix, it becomes <span class="german-word" data-speak="true">erklären</span> — "to make something clear enough to be understood." The prefix suggests that the action has been completed successfully, that understanding has been achieved.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="erinnern">Erinnern</span> is "to remember," literally "to-bring-into-mind." The verb <span class="german-word" data-speak="true">innerlich</span> (inward, internal) contains the same root. With the <span class="german-word" data-speak="true">er-</span> prefix, the action of turning something inward, of bringing a past memory into present consciousness, is marked as achievement. You have successfully remembered. The memory has been brought forth.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="erzählen">Erzählen</span> is "to tell" or "to narrate," literally "to-count-out." The root <span class="german-word" data-speak="true">zählen</span> means "to count." But with the <span class="german-word" data-speak="true">er-</span> prefix, counting becomes telling—the act of enumerating experiences, incidents, and details into a coherent narrative. The story emerges through the act of telling. The <span class="german-word" data-speak="true">er-</span> prefix marks the completion of this narrative act.
+    </p>
+
+    <div class="ety-card" id="card-erklären">
+      <div class="word-header">
+        <span class="word-main">erklären</span>
+        <span class="word-pron">/ɛɐˈklaːʁən/</span>
+      </div>
+      <div class="word-meaning">verb — to explain, to make clear, to declare; to clarify; to profess understanding</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kelǝ- + er-</span>
+        <span class="bridge-note">— "to drive, to clear" (klären) + "to achieve" (er-) — to successfully clear</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">explain (Latin roots)</span>
+        <span class="bridge-note">— English uses Latin; German uses native Germanic construction</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">er-klären</span>
+        <span class="bridge-note">— "achieve-clear"; marks explanation as successful clarification, not mere attempt</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">解释 (jiěshì) / 说明</span>
+        <span class="bridge-note">— "untie-release" / "speak-bright" — both emphasize the achieving of clarity</span>
+      </div>
+      <div class="story">
+        <em>Erklären</em> is among the most common German verbs, yet it contains profound linguistic architecture. The root <em>klären</em> (to clarify) combined with <em>er-</em> (achievement marker) creates the sense not of mere clarification, but of successful, complete explanation—the kind that achieves its goal of creating understanding. When a German speaker says "Ich erkläre," they are not tentatively offering an explanation; they are asserting that they will make something clear enough to be comprehended. The <em>er-</em> prefix marks the action as achievement-oriented.
+      </div>
+    </div>
+
+    <div class="ety-card" id="card-erinnern">
+      <div class="word-header">
+        <span class="word-main">erinnern</span>
+        <span class="word-pron">/ɛɐˈɪnɐn/</span>
+      </div>
+      <div class="word-meaning">verb — to remember, to recall, to bring to mind; to be a reminder of; reflexive: to remember oneself</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₁enǝ- (inner) + er-</span>
+        <span class="bridge-note">— "inner, internal" + "achieve" — to successfully bring inside the mind</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">remember (Latin-influenced)</span>
+        <span class="bridge-note">— English uses Latin; German uses native word for internal movement</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">er-innern</span>
+        <span class="bridge-note">— "achieve-internal"; marks memory as internal retrieval, moving the past inward</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">记得 (jìde) / 想起</span>
+        <span class="bridge-note">— "record-get" / "think-arise" — both emphasize memory's internal retrieval</span>
+      </div>
+      <div class="story">
+        <em>Erinnern</em> beautifully demonstrates how the <em>er-</em> prefix operates on internal actions. Memory is not external; it is the retrieval of what was external and bringing it into the inner world. The <em>er-</em> prefix marks this achievement of internalization. When you <em>erinnern</em> yourself of something, you are successfully drawing it inward, making it present in consciousness again. The reflexive form <em>sich erinnern</em> (to remember oneself) captures this: you turn yourself inward toward memory, achieving the presence of the past within your current consciousness.
+      </div>
+    </div>
+
+    <div class="ety-card" id="card-erzählen">
+      <div class="word-header">
+        <span class="word-main">erzählen</span>
+        <span class="word-pron">/ɛɐˈtseːlən/</span>
+      </div>
+      <div class="word-meaning">verb — to tell, to narrate, to recount; to relate a story; to speak of events in sequence</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kel- (to count) + er-</span>
+        <span class="bridge-note">— "to count, enumerate" (zählen) + "achieve" — to achieve narrative through enumeration</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">tell (different root)</span>
+        <span class="bridge-note">— English "tell" has different etymology; German preserves counting metaphor</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">er-zählen</span>
+        <span class="bridge-note">— "achieve-count"; narrative is the achieved enumeration of events</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">讲述 (jiǎngshù) / 叙述</span>
+        <span class="bridge-note">— "speak-relate" / "order-speak" — both emphasize the structuring of events into narrative</span>
+      </div>
+      <div class="story">
+        <em>Erzählen</em> preserves a profound truth about narrative: that stories are built by counting, by enumerating events one after another until they form a pattern, a shape, a meaningful sequence. The <em>er-</em> prefix marks this achievement—the moment when individual events accumulate into a story, when enumeration becomes narration. This is why <em>erzählen</em> feels more active, more assertive than simply "saying": it is the achievement of making disparate moments cohere into meaningful narrative.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight about er-:</strong> The <span class="german-word" data-speak="true">er-</span> prefix marks achievement, completion, or the successful reaching of a goal. It often appears in verbs that describe actions aimed at internal transformation or successful accomplishment. <span class="german-word" data-speak="true">Er-</span> is the prefix of achievement and fulfilled intention.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-speak="true">ge-</span> is perhaps the most ancient and the most difficult to pin down. In its essence, it marks collectivity, wholeness, the gathering of many into one. <span class="german-word" data-card="geschenk">Geschenk</span> is "gift," literally "something-sent-together." The roots suggest that a gift is something gathered up and sent as a whole to another person. <span class="german-word" data-card="gespräch">Gespräch</span> is "conversation," literally "the-speaking-together." Two or more people <span class="german-word" data-speak="true">sprechen</span> (speak); when they <span class="german-word" data-speak="true">führen ein Gespräch</span> (conduct a conversation), they are engaged in collective speaking, their words braided together into dialogue.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gefühl">Gefühl</span> is "feeling," literally "what is-felt-together." The individual sensations that arise in us are often so intertwined, so collectively present, that German language marks them with <span class="german-word" data-speak="true">ge-</span>, acknowledging that what we call "a feeling" is actually a gathering of multiple sensations into a unified emotional state.
+    </p>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-speak="true">ge-</span> often marks not just plurality, but the cohesion of plural elements into a meaningful whole. This is why the prefix appears so frequently in nouns that describe complex phenomena: <span class="german-word" data-speak="true">Gebirge</span> (mountain range—multiple mountains gathered), <span class="german-word" data-speak="true">Gesetz</span> (law—words set together as binding rules), <span class="german-word" data-speak="true">Geschwindigkeit</span> (speed—the collective motion of all parts).
+    </p>
+
+    <div class="ety-card" id="card-geschenk">
+      <div class="word-header">
+        <span class="word-main">Geschenk</span>
+        <span class="word-pron">/ɡəˈʃɛŋk/</span>
+      </div>
+      <div class="word-meaning">noun — gift, present; something given; mark of generosity; token of affection</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*skenk- (to pour, to send) + ge-</span>
+        <span class="bridge-note">— "to send" + "together, collected" — something gathered and sent as a whole</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">gift (different etymology)</span>
+        <span class="bridge-note">— English "gift" comes from different root; German preserves the sending metaphor</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ge-schenk</span>
+        <span class="bridge-note">— "together-sent"; implies gift as a collected, intentional offering</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">礼物 (lǐwù) / 赠送</span>
+        <span class="bridge-note">— "ritual-thing" / "gift-send" — both emphasize intentional offering</span>
+      </div>
+      <div class="story">
+        <em>Geschenk</em> reveals how the <em>ge-</em> prefix can mark intention and gathering. A gift is not random; it is something carefully gathered together (multiple objects, wrapped and bundled, or multiple qualities bundled into a single gesture) and sent to another with intention. The <em>ge-</em> prefix encodes that a gift is a unified whole, a collected offering, not disparate items but an intentional whole presented as such. This is why a true gift requires presentation, ceremony, acknowledgment—because it is marked by the <em>ge-</em> prefix as something gathered into meaning.
+      </div>
+    </div>
+
+    <div class="ety-card" id="card-gespräch">
+      <div class="word-header">
+        <span class="word-main">Gespräch</span>
+        <span class="word-pron">/ɡəˈʃpʁɛɪ̯x/</span>
+      </div>
+      <div class="word-meaning">noun — conversation, dialogue, discussion; the act of speaking together; exchange of words</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sprek- (to speak) + ge-</span>
+        <span class="bridge-note">— "to speak" + "together, collective" — the collective act of speaking together</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">conversation (Latin-based)</span>
+        <span class="bridge-note">— English uses Latin; German preserves the speaking-together metaphor</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ge-sprach (archaic) → Gespräch</span>
+        <span class="bridge-note">— "together-spoke"; marked as collective speaking, not soliloquy</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">对话 (duìhuà) / 谈话</span>
+        <span class="bridge-note">— "paired-speak" / "discuss-speak" — both emphasize mutual, collective speaking</span>
+      </div>
+      <div class="story">
+        <em>Gespräch</em> is one of the clearest examples of the <em>ge-</em> prefix's power to mark collectivity. Individual speech is <em>Rede</em> or <em>Kundgabe</em> (utterance, pronouncement). But when two or more people engage in mutual speaking, exchange words, respond to each other, the German language marks this fundamentally different activity with the <em>ge-</em> prefix: <em>Gespräch</em>. It is not merely multiple instances of speaking occurring in proximity; it is the unified phenomenon of speaking-together, words braided into dialogue, language becoming relational and reciprocal.
+      </div>
+    </div>
+
+    <div class="ety-card" id="card-gefühl">
+      <div class="word-header">
+        <span class="word-main">Gefühl</span>
+        <span class="word-pron">/ɡəˈfyːl/</span>
+      </div>
+      <div class="word-meaning">noun — feeling, emotion, sensation; sense; intuition; the affective state arising from multiple stimuli</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pʰel- (to feel, to touch) + ge-</span>
+        <span class="bridge-note">— "to feel" + "together, gathered" — multiple sensations gathered into unified emotion</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">feeling (different prefix structure)</span>
+        <span class="bridge-note">— English forms differently; German preserves the gathering metaphor</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ge-fühl</span>
+        <span class="bridge-note">— "together-felt"; marks emotion as collective sensation, not individual isolated impulse</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">感觉 (gǎnjué) / 情感</span>
+        <span class="bridge-note">— "sense-perceive" / "emotion-sensation" — both emphasize multiple sensations combining</span>
+      </div>
+      <div class="story">
+        <em>Gefühl</em> reveals the profundity of the <em>ge-</em> prefix when applied to internal phenomena. A single sensation might be called <em>Empfindung</em> (a sensation, a physical feeling). But when multiple sensations cohere—when the rapid heartbeat, the heat rising in your face, the trembling in your limbs, the thought in your mind, the memory in your consciousness all come together in one unified state—German marks this gathering with <em>ge-</em>: <em>Gefühl</em>. It is not a single sensation but the whole-ness of an emotional state, multiple elements gathered into meaningful unity.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight about ge-:</strong> The <span class="german-word" data-speak="true">ge-</span> prefix marks collectivity, wholeness, and the gathering of multiple elements into unified phenomena. It transforms plural into singularity—many things become one thing. <span class="german-word" data-speak="true">Ge-</span> is the prefix of unity, collection, and the meaningful whole.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="integration">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      All nine words in this chapter demonstrate the three great bridge prefixes of German. Together, they show how the smallest linguistic elements carry the greatest transformative power.
+    </p>
+
+    <p class="narrative small">
+      <strong>Be-:</strong> Begins, receives, describes. Marks direction, acquisition, directed action. Makes verbs transitive. Suggests things are directed toward you or encompassed by action.
+    </p>
+
+    <p class="narrative small">
+      <strong>Er-:</strong> Clarifies, remembers, narrates. Marks achievement, completion, successful accomplishment. Suggests that an action has reached its goal or achieved internal transformation.
+    </p>
+
+    <p class="narrative small">
+      <strong>Ge-:</strong> Gathers, unifies, collects. Marks collectivity, wholeness, multiple elements becoming one. Transforms plural into singular meaning. Suggests multiple elements cohering into meaningful unity.
+    </p>
+
+    <p class="narrative emphasis">
+      The bridge prefixes are the ancient architecture of German meaning. Be-, er-, ge- do not simply modify words. They restructure them, directing meaning, marking achievement, gathering plurality into wholeness. This is how language builds complexity from simplicity. This is how stone by stone, a bridge assembles itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="guess1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      Now that you understand be-, er-, and ge-, try these guesses. Use the bridge metaphor as your foundation.
+    </p>
+
+    <aside class="aside-box">
+      <span class="aside-title">Prefix Practice</span>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">1. Befehl</strong> — be- + fehl- (to command). What might this mean? A directed command? Something imposed toward you?</p>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">2. Erfolg</strong> — er- + folg- (to follow). What does successful following mean? Achievement in pursuit? Accomplishment?</p>
+      <p><strong style="color: var(--fire-glow);">3. Gesellschaft</strong> — ge- + selb- (self) + schaft (state, condition). What is the gathering of selves into society? Community? Social order?</p>
+    </aside>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="guess2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      Advanced guesses: test your understanding of how these prefixes combine.
+    </p>
+
+    <aside class="aside-box">
+      <span class="aside-title">Advanced Application</span>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">1. Geständnis</strong> — ge- + stand- (stand, state) + nis (condition). What is the unified standing together of a confession? An avowal made solidly?</p>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">2. Bestand</strong> — be- + stand (inventory, supply). What is something standing-before you? An inventory? Stock? Durability?</p>
+      <p><strong style="color: var(--fire-glow);">3. Erkenntnis</strong> — er- + kenn (to know) + nis (state). What is the achieved state of knowing? Knowledge? Insight? Recognition of truth?</p>
+    </aside>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="quiz-section" id="quizSection">
+    <div class="quiz-header">
+      <h2>Check Your Understanding</h2>
+      <p>Test your mastery of Chapter 45's bridge prefixes. Aim for 80%.</p>
+    </div>
+    <div id="quizContainer"></div>
+    <div class="quiz-nav">
+      <button id="quizPrev">← Previous</button>
+      <button id="quizNext">Next →</button>
+    </div>
+    <div class="quiz-score" id="quizScore"></div>
+    <div class="post-quiz-summary" id="postQuizSummary"></div>
+    <div class="quiz-reset">
+      <button id="resetQuiz">Reset Quiz</button>
+    </div>
+  </div>
+
+  <div class="word-collection" id="wordCollection">
+    <h3>Words from Die Brücke (The Bridge)</h3>
+    <div class="collected-words" id="collectedWords">
+      <div class="collected-word"><div class="cw-german">beginnen</div><div class="cw-english">to begin</div></div>
+      <div class="collected-word"><div class="cw-german">bekommen</div><div class="cw-english">to receive, get</div></div>
+      <div class="collected-word"><div class="cw-german">beschreiben</div><div class="cw-english">to describe</div></div>
+      <div class="collected-word"><div class="cw-german">erklären</div><div class="cw-english">to explain</div></div>
+      <div class="collected-word"><div class="cw-german">erinnern</div><div class="cw-english">to remember</div></div>
+      <div class="collected-word"><div class="cw-german">erzählen</div><div class="cw-english">to tell, narrate</div></div>
+      <div class="collected-word"><div class="cw-german">Geschenk</div><div class="cw-english">gift</div></div>
+      <div class="collected-word"><div class="cw-german">Gespräch</div><div class="cw-english">conversation</div></div>
+      <div class="collected-word"><div class="cw-german">Gefühl</div><div class="cw-english">feeling, emotion</div></div>
+    </div>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="chapter44.html" class="nav-button">← Chapter 44</a>
+    <span class="chapter-counter">45 / 100</span>
+    <a href="chapter46.html" class="nav-button">Chapter 46 →</a>
+  </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById('workshop-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function drawBridge() {
+  const scrollProgress = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.02)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height * 0.6;
+
+  // Draw stones placing one by one
+  for (let i = 0; i < 40; i++) {
+    const progress = Math.min(scrollProgress * 1.5, 1);
+    if (i / 40 > progress) break;
+
+    const x = centerX - 300 + (i * 15);
+    const y = centerY - Math.cos(i / 40 * Math.PI) * 100;
+
+    ctx.fillStyle = `rgba(192, 192, 192, ${0.1 + (1 - i / 40) * 0.2})`;
+    ctx.fillRect(x, y, 12, 12);
+  }
+
+  // Draw water below
+  const waterY = centerY + 100;
+  for (let i = 0; i < 5; i++) {
+    ctx.strokeStyle = `rgba(74, 120, 168, ${0.05 + i * 0.02})`;
+    ctx.beginPath();
+    ctx.moveTo(0, waterY + i * 4);
+    for (let x = 0; x < canvas.width; x += 20) {
+      const wave = Math.sin((x / 50 + Date.now() * 0.001) * Math.PI) * 3;
+      ctx.lineTo(x, waterY + i * 4 + wave);
+    }
+    ctx.stroke();
+  }
+}
+
+function animate() {
+  drawBridge();
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+      }
+    }
+  });
+});
+
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => speakGerman(word.textContent.trim()));
+});
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.textContent = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+const quizData = [
+  {
+    question: 'What does "be-" primarily mark in German verbs?',
+    options: [
+      'Negation or reversal',
+      'Direction, causality, or making verbs transitive',
+      'Repetition or cycling',
+      'Past tense or completion'
+    ],
+    correct: 1,
+    explanation: 'The "be-" prefix marks directed action, making verbs transitive and suggesting things are directed toward an object.'
+  },
+  {
+    question: 'Bekommen means:',
+    options: [
+      'To become (FALSE—that is werden)',
+      'To receive or obtain',
+      'To come before',
+      'To concern or affect'
+    ],
+    correct: 1,
+    explanation: '"Bekommen" is a famous false friend. It means "to receive," not "to become." Werden is the verb for becoming.'
+  },
+  {
+    question: 'What does the "er-" prefix typically mark?',
+    options: [
+      'Plurality or collection',
+      'Achievement, completion, or reaching a goal',
+      'Negation or opposition',
+      'Causation or direction'
+    ],
+    correct: 1,
+    explanation: '"Er-" marks successful completion or achievement, often transforming actions into accomplished facts.'
+  },
+  {
+    question: 'What does "ge-" primarily mark?',
+    options: [
+      'Negation',
+      'Direction toward something',
+      'Collectivity, wholeness, or gathering of multiple elements into one',
+      'Past action'
+    ],
+    correct: 2,
+    explanation: '"Ge-" transforms multiple elements or plural phenomena into unified wholes (Gespräch=collective speaking, Gefühl=gathered sensation).'
+  },
+  {
+    question: 'How does "beschreiben" differ from "schreiben"?',
+    options: [
+      'It is in the past tense',
+      'The "be-" prefix makes schreiben transitive, allowing it to take a direct object; description encompasses its subject',
+      'It means to write about German topics',
+      'There is no real difference'
+    ],
+    correct: 1,
+    explanation: '"Schreiben" is intransitive; "beschreiben" (to describe) is transitive, meaning to write-around/about something.'
+  },
+  {
+    question: '"Erklären" is best understood as:',
+    options: [
+      'To cry out',
+      'To become clear',
+      'To achieve clarification, to successfully explain',
+      'To declare something false'
+    ],
+    correct: 2,
+    explanation: '"Erklären" = er- (achieve) + klären (to clarify). It marks explanation as successful, complete clarification.'
+  },
+  {
+    question: 'What is the literal meaning of "Gespräch"?',
+    options: [
+      'A speech or monologue',
+      'Speaking-together, collective speaking between multiple people',
+      'A formal address',
+      'A record or transcript of words'
+    ],
+    correct: 1,
+    explanation: '"Ge-" marks collectivity. Gespräch is the unified phenomenon of mutual speaking, not individual utterances in sequence.'
+  },
+  {
+    question: '"Gefühl" literally means:',
+    options: [
+      'One single physical sensation',
+      'What is felt-together, multiple sensations gathered into unified emotion',
+      'A past feeling or memory',
+      'The ability to feel'
+    ],
+    correct: 1,
+    explanation: '"Ge-" marks the gathering of multiple sensations into one unified emotional state, not a single isolated feeling.'
+  },
+  {
+    question: 'What is "Geschenk"?',
+    options: [
+      'A place where gifts are made',
+      'Something that is desired',
+      'A gathered-and-sent gift, something collected and offered as a unified whole',
+      'A temporary loan'
+    ],
+    correct: 2,
+    explanation: '"Ge-" marks the collection and gathering of items/meaning into a gift, which is intentionally unified and presented.'
+  },
+  {
+    question: 'Which statement best describes the bridge prefixes?',
+    options: [
+      'They are simple, with clear meanings that never change',
+      'They are ancient, elusive, and highly transformative, restructuring word meanings rather than simply modifying them',
+      'They are modern additions to German',
+      'They only appear in verbs, never in nouns'
+    ],
+    correct: 1,
+    explanation: 'Be-, er-, ge- are ancient prefixes that fundamentally restructure meaning. They do not simply modify but transform words at their essence.'
+  },
+  {
+    question: 'How is "erinnern" different from "denken" (to think)?',
+    options: [
+      'Erinnern is faster',
+      'Erinnern marks the achievement of bringing memory inward into consciousness, not merely thinking about the present',
+      'They mean exactly the same thing',
+      'Erinnern is archaic'
+    ],
+    correct: 1,
+    explanation: 'Er- marks internalization and achievement. "Erinnern" is successful memory-retrieval, bringing the past into present awareness.'
+  },
+  {
+    question: 'What architectural metaphor unites this chapter?',
+    options: [
+      'A tower being built upward',
+      'A spiral ascending',
+      'A bridge assembling stone by stone, with each prefix playing a structural role',
+      'A wall being constructed'
+    ],
+    correct: 2,
+    explanation: 'The bridge metaphor shows how prefixes are like stones, each with its function, assembling into a unified whole.'
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let answered = new Array(quizData.length).fill(false);
+
+function displayQuestion() {
+  const question = quizData[currentQuestion];
+  const container = document.getElementById('quizContainer');
+
+  container.innerHTML = `
+    <div class="quiz-item ${answered[currentQuestion] ? (answers[currentQuestion] === question.correct ? 'correct' : 'incorrect') : ''}">
+      <div class="quiz-question">${currentQuestion + 1}. ${question.question}</div>
+      <div class="quiz-options">
+        ${question.options.map((option, i) => `
+          <label class="quiz-option ${answers[currentQuestion] === i ? 'selected' : ''} ${answered[currentQuestion] ? (i === question.correct ? 'correct' : (i === answers[currentQuestion] ? 'incorrect' : '')) : ''}">
+            <input type="radio" name="answer" value="${i}" ${answers[currentQuestion] === i ? 'checked' : ''} ${answered[currentQuestion] ? 'disabled' : ''}>
+            ${option}
+          </label>
+        `).join('')}
+      </div>
+      ${answered[currentQuestion] ? `<p style="margin-top: 16px; color: rgba(212, 202, 187, 0.7); font-size: 0.95rem; line-height: 1.6;">${question.explanation}</p>` : ''}
+    </div>
+  `;
+
+  if (!answered[currentQuestion]) {
+    container.querySelectorAll('.quiz-option').forEach((label, i) => {
+      label.addEventListener('click', () => {
+        answers[currentQuestion] = i;
+        answered[currentQuestion] = true;
+        displayQuestion();
+        updateNav();
+        checkQuizCompletion();
+      });
+    });
+  }
+
+  updateNav();
+}
+
+function updateNav() {
+  document.getElementById('quizPrev').disabled = currentQuestion === 0;
+  document.getElementById('quizNext').disabled = currentQuestion === quizData.length - 1;
+}
+
+document.getElementById('quizPrev').addEventListener('click', () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    displayQuestion();
+  }
+});
+
+document.getElementById('quizNext').addEventListener('click', () => {
+  if (currentQuestion < quizData.length - 1) {
+    currentQuestion++;
+    displayQuestion();
+  }
+});
+
+function checkQuizCompletion() {
+  if (answered.every(a => a)) {
+    const correct = answers.reduce((count, ans, i) => count + (ans === quizData[i].correct ? 1 : 0), 0);
+    const percentage = Math.round((correct / quizData.length) * 100);
+
+    document.getElementById('quizScore').textContent = `Score: ${correct}/${quizData.length} (${percentage}%)`;
+
+    if (percentage >= 80) {
+      document.getElementById('postQuizSummary').classList.add('show');
+      document.getElementById('postQuizSummary').innerHTML = `<strong>Excellent!</strong> You have mastered the bridge prefixes. Be-, er-, ge- are no longer mysterious. You understand their architecture. The bridge is complete.`;
+      setTimeout(() => {
+        document.getElementById('wordCollection').classList.add('show');
+        document.querySelectorAll('.collected-word').forEach((w, i) => setTimeout(() => w.classList.add('show'), i * 100));
+      }, 500);
+    } else {
+      document.getElementById('postQuizSummary').classList.add('show');
+      document.getElementById('postQuizSummary').innerHTML = `<strong>Keep studying.</strong> You scored ${percentage}%. The bridge prefixes are the hardest in German. Review their distinct functions: be- directs, er- achieves, ge- gathers.`;
+    }
+  }
+}
+
+document.getElementById('resetQuiz').addEventListener('click', () => {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  answered = new Array(quizData.length).fill(false);
+  document.getElementById('quizScore').textContent = '';
+  document.getElementById('postQuizSummary').classList.remove('show');
+  document.getElementById('wordCollection').classList.remove('show');
+  displayQuestion();
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('quizSection').classList.add('show');
+    displayQuestion();
+  }, 500);
+});
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">412 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(48%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:48%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 412 words across 45 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">93 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(64%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:64%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 93 patterns across 45 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

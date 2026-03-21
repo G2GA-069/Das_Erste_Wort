@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a12">
+    <title>Das erste Wort — Prologue</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --rain-grey: #6a7a8a;
+            --london-dark: #0a0a12;
+            --lamplight: #e8a44a;
+            --lamplight-dim: rgba(232,164,74,0.15);
+            --bookshop-warm: #2a1f14;
+            --parchment: #d4c5a0;
+            --ink-black: #0a0a12;
+            --text-light: #c8c4b8;
+            --text-muted: #8a8678;
+            --gold-dark: #8a6a3a;
+            --gold-bright: #d4a84a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+            font-size: 20px;
+            font-size: 1.25rem;
+            line-height: 1.85;
+            background: var(--ink-black);
+            color: var(--text-light);
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        body {
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transition: background-color 2s ease;
+        }
+
+        body.in-bookshop { background-color: var(--bookshop-warm); }
+        body.in-book { background-color: #0a0a0a; }
+        body.in-alley { background-color: #0e0e18; }
+
+        /* ===== CANVAS LAYERS ===== */
+        #rain-canvas, #fog-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        #fog-canvas { z-index: 1; opacity: 0.6; }
+
+        /* ===== LONDON SKYLINE ===== */
+        .london-skyline {
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%; height: 220px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+            transition: opacity 3s ease;
+        }
+        body.in-bookshop .london-skyline,
+        body.in-book .london-skyline { opacity: 0; }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            background: var(--lamplight);
+            width: 0%;
+            z-index: 200;
+            transition: width 0.3s ease;
+        }
+
+        /* ===== TITLE SCREEN ===== */
+        .title-screen {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        /* The Neverending Story-style ornamental frame */
+        .logo-frame {
+            position: relative;
+            width: 320px;
+            max-width: 85vw;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: logoReveal 2.5s ease 0.5s forwards;
+        }
+
+        @keyframes logoReveal {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .logo-frame svg { width: 100%; height: auto; }
+
+        /* Sütterlin-style title rendered as SVG */
+        .suetterlin-title {
+            opacity: 0;
+            animation: titleFade 2s ease 1.5s forwards;
+        }
+
+        @keyframes titleFade {
+            to { opacity: 1; }
+        }
+
+        .title-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            font-size: 1rem;
+            font-style: italic;
+            font-weight: 300;
+            color: rgba(212, 197, 160, 0.5);
+            letter-spacing: 0.3em;
+            margin-top: 16px;
+            opacity: 0;
+            animation: titleFade 1.5s ease 2.8s forwards;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-size: 0.875rem;
+            font-style: italic;
+            color: rgba(200,196,184,0.25);
+            letter-spacing: 0.15em;
+            opacity: 0;
+            animation: hintPulse 3s ease 4s infinite;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ===== MAIN STORY ===== */
+        .story {
+            position: relative;
+            z-index: 10;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px 40px;
+        }
+
+        /* ===== SCENES ===== */
+        .scene {
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .scene.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .scene p {
+            font-size: 20px;
+            font-size: 1.25rem;
+            line-height: 1.9;
+            margin-bottom: 1.5em;
+            color: var(--text-light);
+        }
+        .scene p:last-child { margin-bottom: 0; }
+
+        /* Atmosphere colours */
+        .scene.rain p { color: #9a96a0; }
+        .scene.warmth p { color: #d4c5a0; }
+        .scene.dark p { color: #b8b0a0; }
+        .scene.flight p { color: #a8a0b0; }
+        .scene.hiding p { color: #b0a898; }
+
+        /* Emphasis */
+        .scene em { color: inherit; font-style: italic; }
+        .scene .heartbeat {
+            display: inline;
+            animation: heartbeat 1.2s ease infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== DIVIDERS ===== */
+        .divider {
+            text-align: center;
+            margin: 60px 0;
+            color: var(--rain-grey);
+            font-size: 1.5rem;
+            letter-spacing: 12px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .divider.visible { opacity: 0.4; }
+
+        /* ===== THE BOOK (EPIC VERSION) ===== */
+        .book-moment {
+            text-align: center;
+            margin: 80px 0;
+            padding: 40px 20px;
+            opacity: 0;
+            transform: scale(0.92);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+        }
+        .book-moment.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .book-outer {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: transform 0.6s ease;
+        }
+        .book-outer:hover { transform: scale(1.03); }
+
+        /* Glow behind the book */
+        .book-glow {
+            position: absolute;
+            top: -30px; left: -30px;
+            right: -30px; bottom: -30px;
+            background: radial-gradient(ellipse, rgba(232,164,74,0.14) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            pointer-events: none;
+        }
+        .book-moment.visible .book-glow { opacity: 1; }
+
+        .book-cover {
+            position: relative;
+            display: inline-block;
+            width: 260px;
+            max-width: 70vw;
+            background: linear-gradient(160deg, #2a1a0a 0%, #1a0e04 40%, #0e0804 100%);
+            border: 2px solid var(--gold-dark);
+            padding: 0;
+            box-shadow:
+                0 12px 50px rgba(0,0,0,0.7),
+                0 2px 10px rgba(138,106,58,0.15),
+                inset 0 0 30px rgba(138,106,58,0.05);
+            transition: all 0.8s ease;
+            overflow: hidden;
+        }
+
+        /* Leather texture overlay */
+        .book-cover::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(138,106,58,0.02) 3px,
+                    rgba(138,106,58,0.02) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Spine shadow on left */
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 16px; height: 100%;
+            background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .book-inner {
+            position: relative;
+            z-index: 3;
+            padding: 50px 30px 40px;
+        }
+
+        /* Ornamental border inside the cover */
+        .book-border {
+            position: absolute;
+            top: 12px; left: 12px;
+            right: 12px; bottom: 12px;
+            border: 1px solid rgba(138,106,58,0.25);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .book-border::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px;
+            right: 4px; bottom: 4px;
+            border: 1px solid rgba(138,106,58,0.12);
+        }
+
+        /* Corner ornaments */
+        .book-corner {
+            position: absolute;
+            width: 24px; height: 24px;
+            z-index: 4;
+        }
+        .book-corner svg { width: 100%; height: 100%; }
+        .book-corner.tl { top: 8px; left: 8px; }
+        .book-corner.tr { top: 8px; right: 8px; transform: scaleX(-1); }
+        .book-corner.bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
+        .book-corner.br { bottom: 8px; right: 8px; transform: scale(-1); }
+
+        /* Sütterlin title on book */
+        .book-suetterlin {
+            margin-bottom: 16px;
+        }
+        .book-suetterlin svg {
+            width: 180px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .book-subtitle-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 14px;
+            font-size: 0.875rem;
+            font-style: italic;
+            color: rgba(138,106,58,0.6);
+            letter-spacing: 0.1em;
+        }
+
+        /* Center ornament on book */
+        .book-ornament {
+            margin: 20px auto 0;
+            width: 60px;
+            opacity: 0.3;
+        }
+        .book-ornament svg { width: 100%; height: auto; }
+
+        /* Hover and opened states */
+        .book-cover:hover {
+            box-shadow:
+                0 12px 60px rgba(0,0,0,0.7),
+                0 0 40px rgba(232,164,74,0.12),
+                inset 0 0 30px rgba(138,106,58,0.08);
+            border-color: rgba(212,168,74,0.6);
+        }
+
+        .book-cover.opened {
+            box-shadow:
+                0 0 80px rgba(232,164,74,0.35),
+                0 0 150px rgba(232,164,74,0.1),
+                inset 0 0 50px rgba(232,164,74,0.1);
+            border-color: var(--lamplight);
+        }
+
+        .book-instruction {
+            font-size: 14px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 28px;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.8s;
+        }
+        .book-moment.visible .book-instruction { opacity: 1; }
+
+        /* Floating dust motes around the book */
+        .dust-mote {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: var(--lamplight);
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ===== POST-OPEN REVEAL ===== */
+        .after-open {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 1.5s ease, opacity 1.2s ease 0.3s;
+        }
+        .after-open.revealed {
+            max-height: 5000px;
+            opacity: 1;
+        }
+
+        /* ===== TRANSITION TEXT ===== */
+        .transition-text {
+            text-align: center;
+            margin: 80px 0;
+            padding: 40px 20px;
+        }
+        .transition-text p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-size: 1.375rem;
+            font-style: italic;
+            color: var(--lamplight);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .transition-text .fade-line {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+        .transition-text .fade-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== CONTINUE LINK ===== */
+        .continue-section {
+            text-align: center;
+            margin-top: 80px;
+            padding: 40px 20px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .continue-section.visible { opacity: 1; }
+
+        .continue-link {
+            display: inline-block;
+            padding: 14px 44px;
+            border: 1px solid var(--lamplight);
+            color: var(--lamplight);
+            text-decoration: none;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-size: 1.125rem;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+        .continue-link:hover {
+            background: rgba(232,164,74,0.1);
+            box-shadow: 0 0 30px rgba(232,164,74,0.1);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .story { padding: 0 18px 30px; }
+            .scene p {
+                font-size: 18px !important;
+                line-height: 1.85;
+            }
+            .scene { margin-bottom: 60px; }
+            .transition-text p { font-size: 19px !important; }
+            .book-cover { width: 220px; }
+            .book-inner { padding: 40px 24px 32px; }
+            .logo-frame { width: 260px; }
+            .title-screen { min-height: 90vh; }
+        }
+
+        @media (max-width: 380px) {
+            .scene p { font-size: 16px !important; }
+            .book-cover { width: 190px; }
+            .book-inner { padding: 32px 18px 26px; }
+            .logo-frame { width: 220px; }
+        }
+    </style>
+</head>
+<body>
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.35;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.8'" onmouseleave="this.style.opacity='0.35'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:0.7rem;letter-spacing:0.15em;color:rgba(180,140,220,0.7);text-transform:uppercase;">G2G Advisory</span>
+    </a>
+  </div>
+
+    <canvas id="rain-canvas"></canvas>
+    <canvas id="fog-canvas"></canvas>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- London skyline silhouette -->
+    <div class="london-skyline">
+        <svg viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="skylineGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#c8c4b8" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#c8c4b8" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <!-- London rooftops, chimneys, Big Ben clock tower, church spires, cranes -->
+            <path fill="url(#skylineGrad)" d="
+                M0,220 L0,180 L30,180 L30,160 L35,160 L35,155 L40,155 L40,160 L50,160 L50,170 L80,170 L80,150 L85,150 L85,140 L90,140 L90,150 L95,150 L95,170 L120,170 L120,155 L125,155 L125,145 L130,145 L130,155 L140,155 L140,170 L170,170 L170,145 L175,145 L175,130 L180,130 L180,125 L182,110 L184,125 L184,130 L189,130 L189,145 L195,145 L195,170 L230,170 L230,160 L240,160 L240,150 L245,150 L245,145 L250,145 L250,150 L260,150 L260,160 L280,160 L280,170 L310,170 L310,155 L315,155 L315,148 L318,148 L318,155 L325,155 L325,170 L360,170 L360,140 L365,140 L365,120 L368,120 L368,100 L370,80 L372,60 L373,45 L374,60 L376,80 L378,100 L380,120 L383,120 L383,140 L390,140 L390,130 L395,130 L395,125 L400,120 L400,130 L405,130 L405,140 L410,140 L410,170 L440,170 L440,155 L445,155 L445,148 L450,148 L450,155 L460,155 L460,170 L500,170 L500,160 L510,160 L510,145 L515,145 L515,138 L520,138 L520,145 L530,145 L530,160 L550,160 L550,170 L590,170 L590,150 L600,150 L600,135 L605,135 L605,120 L608,105 L610,120 L610,135 L615,135 L615,150 L625,150 L625,170 L660,170 L660,155 L665,155 L665,145 L670,145 L670,155 L680,155 L680,170 L720,170 L720,160 L730,160 L730,148 L735,148 L735,142 L738,135 L741,142 L741,148 L748,148 L748,160 L760,160 L760,170 L800,170 L800,155 L810,155 L810,145 L815,145 L815,155 L830,155 L830,165 L860,165 L860,150 L870,150 L870,140 L875,140 L875,130 L878,130 L878,140 L885,140 L885,150 L900,150 L900,165 L930,165 L930,155 L935,155 L935,148 L940,148 L940,155 L950,155 L950,165 L990,165 L990,150 L1000,150 L1000,140 L1010,140 L1010,130 L1015,130 L1015,120 L1018,115 L1021,120 L1021,130 L1026,130 L1026,140 L1036,140 L1036,150 L1050,150 L1050,165 L1080,165 L1080,155 L1090,155 L1090,165 L1120,165 L1120,158 L1130,158 L1130,165 L1160,165 L1160,170 L1200,170 L1200,220 Z
+            "/>
+        </svg>
+    </div>
+
+    <!-- ===== TITLE SCREEN ===== -->
+    <div class="title-screen">
+        <div class="logo-frame">
+            <!-- Neverending Story-style ornamental frame with serpentine motifs -->
+            <svg viewBox="0 0 400 480" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#d4a84a"/>
+                        <stop offset="50%" stop-color="#e8c06a"/>
+                        <stop offset="100%" stop-color="#a07830"/>
+                    </linearGradient>
+                    <linearGradient id="goldGrad2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#d4a84a"/>
+                        <stop offset="100%" stop-color="#8a6a3a"/>
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Outer ornamental oval frame -->
+                <ellipse cx="200" cy="240" rx="175" ry="215" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" opacity="0.4"/>
+                <ellipse cx="200" cy="240" rx="165" ry="205" fill="none" stroke="url(#goldGrad)" stroke-width="0.5" opacity="0.25"/>
+
+                <!-- Top serpent/ouroboros curve -->
+                <path d="M100,80 C100,20 300,20 300,80" fill="none" stroke="url(#goldGrad)" stroke-width="2" opacity="0.6"/>
+                <path d="M110,75 C110,25 290,25 290,75" fill="none" stroke="url(#goldGrad)" stroke-width="1" opacity="0.3"/>
+
+                <!-- Two intertwined serpents (AURYN-inspired) at top -->
+                <g filter="url(#glow)" opacity="0.7">
+                    <!-- Serpent 1 -->
+                    <path d="M160,50 C140,40 130,55 140,65 C150,75 170,65 165,55 C160,45 145,42 138,52"
+                          fill="none" stroke="#d4a84a" stroke-width="1.8" stroke-linecap="round"/>
+                    <!-- Eye -->
+                    <circle cx="145" cy="52" r="1.5" fill="#e8c06a"/>
+
+                    <!-- Serpent 2 -->
+                    <path d="M240,50 C260,40 270,55 260,65 C250,75 230,65 235,55 C240,45 255,42 262,52"
+                          fill="none" stroke="#d4a84a" stroke-width="1.8" stroke-linecap="round"/>
+                    <!-- Eye -->
+                    <circle cx="255" cy="52" r="1.5" fill="#e8c06a"/>
+                </g>
+
+                <!-- Top crown ornament -->
+                <path d="M190,30 L195,18 L200,26 L205,18 L210,30" fill="none" stroke="#d4a84a" stroke-width="1.2" opacity="0.5"/>
+
+                <!-- Side vine ornaments left -->
+                <path d="M38,160 C25,180 25,220 30,240 C25,260 25,300 38,320" fill="none" stroke="url(#goldGrad2)" stroke-width="1.2" opacity="0.35"/>
+                <circle cx="30" cy="200" r="3" fill="none" stroke="#d4a84a" stroke-width="0.8" opacity="0.3"/>
+                <circle cx="28" cy="280" r="3" fill="none" stroke="#d4a84a" stroke-width="0.8" opacity="0.3"/>
+
+                <!-- Side vine ornaments right -->
+                <path d="M362,160 C375,180 375,220 370,240 C375,260 375,300 362,320" fill="none" stroke="url(#goldGrad2)" stroke-width="1.2" opacity="0.35"/>
+                <circle cx="370" cy="200" r="3" fill="none" stroke="#d4a84a" stroke-width="0.8" opacity="0.3"/>
+                <circle cx="372" cy="280" r="3" fill="none" stroke="#d4a84a" stroke-width="0.8" opacity="0.3"/>
+
+                <!-- === SÜTTERLIN-STYLE TITLE === -->
+                <!-- "Das" in Kurrent/Sütterlin style -->
+                <g transform="translate(200,160)" text-anchor="middle" filter="url(#glow)">
+                    <text font-family="'Cormorant Garamond', serif" font-size="32" font-weight="300"
+                          fill="#d4a84a" opacity="0.5" letter-spacing="8" text-anchor="middle" y="0">DAS</text>
+                </g>
+
+                <!-- "erste" - large, flowing, Sütterlin-inspired with hand-drawn strokes -->
+                <g transform="translate(200,220)" filter="url(#glow)">
+                    <!-- Hand-drawn flowing script for "erste" -->
+                    <path d="M72,10 C68,-5 58,-2 60,10 C62,22 72,20 74,12 C76,4 70,0 66,5
+                             M80,0 C78,-4 76,5 78,15 C80,25 84,8 82,-2 L84,20
+                             M92,-5 C86,-2 86,8 92,10 C98,12 98,2 92,0
+                             M105,5 C100,-5 98,15 102,18 C106,20 108,10 106,0
+                             M112,-5 C108,-2 108,8 114,10 C120,12 120,2 114,0
+                             M128,5 C124,-5 120,15 124,18 C128,20 134,8 130,-4"
+                          fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                          opacity="0.85"/>
+                    <!-- Decorative understrokes -->
+                    <path d="M65,28 C85,32 115,32 135,28" fill="none" stroke="#d4a84a" stroke-width="0.8" opacity="0.3"/>
+                </g>
+
+                <!-- "Wort" in Kurrent/Sütterlin style -->
+                <g transform="translate(200,290)" filter="url(#glow)">
+                    <text font-family="'Cormorant Garamond', serif" font-size="32" font-weight="300"
+                          fill="#d4a84a" opacity="0.5" letter-spacing="8" text-anchor="middle" y="0">WORT</text>
+                </g>
+
+                <!-- Central large ornamental text -->
+                <text x="200" y="175" font-family="'Cormorant Garamond', serif" font-size="58" font-weight="300"
+                      fill="url(#goldGrad)" text-anchor="middle" letter-spacing="3" filter="url(#glow)" opacity="0.9">Das</text>
+                <text x="200" y="250" font-family="'Cormorant Garamond', serif" font-size="52" font-weight="300"
+                      fill="url(#goldGrad)" text-anchor="middle" letter-spacing="2" filter="url(#glow)" opacity="0.9"
+                      font-style="italic">erste</text>
+                <text x="200" y="325" font-family="'Cormorant Garamond', serif" font-size="58" font-weight="300"
+                      fill="url(#goldGrad)" text-anchor="middle" letter-spacing="3" filter="url(#glow)" opacity="0.9">Wort</text>
+
+                <!-- Small decorative diamonds between words -->
+                <path d="M200,190 L204,196 L200,202 L196,196 Z" fill="#d4a84a" opacity="0.3"/>
+                <path d="M200,268 L204,274 L200,280 L196,274 Z" fill="#d4a84a" opacity="0.3"/>
+
+                <!-- Bottom ornament - intertwined loops -->
+                <path d="M140,380 C160,370 180,385 200,370 C220,385 240,370 260,380" fill="none" stroke="url(#goldGrad)" stroke-width="1.2" opacity="0.4"/>
+                <path d="M160,395 C175,388 190,398 200,390 C210,398 225,388 240,395" fill="none" stroke="url(#goldGrad)" stroke-width="0.8" opacity="0.3"/>
+
+                <!-- Bottom serpent tail curves -->
+                <path d="M100,400 C100,460 300,460 300,400" fill="none" stroke="url(#goldGrad)" stroke-width="2" opacity="0.6"/>
+                <path d="M110,405 C110,455 290,455 290,405" fill="none" stroke="url(#goldGrad)" stroke-width="1" opacity="0.3"/>
+
+                <!-- Small star/cross at very bottom -->
+                <g transform="translate(200,440)" opacity="0.4">
+                    <line x1="-6" y1="0" x2="6" y2="0" stroke="#d4a84a" stroke-width="1"/>
+                    <line x1="0" y1="-6" x2="0" y2="6" stroke="#d4a84a" stroke-width="1"/>
+                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#d4a84a" stroke-width="0.5"/>
+                    <line x1="4" y1="-4" x2="-4" y2="4" stroke="#d4a84a" stroke-width="0.5"/>
+                </g>
+            </svg>
+        </div>
+
+        <div class="suetterlin-title">
+            <!-- Backup text title for accessibility -->
+        </div>
+
+        <div class="title-subtitle">The First Word</div>
+
+        <div class="scroll-hint">scroll to begin</div>
+    </div>
+
+    <!-- ===== THE STORY ===== -->
+    <div class="story">
+
+        <!-- SCENE 1: THE STREET -->
+        <div class="scene rain" data-bg="">
+            <p>The rain hasn't stopped in three days.</p>
+            <p>You pull your jacket tighter and cross the street. London in November — grey pavement, grey sky, grey faces hurrying past with their heads down. A bus hisses through a puddle and sends a sheet of water across your shoes. You don't even flinch anymore. You've been here long enough to expect it.</p>
+            <p>It's the kind of evening where the city feels like it's trying to push you indoors. The kind of evening where every lit window looks warm and every doorway looks like an invitation. But the doorways aren't for you. You walk past them. You keep walking.</p>
+        </div>
+
+        <div class="divider">. . .</div>
+
+        <!-- SCENE 2: THE ALLEY -->
+        <div class="scene rain">
+            <p>You turn down a side street you don't usually take. You're not sure why. Something about the light at the far end — warmer than the rest, amber instead of the usual fluorescent white. Or maybe you just want to get out of the wind.</p>
+            <p>The alley is narrow. Old buildings lean toward each other overhead, almost touching. The pavement is uneven cobblestone, slick with rain. Somewhere above you, a sign creaks on its hinges. You look up.</p>
+            <p>The sign is painted in faded gold letters on dark wood. You can't quite read it in the half-light, but you can make out one word: <em>Books</em>.</p>
+            <p>Below the sign, a door. Heavy oak, dark with age, with a brass handle worn smooth by decades of hands. A warm light glows through the small window beside it. The glass is old — slightly warped — and through it you can see shelves. Floor to ceiling. Crammed with spines.</p>
+            <p>The door is slightly open.</p>
+        </div>
+
+        <div class="divider">. . .</div>
+
+        <!-- SCENE 3: THE BOOKSHOP -->
+        <div class="scene warmth" data-bg="bookshop">
+            <p>The bell chimes as you push inside. A small, high sound — too delicate for a shop this cluttered. The warmth hits you immediately: not central heating warmth, but the warmth of old paper and dust and something that might be cinnamon, or might just be what a room smells like when it hasn't changed in fifty years.</p>
+            <p>The shop is tiny. Three steps wide, maybe, and deep as a tunnel. Books are stacked everywhere — on shelves, on the floor, on a chair that looks like it hasn't been sat in since it was buried under atlases. The ceiling is low. A lamp with a green glass shade throws a pool of amber light across a counter cluttered with more books and a cold cup of tea.</p>
+            <p>Behind the counter, a man.</p>
+            <p>He's old. Not just elderly — <em>old</em>, in the way that certain trees are old. Thin white hair, hands spotted and careful, eyes behind round spectacles that catch the lamplight and give nothing back. He's reading. He doesn't look up when you enter. The bell has told him everything he needs to know.</p>
+        </div>
+
+        <!-- SCENE 4: THE MAN -->
+        <div class="scene warmth">
+            <p>"Browsing?" he says, without raising his eyes from his book. His voice is dry and precise, like the pages he's turning.</p>
+            <p>You nod, then realize he isn't looking. "Yes," you say. "Just... getting out of the rain."</p>
+            <p>"Hmm." He turns a page. "That's what they all say."</p>
+            <p>You're not sure what that means, so you turn to the shelves. The books are old — genuinely old, not the vintage-shop kind of old. Leather bindings cracked along the spines. Titles in languages you half-recognize. Latin, maybe. French. Something that might be Greek. You run your finger along a row of spines and feel the dust collect under your nail.</p>
+            <p>And then you stop.</p>
+        </div>
+
+        <div class="divider">. . .</div>
+
+        <!-- SCENE 5: FINDING THE BOOK -->
+        <div class="scene dark" data-bg="book">
+            <p>It's on a shelf at eye level, between a water-stained atlas and something in Russian. A small book — barely larger than your hand. The cover is dark leather, almost black, with a faint grain that catches the light. There is no author's name. No publisher's mark. Just a title, pressed into the leather in letters that have gone the colour of old gold — strange, angular letters, written in a hand that hasn't been used in a hundred years.</p>
+            <p>The title is not in English. It's not in Chinese. It's in a language you don't speak and have never studied. And yet — impossibly, absurdly — you know what it says.</p>
+        </div>
+
+        <!-- THE BOOK -->
+        <div class="book-moment" id="bookMoment">
+            <div class="book-outer" id="bookOuter">
+                <div class="book-glow"></div>
+                <div class="book-cover" id="bookCover">
+                    <div class="book-border"></div>
+                    <div class="book-corner tl"><svg viewBox="0 0 24 24"><path d="M2,2 L2,12 C2,7 7,2 12,2" fill="none" stroke="#8a6a3a" stroke-width="1"/><path d="M2,2 L6,2 M2,2 L2,6" fill="none" stroke="#d4a84a" stroke-width="0.8"/></svg></div>
+                    <div class="book-corner tr"><svg viewBox="0 0 24 24"><path d="M2,2 L2,12 C2,7 7,2 12,2" fill="none" stroke="#8a6a3a" stroke-width="1"/><path d="M2,2 L6,2 M2,2 L2,6" fill="none" stroke="#d4a84a" stroke-width="0.8"/></svg></div>
+                    <div class="book-corner bl"><svg viewBox="0 0 24 24"><path d="M2,2 L2,12 C2,7 7,2 12,2" fill="none" stroke="#8a6a3a" stroke-width="1"/><path d="M2,2 L6,2 M2,2 L2,6" fill="none" stroke="#d4a84a" stroke-width="0.8"/></svg></div>
+                    <div class="book-corner br"><svg viewBox="0 0 24 24"><path d="M2,2 L2,12 C2,7 7,2 12,2" fill="none" stroke="#8a6a3a" stroke-width="1"/><path d="M2,2 L6,2 M2,2 L2,6" fill="none" stroke="#d4a84a" stroke-width="0.8"/></svg></div>
+                    <div class="book-inner">
+                        <div class="book-suetterlin">
+                            <!-- Sütterlin-style title SVG on book cover -->
+                            <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="bookGold" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#e8c06a"/>
+                                        <stop offset="50%" stop-color="#d4a84a"/>
+                                        <stop offset="100%" stop-color="#a07830"/>
+                                    </linearGradient>
+                                </defs>
+                                <!-- "Das" in angular Kurrent strokes -->
+                                <g transform="translate(100,28)" text-anchor="middle">
+                                    <text font-family="'Cormorant Garamond', serif" font-size="26" font-weight="600"
+                                          fill="url(#bookGold)" letter-spacing="4">Das</text>
+                                </g>
+                                <!-- "erste" - italic, flowing -->
+                                <g transform="translate(100,62)" text-anchor="middle">
+                                    <text font-family="'Cormorant Garamond', serif" font-size="30" font-weight="300"
+                                          fill="url(#bookGold)" letter-spacing="2" font-style="italic">erste</text>
+                                </g>
+                                <!-- "Wort" -->
+                                <g transform="translate(100,96)" text-anchor="middle">
+                                    <text font-family="'Cormorant Garamond', serif" font-size="26" font-weight="600"
+                                          fill="url(#bookGold)" letter-spacing="4">Wort</text>
+                                </g>
+                                <!-- Thin decorative lines -->
+                                <line x1="55" y1="36" x2="145" y2="36" stroke="#d4a84a" stroke-width="0.4" opacity="0.4"/>
+                                <line x1="60" y1="72" x2="140" y2="72" stroke="#d4a84a" stroke-width="0.4" opacity="0.4"/>
+                            </svg>
+                        </div>
+                        <!-- German only - no translation on the cover -->
+                        <div class="book-ornament">
+                            <svg viewBox="0 0 60 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5,10 C15,2 25,18 30,10 C35,2 45,18 55,10" fill="none" stroke="#8a6a3a" stroke-width="0.8"/>
+                                <circle cx="30" cy="10" r="2" fill="none" stroke="#d4a84a" stroke-width="0.6"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="book-instruction" id="bookInstruction">Touch the cover to open it</div>
+        </div>
+
+        <!-- SCENE 6: AFTER SEEING THE BOOK — THE THEFT -->
+        <div class="after-open" id="afterOpen">
+
+            <div class="scene dark">
+                <p>You pull it from the shelf. The leather is cool against your palms — and then it isn't. Within seconds, warmth bleeds through the cover, as if the book has been waiting in someone's hands and you've only just arrived. It's heavier than it looks. The pages whisper against each other when you tilt it.</p>
+                <p>"That one isn't for sale," the old man says. He's looking at you now, over the top of his spectacles. His expression is unreadable.</p>
+                <p>"I wasn't going to—"</p>
+                <p>"They never are." He goes back to his book.</p>
+            </div>
+
+            <div class="scene dark">
+                <p>You should put it back. You know that. It isn't yours, and the old man said it clearly enough. But your hands won't listen. The warmth is spreading up through your wrists now, into your forearms, and the first line of text is pulling at something in you. Not your curiosity. Something older than that. Something in the part of your brain where language lives, before words have names.</p>
+                <p>You glance at the old man. He's reading. The lamplight pools around him like a small golden island. He hasn't moved.</p>
+                <p>You slip the book inside your jacket.</p>
+            </div>
+
+            <div class="divider visible" style="opacity:0.4">. . .</div>
+
+            <!-- SCENE 7: THE FLIGHT -->
+            <div class="scene flight" data-bg="alley">
+                <p>The bell screams as you push through the door — or maybe that's just your imagination. The rain hits you like a wall. You don't look back. You walk fast, then faster, then you're running, cobblestones slick under your feet, the book pressed against your ribs through the damp jacket. It's still warm. Impossibly warm.</p>
+                <p>You take the first turn you see, then another. The alley bends. A cat scatters from a bin. Your breath comes in white clouds and your shoes splash through puddles you can't see in the dark. Behind you — nothing. No shout. No footsteps. Just the rain and your own heartbeat and the strange, steady heat of the book against your chest.</p>
+                <p>You run until the alley opens into a small courtyard you've never seen before. Old brick walls on three sides. A rusted fire escape. And beneath it — a doorway, deep-set and sheltered, with a stone step worn smooth by years. It's dry. Out of the wind.</p>
+                <p>You sit down. Your hands are shaking — from the cold, from the running, from something else. The rain drums on the iron above you. The courtyard is dark except for a single streetlamp at the far end, throwing just enough amber light to see by.</p>
+            </div>
+
+            <!-- SCENE 8: THE HIDING PLACE -->
+            <div class="scene hiding">
+                <p>You pull the book out from under your jacket. It should be wet. Your jacket is soaked through. But the leather is dry, and the warmth pulses against your hands like a second heartbeat. The old gold letters on the cover catch the distant lamplight and, for a moment, they seem to <em>move</em> — the angular strokes rearranging themselves, breathing.</p>
+                <p>You look around. The courtyard is empty. Just you and the rain and the book and the distant hum of London somewhere beyond these walls. Nobody knows you're here. Nobody is coming.</p>
+                <p>You open the cover.</p>
+            </div>
+
+            <!-- THE TRANSITION -->
+            <div class="transition-text" id="transitionText">
+                <p class="fade-line">The first page is blank.</p>
+                <p class="fade-line">Then it isn't.</p>
+                <p class="fade-line">Ink blooms from the center of the page like smoke in water —</p>
+                <p class="fade-line">dark, deliberate strokes forming letters you've never seen,</p>
+                <p class="fade-line">in a hand that hasn't written in a thousand years.</p>
+                <p class="fade-line" style="margin-top: 40px;">The courtyard falls away.</p>
+                <p class="fade-line">The rain stops.</p>
+                <p class="fade-line">The brick walls dissolve into darkness,</p>
+                <p class="fade-line">and then into something vast.</p>
+                <p class="fade-line" style="margin-top: 40px; color: #c8c4b8;">You are standing in a field that stretches to every horizon.</p>
+                <p class="fade-line" style="color: #c8c4b8;">The sky is full of stars you don't recognize.</p>
+                <p class="fade-line" style="color: #c8c4b8;">A fire burns ahead.</p>
+                <p class="fade-line" style="margin-top: 40px; color: #c8c4b8;">And someone is speaking.</p>
+            </div>
+
+            <div class="continue-section" id="continueSection">
+                <a href="chapter1.html" class="continue-link">Turn the page</a>
+                <div style="margin-top:24px;">
+                  <a href="index.html" style="color:rgba(212,202,187,0.25);font-size:0.8rem;text-decoration:none;letter-spacing:0.1em;transition:color 0.3s ease;" onmouseover="this.style.color='rgba(212,202,187,0.5)'" onmouseout="this.style.color='rgba(212,202,187,0.25)'">← Back to contents</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ===== RAIN CANVAS =====
+        const rainCanvas = document.getElementById('rain-canvas');
+        const rainCtx = rainCanvas.getContext('2d');
+        let drops = [];
+        let rainOpacity = 1;
+        let splashes = [];
+
+        function resizeCanvases() {
+            rainCanvas.width = fogCanvas.width = window.innerWidth;
+            rainCanvas.height = fogCanvas.height = window.innerHeight;
+        }
+
+        function initRain() {
+            resizeCanvases();
+            const count = window.innerWidth > 600 ? 280 : 140;
+            drops = [];
+            for (let i = 0; i < count; i++) {
+                drops.push({
+                    x: Math.random() * rainCanvas.width,
+                    y: Math.random() * rainCanvas.height,
+                    length: Math.random() * 18 + 8,
+                    speed: Math.random() * 5 + 3,
+                    opacity: Math.random() * 0.22 + 0.06,
+                    wind: Math.random() * 0.8 + 0.2
+                });
+            }
+        }
+
+        function drawRain() {
+            rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+            // Draw rain drops
+            for (let drop of drops) {
+                rainCtx.beginPath();
+                rainCtx.moveTo(drop.x, drop.y);
+                rainCtx.lineTo(drop.x + drop.wind * 2, drop.y + drop.length);
+                rainCtx.strokeStyle = 'rgba(150, 165, 190, ' + (drop.opacity * rainOpacity) + ')';
+                rainCtx.lineWidth = 0.8;
+                rainCtx.stroke();
+
+                drop.y += drop.speed;
+                drop.x += drop.wind;
+
+                // Create splash when drop hits bottom
+                if (drop.y > rainCanvas.height) {
+                    if (Math.random() < 0.25 && rainOpacity > 0.3) {
+                        splashes.push({
+                            x: drop.x,
+                            y: rainCanvas.height - 2,
+                            radius: 0,
+                            maxRadius: Math.random() * 4 + 2,
+                            opacity: 0.15 * rainOpacity,
+                            speed: Math.random() * 0.3 + 0.1
+                        });
+                    }
+                    drop.y = -drop.length;
+                    drop.x = Math.random() * rainCanvas.width;
+                }
+            }
+
+            // Draw splashes
+            for (let i = splashes.length - 1; i >= 0; i--) {
+                const s = splashes[i];
+                rainCtx.beginPath();
+                rainCtx.arc(s.x, s.y, s.radius, 0, Math.PI, true);
+                rainCtx.strokeStyle = 'rgba(150, 165, 190, ' + s.opacity + ')';
+                rainCtx.lineWidth = 0.5;
+                rainCtx.stroke();
+
+                s.radius += s.speed;
+                s.opacity -= 0.005;
+
+                if (s.opacity <= 0 || s.radius >= s.maxRadius) {
+                    splashes.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(drawRain);
+        }
+
+        // ===== FOG CANVAS =====
+        const fogCanvas = document.getElementById('fog-canvas');
+        const fogCtx = fogCanvas.getContext('2d');
+        let fogLayers = [];
+
+        function initFog() {
+            fogLayers = [];
+            for (let i = 0; i < 8; i++) {
+                fogLayers.push({
+                    x: Math.random() * fogCanvas.width,
+                    y: fogCanvas.height * (0.3 + Math.random() * 0.6),
+                    width: Math.random() * 500 + 250,
+                    height: Math.random() * 80 + 40,
+                    speed: (Math.random() - 0.5) * 0.4,
+                    opacity: Math.random() * 0.12 + 0.04
+                });
+            }
+        }
+
+        function drawFog() {
+            fogCtx.clearRect(0, 0, fogCanvas.width, fogCanvas.height);
+
+            for (let layer of fogLayers) {
+                const grad = fogCtx.createRadialGradient(
+                    layer.x, layer.y, 0,
+                    layer.x, layer.y, layer.width / 2
+                );
+                grad.addColorStop(0, 'rgba(140, 150, 170, ' + (layer.opacity * rainOpacity) + ')');
+                grad.addColorStop(1, 'rgba(140, 150, 170, 0)');
+
+                fogCtx.fillStyle = grad;
+                fogCtx.fillRect(
+                    layer.x - layer.width / 2,
+                    layer.y - layer.height / 2,
+                    layer.width,
+                    layer.height
+                );
+
+                layer.x += layer.speed;
+                if (layer.x > fogCanvas.width + layer.width) layer.x = -layer.width;
+                if (layer.x < -layer.width) layer.x = fogCanvas.width + layer.width;
+            }
+
+            requestAnimationFrame(drawFog);
+        }
+
+        // ===== DUST MOTES around the book =====
+        function createDustMotes() {
+            const bookMoment = document.getElementById('bookMoment');
+            for (let i = 0; i < 20; i++) {
+                const mote = document.createElement('div');
+                mote.className = 'dust-mote';
+                mote.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation: dustFloat${i % 3} ${4 + Math.random() * 4}s ease-in-out ${Math.random() * 3}s infinite;
+                    width: ${1.5 + Math.random() * 2.5}px;
+                    height: ${1.5 + Math.random() * 2.5}px;
+                `;
+                bookMoment.querySelector('.book-outer').appendChild(mote);
+            }
+
+            // Inject keyframes
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes dustFloat0 {
+                    0%, 100% { opacity: 0; transform: translate(0, 0); }
+                    25% { opacity: 0.7; }
+                    50% { opacity: 0.4; transform: translate(25px, -40px); }
+                    75% { opacity: 0.7; }
+                }
+                @keyframes dustFloat1 {
+                    0%, 100% { opacity: 0; transform: translate(0, 0); }
+                    25% { opacity: 0.6; }
+                    50% { opacity: 0.3; transform: translate(-20px, -35px); }
+                    75% { opacity: 0.6; }
+                }
+                @keyframes dustFloat2 {
+                    0%, 100% { opacity: 0; transform: translate(0, 0); }
+                    30% { opacity: 0.8; }
+                    60% { opacity: 0.3; transform: translate(15px, -45px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // ===== SCROLL REVEAL =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    const bg = entry.target.dataset.bg;
+                    if (bg === 'bookshop') {
+                        document.body.classList.add('in-bookshop');
+                        document.body.classList.remove('in-book');
+                        document.body.classList.remove('in-alley');
+                    } else if (bg === 'book') {
+                        document.body.classList.remove('in-bookshop');
+                        document.body.classList.add('in-book');
+                        document.body.classList.remove('in-alley');
+                    } else if (bg === 'alley') {
+                        document.body.classList.remove('in-bookshop');
+                        document.body.classList.remove('in-book');
+                        document.body.classList.add('in-alley');
+                        fadeRain();
+                    }
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.scene, .divider, .book-moment, .continue-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // ===== FADE RAIN =====
+        function fadeRain() {
+            const fade = setInterval(() => {
+                rainOpacity -= 0.015;
+                if (rainOpacity <= 0) {
+                    rainOpacity = 0;
+                    clearInterval(fade);
+                }
+            }, 50);
+        }
+
+        // ===== BOOK INTERACTION =====
+        let bookOpened = false;
+        const bookCover = document.getElementById('bookCover');
+        const bookOuter = document.getElementById('bookOuter');
+
+        function openBook() {
+            if (bookOpened) return;
+            bookOpened = true;
+
+            bookCover.classList.add('opened');
+            document.getElementById('bookInstruction').style.display = 'none';
+
+            // Pulse glow effect
+            bookOuter.querySelector('.book-glow').style.background =
+                'radial-gradient(ellipse, rgba(232,164,74,0.35) 0%, transparent 70%)';
+
+            // Reveal the after-open content
+            setTimeout(() => {
+                document.getElementById('afterOpen').classList.add('revealed');
+
+                // Scroll to the new content smoothly
+                setTimeout(() => {
+                    const afterOpen = document.getElementById('afterOpen');
+                    const firstScene = afterOpen.querySelector('.scene');
+                    if (firstScene) {
+                        firstScene.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 400);
+            }, 800);
+
+            // Start transition text cascade after reading the theft
+            // The cascade is triggered when the transitionText comes into view
+        }
+
+        bookCover.addEventListener('click', openBook);
+        bookCover.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            openBook();
+        });
+
+        // ===== TRANSITION TEXT CASCADE =====
+        // Triggered when the transition text scrolls into view
+        let transitionStarted = false;
+        const transitionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !transitionStarted && bookOpened) {
+                    transitionStarted = true;
+                    const lines = document.querySelectorAll('#transitionText .fade-line');
+                    lines.forEach((line, i) => {
+                        setTimeout(() => {
+                            line.classList.add('visible');
+                        }, i * 700);
+                    });
+
+                    // Show continue link after all lines
+                    setTimeout(() => {
+                        document.getElementById('continueSection').classList.add('visible');
+                    }, lines.length * 700 + 1000);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        transitionObserver.observe(document.getElementById('transitionText'));
+
+        // ===== PROGRESS BAR =====
+        function updateProgress() {
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = window.scrollY;
+            const progress = scrollHeight > 0 ? (scrolled / scrollHeight) * 100 : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        window.addEventListener('scroll', updateProgress);
+
+        // ===== INIT =====
+        window.addEventListener('resize', resizeCanvases);
+        initRain();
+        initFog();
+        drawRain();
+        drawFog();
+        createDustMotes();
+
+        // Make first scene visible after title screen scroll
+        window.addEventListener('load', () => {
+            // Title screen animates in automatically via CSS
+        });
+    </script>
+
+  <div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+</body>
+</html>

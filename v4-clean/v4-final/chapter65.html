@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 65: Der Mann, der...</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --conjunction: #d9a77a;
+    --scholarly-blue: #1a3a52;
+    --warm-gold: #c9a961;
+  }
+
+  html { scroll-behavior: smooth; background: #0a0e1a; }
+  body {
+    background: linear-gradient(to bottom, var(--scholarly-blue) 0%, var(--night) 30%, var(--night-mid) 60%, var(--warm-gold) 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #magnifier-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 28px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+  }
+
+  .ety-card.open {
+    max-height: 1200px;
+    opacity: 1;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .grammar-box {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 28px 0;
+    font-size: 1rem;
+    color: var(--text-bright);
+    line-height: 1.8;
+  }
+
+  .grammar-box .rule-title {
+    font-size: 1.2rem;
+    color: var(--fire-glow);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .example-pair {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 2px solid var(--fire);
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .example-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--fire);
+    margin-bottom: 4px;
+  }
+
+  .example-text {
+    color: var(--text-bright);
+  }
+
+  .aside-box {
+    background: rgba(212, 165, 116, 0.06);
+    border-left: 2px solid rgba(212, 165, 116, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--fire);
+    margin-bottom: 8px;
+  }
+
+  .relative-table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+    font-size: 0.95rem;
+  }
+
+  .relative-cell {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .relative-cell-header {
+    font-weight: 600;
+    color: var(--fire);
+    margin-bottom: 8px;
+  }
+
+  .relative-cell-content {
+    color: var(--text-bright);
+    font-size: 0.9rem;
+  }
+
+  .comprehensive-table {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 28px 0;
+    font-size: 0.95rem;
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 6px;
+  }
+
+  .table-row.header {
+    background: rgba(232, 164, 74, 0.12);
+    font-weight: 600;
+    color: var(--fire);
+  }
+
+  .table-cell {
+    color: var(--text-bright);
+  }
+
+  .table-cell.label {
+    color: var(--fire);
+    font-weight: 500;
+  }
+
+  .chinese-bridge {
+    background: rgba(100, 140, 200, 0.08);
+    border-left: 3px solid rgba(100, 140, 200, 0.4);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.85);
+  }
+
+  .chinese-bridge .bridge-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(100, 140, 200, 0.7);
+    margin-bottom: 12px;
+  }
+
+  .chinese-example {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 2px solid rgba(100, 140, 200, 0.5);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden { display: none; }
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(212, 165, 116, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show { display: block; }
+
+  .nav-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin: 60px 0 0 0;
+    padding-top: 40px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .nav-link {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .nav-link:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  @media (max-width: 600px) {
+    .title-screen h1 { font-size: 2.5rem; }
+    .relative-table { grid-template-columns: repeat(2, 1fr); }
+    .table-row { grid-template-columns: 1fr; }
+    .content { padding: 40px 16px 100px; }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="magnifier-canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 65</div>
+    <h1 data-speak="true">Der Mann, der...</h1>
+    <p class="subtitle" data-speak="true">Relative Clauses: Zooming In on Details</p>
+    <p class="scroll-hint" data-speak="true">Discovering Hidden Connections<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">
+      Imagine you're in a crowded market, and someone points and says "Der Mann" (the man). Which one? There are dozens of men. But then they add: "Der Mann, <span class="german-word" data-card="der">der</span> einen roten Hut trägt" (the man who wears a red hat). Suddenly, one specific man emerges from the crowd.
+    </p>
+    <p class="narrative" data-speak="true">
+      This is the power of a relative clause. It is a grammatical spotlight—a dependent clause that zooms in on a noun and adds detail that narrows, clarifies, or enriches its meaning. A relative clause is a sentence inside a sentence. It relates back to a noun (the antecedent) and describes or defines it. In German, relative clauses follow a precise grammatical pattern that seems intimidating at first but reveals a beautiful internal logic once you understand it.
+    </p>
+    <p class="narrative" data-speak="true">
+      The core challenge—and the key insight—is this: the relative pronoun must agree in gender and number with the noun it describes, but its case is determined entirely by its function within the relative clause itself, not by the main sentence. This disconnect between the antecedent's role and the relative pronoun's case confuses learners because they expect the rules to align. But they don't. And that's where the elegance lies.
+    </p>
+  </div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      What Are Relative Pronouns? The Spotlight Mechanism
+    </p>
+    <p class="narrative" data-speak="true">
+      A relative pronoun is a word that introduces a relative clause and links it back to the noun it describes. In English, you have separate words: who (for people, subject), whom (for people, object), that, which. In German, it's cleverly economical: the relative pronouns are der, die, and das—identical in form to the definite articles. Same words, different function.
+    </p>
+    <p class="narrative" data-speak="true">
+      The trick is that case matters enormously. When you look at "der" in a relative clause, it might be nominative (the subject of the clause), accusative (the direct object), dative (the indirect object), or genitive (expressing possession). Your task is to identify which role the pronoun plays within its own clause, then select the form that reflects both the antecedent's gender/number and the pronoun's grammatical function.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">The Complete Relative Pronoun Paradigm</div>
+      <p style="margin-bottom: 20px;">Below is the full table of relative pronoun forms. These forms correspond to the definite articles in gender and number, but case depends on function:</p>
+
+      <div class="comprehensive-table">
+        <div class="table-row header">
+          <div class="table-cell label">Case</div>
+          <div class="table-cell label">Masculine (m.)</div>
+          <div class="table-cell label">Feminine (f.) / Plural (pl.)</div>
+          <div class="table-cell label">Neuter (n.)</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Nominative</div>
+          <div class="table-cell">der (m.s.)</div>
+          <div class="table-cell">die (f.s. / all pl.)</div>
+          <div class="table-cell">das (n.s.)</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Accusative</div>
+          <div class="table-cell">den (m.s.)</div>
+          <div class="table-cell">die (f.s. / all pl.)</div>
+          <div class="table-cell">das (n.s.)</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Dative</div>
+          <div class="table-cell">dem (m.s.)</div>
+          <div class="table-cell">der (f.s.) / denen (pl.)</div>
+          <div class="table-cell">dem (n.s.)</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Genitive</div>
+          <div class="table-cell">dessen (m.s.)</div>
+          <div class="table-cell">deren (f.s. / all pl.)</div>
+          <div class="table-cell">dessen (n.s.)</div>
+        </div>
+      </div>
+
+      <div class="example-pair" style="margin-top: 24px;">
+        <div class="example-label">Key Principle: Gender/Number from Antecedent, Case from Function</div>
+        <div class="example-text" data-speak="true">
+          <strong>Der Mann, der hier steht, ist groß.</strong><br>
+          (The man who stands here is tall.)
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 8px;">
+          Antecedent: "Mann" is masculine singular → use masculine form. Function: the relative pronoun is the subject of "steht" (stands) → nominative. Result: "der" (m.s. nominative).
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Another Example: Accusative Direct Object</div>
+        <div class="example-text" data-speak="true">
+          <strong>Der Mann, den ich kenne, ist Arzt.</strong><br>
+          (The man whom I know is a doctor.)
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 8px;">
+          Antecedent: "Mann" is masculine singular → use masculine form. Function: the relative pronoun is the direct object of "kenne" (know) → accusative. Result: "den" (m.s. accusative). Note: "Mann" is the nominative subject of the main clause, but the pronoun is accusative because of its role within the relative clause.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Building Relative Clauses: Four Functions, Four Cases
+    </p>
+
+    <div class="ety-card">
+      <div class="word-header">
+        <div class="word-main" data-speak="true">Relativsatz</div>
+      </div>
+      <div class="word-meaning" data-speak="true">relative clause; a dependent clause introduced by a relative pronoun</div>
+
+      <div class="story" data-speak="true">
+        The term "Relativsatz" derives from Latin <em>relativus</em>, meaning "brought back" or "related." A relative clause grammatically "brings back" or restores information to a specific noun, enriching and clarifying it. The systematic use of relative clauses allows German to build complex, layered sentences without losing clarity about which modifier describes which noun. Each relative pronoun serves as a grammatical thread connecting clause to antecedent.
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">1. Nominative: The Relative Pronoun as Subject</div>
+      <p style="margin-bottom: 16px;">Use the nominative form when the relative pronoun is the subject of the relative clause—the one performing the action:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Masculine Singular</div>
+        <div class="example-text" data-speak="true">Der Schüler, der fleißig ist, gewinnt den Preis.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The student who is diligent wins the prize. (Der = subject of "ist")</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Feminine Singular</div>
+        <div class="example-text" data-speak="true">Die Lehrerin, die hier unterrichtet, ist sehr erfahren.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The teacher (f.) who teaches here is very experienced. (Die = subject of "unterrichtet")</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Plural</div>
+        <div class="example-text" data-speak="true">Die Bücher, die auf dem Tisch liegen, sind alt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The books that lie on the table are old. (Die = subject of "liegen")</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">2. Accusative: The Relative Pronoun as Direct Object</div>
+      <p style="margin-bottom: 16px;">Use accusative when the relative pronoun is the direct object—what someone does something to:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Masculine Singular</div>
+        <div class="example-text" data-speak="true">Der Mann, den ich kenne, ist ein Arzt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The man whom I know is a doctor. (Den = direct object of "kenne")</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Feminine Singular</div>
+        <div class="example-text" data-speak="true">Die Frau, die ich liebe, kommt morgen.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The woman whom I love comes tomorrow. (Die = direct object of "liebe")</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Neuter Singular</div>
+        <div class="example-text" data-speak="true">Das Buch, das ich lese, ist interessant.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The book that I read is interesting. (Das = direct object of "lese")</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">3. Dative: The Relative Pronoun as Indirect Object or After Dative Prepositions</div>
+      <p style="margin-bottom: 16px;">Use dative when the relative pronoun is the indirect object or follows a dative preposition (mit, bei, von, etc.):</p>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Indirect Object</div>
+        <div class="example-text" data-speak="true">Der Lehrer, dem ich vertraue, ist sehr klug.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The teacher whom I trust is very intelligent. (Dem = indirect object of "vertraue")</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: After Dative Preposition</div>
+        <div class="example-text" data-speak="true">Die Frau, mit der ich arbeite, ist meine Kollegin.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The woman with whom I work is my colleague. (Der = dative after preposition "mit")</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Plural Dative</div>
+        <div class="example-text" data-speak="true">Die Freunde, denen ich alles sage, sind treu.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The friends to whom I tell everything are loyal. (Denen = plural dative)</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">4. Genitive: The Relative Pronoun Expressing Possession or Relationship</div>
+      <p style="margin-bottom: 16px;">Use genitive when the relative pronoun expresses possession, belonging, or relationship:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Masculine Singular Possession</div>
+        <div class="example-text" data-speak="true">Der Mann, dessen Auto rot ist, wohnt hier.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The man whose car is red lives here. (Dessen = genitive possessive)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Feminine Singular Possession</div>
+        <div class="example-text" data-speak="true">Die Frau, deren Sohn Ingenieur ist, ist stolz.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The woman whose son is an engineer is proud. (Deren = feminine genitive)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Plural Possession</div>
+        <div class="example-text" data-speak="true">Die Bücher, deren Autor ich liebe, sind hier.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The books whose author I love are here. (Deren = plural genitive)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      The Golden Rule: The Antecedent-Function Principle
+    </p>
+
+    <div class="aside-box">
+      <div class="aside-title">The Master Formula for Relative Clause Mastery</div>
+      <p data-speak="true">
+        <strong>Step 1: Identify the antecedent.</strong> Find the noun the relative clause describes. This noun sits just before the relative pronoun.<br><br>
+        <strong>Step 2: Determine gender and number.</strong> Is the antecedent masculine, feminine, or neuter? Singular or plural? This determines which "family" of relative pronouns you use.<br><br>
+        <strong>Step 3: Analyze the function within the clause.</strong> What does the relative pronoun do inside the relative clause? Is it the subject (nominative), direct object (accusative), indirect object (dative), or does it express possession (genitive)?<br><br>
+        <strong>Step 4: Select the pronoun.</strong> Choose the relative pronoun form that matches the gender/number from Step 2 but takes the case from Step 3. The antecedent's case in the main sentence is irrelevant.
+      </p>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Detailed Step-by-Step Analysis</div>
+
+      <div class="example-pair">
+        <div class="example-label">Full Example: A Complex Sentence</div>
+        <div class="example-text" data-speak="true">
+          <strong>Der Lehrer, dem ich das Buch gab, ist nett.</strong><br>
+          (The teacher to whom I gave the book is kind.)
+        </div>
+      </div>
+
+      <p style="margin-top: 20px; font-size: 0.95rem; color: rgba(212,202,187,0.8); line-height: 1.8;">
+        <strong>Step 1—Antecedent:</strong> "Lehrer" (teacher)<br>
+        <strong>Step 2—Gender and Number:</strong> "Lehrer" is masculine singular<br>
+        <strong>Step 3—Function in the Relative Clause:</strong> In the phrase "dem ich das Buch gab" (to whom I gave the book), the relative pronoun follows the verb "gab" (gave). The verb "geben" takes a dative indirect object, so the pronoun is the indirect object → dative case<br>
+        <strong>Step 4—Selection:</strong> We need masculine singular dative → <strong>dem</strong><br><br>
+        <strong>Critical Note:</strong> "Lehrer" is nominative in the main clause (the subject of "ist nett"), but the relative pronoun is dative because of its function within the relative clause, not because of its role in the main sentence.
+      </p>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Why This Matters: The Independence Principle</div>
+      <p style="margin-bottom: 16px;">Many learners expect the relative pronoun's case to match the antecedent's case in the main clause. But relative clauses are grammatically independent. The relative pronoun's case reflects the relative clause's internal logic, not the main clause's.</p>
+
+      <div class="example-pair">
+        <div class="example-label">The Antecedent is Nominative, but the Pronoun Might Not Be</div>
+        <div class="example-text" data-speak="true">
+          Der Mann (nominative subject of main clause), den ich kenne (accusative object in relative clause)...
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">
+          The man whom I know. "Mann" is nominative in the main clause, but "den" is accusative because the pronoun is the direct object of "kenne" within the relative clause.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Progressive Complexity: From Simple to Advanced
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Building Up: Layered Relative Clause Examples</div>
+
+      <div class="example-pair">
+        <div class="example-label">Level 1: Simple Subject Relative Clause</div>
+        <div class="example-text" data-speak="true">Das Buch, das auf dem Tisch liegt, ist alt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The book that lies on the table is old. (Simple—the pronoun is the subject)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Level 2: Direct Object Relative Clause</div>
+        <div class="example-text" data-speak="true">Der Student, den der Professor kennt, ist fleißig.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The student whom the professor knows is diligent. (The pronoun is the direct object)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Level 3: Dative Relative Clause with Preposition</div>
+        <div class="example-text" data-speak="true">Die Kollegin, mit der ich täglich arbeite, ist sehr organisiert.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The colleague with whom I work daily is very organized. (The pronoun follows a dative preposition)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Level 4: Genitive Relative Clause</div>
+        <div class="example-text" data-speak="true">Der Arzt, dessen Praxis in Berlin ist, ist weltberühmt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The doctor whose practice is in Berlin is world-famous. (The pronoun expresses possession)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Level 5: Complex Nested Structure</div>
+        <div class="example-text" data-speak="true">Die Stadt, in der die Universität liegt, deren Geschichte bis ins Mittelalter reicht, ist wunderschön.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The city in which the university lies, whose history goes back to the Middle Ages, is beautiful. (Multiple relative clauses stacked)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-6">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Alternative Relative Pronouns: welcher and Other Forms
+    </p>
+
+    <p class="narrative" data-speak="true">
+      German offers alternative relative pronouns that function exactly like der/die/das but carry a more formal or literary tone. The pronoun <span class="german-word" data-card="welcher">welcher/welche/welches</span> is the primary alternative, declining through all four cases just like the standard forms. It's particularly common in written German and formal contexts.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Welcher/Welche/Welches: The Formal Alternative</div>
+      <p style="margin-bottom: 20px;">This paradigm is structurally identical to the standard relative pronouns but sounds more elevated:</p>
+
+      <div class="comprehensive-table">
+        <div class="table-row header">
+          <div class="table-cell label">Case</div>
+          <div class="table-cell label">Masculine</div>
+          <div class="table-cell label">Feminine / Plural</div>
+          <div class="table-cell label">Neuter</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Nominative</div>
+          <div class="table-cell">welcher</div>
+          <div class="table-cell">welche</div>
+          <div class="table-cell">welches</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Accusative</div>
+          <div class="table-cell">welchen</div>
+          <div class="table-cell">welche</div>
+          <div class="table-cell">welches</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Dative</div>
+          <div class="table-cell">welchem</div>
+          <div class="table-cell">welcher / welchen</div>
+          <div class="table-cell">welchem</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell label">Genitive</div>
+          <div class="table-cell">welchen</div>
+          <div class="table-cell">welcher / welcher</div>
+          <div class="table-cell">welchen</div>
+        </div>
+      </div>
+
+      <div class="example-pair" style="margin-top: 24px;">
+        <div class="example-label">Using Welcher Instead of Der</div>
+        <div class="example-text" data-speak="true">Der Mann, welcher hier arbeitet, ist mein Bruder.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">More formal: "The man, who works here, is my brother."</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Special Relative Pronouns: wo, was, and whose Equivalents</div>
+
+      <div class="example-pair">
+        <div class="example-label">Wo as a Relative Pronoun (Location)</div>
+        <div class="example-text" data-speak="true">Die Stadt, wo ich aufgewachsen bin, ist klein.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The city where I grew up is small. (Wo is used for places instead of "in der/in dem")</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Was as a Relative Pronoun (After Indefinite Antecedents)</div>
+        <div class="example-text" data-speak="true">Alles, was er sagte, war wahr.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">Everything that he said was true. (Was is used after indefinite pronouns like alles, nichts, vieles)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-7">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Language Bridge: How Relative Clauses Work in Chinese
+    </p>
+
+    <div class="chinese-bridge">
+      <div class="bridge-title">Comparing Strategies: German vs. Chinese</div>
+
+      <p style="margin-bottom: 16px;">German relative clauses follow the noun they modify (post-nominal), but in Chinese, the relative clause comes before the noun (pre-nominal). Chinese marks the relationship with the particle <span style="font-family: 'Noto Sans SC', sans-serif;">的</span> (de), while German uses a relative pronoun that must agree in gender, number, and case.</p>
+
+      <div class="chinese-example">
+        <strong>German Post-Nominal Relative Clause:</strong><br data-speak="true">
+        <span data-speak="true">Der Mann, der einen roten Hut trägt...</span> (The man who wears a red hat...)
+      </div>
+
+      <div class="chinese-example">
+        <strong>Chinese Pre-Nominal Relative Clause (with 的 de):</strong><br>
+        <span style="font-family: 'Noto Sans SC', sans-serif;">穿红帽子的男人</span> (wear-red-hat-DE man)<br>
+        <span data-speak="true">Literally: "wear-red-hat-of man" → "the man who wears a red hat"</span>
+      </div>
+
+      <p style="margin-top: 16px; font-size: 1rem; color: rgba(212,202,187,0.8);">
+        <strong>Key Difference:</strong> In German, you place the relative pronoun at the head of the clause—it immediately signals the relationship to the antecedent. In Chinese, the entire descriptive phrase (verb + object) comes first, and then <span style="font-family: 'Noto Sans SC', sans-serif;">的</span> links it to the noun. Two mirror strategies: German modifies by pronoun agreement; Chinese modifies by structural position and a grammatical particle.
+      </p>
+
+      <div class="chinese-example" style="margin-top: 20px;">
+        <strong>Another Example—Gender and Case Matter in German:</strong><br data-speak="true">
+        <span data-speak="true">Die Frau, die ich kenne...</span> (The woman whom I know...)<br>
+        German marks the object relationship with accusative "die"
+      </div>
+
+      <div class="chinese-example">
+        <strong>Chinese Equivalent:</strong><br>
+        <span style="font-family: 'Noto Sans SC', sans-serif;">我认识的女人</span> (I-recognize-DE woman)<br>
+        <span data-speak="true">Chinese doesn't mark object vs. subject—word order and context clarify the relationship</span>
+      </div>
+
+      <p style="margin-top: 16px; font-size: 1rem; color: rgba(212,202,187,0.8);">
+        <strong>Learning Insight:</strong> If you speak Chinese, German relative clauses might feel backward (coming after the noun instead of before), and the grammatical agreement system is completely foreign. But you're solving the same problem—indicating which noun is modified by which description. German uses grammatical gender, number, and case; Chinese uses word order and a marker. Both are elegant solutions, just using different tools.
+      </p>
+    </div>
+  </div>
+
+  <div class="scene scene-8">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Practical Mastery: Real-World Relative Clauses
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Complete Practical Examples from Everyday Contexts</div>
+
+      <div class="example-pair">
+        <div class="example-label">In a Bookstore</div>
+        <div class="example-text" data-speak="true">Die Bücher, die auf der Bestseller-Liste stehen, sind schnell ausverkauft.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The books that appear on the bestseller list sell out quickly. (Subject relative clause)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">About a Friend</div>
+        <div class="example-text" data-speak="true">Mein Freund, den ich seit zehn Jahren kenne, hat geheiratet.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">My friend whom I've known for ten years got married. (Direct object relative clause)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">At the Workplace</div>
+        <div class="example-text" data-speak="true">Der Manager, mit dem ich zusammenarbeite, ist sehr unterstützend.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The manager with whom I work is very supportive. (Dative preposition)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Family Context</div>
+        <div class="example-text" data-speak="true">Meine Großmutter, deren Rezepte ich liebe, lebt in München.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">My grandmother whose recipes I love lives in Munich. (Genitive possession)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Academic Context</div>
+        <div class="example-text" data-speak="true">Die Universität, an der ich studiere, hat eine große Bibliothek.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The university at which I study has a large library. (Dative preposition "an")</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-container">
+    <h3 data-speak="true">Chapter 65 Quiz: Relative Clauses — Test Your Understanding (80% Pass Required)</h3>
+
+    <div id="quiz-questions"></div>
+
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+
+    <div class="quiz-score" id="quiz-score"></div>
+
+    <div class="quiz-reset">
+      <button onclick="resetQuiz()">Start Over</button>
+    </div>
+
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+  </div>
+
+  <div class="nav-buttons">
+    <a href="chapter64.html" class="nav-link" data-speak="true">← Chapter 64: Weil, dass, obwohl</a>
+    <a href="chapter66.html" class="nav-link" data-speak="true">Chapter 66: Es wird gemacht →</a>
+  </div>
+
+</div>
+
+<script data-speak="true">
+const quizData = [
+  {
+    question: "What is the primary function of a relative clause?",
+    options: [
+      "To introduce a new topic",
+      "To provide additional information about a noun, making it more specific or detailed",
+      "To create a new sentence structure",
+      "To replace a verb"
+    ],
+    correct: 1,
+    explanation: "A relative clause is a dependent clause that describes or adds information about a noun (the antecedent), zooming in on it with detail."
+  },
+  {
+    question: "In the sentence 'Der Mann, der hier arbeitet, ist mein Freund,' what is the antecedent?",
+    options: ["der", "Mann", "arbeitet", "Freund"],
+    correct: 1,
+    explanation: "The antecedent is 'Mann'—the noun that the relative clause 'der hier arbeitet' describes."
+  },
+  {
+    question: "What determines the case of a relative pronoun?",
+    options: [
+      "The antecedent's gender",
+      "The antecedent's case in the main clause",
+      "The relative pronoun's function within the relative clause",
+      "The tense of the main verb"
+    ],
+    correct: 2,
+    explanation: "The case depends on what role the pronoun plays in the relative clause (subject, object, etc.), NOT on the antecedent's case."
+  },
+  {
+    question: "Complete: 'Die Studentin, die ich kenne, ist Medizinerin.' What is the function of 'die'?",
+    options: [
+      "Subject of the relative clause",
+      "Direct object of the relative clause",
+      "Indirect object",
+      "Possessive"
+    ],
+    correct: 1,
+    explanation: "'Die' is the direct object of 'kenne' (know)—the one being known. This is why accusative is used, even though 'Studentin' is nominative in the main clause."
+  },
+  {
+    question: "Which relative pronoun would you use for 'Der Mann, ____ ich vertraue, ist weise'? (masculine singular, dative)",
+    options: ["der", "den", "dem", "dessen"],
+    correct: 2,
+    explanation: "'Vertrauen' takes the dative case, so the indirect object 'dem' is correct."
+  },
+  {
+    question: "In 'Das Buch, das ich lese, ist spannend,' what case is 'das'?",
+    options: ["Nominative", "Accusative", "Dative", "Genitive"],
+    correct: 1,
+    explanation: "The pronoun is the direct object of 'lese' (read), so it's accusative. For neuter, accusative and nominative look identical."
+  },
+  {
+    question: "What is the genitive relative pronoun for feminine singular?",
+    options: ["der", "deren", "denen", "deshalb"],
+    correct: 1,
+    explanation: "The genitive feminine singular relative pronoun is 'deren,' used to express possession."
+  },
+  {
+    question: "Complete: 'Der Mann, ____ Auto blau ist, lebt in Köln.' What case and gender?",
+    options: ["dessen (masculine genitive)", "derer (feminine genitive)", "deren (plural genitive)", "deshalb"],
+    correct: 0,
+    explanation: "The antecedent 'Mann' is masculine singular, and the pronoun expresses possession (whose car), so 'dessen' (masculine genitive) is correct."
+  },
+  {
+    question: "Which sentence is grammatically correct?",
+    options: [
+      "Die Freunde, die ich liebe, sind treu.",
+      "Die Freunde, den ich liebe, sind treu.",
+      "Die Freunde, dem ich liebe, sind treu.",
+      "Die Freunde, deren ich liebe, sind treu."
+    ],
+    correct: 0,
+    explanation: "With plural accusative (direct object), 'die' is correct. The other options have wrong cases."
+  },
+  {
+    question: "In 'Die Stadt, wo ich aufwuchs, ist klein,' why is 'wo' used instead of 'in der'?",
+    options: [
+      "'Wo' is always used in relative clauses",
+      "'Wo' is a locational relative pronoun used for places instead of full prepositional phrases",
+      "It's more casual",
+      "There's no grammatical reason"
+    ],
+    correct: 1,
+    explanation: "'Wo' serves as a relative pronoun for location, replacing 'in dem/in der' or other locational prepositions."
+  },
+  {
+    question: "How does German relative clause structure differ from Chinese?",
+    options: [
+      "German uses prepositions; Chinese doesn't",
+      "German places relative clauses after the noun; Chinese places them before and uses the particle 的 (de)",
+      "German has no relative pronouns",
+      "Chinese uses only nominative"
+    ],
+    correct: 1,
+    explanation: "German modifies by placing the relative clause after the noun and using agreement markers (der/die/das forms). Chinese places the entire modification before the noun and marks it with 的."
+  },
+  {
+    question: "What is the 'antecedent-function principle' for relative clauses?",
+    options: [
+      "Always use the same case as the main verb",
+      "Match gender/number to the antecedent; determine case from the pronoun's function in the relative clause",
+      "Use nominative for all relative pronouns",
+      "Ignore the antecedent entirely"
+    ],
+    correct: 1,
+    explanation: "This is the core principle: gender and number come from the antecedent; case comes from the pronoun's role in the relative clause."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion() {
+  const quiz = document.getElementById('quiz-questions');
+  quiz.innerHTML = '';
+
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+
+  const html = `
+    <div class="quiz-question ${isAnswered ? 'answered' : ''}">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '') : ''}"
+               onclick="selectAnswer(${i})" data-speak="true">
+            ${opt}
+          </div>
+        `).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232,164,74,0.1); font-size: 0.95rem; color: rgba(212,202,187,0.8);" data-speak="true">${q.explanation}</div>` : ''}
+    </div>
+  `;
+
+  quiz.innerHTML = html;
+  updateNavButtons();
+}
+
+function selectAnswer(index) {
+  if (answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = index;
+  if (index === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    currentQuestion++;
+    displayQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    displayQuestion();
+  }
+}
+
+function updateNavButtons() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function showScore() {
+  const percentage = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${percentage}%)`;
+  const summary = document.getElementById('quiz-summary');
+  summary.classList.add('show');
+  if (percentage >= 80) {
+    summary.innerHTML = `<p data-speak="true"><strong>Quiz Complete! You've achieved 80%+ mastery!</strong></p><p style="margin-top: 12px;" data-speak="true">Relative clauses are complex, but you've grasped the core principle: gender/number from the antecedent, case from function. You're ready for Chapter 66.</p>`;
+  } else {
+    summary.innerHTML = `<p data-speak="true"><strong>Quiz Complete.</strong></p><p style="margin-top: 12px;" data-speak="true">Score: ${percentage}%. Relative clauses take practice—review the antecedent-function principle and try again.</p>`;
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  answered = {};
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-summary').classList.remove('show');
+  displayQuestion();
+}
+
+// Canvas: Magnifying glass animation revealing hidden details
+const canvas = document.getElementById('magnifier-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawMagnifier() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const time = Date.now() / 2000;
+  const radius = 100;
+  const x = canvas.width / 2 + Math.cos(time) * 250;
+  const y = canvas.height / 2 + Math.sin(time * 0.7) * 180;
+
+  // Outer magnifying glass circle
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.25)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Inner concentric circles for magnification effect
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.15)';
+  ctx.lineWidth = 2;
+  for (let i = 1; i < 5; i++) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius / (i + 1), 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Highlight glow
+  ctx.fillStyle = 'rgba(232, 164, 74, 0.08)';
+  ctx.beginPath();
+  ctx.arc(x, y, radius * 1.3, 0, Math.PI * 2);
+  ctx.fill();
+
+  requestAnimationFrame(drawMagnifier);
+}
+
+drawMagnifier();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(scene => observer.observe(scene));
+
+displayQuestion();
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">572 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(67%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:67%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 572 words across 65 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">114 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(78%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:78%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 114 patterns across 65 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>The First Word — Chapter 87: Eigentlich, übrigens (Modal Particles III)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --fire: #e8a44a;
+      --fire-glow: #f4c67a;
+      --ember: #c45d2c;
+      --night: #0a0e1a;
+      --night-mid: #131a2e;
+      --night-light: #1c2640;
+      --star: #e8dcc8;
+      --text: #d4cabb;
+      --text-bright: #efe8db;
+      --german: #e8a44a;
+      --english: #8a9bae;
+      --pie: #9b8ec4;
+      --particle-accent: #d4a5ff;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--night);
+    }
+
+    body {
+      background: linear-gradient(to bottom, #1a1520 0%, #0a0e1a 40%, #1a1a2e 70%, #0a0505 100%);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.25rem;
+      line-height: 1.85;
+      overflow-x: hidden;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 60px 24px 140px;
+    }
+
+    .title-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .title-screen h1 {
+      font-size: 3.8rem;
+      font-weight: 300;
+      color: var(--text-bright);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3em;
+      opacity: 0;
+      animation: fadeUp 2s ease 0.5s forwards;
+    }
+
+    .title-screen .subtitle {
+      font-size: 1.4rem;
+      font-weight: 300;
+      font-style: italic;
+      color: #e8a44a;
+      opacity: 0;
+      animation: fadeUp 2s ease 1.2s forwards;
+      margin-bottom: 2em;
+    }
+
+    .title-screen .chapter-label {
+      font-size: 0.95rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(212, 202, 187, 0.4);
+      opacity: 0;
+      animation: fadeUp 2s ease 0.2s forwards;
+      margin-bottom: 0.5em;
+    }
+
+    .scroll-hint {
+      opacity: 0;
+      animation: fadeUp 2s ease 2s forwards;
+      color: rgba(212, 202, 187, 0.3);
+      font-size: 0.95rem;
+      margin-top: 3em;
+    }
+
+    .scene {
+      margin-bottom: 90px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s, transform 1s;
+    }
+
+    .scene.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scene-marker {
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+      margin: 0 auto 40px;
+    }
+
+    .narrative {
+      font-size: 1.25rem;
+      line-height: 1.95;
+      margin-bottom: 1.8em;
+      letter-spacing: 0.01em;
+    }
+
+    .narrative.emphasis {
+      font-size: 1.4rem;
+      color: var(--text-bright);
+      text-align: center;
+      font-style: italic;
+      margin: 2.2em 0;
+      line-height: 1.8;
+    }
+
+    .narrative.small {
+      font-size: 1.05rem;
+      color: rgba(212, 202, 187, 0.7);
+      line-height: 1.75;
+    }
+
+    .german-word {
+      color: var(--german);
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+      transition: all 0.3s;
+    }
+
+    .german-word:hover {
+      color: var(--fire-glow);
+      border-bottom-color: var(--fire-glow);
+    }
+
+    .ety-card {
+      background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+      border: 1px solid rgba(232, 164, 74, 0.18);
+      border-radius: 14px;
+      padding: 36px 40px;
+      margin: 28px 0 40px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.7s ease, opacity 0.6s ease;
+    }
+
+    .ety-card.open {
+      max-height: 2000px;
+      opacity: 1;
+    }
+
+    .ety-card .word-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ety-card .word-main {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--german);
+      letter-spacing: 0.05em;
+    }
+
+    .ety-card .word-meaning {
+      font-size: 1.15rem;
+      color: var(--text-bright);
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(232, 164, 74, 0.15);
+      font-style: italic;
+    }
+
+    .ety-card .story {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(232, 164, 74, 0.15);
+      font-size: 1.05rem;
+      color: rgba(212, 202, 187, 0.85);
+      line-height: 1.88;
+      letter-spacing: 0.005em;
+    }
+
+    .ety-card .example {
+      background: rgba(232, 164, 74, 0.04);
+      border-left: 2px solid rgba(232, 164, 74, 0.3);
+      padding: 14px 18px;
+      margin: 18px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 1rem;
+    }
+
+    .ety-card .example-german {
+      color: var(--german);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .ety-card .example-english {
+      color: rgba(212, 202, 187, 0.75);
+      font-size: 0.98rem;
+      font-style: italic;
+    }
+
+    .guess-section {
+      background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+      border: 1px solid rgba(232, 164, 74, 0.15);
+      border-radius: 14px;
+      padding: 40px 36px;
+      margin: 48px 0;
+      text-align: center;
+    }
+
+    .guess-section .prompt {
+      font-size: 1.2rem;
+      color: var(--text-bright);
+      margin-bottom: 26px;
+      line-height: 1.6;
+    }
+
+    .guess-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .guess-btn {
+      background: rgba(232, 164, 74, 0.08);
+      border: 1px solid rgba(232, 164, 74, 0.25);
+      color: var(--text-bright);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      padding: 14px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .guess-btn:hover {
+      background: rgba(232, 164, 74, 0.15);
+      border-color: var(--fire);
+      transform: translateY(-2px);
+    }
+
+    .guess-btn.correct {
+      background: rgba(74, 180, 100, 0.15);
+      border-color: #4ab464;
+      color: #8ed69e;
+      pointer-events: none;
+    }
+
+    .guess-btn.incorrect {
+      background: rgba(180, 74, 74, 0.1);
+      border-color: rgba(180, 74, 74, 0.3);
+      color: rgba(212, 202, 187, 0.3);
+      pointer-events: none;
+    }
+
+    .guess-feedback {
+      font-size: 1.05rem;
+      margin-top: 16px;
+      color: var(--fire-glow);
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .guess-feedback.show {
+      opacity: 1;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 70px 0;
+      color: rgba(232, 164, 74, 0.25);
+      font-size: 1.5rem;
+      letter-spacing: 0.15em;
+    }
+
+    .aside-box {
+      background: linear-gradient(135deg, rgba(155, 142, 196, 0.08), rgba(155, 142, 196, 0.04));
+      border-left: 3px solid rgba(155, 142, 196, 0.35);
+      padding: 28px 32px;
+      margin: 36px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.08rem;
+      color: rgba(212, 202, 187, 0.9);
+      line-height: 1.9;
+    }
+
+    .contextual-note {
+      background: linear-gradient(135deg, rgba(232, 164, 74, 0.06), rgba(232, 164, 74, 0.02));
+      border-left: 3px solid rgba(232, 164, 74, 0.3);
+      padding: 24px 28px;
+      margin: 32px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 1.05rem;
+      color: rgba(212, 202, 187, 0.85);
+    }
+
+    .quiz-container {
+      background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+      border: 1px solid rgba(232, 164, 74, 0.12);
+      border-radius: 16px;
+      padding: 48px 40px;
+      margin: 70px 0;
+    }
+
+    .quiz-container h3 {
+      font-size: 1.6rem;
+      color: var(--text-bright);
+      margin-bottom: 40px;
+      text-align: center;
+      font-weight: 400;
+    }
+
+    .quiz-question {
+      background: rgba(26, 35, 55, 0.6);
+      border: 1px solid rgba(232, 164, 74, 0.08);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .quiz-question.hidden {
+      display: none;
+    }
+
+    .quiz-question-text {
+      font-size: 1.15rem;
+      color: var(--text-bright);
+      margin-bottom: 22px;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-option {
+      background: rgba(232, 164, 74, 0.08);
+      border: 1px solid rgba(232, 164, 74, 0.2);
+      color: var(--text);
+      padding: 14px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1.05rem;
+      text-align: left;
+    }
+
+    .quiz-option:hover {
+      background: rgba(232, 164, 74, 0.15);
+      border-color: var(--fire);
+    }
+
+    .quiz-option.selected {
+      background: rgba(74, 180, 100, 0.15);
+      border-color: #4ab464;
+      color: #8ed69e;
+    }
+
+    .quiz-option.incorrect {
+      background: rgba(180, 74, 74, 0.1);
+      border-color: rgba(180, 74, 74, 0.3);
+      color: rgba(212, 202, 187, 0.3);
+    }
+
+    .quiz-nav {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .quiz-nav button {
+      background: rgba(232, 164, 74, 0.08);
+      border: 1px solid rgba(232, 164, 74, 0.25);
+      color: var(--text-bright);
+      font-family: 'Cormorant Garamond', serif;
+      padding: 14px 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1.05rem;
+    }
+
+    .quiz-nav button:hover:not(:disabled) {
+      background: rgba(232, 164, 74, 0.15);
+      border-color: var(--fire);
+    }
+
+    .quiz-nav button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .quiz-score {
+      text-align: center;
+      font-size: 1.5rem;
+      color: var(--fire-glow);
+      margin: 32px 0;
+      font-weight: 500;
+    }
+
+    .post-quiz-summary {
+      background: linear-gradient(135deg, rgba(155, 142, 196, 0.08), rgba(155, 142, 196, 0.04));
+      border-left: 2px solid rgba(232, 164, 74, 0.35);
+      padding: 28px 32px;
+      margin: 28px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.08rem;
+      color: rgba(212, 202, 187, 0.9);
+      display: none;
+      line-height: 1.8;
+    }
+
+    .post-quiz-summary.show {
+      display: block;
+    }
+
+    .post-quiz-summary strong {
+      color: var(--text-bright);
+      font-size: 1.15rem;
+    }
+
+    .word-collection {
+      background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+      border: 1px solid rgba(232, 164, 74, 0.12);
+      border-radius: 16px;
+      padding: 48px 40px;
+      margin: 70px 0;
+      text-align: center;
+      display: none;
+    }
+
+    .word-collection h3 {
+      font-size: 1.5rem;
+      color: var(--text-bright);
+      margin-bottom: 36px;
+      font-weight: 400;
+    }
+
+    .word-collection.show {
+      display: block;
+    }
+
+    .collected-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .collected-word {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(232, 164, 74, 0.06);
+      border: 1px solid rgba(232, 164, 74, 0.15);
+      border-radius: 12px;
+      padding: 18px 28px;
+      min-width: 100px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+
+    .collected-word.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .collected-word .cw-german {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--german);
+      letter-spacing: 0.02em;
+    }
+
+    .collected-word .cw-english {
+      font-size: 0.85rem;
+      color: rgba(212, 202, 187, 0.5);
+      margin-top: 6px;
+      font-weight: 400;
+    }
+
+    .chapter-end {
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .chapter-end .end-line {
+      width: 60px;
+      height: 1px;
+      background: var(--fire);
+      margin: 0 auto 40px;
+      opacity: 0.4;
+    }
+
+    .chapter-end .end-text {
+      font-size: 1.35rem;
+      color: var(--text-bright);
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    .chapter-end .end-subtext {
+      font-size: 1.08rem;
+      color: rgba(212, 202, 187, 0.75);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .next-chapter {
+      font-size: 1.15rem;
+      color: var(--fire);
+      margin-top: 40px;
+      letter-spacing: 0.04em;
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+      z-index: 100;
+      width: 0%;
+    }
+
+    .speak-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(232, 164, 74, 0.3);
+      border-radius: 50%;
+      background: rgba(232, 164, 74, 0.1);
+      color: var(--fire);
+      cursor: pointer;
+      font-size: 1rem;
+      vertical-align: middle;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .speak-btn:hover {
+      background: rgba(232, 164, 74, 0.2);
+      border-color: rgba(232, 164, 74, 0.6);
+    }
+
+    .speak-btn:active {
+      transform: scale(0.9);
+    }
+
+    .speak-btn.speaking {
+      background: rgba(232, 164, 74, 0.3);
+      border-color: #e8a44a;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        padding: 40px 16px 120px;
+      }
+
+      .title-screen h1 {
+        font-size: 2.4rem;
+      }
+
+      .narrative {
+        font-size: 1.15rem;
+      }
+
+      .ety-card {
+        padding: 28px 24px;
+      }
+
+      .quiz-container {
+        padding: 32px 24px;
+      }
+    }
+  
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+  <canvas id="canvas"></canvas>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <div class="content">
+    <div class="title-screen">
+      <div class="chapter-label">Chapter Eighty-Seven</div>
+      <h1>Eigentlich, übrigens</h1>
+      <div class="subtitle">Modal Particles: Conversation Shifters</div>
+      <div class="scroll-hint"><span>↓</span></div>
+    </div>
+
+    <div class="scene" id="scene1">
+      <div class="scene-marker"></div>
+      <p class="narrative">We reach the final set of modal particles—particles that shift conversations in real time. Where previous particles adjusted tone and attitude, these particles actively steer dialogue. They change the direction of thought, redirect attention, or circle back to main points after digression. They are the particles of conversation itself: the tools that speakers use to navigate discourse, to bring discussions back on track, to hedge their meaning, or to redirect focus.</p>
+
+      <p class="narrative emphasis">Eigentlich, übrigens, jedenfalls, allerdings, nämlich—these are the particles of dialogue. They move conversation forward, backward, and sideways.</p>
+
+      <p class="narrative">Understanding these particles means understanding how German speakers actually think and communicate in real conversation. These are the particles you hear in native speech, shaping the flow of discussion, softening statements, and guiding listeners through the mental landscape of the speaker's thoughts. Master these, and you will understand not just what Germans say, but how they organize and express their thinking.</p>
+
+      <div class="aside-box">
+        <strong style="color: var(--text-bright); font-size: 1.15rem;">The Architecture of Thought</strong>
+        <p style="margin-top: 12px;">German conversation uses particles to build structures of thought. Eigentlich hedges and redirects. Übrigens introduces asides. Jedenfalls returns to the main point. Allerdings concedes before continuing. Nämlich explains reasons. Together, these particles form a kind of conversational architecture—they show how a German speaker's mind moves through an idea, where they emphasize, where they qualify, where they digress and return. Learning these particles is learning to think in German.</p>
+      </div>
+    </div>
+
+    <div class="divider">· · ·</div>
+
+    <div class="scene" id="scene2">
+      <div class="scene-marker"></div>
+
+      <p class="narrative"><span class="german-word" data-card="eigentlich">Eigentlich</span> means "actually" or "originally," but its particle function is far more subtle and powerful.</p>
+
+      <div class="ety-card" id="card-eigentlich">
+        <div class="word-header">
+          <span class="word-main">eigentlich</span>
+          <button class="speak-btn" data-speak="eigentlich" title="Speak eigentlich">🔊</button>
+        </div>
+        <div class="word-meaning">actually, originally, in fact (hedging, redirecting, reframing)</div>
+        <div class="story">
+          <p>Eigentlich as a modal particle is the tool of redirection and hedge. It says: what I just said (or what we've been discussing) is not quite what I actually mean. Let me reconsider, reframe, or add nuance. "Das ist eigentlich nicht so einfach." (Actually, it's not that simple.) The speaker begins by seeming to agree or understand, then uses eigentlich to redirect the conversation toward a more accurate or nuanced position.</p>
+
+          <p style="margin-top: 14px;">Eigentlich can hedge and soften direct statements. "Ich bin eigentlich nicht damit einverstanden." (Actually, I don't agree with that.) It sounds less harsh than "Ich bin nicht damit einverstanden"—the eigentlich acknowledges the other person's point while creating space for disagreement. It says: I hear you, but actually, let me reconsider aloud.</p>
+
+          <p style="margin-top: 14px;">In questions, eigentlich can signal confusion or a request for clarification. "Was willst du eigentlich?" (What exactly do you want?) or "Warum sind Sie eigentlich hier?" (Why exactly are you here?) The eigentlich adds a sense of "I thought I understood, but actually, let me ask again." It's not accusatory, but it signals that the speaker's understanding was incomplete.</p>
+
+          <p style="margin-top: 14px;">Eigentlich can also introduce a realization or afterthought. "Eigentlich wollte ich dir etwas anderes sagen." (Actually, I wanted to tell you something else.) The speaker was about to say one thing, then uses eigentlich to redirect toward what they actually meant to say. It transforms the conversation, redirecting its course.</p>
+
+          <p style="margin-top: 14px;">This particle is essential to how Germans actually speak. It's the word of reconsideration, of intellectual honesty, of saying "wait, let me think about this more carefully." It marks German speakers as thoughtful and willing to revise their positions in light of new understanding.</p>
+
+          <div class="example">
+            <div class="example-german">Das ist eigentlich nicht so einfach.</div>
+            <div class="example-english">Actually, it's not that simple. (reframing the discussion)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Ich bin eigentlich nicht damit einverstanden.</div>
+            <div class="example-english">Actually, I don't agree with that. (softened disagreement)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Was willst du eigentlich?</div>
+            <div class="example-english">What exactly do you want? (seeking clarification)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Eigentlich wollte ich dir etwas anderes sagen.</div>
+            <div class="example-english">Actually, I wanted to tell you something else. (redirecting the conversation)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das hättest du eigentlich wissen sollen.</div>
+            <div class="example-english">You actually should have known that. (mild reproach)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Eigentlich bin ich ganz anderer Meinung.</div>
+            <div class="example-english">Actually, I'm of quite a different opinion. (hedged disagreement)</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="narrative" style="margin-top: 32px;"><span class="german-word" data-card="übrigens">Übrigens</span> is the particle of tangent and aside—the conversational detour.</p>
+
+      <div class="ety-card" id="card-übrigens">
+        <div class="word-header">
+          <span class="word-main">übrigens</span>
+          <button class="speak-btn" data-speak="übrigens" title="Speak übrigens">🔊</button>
+        </div>
+        <div class="word-meaning">by the way, incidentally, speaking of which (topic shift, aside)</div>
+        <div class="story">
+          <p>Übrigens marks a shift in topic. It says: what I'm about to tell you is not the main point, but it's worth mentioning anyway. "Übrigens, hast du schon von seinem neuen Job gehört?" (By the way, have you heard about his new job?) The speaker is making a conversational detour—they remember something tangential, and übrigens signals this shift to the listener.</p>
+
+          <p style="margin-top: 14px;">Übrigens often appears at the start of sentences, but it can also appear mid-sentence to signal that something is being added as an aside. "Das ist wahr, und übrigens, ich habe das schon früher gesagt." (That's true, and by the way, I said that before.) The speaker is adding a tangential point, acknowledging its tangential nature with übrigens.</p>
+
+          <p style="margin-top: 14px;">The particle is crucial for natural dialogue. It shows the listener that the speaker knows they're changing topics, that it's a conscious shift, not a derailment. "Übrigens" says: I know this is off-topic, but I want to mention it anyway. It's honest about conversational tangents, acknowledging them rather than pretending they're part of the main thread.</p>
+
+          <p style="margin-top: 14px;">Übrigens can also be used to introduce information that you think is worth remembering. "Übrigens, der Film kommt nächste Woche raus." (By the way, the film comes out next week.) The speaker is saying: you might find this worth knowing, even though it's not the main subject we're discussing.</p>
+
+          <div class="example">
+            <div class="example-german">Übrigens, hast du schon von seinem neuen Job gehört?</div>
+            <div class="example-english">By the way, have you heard about his new job? (tangential shift)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das ist wahr, und übrigens, ich habe das schon früher gesagt.</div>
+            <div class="example-english">That's true, and by the way, I said that before. (adding an aside)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Übrigens, vergessen wir nicht, morgen anzurufen.</div>
+            <div class="example-english">By the way, let's not forget to call tomorrow. (introducing aside)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Ich bin einverstanden, übrigens, hat er das auch gesagt?</div>
+            <div class="example-english">I agree, and by the way, did he say that too? (tangential addition)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Übrigens, der Film kommt nächste Woche raus.</div>
+            <div class="example-english">By the way, the film comes out next week. (sharing tangential information)</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="narrative" style="margin-top: 32px;"><span class="german-word" data-card="jedenfalls">Jedenfalls</span> is the particle of return—it brings conversation back to the main point.</p>
+
+      <div class="ety-card" id="card-jedenfalls">
+        <div class="word-header">
+          <span class="word-main">jedenfalls</span>
+          <button class="speak-btn" data-speak="jedenfalls" title="Speak jedenfalls">🔊</button>
+        </div>
+        <div class="word-meaning">in any case, anyway, at least (returning to main point)</div>
+        <div class="story">
+          <p>Jedenfalls serves as the conversational anchor. After a digression, a qualification, or an aside, jedenfalls signals: let's return to the main point. "Das ist kompliziert, aber jedenfalls sollten wir etwas tun." (It's complicated, but in any case, we should do something.) The speaker acknowledges complexity, then uses jedenfalls to move beyond it toward action or decision.</p>
+
+          <p style="margin-top: 14px;">Jedenfalls can also mark a fallback position or a minimum claim. "Ich weiß nicht, was genau passiert ist, aber jedenfalls sollte das nicht noch einmal geschehen." (I don't know exactly what happened, but in any case, that should not happen again.) The speaker is saying: I'm uncertain about details, but I'm certain about this minimum claim.</p>
+
+          <p style="margin-top: 14px;">In longer discussions, jedenfalls functions as punctuation—it marks the return from tangent to main thread. It says to the listener: we've explored the complications and the asides, now let's get back to business. It's the particle of pragmatism that says "enough nuance, let's decide."</p>
+
+          <div class="example">
+            <div class="example-german">Das ist kompliziert, aber jedenfalls sollten wir etwas tun.</div>
+            <div class="example-english">It's complicated, but in any case, we should do something. (returning to main point)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Ich weiß nicht, was genau passiert ist, aber jedenfalls...</div>
+            <div class="example-english">I don't know exactly what happened, but in any case... (marking minimum claim)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Es gibt viele Gründe dafür und dagegen, jedenfalls müssen wir entscheiden.</div>
+            <div class="example-english">There are many reasons for and against it, anyway, we have to decide. (moving to decision)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das ist jedenfalls besser als vorher.</div>
+            <div class="example-english">At least that's better than before. (fallback position)</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="narrative" style="margin-top: 32px;"><span class="german-word" data-card="allerdings">Allerdings</span> is the particle of concession—it acknowledges before continuing.</p>
+
+      <div class="ety-card" id="card-allerdings">
+        <div class="word-header">
+          <span class="word-main">allerdings</span>
+          <button class="speak-btn" data-speak="allerdings" title="Speak allerdings">🔊</button>
+        </div>
+        <div class="word-meaning">however, admittedly, I must say, though (concession)</div>
+        <div class="story">
+          <p>Allerdings concedes validity before the speaker adds their own point. "Das stimmt allerdings." (That's admittedly true.) The speaker acknowledges that the other person is right, but the allerdings signals that something follows—a qualification, a "but," a different perspective. It's intellectually honest: I recognize the validity of what you're saying, and here's my addition or caveat.</p>
+
+          <p style="margin-top: 14px;">Allerdings can also appear at the beginning of a response, signaling: "I hear your point, and I must admit it has merit, but..." "Allerdings, das hätte ich auch sagen können." (Admittedly, I could have said that too.) The speaker is acknowledging the other person's wit or insight before adding their own.</p>
+
+          <p style="margin-top: 14px;">In longer arguments, allerdings functions as honest acknowledgment. Rather than dismissing opposing points, the German speaker uses allerdings to recognize them while continuing with their own argument. "Du hast recht, allerdings..." (You're right, although...) This is the particle of intellectual fairness—it says: I will not pretend your point is invalid, but I have something to add.</p>
+
+          <div class="example">
+            <div class="example-german">Das stimmt allerdings.</div>
+            <div class="example-english">That's admittedly true. (conceding validity)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Allerdings, das hätte ich auch sagen können.</div>
+            <div class="example-english">Admittedly, I could have said that too. (acknowledging other's point)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Du hast recht, allerdings...</div>
+            <div class="example-english">You're right, although... (conceding before continuing)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das ist allerdings schwieriger als es aussieht.</div>
+            <div class="example-english">That is, admittedly, more difficult than it looks. (acknowledging difficulty)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das ist allerdings ein guter Punkt.</div>
+            <div class="example-english">That is, I must say, a good point. (recognizing merit)</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="narrative" style="margin-top: 32px;"><span class="german-word" data-card="nämlich">Nämlich</span> is the particle of explanation—it introduces the reason why.</p>
+
+      <div class="ety-card" id="card-nämlich">
+        <div class="word-header">
+          <span class="word-main">nämlich</span>
+          <button class="speak-btn" data-speak="nämlich" title="Speak nämlich">🔊</button>
+        </div>
+        <div class="word-meaning">namely, you see, because (explanation, reason)</div>
+        <div class="story">
+          <p>Nämlich introduces explanation and reason. "Ich kann nicht kommen, ich bin nämlich krank." (I can't come, you see, I'm sick.) The nämlich says: here comes the reason, the explanation for what I just said. It's often used in the middle of a sentence to provide the reasoning behind a statement, as if the speaker is explaining to themselves as much as to the listener.</p>
+
+          <p style="margin-top: 14px;">Nämlich can appear as a sentence starter: "Nämlich, das Problem ist..." (You see, the problem is...) or "Das geht nicht, nämlich weil..." (That won't work, namely because...) The particle signals that explanation is coming, that the listener should pay attention to the reason being offered.</p>
+
+          <p style="margin-top: 14px;">In conversation, nämlich often appears when a speaker realizes they haven't fully explained themselves. "Das ist wichtig, nämlich weil die Zukunft davon abhängt." (That's important, you see, because the future depends on it.) The speaker adds nämlich to clarify their reasoning, to help the listener understand not just the claim, but why the speaker believes it.</p>
+
+          <div class="example">
+            <div class="example-german">Ich kann nicht kommen, ich bin nämlich krank.</div>
+            <div class="example-english">I can't come, you see, I'm sick. (providing reason)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das geht nicht, nämlich weil zu viele Menschen betroffen sind.</div>
+            <div class="example-english">That won't work, namely because too many people are affected. (explaining why)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das ist wichtig, nämlich weil die Zukunft davon abhängt.</div>
+            <div class="example-english">That's important, you see, because the future depends on it. (clarifying reason)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Nämlich, das Problem ist...was wollen wir eigentlich erreichen?</div>
+            <div class="example-english">You see, the problem is...what exactly do we want to achieve? (introducing central question)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das sehe ich anders, nämlich...</div>
+            <div class="example-english">I see that differently, namely... (offering alternative explanation)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">· · ·</div>
+
+    <div class="scene">
+      <div class="contextual-note">
+        <strong style="color: var(--text-bright);">The Parallel in Chinese</strong>
+        <p style="margin-top: 12px;">Chinese also has conversation-directing particles. The word 其实 (qíshí, "actually") serves functions similar to eigentlich. The expression 顺便说一下 (shùnbiàn shuōyīxià, "by the way") parallels übrigens. Where German uses modal particles to guide conversation, Chinese uses similar tools—particles and expressions that show listeners how the speaker is organizing their thoughts. Both languages encode the architecture of thought in their particles. Learning these particles in any language is learning to see how that culture thinks, plans, and navigates discourse.</p>
+      </div>
+
+      <div class="aside-box">
+        <strong style="color: var(--text-bright); font-size: 1.15rem;">The Completion of Your Study</strong>
+        <p style="margin-top: 12px;">You have now learned fifteen modal particles across three chapters. From doch, mal, ja to halt, eben, schon to eigentlich, übrigens, jedenfalls, allerdings, nämlich—you have learned the emotional and conversational texture of German speech. You understand how German speakers express contradiction, softening, assumption, resignation, reassurance, hedging, diversion, return, concession, and explanation. You understand not just how to speak German, but how to think and feel in German. These particles are your final graduation—they transform you from a learner into someone who can navigate the real conversations of native speakers. They are the difference between correct German and natural German.</p>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-guess1">
+      <div class="guess-section">
+        <div class="prompt">
+          <span class="german-word">Eigentlich</span> primarily serves to:
+          <div style="font-size: 0.9rem; opacity: 0.5; margin-top: 8px;">(What does it redirect?)</div>
+        </div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="guess(this, true)">hedge and redirect conversation</button>
+          <button class="guess-btn" onclick="guess(this, false)">introduce an aside</button>
+          <button class="guess-btn" onclick="guess(this, false)">return to main point</button>
+          <button class="guess-btn" onclick="guess(this, false)">explain a reason</button>
+        </div>
+        <div class="guess-feedback" id="feedback1"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-guess2">
+      <div class="guess-section">
+        <div class="prompt">
+          <span class="german-word">Übrigens</span> signals:
+          <div style="font-size: 0.9rem; opacity: 0.5; margin-top: 8px;">(What shift?)</div>
+        </div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="guess(this, true)">a topic shift or aside</button>
+          <button class="guess-btn" onclick="guess(this, false)">return to main topic</button>
+          <button class="guess-btn" onclick="guess(this, false)">acknowledgment and concession</button>
+          <button class="guess-btn" onclick="guess(this, false)">explanation of reasons</button>
+        </div>
+        <div class="guess-feedback" id="feedback2"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-quiz">
+      <div class="quiz-container">
+        <h3>Test Your Knowledge: Modal Particles III</h3>
+        <div id="quiz-questions"></div>
+        <div class="quiz-nav">
+          <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+          <button id="next-btn" onclick="nextQuestion()">Next →</button>
+        </div>
+        <div class="quiz-score" id="quiz-score"></div>
+        <div class="quiz-reset" id="quiz-reset"></div>
+        <div class="post-quiz-summary" id="post-quiz-summary"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-collection">
+      <div class="word-collection" id="word-collection-box">
+        <h3>Modal Particles Gathered in Chapter 87</h3>
+        <div class="collected-words">
+          <div class="collected-word" data-delay="0">
+            <span class="cw-german">eigentlich</span>
+            <span class="cw-english">hedging</span>
+          </div>
+          <div class="collected-word" data-delay="150">
+            <span class="cw-german">übrigens</span>
+            <span class="cw-english">aside</span>
+          </div>
+          <div class="collected-word" data-delay="300">
+            <span class="cw-german">jedenfalls</span>
+            <span class="cw-english">return</span>
+          </div>
+          <div class="collected-word" data-delay="450">
+            <span class="cw-german">allerdings</span>
+            <span class="cw-english">concession</span>
+          </div>
+          <div class="collected-word" data-delay="600">
+            <span class="cw-german">nämlich</span>
+            <span class="cw-english">explanation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-end">
+      <div class="chapter-end">
+        <div class="end-line"></div>
+        <p class="end-text">End of Chapter Eighty-Seven</p>
+        <p class="end-subtext">Fifteen modal particles mastered. The full emotional, philosophical, and conversational landscape of German expression lies within your understanding. You have learned to think in German, to feel in German, to navigate discourse like a native speaker. The study of modal particles is complete. What remains is practice, conversation, and the gradual deepening of all you have learned.</p>
+        <div class="next-chapter">The architecture of German awaits.</div>
+      </div>
+    </div>
+  
+  <div class="nav-section">
+    <a href="chapter86.html" class="nav-btn">← Chapter 86</a>
+    <a href="chapter88.html" class="nav-btn next">Chapter 88 →</a>
+  </div>
+
+</div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const count = window.innerWidth < 600
+        ? Math.floor((canvas.width * canvas.height) / 8000)
+        : Math.floor((canvas.width * canvas.height) / 6000);
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random() * 0.3 + 0.1,
+          speed: Math.random() * 0.1 + 0.03,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: Math.random() * 0.008
+        });
+      }
+    }
+
+    function drawParticles(time) {
+      ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+      particles.forEach((p, idx) => {
+        p.x -= p.speed;
+        p.wobble += p.wobbleSpeed;
+        p.y += Math.sin(p.wobble) * 0.2;
+
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.y < -10) p.y = canvas.height + 10;
+        if (p.y > canvas.height + 10) p.y = -10;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(150, 150, 150, ${p.alpha})`;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(drawParticles);
+    }
+
+    resizeCanvas();
+    createParticles();
+    requestAnimationFrame(drawParticles);
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createParticles();
+    });
+
+    const scenes = document.querySelectorAll('.scene');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          if (entry.target.id === 'scene-collection') {
+            const words = entry.target.querySelectorAll('.collected-word');
+            words.forEach(w => {
+              const delay = parseInt(w.dataset.delay) || 0;
+              setTimeout(() => w.classList.add('show'), delay);
+            });
+          }
+        }
+      });
+    }, { threshold: 0.15 });
+
+    scenes.forEach(s => observer.observe(s));
+
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = (window.scrollY / h) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    });
+
+    document.querySelectorAll('.german-word').forEach(word => {
+      word.addEventListener('click', () => {
+        const cardId = 'card-' + word.dataset.card;
+        const card = document.getElementById(cardId);
+        if (card) {
+          const isOpen = card.classList.contains('open');
+          document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+          if (!isOpen) {
+            card.classList.add('open');
+            word.classList.add('revealed');
+            setTimeout(() => {
+              card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+          }
+        }
+      });
+    });
+
+    const synth = window.speechSynthesis;
+
+    function speakGerman(text) {
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'de-DE';
+      utterance.rate = 0.9;
+      synth.speak(utterance);
+    }
+
+    document.querySelectorAll('.speak-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const text = this.dataset.speak;
+        speakGerman(text);
+      });
+    });
+
+    function guess(btn, correct) {
+      const section = btn.closest('.guess-section');
+      const feedback = section.querySelector('.guess-feedback');
+      const allBtns = section.querySelectorAll('.guess-btn');
+
+      if (correct) {
+        btn.classList.add('correct');
+        allBtns.forEach(b => {
+          if (b !== btn) b.classList.add('incorrect');
+        });
+        feedback.textContent = 'You sense the conversation\'s direction.';
+        feedback.classList.add('show');
+      } else {
+        btn.classList.add('incorrect');
+        btn.style.pointerEvents = 'none';
+        feedback.textContent = 'These particles steer dialogue.';
+        feedback.classList.add('show');
+      }
+    }
+
+    const quizData = [
+      {
+        question: "'Eigentlich' primarily functions to:",
+        options: ["introduce an aside", "hedge and redirect conversation", "return to main point", "explain reasons"],
+        correct: 1,
+        explanation: "Eigentlich redirects and reframes discussion toward more accurate understanding."
+      },
+      {
+        question: "'Das ist eigentlich nicht so einfach' means:",
+        options: ["That's not actually easy", "That's actually not so simple", "That's genuinely difficult", "That's simply not complex"],
+        correct: 1,
+        explanation: "Eigentlich hedges and reframes, suggesting reconsideration."
+      },
+      {
+        question: "'Eigentlich' in questions like 'Was willst du eigentlich?' signals:",
+        options: ["anger", "seeking clarification after partial understanding", "certainty", "agreement"],
+        correct: 1,
+        explanation: "Eigentlich signals that the speaker's understanding was incomplete."
+      },
+      {
+        question: "'Übrigens' is used to:",
+        options: ["return to main topic", "introduce a tangential aside", "explain reasons", "concede points"],
+        correct: 1,
+        explanation: "Übrigens marks conversational tangents and asides."
+      },
+      {
+        question: "'Übrigens, hast du schon von seinem neuen Job gehört?' means:",
+        options: ["Mainly, have you heard...", "By the way, have you heard...", "Certainly, have you heard...", "Moreover, have you heard..."],
+        correct: 1,
+        explanation: "Übrigens signals a topic shift or tangential information."
+      },
+      {
+        question: "'Jedenfalls' functions to:",
+        options: ["introduce asides", "return to main point after digression", "offer explanation", "concede validity"],
+        correct: 1,
+        explanation: "Jedenfalls anchors discussion and returns to main points."
+      },
+      {
+        question: "'Das ist kompliziert, aber jedenfalls sollten wir etwas tun' means:",
+        options: ["It's complicated, but nevertheless we should do something", "It's complex, at least we should try", "It's difficult, and anyway we must act", "It's complicated, but regardless we must decide"],
+        correct: 0,
+        explanation: "Jedenfalls marks return from complexity to main point and decision."
+      },
+      {
+        question: "'Allerdings' introduces:",
+        options: ["a topic shift", "explanation and reason", "acknowledgment before continuing with own point", "return to main topic"],
+        correct: 2,
+        explanation: "Allerdings concedes and acknowledges before adding own perspective."
+      },
+      {
+        question: "'Das stimmt allerdings' means:",
+        options: ["That's definitely true", "That's admittedly true", "That's completely accurate", "That's certainly so"],
+        correct: 1,
+        explanation: "Allerdings acknowledges validity while the speaker is about to qualify."
+      },
+      {
+        question: "'Nämlich' introduces:",
+        options: ["a topic shift", "acknowledgment", "explanation and reason why", "return to main point"],
+        correct: 2,
+        explanation: "Nämlich marks the introduction of explanation or reason."
+      },
+      {
+        question: "'Ich kann nicht kommen, ich bin nämlich krank' means:",
+        options: ["I can't come, I'm sick anyway", "I can't come, namely I'm sick", "I can't come—you see, I'm sick", "I can't come because I'm certainly sick"],
+        correct: 2,
+        explanation: "Nämlich introduces the reason or explanation for the previous statement."
+      },
+      {
+        question: "These final modal particles are primarily used for:",
+        options: ["grammar changes", "steering conversation and showing thought organization", "changing verb tense", "forming questions"],
+        correct: 1,
+        explanation: "These particles direct dialogue and reveal how German speakers organize their thinking."
+      }
+    ];
+
+    let currentQuestion = 0;
+    let answers = new Array(quizData.length).fill(null);
+    let quizComplete = false;
+
+    function initializeQuiz() {
+      const container = document.getElementById('quiz-questions');
+      container.innerHTML = '';
+
+      quizData.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+        div.id = 'q-' + idx;
+
+        let html = `<div class="quiz-question-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+        q.options.forEach((opt, optIdx) => {
+          html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+        });
+        html += '</div>';
+        div.innerHTML = html;
+        container.appendChild(div);
+      });
+
+      updateQuizNav();
+    }
+
+    function selectAnswer(qIdx, optIdx) {
+      if (quizComplete) return;
+      answers[qIdx] = optIdx;
+      updateQuizNav();
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < quizData.length - 1) {
+        document.getElementById('q-' + currentQuestion).classList.add('hidden');
+        currentQuestion++;
+        document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+        updateQuizNav();
+      } else if (!quizComplete) {
+        completeQuiz();
+      }
+    }
+
+    function previousQuestion() {
+      if (currentQuestion > 0) {
+        document.getElementById('q-' + currentQuestion).classList.add('hidden');
+        currentQuestion--;
+        document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+        updateQuizNav();
+      }
+    }
+
+    function updateQuizNav() {
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      prevBtn.disabled = currentQuestion === 0;
+
+      if (currentQuestion === quizData.length - 1) {
+        nextBtn.textContent = 'Submit Quiz';
+      } else {
+        nextBtn.textContent = 'Next →';
+      }
+    }
+
+    function completeQuiz() {
+      quizComplete = true;
+      let score = 0;
+      answers.forEach((ans, idx) => {
+        if (ans === quizData[idx].correct) {
+          score++;
+        }
+      });
+
+      const percentage = Math.round((score / quizData.length) * 100);
+      const scoreDiv = document.getElementById('quiz-score');
+      scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+      document.getElementById('prev-btn').disabled = true;
+      document.getElementById('next-btn').disabled = true;
+
+      if (percentage >= 80) {
+        scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">Mastery unlocked! ✓</p>';
+        document.getElementById('word-collection-box').classList.add('show');
+
+        const summary = document.getElementById('post-quiz-summary');
+        summary.innerHTML = `<strong style="color: var(--text-bright); font-size: 1.1rem;">All Modal Particles Mastered</strong><p style="margin-top: 8px;">Fifteen particles learned. Contradiction, softening, assumption, resignation, reassurance, hedging, direction. You now understand the invisible architecture of German speech. Your journey through the particles is complete.</p>`;
+        summary.classList.add('show');
+      } else {
+        scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80%.</p>';
+        const resetDiv = document.getElementById('quiz-reset');
+        resetDiv.innerHTML = '<button onclick="resetQuiz()" style="background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); padding: 12px 32px; border-radius: 8px; cursor: pointer; margin-top: 16px; font-family: \'Cormorant Garamond\', serif;">Reset Quiz</button>';
+      }
+    }
+
+    function resetQuiz() {
+      currentQuestion = 0;
+      answers = new Array(quizData.length).fill(null);
+      quizComplete = false;
+
+      document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+        q.classList.toggle('hidden', idx !== 0);
+      });
+
+      document.getElementById('quiz-score').textContent = '';
+      document.getElementById('post-quiz-summary').classList.remove('show');
+      document.getElementById('word-collection-box').classList.remove('show');
+      document.getElementById('quiz-reset').innerHTML = '';
+      document.getElementById('prev-btn').disabled = false;
+      document.getElementById('next-btn').disabled = false;
+      document.getElementById('next-btn').textContent = 'Next →';
+
+      updateQuizNav();
+    }
+
+    initializeQuiz();
+  </script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">748 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(88%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:88%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 748 words across 87 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">136 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(93%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:93%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 136 patterns and grammar rules across 87 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

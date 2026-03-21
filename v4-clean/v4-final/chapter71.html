@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 71: Lass uns gehen</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --conjunction: #d9a77a;
+    --scholarly-blue: #1a3a52;
+    --warm-gold: #c9a961;
+  }
+  html { scroll-behavior: smooth; background: #0a0e1a; }
+  body {
+    background: linear-gradient(to bottom, var(--scholarly-blue) 0%, var(--night) 30%, var(--night-mid) 60%, var(--warm-gold) 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+  }
+  #doors-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  .content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 60px 24px 120px; }
+  .title-screen { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px; }
+  .title-screen h1 { font-size: 3.5rem; font-weight: 300; color: var(--text-bright); opacity: 0; animation: fadeUp 2s ease 0.5s forwards; }
+  .title-screen .subtitle { font-size: 1.3rem; font-weight: 300; font-style: italic; color: var(--fire); opacity: 0; animation: fadeUp 2s ease 1.2s forwards; margin-bottom: 2em; }
+  .title-screen .chapter-label { font-size: 0.9rem; opacity: 0; animation: fadeUp 2s ease 0.2s forwards; }
+  .scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3); margin-top: 3em; }
+  .scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+  .scene.visible { opacity: 1; transform: translateY(0); }
+  .scene-marker { display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--fire), transparent); margin: 0 auto 40px; }
+  .narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+  .narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center; font-style: italic; margin: 2em 0; }
+  .german-word { color: var(--german); font-weight: 600; cursor: pointer; border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; }
+  .german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+  .vocab-card { background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95)); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 28px 32px; margin: 24px 0 32px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.5s ease; }
+  .vocab-card.open { max-height: 1200px; opacity: 1; }
+  .vocab-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .vocab-card .word-main { font-size: 2rem; font-weight: 700; color: var(--german); }
+  .vocab-card .word-meaning { font-size: 1.1rem; color: var(--english); }
+  .vocab-card .word-content { margin-top: 12px; font-size: 1rem; color: rgba(212, 202, 187, 0.85); line-height: 1.7; }
+  .vocab-card .usage-note { background: rgba(232, 164, 74, 0.05); border-left: 2px solid rgba(232, 164, 74, 0.2); padding: 12px 16px; margin-top: 12px; border-radius: 4px; font-size: 0.95rem; }
+  .grammar-box { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2); border-radius: 8px; padding: 24px; margin: 28px 0; font-size: 1rem; color: var(--text-bright); }
+  .grammar-box .rule-title { font-size: 1.2rem; color: #f4c67a; font-weight: 600; margin-bottom: 16px; }
+  .example-pair { background: rgba(10, 14, 26, 0.5); border-left: 2px solid #e8a44a; padding: 16px; margin: 12px 0; border-radius: 4px; }
+  .example-label { font-size: 0.8rem; text-transform: uppercase; color: #e8a44a; margin-bottom: 4px; }
+  .example-text { color: var(--text-bright); font-weight: 500; }
+  .example-translation { font-size: 0.95rem; color: var(--english); margin-top: 8px; }
+  .aside-box { background: rgba(232, 164, 74, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3); padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; }
+  .aside-box .aside-title { font-size: 0.8rem; text-transform: uppercase; color: #e8a44a; margin-bottom: 8px; }
+  .meaning-table { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .meaning-cell { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.12); padding: 16px; border-radius: 6px; }
+  .meaning-title { font-weight: 600; color: var(--fire); margin-bottom: 8px; font-size: 0.95rem; }
+  .meaning-examples { font-size: 0.9rem; color: rgba(212, 202, 187, 0.8); line-height: 1.6; }
+  .compound-table { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; font-size: 0.9rem; }
+  .compound-row { display: contents; }
+  .compound-cell { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.12); padding: 12px; border-radius: 6px; }
+  .compound-cell.header { font-weight: 600; color: var(--fire); background: rgba(232, 164, 74, 0.12); }
+  .quiz-container { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95)); border: 1px solid rgba(232, 164, 74, 0.12); border-radius: 16px; padding: 40px 32px; margin: 60px 0; }
+  .quiz-container h3 { font-size: 1.3rem; color: var(--text-bright); text-align: center; margin-bottom: 32px; }
+  .quiz-question { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.08); border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+  .quiz-question .q-text { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2); color: var(--text); padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-family: 'Cormorant Garamond', serif; font-size: 1rem; }
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); }
+  .quiz-nav { display: flex; gap: 12px; justify-content: center; margin-top: 32px; }
+  .quiz-nav button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; padding: 12px 28px; border-radius: 8px; cursor: pointer; }
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; }
+  .quiz-score { text-align: center; font-size: 1.3rem; color: #f4c67a; margin: 24px 0; }
+  .post-quiz-summary { background: rgba(232, 164, 74, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3); padding: 24px 28px; margin: 24px 0; border-radius: 0 8px 8px 0; display: none; }
+  .post-quiz-summary.show { display: block; }
+  .nav-links { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(232, 164, 74, 0.15); }
+  .nav-link { color: var(--fire); text-decoration: none; font-size: 0.95rem; transition: color 0.3s ease; }
+  .nav-link:hover { color: var(--fire-glow); }
+  .chapter-number { color: rgba(232, 164, 74, 0.5); }
+  @media (max-width: 768px) { .meaning-table, .compound-table { grid-template-columns: 1fr; } .title-screen h1 { font-size: 2.5rem; } }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="doors-canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 71</div>
+    <h1 data-speak="true">Lass uns gehen</h1>
+    <p class="subtitle" data-speak="true">The Verb Lassen (To Let, Make, Have)</p>
+    <p class="scroll-hint" data-speak="true">Opening Doors of Possibility<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">
+      The verb <span class="german-word" data-card="lassen">lassen</span> is one of the most important and versatile verbs in German. It has four distinct meanings depending on context: "let" (allow), "make/cause" (compel an action), "have done" (commission an action), and "leave/abandon" (desist from). A single verb that opens doors—literally and figuratively—to expressing causation, permission, and action. Mastering lassen is essential for fluent German.
+    </p>
+    <p class="narrative" data-speak="true">
+      What makes lassen remarkable is its chameleon nature. In different sentences, it transforms meaning completely. "Lass mich!" (Let me!) is a plea for permission. "Der Film lässt mich weinen" (The film makes me cry) describes causation. "Ich lasse mir die Haare schneiden" (I have my hair cut) commissions an action. These four meanings coexist in one verb, creating a semantic richness that characterizes German expression.
+    </p>
+  </div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Four Meanings of Lassen</p>
+    <p class="narrative" data-speak="true">The four uses of lassen are semantically distinct but share the core idea of "releasing" agency or responsibility. Understanding the nuances between them is crucial for accurate usage.</p>
+
+    <div class="meaning-table">
+      <div class="meaning-cell">
+        <div class="meaning-title" data-speak="true">1. To Allow / Permit</div>
+        <div class="meaning-examples" data-speak="true">
+          Subject allows another to perform an action<br>
+          <strong>Lass mich gehen!</strong><br>
+          (Let me go! / Allow me to go!)
+        </div>
+      </div>
+      <div class="meaning-cell">
+        <div class="meaning-title" data-speak="true">2. To Make / Cause</div>
+        <div class="meaning-examples" data-speak="true">
+          Subject causes an action or state<br>
+          <strong>Das Buch lässt mich denken.</strong><br>
+          (The book makes me think.)
+        </div>
+      </div>
+      <div class="meaning-cell">
+        <div class="meaning-title" data-speak="true">3. To Have Done</div>
+        <div class="meaning-examples" data-speak="true">
+          Subject commissions another to perform<br>
+          <strong>Ich lasse mir ein Kleid machen.</strong><br>
+          (I have a dress made / I commission a dress.)
+        </div>
+      </div>
+      <div class="meaning-cell">
+        <div class="meaning-title" data-speak="true">4. To Leave / Stop / Abandon</div>
+        <div class="meaning-examples" data-speak="true">
+          Subject ceases an action or relinquishes<br>
+          <strong>Lass das! (Stop that!)</strong><br>
+          <strong>Ich lasse das Auto hier.</strong><br>
+          (I leave the car here.)
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Verb's Flexibility</div>
+      <p data-speak="true">Lassen is fundamentally about releasing, allowing, or permitting agency. Whether you're permitting someone to act, causing an action, commissioning an action, or abandoning an action, the core concept remains: something is released from the subject's direct control or responsibility.</p>
+    </div>
+  </div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Meaning 1: To Allow / Permit</p>
+    <p class="narrative" data-speak="true">When <span class="german-word" data-card="lassen">lassen</span> means "to allow," the subject permits another entity to perform an action. The syntax is straightforward: subject + lässt + object + infinitive.</p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Pattern: Allow Someone to Do Something</div>
+      <div class="example-pair">
+        <div class="example-label">Example 1</div>
+        <div class="example-text" data-speak="true">Lass mich gehen. (Let me go.)</div>
+        <div class="example-translation">You allow me to leave.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 2</div>
+        <div class="example-text" data-speak="true">Der Lehrer lässt die Schüler nach Hause gehen. (The teacher lets the students go home.)</div>
+        <div class="example-translation">The teacher permits the students to leave.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 3</div>
+        <div class="example-text" data-speak="true">Lass mich das erklären. (Let me explain that.)</div>
+        <div class="example-translation">Allow me to clarify this matter.</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Infinitive Form</div>
+      <p data-speak="true">When lassen is conjugated, the accompanying verb remains in the infinitive form. This is crucial: "Ich lasse dich gehen" (I let you go), not "Ich lasse dich gehst."</p>
+    </div>
+  </div>
+
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Meaning 2: To Make / Cause</p>
+    <p class="narrative" data-speak="true">This use of <span class="german-word" data-card="lassen">lassen</span> expresses causation. The subject doesn't permit—it causes or compels an action or emotional state. This is how German speakers naturally express cause-and-effect relationships.</p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Pattern: Make Someone/Something Do Something</div>
+      <div class="example-pair">
+        <div class="example-label">Example 1</div>
+        <div class="example-text" data-speak="true">Der Film lässt mich weinen. (The film makes me cry.)</div>
+        <div class="example-translation">The film causes me to cry; I cry because of the film.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 2</div>
+        <div class="example-text" data-speak="true">Sein Verhalten lässt mich zweifeln. (His behavior makes me doubt.)</div>
+        <div class="example-translation">His behavior causes me to have doubts.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 3</div>
+        <div class="example-text" data-speak="true">Das Konzert ließ die Menschen tanzen. (The concert made people dance.)</div>
+        <div class="example-translation">The concert caused people to dance.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 4</div>
+        <div class="example-text" data-speak="true">Diese Nachricht ließ mich erschrecken. (This news made me startle.)</div>
+        <div class="example-translation">The news caused me to be frightened.</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Emotional Causation</div>
+      <p data-speak="true">Lassen in the causative sense is often used with verbs of emotion or mental state: "lässt mich denken" (makes me think), "lässt mich fragen" (makes me ask), "lässt mich hoffen" (makes me hope). These reveal how external forces influence internal states.</p>
+    </div>
+  </div>
+
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Meaning 3: To Have Done / Commission</p>
+    <p class="narrative" data-speak="true">This meaning is crucial for daily life. When you say <span class="german-word" data-card="lassen">lassen</span> + dative reflexive + direct object, you're commissioning someone else to perform an action on your behalf. This is how Germans express having services done.</p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Pattern: Have Someone Do Something (Commission)</div>
+      <p data-speak="true" style="margin-bottom: 12px;">Structure: Subject + lässt + dative reflexive + direct object + infinitive</p>
+      <div class="example-pair">
+        <div class="example-label">Example 1 — Hair</div>
+        <div class="example-text" data-speak="true">Ich lasse mir die Haare schneiden. (I have my hair cut.)</div>
+        <div class="example-translation">I commission someone to cut my hair. I don't cut it myself—I pay someone to do it.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 2 — Food</div>
+        <div class="example-text" data-speak="true">Sie lässt sich ein Essen bringen. (She has a meal brought to her.)</div>
+        <div class="example-translation">She commissions someone to bring her food.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 3 — Car Repair</div>
+        <div class="example-text" data-speak="true">Ich lasse mir das Auto reparieren. (I have my car repaired.)</div>
+        <div class="example-translation">I commission a mechanic to repair my car.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 4 — Clothing</div>
+        <div class="example-text" data-speak="true">Er lässt sich einen Anzug machen. (He has a suit made.)</div>
+        <div class="example-translation">He commissions a tailor to create a custom suit.</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Dative Reflexive</div>
+      <p data-speak="true">The dative reflexive (mir, dir, sich, uns, euch, sich) is essential here. It indicates that the action benefits the subject. "Ich lasse mir einen Kaffee bringen" literally means "I let for myself a coffee be brought," but idiomatically means "I have someone bring me coffee."</p>
+    </div>
+  </div>
+
+  <div class="scene scene-6">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Meaning 4: To Leave / Stop / Abandon</p>
+    <p class="narrative" data-speak="true">This use of <span class="german-word" data-card="lassen">lassen</span> is simpler and more literal. It means to leave something behind, to stop doing something, or to abandon an action or object.</p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Pattern: Leave / Stop / Abandon</div>
+      <div class="example-pair">
+        <div class="example-label">Example 1 — Stop an Action</div>
+        <div class="example-text" data-speak="true">Lass das! (Stop that!)</div>
+        <div class="example-translation">Cease that action immediately.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 2 — Leave a Location</div>
+        <div class="example-text" data-speak="true">Ich lasse das Auto hier. (I leave the car here.)</div>
+        <div class="example-translation">I'm departing and leaving the car behind in this location.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 3 — Stop a Habit</div>
+        <div class="example-text" data-speak="true">Lass dich vom Rauchen! (Stop smoking!)</div>
+        <div class="example-translation">Cease the habit of smoking.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Example 4 — Abandon a Topic</div>
+        <div class="example-text" data-speak="true">Lass das Thema! (Drop the topic!)</div>
+        <div class="example-translation">Stop discussing this subject.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-7">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Compound Verbs with Lassen</p>
+    <p class="narrative" data-speak="true">German has several important verbs that are compounds containing lassen. These are independent verbs with their own meanings, derived from the core lassen concept.</p>
+
+    <div class="compound-table">
+      <div class="compound-row">
+        <div class="compound-cell header" data-speak="true">Verb</div>
+        <div class="compound-cell header" data-speak="true">Meaning & Usage</div>
+      </div>
+      <div class="compound-row">
+        <div class="compound-cell" data-speak="true"><strong>verlassen</strong></div>
+        <div class="compound-cell" data-speak="true">To leave, abandon, desert. Subject actively departs from a place or relationship. "Ich verlasse dich." (I leave you—departing for good or ending a relationship.)</div>
+      </div>
+      <div class="compound-row">
+        <div class="compound-cell" data-speak="true"><strong>nachlassen</strong></div>
+        <div class="compound-cell" data-speak="true">To decrease, diminish, ease up. "Der Regen lässt nach." (The rain is decreasing.) / "Du musst nachlassen!" (You need to ease up!)</div>
+      </div>
+      <div class="compound-row">
+        <div class="compound-cell" data-speak="true"><strong>zulassen</strong></div>
+        <div class="compound-cell" data-speak="true">To allow, permit, tolerate. "Das kann ich nicht zulassen." (I cannot allow that.) / Often with accusative: "zulässig" (permitted, allowed).</div>
+      </div>
+      <div class="compound-row">
+        <div class="compound-cell" data-speak="true"><strong>hinterlassen</strong></div>
+        <div class="compound-cell" data-speak="true">To leave behind, bequeath, leave as a legacy. "Er hinterlässt eine Familie." (He leaves behind a family.) Often used in legal or formal contexts.</div>
+      </div>
+      <div class="compound-row">
+        <div class="compound-cell" data-speak="true"><strong>ablassen</strong></div>
+        <div class="compound-cell" data-speak="true">To let off, discharge, drain. "Wasser ablassen." (To drain water.) / "Von jemandem ablassen" (To stop bothering someone).</div>
+      </div>
+      <div class="compound-row">
+        <div class="compound-cell" data-speak="true"><strong>auslassen</strong></div>
+        <div class="compound-cell" data-speak="true">To omit, skip, leave out. "Ein Wort auslassen." (To omit a word.) / "Seinen Ärger auslassen" (To vent one's anger).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-8">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">The Core 5 Lassen Words</p>
+    <p class="narrative" data-speak="true">These five terms form the essential vocabulary for using lassen in all its meanings. Mastery of these will give you fluency with this crucial verb.</p>
+
+    <div class="vocab-card" data-card="lassen">
+      <div class="word-header">
+        <div class="word-main">lassen</div>
+        <div class="word-meaning">to let, allow, make, have done, leave</div>
+      </div>
+      <div class="word-content" data-speak="true">The primary verb with four distinct meanings. One of the most important verbs in German. Present tense: lasse, lässt, lässt, lassen, lasst, lassen. Past tense: ließ. Perfect: gelassen.</div>
+      <div class="usage-note" data-speak="true">"Lass mich gehen" (Let me go) / "Das lässt mich denken" (That makes me think) / "Ich lasse mir einen Kaffee bringen" (I have coffee brought to me) / "Lass das!" (Stop that!)</div>
+    </div>
+
+    <div class="vocab-card" data-card="verlassen">
+      <div class="word-header">
+        <div class="word-main">verlassen</div>
+        <div class="word-meaning">to leave, abandon, desert</div>
+      </div>
+      <div class="word-content" data-speak="true">A separable compound verb where the subject actively departs from a location or relationship. This is not about permission—it's about departing. The past participle "verlassen" also functions as an adjective meaning "abandoned" or "forsaken."</div>
+      <div class="usage-note" data-speak="true">"Ich verlasse dich." (I'm leaving you.) / "Das verlassene Haus" (The abandoned house) / "Wir verlassen das Büro." (We're leaving the office.)</div>
+    </div>
+
+    <div class="vocab-card" data-card="zulassen">
+      <div class="word-header">
+        <div class="word-main">zulassen</div>
+        <div class="word-meaning">to allow, permit, tolerate, admit</div>
+      </div>
+      <div class="word-content" data-speak="true">A separable compound meaning to allow something to happen or to admit someone into a space. Often appears in negative constructions. The adjective "zulässig" means "permissible" or "allowable."</div>
+      <div class="usage-note" data-speak="true">"Das kann ich nicht zulassen." (I cannot allow that.) / "Er wird zum Prüfung zugelassen." (He is admitted to the exam.) / "Ist das zulässig?" (Is that permissible?)</div>
+    </div>
+
+    <div class="vocab-card" data-card="nachlassen">
+      <div class="word-header">
+        <div class="word-main">nachlassen</div>
+        <div class="word-meaning">to decrease, diminish, ease up, let up</div>
+      </div>
+      <div class="word-content" data-speak="true">A separable compound describing reduction or decrease. Used for weather, intensity, effort, prices—anything that becomes less intense or severe. Also means "to give a discount" or "to be lenient."</div>
+      <div class="usage-note" data-speak="true">"Der Regen lässt nach." (The rain is decreasing.) / "Seine Kraft lässt nach." (His strength is waning.) / "Der Preis wird nachgelassen." (The price is discounted.)</div>
+    </div>
+
+    <div class="vocab-card" data-card="hinterlassen">
+      <div class="word-header">
+        <div class="word-main">hinterlassen</div>
+        <div class="word-meaning">to leave behind, bequeath, leave as a legacy</div>
+      </div>
+      <div class="word-content" data-speak="true">A separable compound used when someone departs and leaves something or someone behind—often permanently. Used in legal contexts for wills and inheritances, and in literary contexts for legacies and impressions.</div>
+      <div class="usage-note" data-speak="true">"Er hinterlässt eine Familie." (He leaves behind a family.) / "Sie hinterlässt ein Vermögen." (She leaves behind a fortune.) / "Eine tiefe Spur hinterlassen" (To leave a deep mark/impression.)</div>
+    </div>
+  </div>
+
+  <div class="scene scene-9">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Practical Contexts: Real-World Usage</p>
+    <p class="narrative" data-speak="true">Lassen appears constantly in everyday German. From giving permission to commissioning services, from describing causes to describing departures, lassen is woven into daily speech and writing.</p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Permission & Requests</div>
+      <div class="example-pair">
+        <div class="example-label">Asking for Permission</div>
+        <div class="example-text" data-speak="true">Lass mich das erklären. Lass mich das versuchen. Lasst mich raus!</div>
+        <div class="example-translation">Let me explain that. Let me try that. Let me out!</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Causation & Effect</div>
+      <div class="example-pair">
+        <div class="example-label">Describing What Something Causes</div>
+        <div class="example-text" data-speak="true">Das macht mich traurig. Die Musik lässt mich tanzen. Die Geschichte lässt mich nachdenken.</div>
+        <div class="example-translation">That makes me sad. The music makes me dance. The story makes me think.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Commissioning Services</div>
+      <div class="example-pair">
+        <div class="example-label">Having Things Done</div>
+        <div class="example-text" data-speak="true">Ich lasse mir einen Anzug machen. Sie lässt sich die Nägel lackieren. Wir lassen uns das Auto waschen.</div>
+        <div class="example-translation">I'm having a suit made. She's having her nails done. We're having our car washed.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Stopping & Departing</div>
+      <div class="example-pair">
+        <div class="example-label">Ceasing or Leaving</div>
+        <div class="example-text" data-speak="true">Lass das! Ich verlasse dich. Lass mich in Ruhe! Wir verlassen das Gebäude.</div>
+        <div class="example-translation">Stop that! I'm leaving you. Leave me alone! We're leaving the building.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-10">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Lassen with Infinitives: The Causative Construction</p>
+    <p class="narrative" data-speak="true">When lassen appears with an infinitive verb, it creates a powerful causative construction. The accompanying verb stays in the infinitive form (never conjugated). This is how German naturally expresses "making" someone do something or "letting" something happen.</p>
+    <div class="grammar-box">
+      <div class="rule-title">Lassen + Infinitive Construction</div>
+      <p data-speak="true" style="margin-bottom: 12px;">Pattern: Subject + lässt + object + infinitive verb</p>
+      <div class="example-pair">
+        <div class="example-label">Allow Pattern</div>
+        <div class="example-text" data-speak="true">Der Lehrer lässt die Schüler nach Hause gehen.</div>
+        <div class="example-translation">The teacher lets the students go home. (Teacher allows students to depart)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Cause Pattern</div>
+        <div class="example-text" data-speak="true">Die Musik lässt mich tanzen.</div>
+        <div class="example-translation">The music makes me dance. (Music causes dancing)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Have Done Pattern</div>
+        <div class="example-text" data-speak="true">Ich lasse mein Auto reparieren.</div>
+        <div class="example-translation">I have my car repaired. (I commission repair work)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Word Order Note</div>
+        <div class="example-text" data-speak="true">In subordinate clauses, the infinitive stays at the end: "Ich weiß, dass der Lehrer die Schüler nach Hause gehen lässt."</div>
+        <div class="example-translation">Note: The infinitive doesn't move even in subordinate position.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-11">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Lassen in Different Tenses</p>
+    <p class="narrative" data-speak="true">Like all German verbs, lassen conjugates across all tenses. The core meaning remains, but the temporal frame shifts. Here's how lassen appears across the most common tenses.</p>
+    <div class="grammar-box">
+      <div class="rule-title">Conjugating Lassen Across Tenses</div>
+      <div class="example-pair">
+        <div class="example-label">Present Tense</div>
+        <div class="example-text" data-speak="true">Ich lasse dich gehen. (I let you go.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Simple Past (Präteritum)</div>
+        <div class="example-text" data-speak="true">Ich ließ dich gehen. (I let you go. — past event)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Perfect Tense (Perfekt)</div>
+        <div class="example-text" data-speak="true">Ich habe dich gehen lassen. (I have let you go.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Future Tense</div>
+        <div class="example-text" data-speak="true">Ich werde dich gehen lassen. (I will let you go.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Conditional</div>
+        <div class="example-text" data-speak="true">Ich würde dich gehen lassen. (I would let you go.)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-12">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Lassen vs. Lassen: When They Look Identical</p>
+    <p class="narrative" data-speak="true">German has a delightful quirk: in the perfect tense, lassen sometimes appears twice—once as the main verb and once as a past participle-like form. This "double lassen" phenomenon is a feature of German, not an error. It reveals the depth of the causative construction.</p>
+    <div class="grammar-box">
+      <div class="rule-title">The Perfect Tense with Infinitive Retention</div>
+      <div class="example-pair">
+        <div class="example-label">Normal Perfect</div>
+        <div class="example-text" data-speak="true">Ich habe ihn gelassen. (I have let him / I have left him.)</div>
+        <div class="example-translation">The past participle "gelassen" appears normally.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Perfect with Infinitive</div>
+        <div class="example-text" data-speak="true">Ich habe ihn gehen lassen. (I have let him go.)</div>
+        <div class="example-translation">With an infinitive object, "lassen" appears in infinitive form at the end, not as "gelassen".</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">The Double Lassen</div>
+        <div class="example-text" data-speak="true">Ich habe mir das Auto reparieren lassen. (I have had my car repaired.)</div>
+        <div class="example-translation">Two lassens: one auxiliary (haben) and one infinitive. This is correct German grammar!</div>
+      </div>
+    </div>
+    <div class="aside-box">
+      <div class="aside-title">Why This Happens</div>
+      <p data-speak="true">When lassen takes an infinitive, German grammar treats the infinitive + lassen combination as a single verbal unit. The perfect tense requires an auxiliary (haben) + past participle, but when an infinitive is present, that infinitive stays, creating the "double lassen" effect. This is not redundancy—it's how German marks causation in the perfect tense.</p>
+    </div>
+  </div>
+
+  <div class="quiz-container">
+    <h3 data-speak="true">Chapter 71 Quiz: Lassen & Its Meanings (80% = 12 Questions)</h3>
+    <div id="quiz-questions"></div>
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+    <div class="quiz-reset" style="text-align: center; margin-top: 20px;">
+      <button onclick="resetQuiz()" style="background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; padding: 12px 28px; border-radius: 8px; cursor: pointer;">Start Over</button>
+    </div>
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+  </div>
+
+  <div class="scene scene-13">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Common Idioms & Expressions with Lassen</p>
+    <p class="narrative" data-speak="true">Lassen appears in numerous German idioms and fixed expressions that have meanings beyond the basic verb. These idiomatic uses reveal how deeply lassen is woven into German thought and speech patterns.</p>
+    <div class="grammar-box">
+      <div class="rule-title">Common Idiomatic Expressions</div>
+      <div class="example-pair">
+        <div class="example-label">Lass mich in Ruhe!</div>
+        <div class="example-text" data-speak="true">Leave me alone! / Stop bothering me!</div>
+        <div class="example-translation">Literally: "Let me in peace" — a standard way to ask for solitude.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Das lässt sich machen.</div>
+        <div class="example-text" data-speak="true">That can be done. / It's doable.</div>
+        <div class="example-translation">Expressing possibility or feasibility.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Lass mich raten!</div>
+        <div class="example-text" data-speak="true">Let me guess!</div>
+        <div class="example-translation">Requesting permission to make a guess or prediction.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Das lässt sich sehen.</div>
+        <div class="example-text" data-speak="true">That's quite good. / That's respectable.</div>
+        <div class="example-translation">Expressing qualified approval or that something is presentable.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Lass dich nicht ablenken!</div>
+        <div class="example-text" data-speak="true">Don't let yourself be distracted!</div>
+        <div class="example-translation">Exhortation to maintain focus.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-14">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Lassen vs. Other "Letting" Verbs</p>
+    <p class="narrative" data-speak="true">German has other verbs that can express similar meanings to lassen's "letting" sense. Understanding the distinctions helps you choose the right verb for the exact nuance you want to convey.</p>
+    <div class="grammar-box">
+      <div class="rule-title">Lassen vs. Zulassen vs. Erlauben</div>
+      <div class="example-pair">
+        <div class="example-label">Lassen (Most General)</div>
+        <div class="example-text" data-speak="true">Lass mich gehen. (Let me go.) — Most neutral and natural</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Zulassen (More Formal "Allow")</div>
+        <div class="example-text" data-speak="true">Das kann ich nicht zulassen. (I cannot allow that.) — More formal or official tone</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Erlauben (Explicit "Permit")</div>
+        <div class="example-text" data-speak="true">Darf ich? — Erlauben Sie mir, zu gehen. (May I? — Allow me to go.) — Most formal, often used for official permission</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">The Distinction</div>
+        <div class="example-text" data-speak="true">Lassen: casual, natural, flexible. Zulassen: more forceful "allow/admit". Erlauben: explicit official permission. Choose based on context and formality level.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-links">
+    <a href="chapter70.html" class="nav-link"><span class="chapter-number">← Ch 70</span> Reflexive Verbs</a>
+    <a href="chapter72.html" class="nav-link">Next <span class="chapter-number">Ch 72 →</span></a>
+  </div>
+
+</div>
+
+<script>
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.hasAttribute('data-card')) {
+    const card = document.querySelector('[data-card="' + e.target.getAttribute('data-card') + '"]');
+    if (card && card.classList.contains('vocab-card')) {
+      card.classList.toggle('open');
+    }
+  }
+  if (e.target.hasAttribute('data-speak') && e.target.textContent.trim()) {
+    speakGerman(e.target.textContent);
+  }
+});
+
+const quizData = [
+  { question: "What does 'Lass mich gehen' mean?", options: ["Make me go", "Let me go", "I let you go", "Abandon me"], correct: 1, explanation: "'Lass mich gehen' is 'Let me go' — lassen in the permissive sense." },
+  { question: "Which meaning is shown in 'Das lässt mich denken'?", options: ["Allow", "Make/Cause", "Have done", "Leave"], correct: 1, explanation: "This is the causative meaning: The thing causes me to think." },
+  { question: "In 'Ich lasse mir die Haare schneiden,' what does lassen mean?", options: ["Let", "Make", "Have done", "Leave"], correct: 2, explanation: "This is 'have done' — I commission a hairdresser to cut my hair." },
+  { question: "What is the past tense of 'lassen'?", options: ["gelass", "gelassen", "ließ (for simple past)", "All of the above"], correct: 2, explanation: "The simple past is 'ließ' (single syllable). Perfect tense: 'hat gelassen'." },
+  { question: "Which is a compound verb with lassen?", options: ["verlassen", "zulassen", "nachlassen", "All of the above"], correct: 3, explanation: "All three are separable compounds derived from lassen." },
+  { question: "What does 'Lass das!' mean?", options: ["Let that (happen)", "Stop that!", "Make that", "Leave that"], correct: 1, explanation: "'Lass das!' means 'Stop that!' — the imperative form of lassen meaning to cease." },
+  { question: "'Ich verlasse dich' means...", options: ["I let you go", "I make you leave", "I'm leaving you (permanently)", "I have you leave"], correct: 2, explanation: "'Verlassen' is the compound meaning to actively leave or abandon someone." },
+  { question: "Which sentence uses dative reflexive lassen?", options: ["Lass mich gehen.", "Das lässt mich weinen.", "Ich lasse mir einen Kaffee bringen.", "Ich verlasse das Haus."], correct: 2, explanation: "'Ich lasse mir einen Kaffee bringen' has the dative reflexive 'mir' — having coffee brought to me." },
+  { question: "What does 'zulassen' mean?", options: ["To let go", "To allow/permit/admit", "To decrease", "To bequeath"], correct: 1, explanation: "'Zulassen' is the compound meaning to allow, permit, or admit." },
+  { question: "In 'Der Regen lässt nach,' lassen means...", options: ["Allow", "Make", "Have done", "Decrease (from compound nachlassen)"], correct: 3, explanation: "'Nachlassen' means to decrease or diminish — the rain is letting up." },
+  { question: "Which verb means 'to leave behind/bequeath'?", options: ["verlassen", "zulassen", "hinterlassen", "nachlassen"], correct: 2, explanation: "'Hinterlassen' means to leave behind as a legacy or inheritance." },
+  { question: "Complete: 'Das kann ich nicht _____.' (allow)", options: ["lass", "lassen", "zulassen", "verlassen"], correct: 2, explanation: "The infinitive 'zulassen' (to allow) fits: 'Das kann ich nicht zulassen' (I cannot allow that)." }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion() {
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+  document.getElementById('quiz-questions').innerHTML = `
+    <div class="quiz-question">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `<div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '') : ''}" onclick="selectAnswer(${i})" data-speak="true">${opt}</div>`).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232,164,74,0.1); font-size: 0.95rem; color: rgba(212,202,187,0.8);" data-speak="true">${q.explanation}</div>` : ''}
+    </div>
+  `;
+  updateNavButtons();
+}
+
+function selectAnswer(i) {
+  if (answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = i;
+  if (i === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) { currentQuestion++; displayQuestion(); }
+  else showScore();
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) { currentQuestion--; displayQuestion(); }
+}
+
+function updateNavButtons() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function showScore() {
+  const pct = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('quiz-summary').classList.add('show');
+  document.getElementById('quiz-summary').innerHTML = `<p data-speak="true"><strong>Quiz Complete!</strong></p><p style="margin-top: 12px;" data-speak="true">Lassen opens doors to expression—${pct >= 80 ? 'magnificent mastery!' : 'keep practicing!'}</p>`;
+}
+
+function resetQuiz() {
+  currentQuestion = 0; score = 0; answered = {};
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-summary').classList.remove('show');
+  displayQuestion();
+}
+
+const canvas = document.getElementById('doors-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawDoors() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const time = Date.now() / 1000;
+
+  // Draw 4 doors at different depths (parallax effect)
+  for (let d = 0; d < 4; d++) {
+    const depth = d / 4;
+    const scale = 0.5 + depth * 0.5;
+    const opacity = 0.1 + depth * 0.3;
+    const xOffset = Math.sin(time * 0.3 + d) * 100;
+
+    const x = canvas.width / 2 + xOffset - 100 * scale;
+    const y = canvas.height / 2 - 150 * scale;
+    const w = 200 * scale;
+    const h = 300 * scale;
+
+    // Door outline
+    ctx.strokeStyle = `rgba(232, 164, 74, ${opacity})`;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, w, h);
+
+    // Door knob
+    ctx.fillStyle = `rgba(201, 169, 97, ${opacity})`;
+    ctx.beginPath();
+    ctx.arc(x + w - 20 * scale, y + h / 2, 8 * scale, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Door opening effect
+    const openAmount = Math.sin(time * 0.2 + d * 0.5) * 0.3;
+    if (openAmount > 0) {
+      ctx.fillStyle = `rgba(232, 164, 74, ${opacity * openAmount * 0.5})`;
+      ctx.fillRect(x + w - 20 * scale, y, 20 * scale, h);
+    }
+  }
+
+  requestAnimationFrame(drawDoors);
+}
+
+drawDoors();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(s => observer.observe(s));
+
+displayQuestion();
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">620 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(72%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:72%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 620 words across 71 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">120 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(82%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:82%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 120 patterns across 71 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

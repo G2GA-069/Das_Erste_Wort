@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 72: Um...zu, ohne...zu, anstatt...zu</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --purpose: #d9a77a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- PATHWAYS CANVAS --- */
+  #pathways-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- GRAMMAR BOX --- */
+  .grammar-box {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 28px 0 32px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .grammar-box .rule-title {
+    font-size: 1.2rem;
+    color: #f4c67a;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .example-pair {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 3px solid #e8a44a;
+    padding: 18px 20px;
+    margin: 16px 0;
+    border-radius: 4px;
+    line-height: 1.8;
+  }
+
+  .example-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #e8a44a;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .example-text {
+    color: var(--text-bright);
+    font-size: 1.1rem;
+  }
+
+  /* --- FEATURE TABLE --- */
+  .feature-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    background: rgba(10, 14, 26, 0.4);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .feature-table th {
+    background: rgba(232, 164, 74, 0.1);
+    border-bottom: 2px solid rgba(232, 164, 74, 0.25);
+    padding: 14px;
+    text-align: left;
+    color: #f4c67a;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .feature-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+    color: var(--text-bright);
+  }
+
+  .feature-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .feature-table code {
+    background: rgba(232, 164, 74, 0.08);
+    color: #f4c67a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+  }
+
+  /* --- VOCAB CARD --- */
+  .vocab-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.9), rgba(15, 20, 35, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 18px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .vocab-card:hover {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.99), rgba(15, 20, 35, 0.99));
+    border-color: rgba(232, 164, 74, 0.3);
+    transform: translateX(4px);
+  }
+
+  .vocab-card .word-german {
+    color: var(--german);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .vocab-card .word-english {
+    color: var(--english);
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .vocab-card .word-example {
+    color: rgba(212, 202, 187, 0.7);
+    font-size: 0.95rem;
+    font-style: italic;
+    margin-top: 8px;
+  }
+
+  .vocab-card .word-chinese {
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--chinese);
+    font-size: 1.1rem;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box strong {
+    color: #f4c67a;
+  }
+
+  /* --- QUIZ CONTAINER --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.5);
+  }
+
+  .quiz-feedback {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.8);
+    min-height: 1.5em;
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #f4c67a;
+    margin: 24px 0;
+  }
+
+  .post-quiz-summary {
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- NAVIGATION --- */
+  .nav-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .nav-buttons a {
+    flex: 1;
+    padding: 14px 20px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .nav-buttons a:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .nav-buttons a:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="pathways-canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 72</div>
+    <h1 data-speak="true">Um...zu, ohne...zu, anstatt...zu</h1>
+    <p class="subtitle" data-speak="true">Infinitive Constructions — Purpose, Exception, Alternative</p>
+    <p class="scroll-hint" data-speak="true">Expressing Why, How, and What Instead<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">
+      German possesses a set of infinitive constructions that allow you to express purpose (in order to), exception (without), and alternatives (instead of) with surgical precision. Unlike English's clumsy "in order to," German's <span class="german-word" data-card="um...zu">um...zu</span> construction is elegant and ubiquitous. These three structures—<span class="german-word" data-card="um...zu">um...zu</span>, <span class="german-word" data-card="ohne...zu">ohne...zu</span>, and <span class="german-word" data-card="anstatt...zu">anstatt...zu</span>—are essential for fluent, natural German.
+    </p>
+  </div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Um...zu: Purpose and Intention
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">The Um...zu Construction</div>
+      <p class="narrative small" style="margin-bottom: 16px;" data-speak="true">
+        <strong>Um...zu</strong> expresses purpose: the reason why an action is taken. It replaces a subordinate clause beginning with "damit" (so that). Unlike <strong>zu</strong> by itself (which simply means "to"), <strong>um...zu</strong> emphasizes intention and goal.
+      </p>
+
+      <div class="example-pair">
+        <div class="example-label">Basic Pattern</div>
+        <div class="example-text" data-speak="true">
+          Subject + Verb + um + zu + Infinitive
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Simple Purpose</div>
+        <div class="example-text" data-speak="true">
+          Ich lerne Deutsch, <span class="german-word">um</span> in Berlin zu arbeiten.
+          <br><em>(I am learning German in order to work in Berlin.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Replaces Subordinate Clause</div>
+        <div class="example-text" data-speak="true">
+          Original: Ich spiele Tennis, damit ich fit bleibe.<br>
+          With um...zu: Ich spiele Tennis, um fit zu bleiben.
+          <br><em>(I play tennis in order to stay fit.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Complex Sentence</div>
+        <div class="example-text" data-speak="true">
+          Sie ging zur Universität, um Medizin zu studieren.
+          <br><em>(She went to university in order to study medicine.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 4: With Separable Verb</div>
+        <div class="example-text" data-speak="true">
+          Wir rufen unseren Freund an, um ihn abzuholen.
+          <br><em>(We call our friend in order to pick him up.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 5: In Past Tense (Narrative)</div>
+        <div class="example-text" data-speak="true">
+          Er reiste nach Deutschland, um seine Familie zu besuchen.
+          <br><em>(He traveled to Germany in order to visit his family.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 6: Negative Purpose</div>
+        <div class="example-text" data-speak="true">
+          Ich schweige, um keine Probleme zu verursachen.
+          <br><em>(I remain silent in order not to cause problems.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 7: Reflexive Infinitive</div>
+        <div class="example-text" data-speak="true">
+          Du fragst, um dich besser zu informieren.
+          <br><em>(You ask in order to inform yourself better.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 8: Double Infinitive</div>
+        <div class="example-text" data-speak="true">
+          Sie kommt, um mit uns essen zu gehen.
+          <br><em>(She comes in order to go eat with us.)</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <strong>Key Grammar Point:</strong> When the subject of the main clause and the infinitive clause are the same, you use um...zu. When they differ, use "damit" + subordinate clause instead. Example: "Ich lerne, um gut zu sprechen" (I learn in order to speak well) vs. "Ich lerne, damit er mich versteht" (I learn so that he understands me).
+    </div>
+  </div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Ohne...zu: Without Doing (Exception Clause)
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">The Ohne...zu Construction</div>
+      <p class="narrative small" style="margin-bottom: 16px;" data-speak="true">
+        <strong>Ohne...zu</strong> expresses an exception or negation: doing something without performing another action. It shows what does NOT happen despite the main action.
+      </p>
+
+      <div class="example-pair">
+        <div class="example-label">Basic Pattern</div>
+        <div class="example-text" data-speak="true">
+          Subject + Verb + ohne + zu + Infinitive
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Simple Exception</div>
+        <div class="example-text" data-speak="true">
+          Er verließ das Haus, <span class="german-word">ohne</span> ein Wort zu sagen.
+          <br><em>(He left the house without saying a word.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Replaces Subordinate Clause</div>
+        <div class="example-text" data-speak="true">
+          Original: Sie aß, ohne dass sie es genoss.<br>
+          With ohne...zu: Sie aß, ohne es zu genießen.
+          <br><em>(She ate without enjoying it.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Reflexive Infinitive</div>
+        <div class="example-text" data-speak="true">
+          Ich ging zur Arbeit, ohne mich umzuziehen.
+          <br><em>(I went to work without changing my clothes.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 4: Separable Verb</div>
+        <div class="example-text" data-speak="true">
+          Sie verließ die Party, ohne sich abzumelden.
+          <br><em>(She left the party without saying goodbye.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 5: Negated Action</div>
+        <div class="example-text" data-speak="true">
+          Du schreibst ein Buch, ohne es zu planen.
+          <br><em>(You write a book without planning it.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 6: In Complex Narrative</div>
+        <div class="example-text" data-speak="true">
+          Er durchsuchte das Haus, ohne etwas zu finden.
+          <br><em>(He searched the house without finding anything.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 7: Double Object</div>
+        <div class="example-text" data-speak="true">
+          Sie löste das Problem, ohne um Hilfe zu bitten.
+          <br><em>(She solved the problem without asking for help.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 8: Temporal Contrast</div>
+        <div class="example-text" data-speak="true">
+          Ich schlief, ohne die Zeit zu bemerken.
+          <br><em>(I slept without noticing the time.)</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <strong>Semantic Function:</strong> Ohne...zu often emphasizes a striking absence or lack of consideration. It can carry judgment—"He acted without thinking" suggests recklessness. This nuance makes it more precise than English's clumsy "without -ing."
+    </div>
+  </div>
+
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Anstatt...zu: Instead of (Alternative Action)
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">The Anstatt...zu Construction (Also: Statt...zu)</div>
+      <p class="narrative small" style="margin-bottom: 16px;" data-speak="true">
+        <strong>Anstatt...zu</strong> (or <strong>statt...zu</strong>) expresses an alternative: doing one thing instead of another. It contrasts two possible actions, emphasizing which one was NOT chosen.
+      </p>
+
+      <div class="example-pair">
+        <div class="example-label">Basic Pattern</div>
+        <div class="example-text" data-speak="true">
+          Subject + Verb + anstatt/statt + zu + Infinitive
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Simple Alternative</div>
+        <div class="example-text" data-speak="true">
+          <span class="german-word">Anstatt</span> zu arbeiten, ging er ins Kino.
+          <br><em>(Instead of working, he went to the cinema.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Replaces Subordinate Clause</div>
+        <div class="example-text" data-speak="true">
+          Original: Statt dass sie sich ausruht, arbeitet sie weiter.<br>
+          With statt...zu: Statt sich auszuruhen, arbeitet sie weiter.
+          <br><em>(Instead of resting, she continues working.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Reflexive Infinitive</div>
+        <div class="example-text" data-speak="true">
+          Anstatt sich zu beeilen, nahm er sich Zeit.
+          <br><em>(Instead of hurrying, he took his time.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 4: Separated from Main Clause</div>
+        <div class="example-text" data-speak="true">
+          Sie kam zu spät, anstatt pünktlich zu sein.
+          <br><em>(She arrived late, instead of being on time.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 5: With Separable Verb</div>
+        <div class="example-text" data-speak="true">
+          Anstatt einzuschlafen, blieb er wach und dachte.
+          <br><em>(Instead of falling asleep, he stayed awake and thought.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 6: Emphatic Contrast</div>
+        <div class="example-text" data-speak="true">
+          Statt das Buch zu lesen, starrte er aus dem Fenster.
+          <br><em>(Instead of reading the book, he stared out the window.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 7: In Narrative Context</div>
+        <div class="example-text" data-speak="true">
+          Anstatt die Wahrheit zu sagen, log er.
+          <br><em>(Instead of telling the truth, he lied.)</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 8: Showing Judgment</div>
+        <div class="example-text" data-speak="true">
+          Statt sich zu entschuldigen, verteidigte er sich.
+          <br><em>(Instead of apologizing, he defended himself.)</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <strong>Variant Form:</strong> <strong>Statt...zu</strong> is a shortened, equally common form of <strong>anstatt...zu</strong>. Both are correct; <strong>statt</strong> is slightly more concise and is often preferred in modern usage.
+    </div>
+  </div>
+
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Comparison Table: The Three Infinitive Constructions
+    </p>
+
+    <div class="grammar-box">
+      <table class="feature-table">
+        <thead>
+          <tr>
+            <th data-speak="true">Construction</th>
+            <th data-speak="true">Meaning</th>
+            <th data-speak="true">Function</th>
+            <th data-speak="true">Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>um...zu</code></td>
+            <td data-speak="true">in order to</td>
+            <td data-speak="true">Purpose/Goal</td>
+            <td data-speak="true">Ich lerne, um gut zu sprechen.</td>
+          </tr>
+          <tr>
+            <td><code>ohne...zu</code></td>
+            <td data-speak="true">without</td>
+            <td data-speak="true">Exception/Negation</td>
+            <td data-speak="true">Er ging, ohne zu sagen.</td>
+          </tr>
+          <tr>
+            <td><code>anstatt/statt...zu</code></td>
+            <td data-speak="true">instead of</td>
+            <td data-speak="true">Alternative</td>
+            <td data-speak="true">Statt zu arbeiten, spielte er.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="scene scene-6">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      The Vocabulary of Purpose, Exception, and Alternative
+    </p>
+
+    <div class="vocab-card" data-card="um...zu">
+      <div class="word-german" data-speak="true">um...zu</div>
+      <div class="word-english" data-speak="true">in order to; to (with purpose)</div>
+      <div class="word-example" data-speak="true">Ich bin hier, um zu lernen. (I am here in order to learn.)</div>
+      <div class="word-chinese">为了 (wèile) — expresses goal or purpose</div>
+    </div>
+
+    <div class="vocab-card" data-card="ohne...zu">
+      <div class="word-german" data-speak="true">ohne...zu</div>
+      <div class="word-english" data-speak="true">without (doing)</div>
+      <div class="word-example" data-speak="true">Er sprach, ohne zu denken. (He spoke without thinking.)</div>
+      <div class="word-chinese">不 (bù) — without; negation particle</div>
+    </div>
+
+    <div class="vocab-card" data-card="anstatt...zu">
+      <div class="word-german" data-speak="true">anstatt...zu / statt...zu</div>
+      <div class="word-english" data-speak="true">instead of (doing)</div>
+      <div class="word-example" data-speak="true">Statt zu laufen, ging er. (Instead of running, he walked.)</div>
+      <div class="word-chinese">而不是 (érbúshì) — instead of; rather than</div>
+    </div>
+
+    <div class="vocab-card" data-card="Absicht">
+      <div class="word-german" data-speak="true">Absicht, die</div>
+      <div class="word-english" data-speak="true">intention; purpose</div>
+      <div class="word-example" data-speak="true">Seine Absicht war, die Wahrheit zu sagen. (His intention was to tell the truth.)</div>
+      <div class="word-chinese">意图 (yìtú) — intention; aim</div>
+    </div>
+
+    <div class="vocab-card" data-card="Grund">
+      <div class="word-german" data-speak="true">Grund, der</div>
+      <div class="word-english" data-speak="true">reason; ground; basis</div>
+      <div class="word-example" data-speak="true">Der Grund, um hier zu sein, ist Bildung. (The reason for being here is education.)</div>
+      <div class="word-chinese">原因 (yuányīn) — reason; cause</div>
+    </div>
+
+    <div class="vocab-card" data-card="Ziel">
+      <div class="word-german" data-speak="true">Ziel, das</div>
+      <div class="word-english" data-speak="true">goal; aim; target; destination</div>
+      <div class="word-example" data-speak="true">Das Ziel war, die Sprache perfekt zu sprechen. (The goal was to speak the language perfectly.)</div>
+      <div class="word-chinese">目标 (mùbiāo) — goal; objective; target</div>
+    </div>
+
+    <div class="vocab-card" data-card="Alternative">
+      <div class="word-german" data-speak="true">Alternative, die</div>
+      <div class="word-english" data-speak="true">alternative; choice; option</div>
+      <div class="word-example" data-speak="true">Die Alternative war, zu Hause zu bleiben. (The alternative was to stay home.)</div>
+      <div class="word-chinese">选择 (xuǎnzé) — choice; alternative; option</div>
+    </div>
+
+    <div class="vocab-card" data-card="Ausnahme">
+      <div class="word-german" data-speak="true">Ausnahme, die</div>
+      <div class="word-english" data-speak="true">exception; exclusion</div>
+      <div class="word-example" data-speak="true">Mit Ausnahme der Feiertage arbeitet er täglich. (With the exception of holidays, he works daily.)</div>
+      <div class="word-chinese">例外 (lìwài) — exception; special case</div>
+    </div>
+
+  </div>
+
+  <div class="scene scene-7">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Advanced: When Same Subject vs. Different Subject
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Critical Distinction</div>
+      <p class="narrative small" style="margin-bottom: 16px;" data-speak="true">
+        All three constructions (<strong>um...zu</strong>, <strong>ohne...zu</strong>, <strong>anstatt...zu</strong>) REQUIRE the same subject in both clauses. If the subjects differ, you must use a subordinate clause instead.
+      </p>
+
+      <div class="example-pair">
+        <div class="example-label">Same Subject → Use Infinitive Construction</div>
+        <div class="example-text" data-speak="true">
+          Ich lerne, um besser zu sprechen.<br>
+          <em>(I learn in order to speak better. — Same subject: "I")</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Different Subjects → Use Subordinate Clause</div>
+        <div class="example-text" data-speak="true">
+          Ich lerne, damit er mich versteht.<br>
+          <em>(I learn so that he understands me. — Different subjects: "I" and "he")</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Same Subject: Ohne...zu</div>
+        <div class="example-text" data-speak="true">
+          Sie ging weg, ohne zu sagen, wo sie hingeht.<br>
+          <em>(She left without saying where she is going. — Same subject: "she")</em>
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Different Subjects: Subordinate Clause Needed</div>
+        <div class="example-text" data-speak="true">
+          Sie ging weg, ohne dass ich es bemerkte.<br>
+          <em>(She left without me noticing. — Different subjects: "she" and "I")</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <strong>Remember:</strong> The infinitive construction is elegant, but only works when the subject remains constant. Master this constraint, and you'll avoid the most common error made by learners.
+    </div>
+  </div>
+
+  <div class="scene scene-8">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Synthesis: Building with Purpose, Exception, and Alternative
+    </p>
+
+    <p class="narrative" data-speak="true">
+      These three infinitive constructions are not mere grammatical ornaments—they are the backbone of sophisticated German thought. A German speaker does not simply say "I am learning"; they say <strong>um besser zu verstehen</strong> (in order to understand better). This grammatical precision reflects a cultural value: every action has intention, every statement has implication.
+    </p>
+
+    <p class="narrative" data-speak="true">
+      When you master <strong>um...zu</strong>, <strong>ohne...zu</strong>, and <strong>anstatt...zu</strong>, you stop thinking in English and start thinking in German. You begin to construct sentences with deliberate purpose. You express not just what happened, but why, what was absent, and what alternative was rejected.
+    </p>
+
+    <p class="narrative" data-speak="true">
+      This is the architecture of German expression: Purpose, Exception, and Alternative form a complete logical framework for explaining human action and intention.
+    </p>
+  </div>
+
+  <!-- QUIZ SECTION -->
+  <div class="quiz-container">
+    <h3 data-speak="true">Chapter 72 Quiz: Um...zu, ohne...zu, anstatt...zu</h3>
+
+    <div id="quiz-questions"></div>
+
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+
+    <div class="quiz-score" id="quiz-score"></div>
+
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="nav-buttons">
+    <a href="chapter71.html" data-speak="true">← Chapter 71</a>
+    <a href="chapter73.html" data-speak="true">Chapter 73 →</a>
+  </div>
+
+</div>
+
+<script data-speak="true">
+// Pathways Canvas Animation
+const canvas = document.getElementById('pathways-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+let particles = [];
+let time = 0;
+
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.vy = (Math.random() - 0.5) * 0.5;
+    this.life = 1;
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= 0.01;
+  }
+
+  draw() {
+    ctx.fillStyle = `rgba(232, 164, 74, ${this.life * 0.3})`;
+    ctx.fillRect(this.x, this.y, 2, 2);
+  }
+}
+
+function animatePathways() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  time++;
+
+  // Draw purpose arrows
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.1)';
+  ctx.lineWidth = 2;
+
+  for (let i = 0; i < 3; i++) {
+    const y = (canvas.height / 3) * (i + 1);
+    ctx.beginPath();
+    ctx.moveTo(0, y + Math.sin(time * 0.005 + i) * 10);
+    ctx.lineTo(canvas.width, y + Math.sin(time * 0.005 + i + 1) * 10);
+    ctx.stroke();
+  }
+
+  // Particle emissions at random points
+  if (Math.random() < 0.3) {
+    particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+  }
+
+  particles.forEach((p, i) => {
+    p.update();
+    p.draw();
+    if (p.life <= 0) particles.splice(i, 1);
+  });
+
+  requestAnimationFrame(animatePathways);
+}
+
+animatePathways();
+
+// Quiz Data
+const quizData = [
+  {
+    question: "What does 'um...zu' express?",
+    options: [
+      "Purpose or intention",
+      "Exception or negation",
+      "An alternative action",
+      "A past event"
+    ],
+    correct: 0,
+    explanation: "Um...zu expresses purpose: 'in order to' or 'so as to.' It shows the goal or intention behind an action."
+  },
+  {
+    question: "Translate: 'Ich lerne, um gut zu sprechen.'",
+    options: [
+      "I learn, and I speak well.",
+      "I learn in order to speak well.",
+      "I learn, without speaking well.",
+      "I learn instead of speaking."
+    ],
+    correct: 1,
+    explanation: "This is a classic um...zu construction expressing purpose. It means 'I learn in order to speak well.'"
+  },
+  {
+    question: "What does 'ohne...zu' express?",
+    options: [
+      "A purpose",
+      "An alternative",
+      "An exception or negation—doing something without performing another action",
+      "A reason"
+    ],
+    correct: 2,
+    explanation: "Ohne...zu means 'without doing.' It shows what does NOT happen despite the main action."
+  },
+  {
+    question: "Translate: 'Er verließ das Haus, ohne ein Wort zu sagen.'",
+    options: [
+      "He left the house and said a word.",
+      "He left the house in order to say a word.",
+      "He left the house without saying a word.",
+      "He left the house, instead of saying a word."
+    ],
+    correct: 2,
+    explanation: "Ohne...zu means 'without,' so this translates as 'He left the house without saying a word.'"
+  },
+  {
+    question: "What is the difference between 'statt' and 'anstatt'?",
+    options: [
+      "They have completely different meanings.",
+      "'Statt' is older German; 'anstatt' is modern.",
+      "'Statt' and 'anstatt' are synonyms; 'statt' is more concise.",
+      "'Anstatt' is only used with reflexive verbs."
+    ],
+    correct: 2,
+    explanation: "'Statt' and 'anstatt' mean the same thing: 'instead of.' Both are correct; 'statt' is slightly more modern and concise."
+  },
+  {
+    question: "Which construction expresses an alternative or choice not taken?",
+    options: [
+      "um...zu",
+      "ohne...zu",
+      "anstatt...zu / statt...zu",
+      "All three equally"
+    ],
+    correct: 2,
+    explanation: "Anstatt...zu (or statt...zu) specifically expresses an alternative: doing one thing instead of another."
+  },
+  {
+    question: "Translate: 'Anstatt zu arbeiten, ging er ins Kino.'",
+    options: [
+      "While working, he went to the cinema.",
+      "In order to work, he went to the cinema.",
+      "Instead of working, he went to the cinema.",
+      "Without working, he went to the cinema."
+    ],
+    correct: 2,
+    explanation: "Anstatt...zu means 'instead of,' so this is 'Instead of working, he went to the cinema.'"
+  },
+  {
+    question: "When do all three infinitive constructions (um...zu, ohne...zu, anstatt...zu) work grammatically?",
+    options: [
+      "When the subjects of both clauses are different",
+      "When the subjects of both clauses are the same",
+      "They work regardless of subject",
+      "Only with reflexive verbs"
+    ],
+    correct: 1,
+    explanation: "All three constructions require the same subject. If subjects differ, use a subordinate clause (e.g., 'damit' instead of 'um...zu')."
+  },
+  {
+    question: "Which is correct? A) 'Ich lerne, um besser zu sprechen.' B) 'Ich lerne, um er besser spricht.'",
+    options: [
+      "A only",
+      "B only",
+      "Both are correct",
+      "Neither is correct"
+    ],
+    correct: 0,
+    explanation: "A is correct. The infinitive construction requires the proper zu + infinitive form (zu sprechen), not a full clause."
+  },
+  {
+    question: "Translate: 'Sie ging weg, ohne zu sagen, wo sie hingeht.'",
+    options: [
+      "She left in order to say where she is going.",
+      "She left instead of saying where she is going.",
+      "She left without saying where she is going.",
+      "She left, so she said where she is going."
+    ],
+    correct: 2,
+    explanation: "Without...zu expresses exception. This means 'She left without saying where she is going.'"
+  },
+  {
+    question: "Which sentence uses the same subject rule correctly?",
+    options: [
+      "Ich lerne Deutsch, um mein Bruder versteht mich. (I learn German so my brother understands me.)",
+      "Ich lerne Deutsch, um besser zu verstehen. (I learn German in order to understand better.)",
+      "Er arbeitet, ohne sein Gehalt zu erhalten. (He works without receiving his salary.)",
+      "B and C"
+    ],
+    correct: 3,
+    explanation: "B and C both use the same-subject rule correctly. A is wrong: it should use 'damit' because subjects differ (I vs. brother)."
+  },
+  {
+    question: "What is the function of 'um...zu' in the sentence: 'Wir reisen, um die Welt zu sehen'?",
+    options: [
+      "To negate an action",
+      "To express the goal or purpose of traveling",
+      "To show an exception",
+      "To present an alternative"
+    ],
+    correct: 1,
+    explanation: "Um...zu expresses purpose. Here, the purpose of traveling is to see the world."
+  },
+  {
+    question: "Which pairs of sentences are equivalent in meaning?",
+    options: [
+      "'Ich arbeite, um Geld zu verdienen' = 'Ich arbeite, um Geld verdiene.'",
+      "'Ich arbeite, um Geld zu verdienen' = 'Ich arbeite, damit ich Geld verdiene.'",
+      "'Er spricht, ohne zu denken' = 'Er spricht trotz dass er nicht denkt.'",
+      "'Statt zu rufen' = 'Anstatt zu schreien' (same meaning)"
+    ],
+    correct: 1,
+    explanation: "Um...zu and damit + clause express the same idea when the subject is the same. Both mean 'in order to.'"
+  },
+  {
+    question: "In the sentence 'Anstatt sich auszuruhen, arbeitete sie weiter,' what is the alternative that was NOT chosen?",
+    options: [
+      "Resting",
+      "Working",
+      "Leaving",
+      "Speaking"
+    ],
+    correct: 0,
+    explanation: "Anstatt...zu introduces the alternative NOT taken. Here, resting was the alternative that was rejected in favor of working."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion() {
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+
+  document.getElementById('quiz-questions').innerHTML = `
+    <div class="quiz-question">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : (i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '')) : ''}" onclick="selectAnswer(${i})" data-speak="true">
+            ${opt}
+          </div>
+        `).join('')}
+      </div>
+      ${isAnswered ? `<div class="quiz-feedback" data-speak="true"><strong>Explanation:</strong> ${q.explanation}</div>` : ''}
+    </div>
+  `;
+
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').disabled = !isAnswered;
+}
+
+function selectAnswer(i) {
+  if (answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = i;
+  if (i === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    currentQuestion++;
+    displayQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    displayQuestion();
+  }
+}
+
+function showScore() {
+  const pct = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('quiz-summary').classList.add('show');
+  document.getElementById('quiz-summary').innerHTML = `
+    <p data-speak="true"><strong>Quiz Complete!</strong></p>
+    <p style="margin-top: 12px;" data-speak="true">You've mastered the infinitive constructions. Purpose, exception, and alternative are now at your command. Move forward with confidence.</p>
+  `;
+}
+
+// Scene visibility observer
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(s => observer.observe(s));
+
+// Initialize quiz
+displayQuestion();
+
+// Simple German text-to-speech trigger
+document.querySelectorAll('[data-speak="true"]').forEach(el => {
+  el.addEventListener('click', function() {
+    const text = this.innerText;
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'de-DE';
+      window.speechSynthesis.speak(utterance);
+    }
+  });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">628 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(73%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:73%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 628 words across 72 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">121 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(83%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:83%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 121 patterns across 72 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

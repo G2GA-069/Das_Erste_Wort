@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 55: Des Vaters (Genitive)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --genitive: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .grammar-table {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 32px 0;
+    overflow-x: auto;
+  }
+
+  .grammar-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+  }
+
+  .grammar-table th, .grammar-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+    color: var(--text);
+  }
+
+  .grammar-table th {
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+
+  .grammar-table tr:hover td {
+    background: rgba(232, 164, 74, 0.05);
+  }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .grammar-table { padding: 16px; font-size: 0.9rem; }
+    .grammar-table th, .grammar-table td { padding: 10px 8px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Fifty-Five</div>
+    <h1>Des Vaters</h1>
+    <div class="subtitle">The Genitive Case — What Belongs</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- SCENE 1: POSSESSION AND OWNERSHIP -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Stand with me in an ancient Germanic village. The year is uncertain — perhaps 400, perhaps 600. It does not matter. What matters is this: someone points to a house and says something. In Old Germanic, it might have sounded like this: <span class="german-word" data-speak="true">des Vaters Haus</span> — the father's house. The house belonging to the father.
+    </p>
+
+    <p class="narrative">
+      Notice the peculiarity of that phrase. In English, we would say "the father's house," using the possessive 's, a marker that tells us who owns the house. In German, the phrase is <span class="german-word" data-speak="true">des Vaters Haus</span> — literally "of the father house." And it uses a special form of "the" — <span class="german-word" data-speak="true">des</span> — instead of <span class="german-word" data-speak="true">der</span>. This is the genitive case, the case of possession, the grammatical shape that German uses to show what belongs to whom.
+    </p>
+
+    <p class="narrative">
+      And here is where grammar becomes fascinating: this change — from "the father" to "of the father" — is not a modern invention. It is not a choice made by one person or one generation. It is a fossil. An ancient stone from the bedrock of language, so old that we cannot name its origins. When a German speaker uses the genitive case, they are using a grammatical form inherited directly from Proto-Indo-European, spoken perhaps five or six thousand years ago by nomadic peoples on the steppes of Central Asia.
+    </p>
+
+    <p class="narrative emphasis">
+      The genitive case is possession made visible in grammar. It is ownership written into the shape of words. And understanding why it exists, why it matters, and why German has preserved it so well, is to understand something profound about how language organizes meaning.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 2: THE NATURE OF POSSESSION -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In every human society, the question of possession is fundamental. This is mine. That is yours. This belongs to me. That is his. Before you can have law, you must have a way to talk about ownership. Before you can have trade, you must be able to say "this cow belongs to that man." Before you can have family, you must be able to say "the child is the son of the mother." Possession is at the heart of human social life.
+    </p>
+
+    <p class="narrative">
+      And so in the languages of the world, you find ways to mark possession. English uses the 's — a simple marker added to the end of a word. "John's book. The king's crown. The mother's love." In English, this is the only possessive marker we have left. Just the 's. Simple. Efficient.
+    </p>
+
+    <p class="narrative">
+      But in German, and in all the ancient Germanic languages, possession is handled differently. Instead of changing the word that owns something, you change the word that is being owned — or more precisely, you change the article that stands before it. The word for "the" itself changes shape to show that something is being possessed.
+    </p>
+
+    <p class="narrative">
+      Look at this pattern. When you speak of a father (nominative case), you say <span class="german-word" data-speak="true">der Vater</span> — the father. The article is <span class="german-word" data-speak="true">der</span>. But when that father possesses something — when something belongs to him — the article shifts. It becomes <span class="german-word" data-speak="true">des Vaters</span>. The article changed from <span class="german-word" data-speak="true">der</span> to <span class="german-word" data-speak="true">des</span>. And if you listen carefully, you can hear the shift: <span class="german-word" data-speak="true">der</span> [a full vowel] becomes <span class="german-word" data-speak="true">des</span> [a short schwa sound at the end]. The -s at the end marks possession the way an s marks possession in English, but in German, it is the article that carries the marking.
+    </p>
+
+    <p class="narrative">
+      This is not random. This is not arbitrary. This pattern exists in English too, though we have mostly forgotten it. When English says "the king's crown," there is a genitive -s. When English says "John's book," there is a genitive -s. The -s has not disappeared; it has just moved from the article to the noun itself. In German, the -s stayed with the article. In English, the -s migrated to the noun. Both languages inherited the genitive case from their common ancestor, but they handled it differently as the centuries passed.
+    </p>
+
+    <p class="narrative">
+      Why is this important? Because it shows us something crucial about language change. The genitive case did not vanish from English. It simply changed form. The meaning stayed. The function stayed. Only the shape shifted, like water taking the shape of its container.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 3: THE GENITIVE ARTICLES -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let us look at the actual forms. Here is where German grammar becomes visible, where the genitive case reveals its structure like a tree revealing its branches.
+    </p>
+
+    <div class="grammar-table">
+      <table>
+        <tr>
+          <th>Case</th>
+          <th>Masculine ("the")</th>
+          <th>Feminine ("the")</th>
+          <th>Neuter ("the")</th>
+          <th>Plural ("the")</th>
+        </tr>
+        <tr>
+          <td><strong>Nominative</strong></td>
+          <td>der</td>
+          <td>die</td>
+          <td>das</td>
+          <td>die</td>
+        </tr>
+        <tr>
+          <td><strong>Genitive</strong></td>
+          <td>des</td>
+          <td>der</td>
+          <td>des</td>
+          <td>der</td>
+        </tr>
+      </table>
+    </div>
+
+    <p class="narrative">
+      Look at this table. Notice something remarkable: the genitive forms are not random. The masculine and neuter both become <span class="german-word" data-speak="true">des</span> (with an -s ending). The feminine and plural both become <span class="german-word" data-speak="true">der</span> (with no ending, same as the nominative feminine). This is not accident. This is pattern.
+    </p>
+
+    <p class="narrative">
+      The -s ending in <span class="german-word" data-speak="true">des</span> comes from Proto-Indo-European. In the most ancient languages, the genitive case was marked by an -s ending. And German has preserved this -s through five thousand years of language change. Latin had it too: <em>Caesaris</em> (Caesar's) — with a -is ending that descends from the same -s. Sanskrit had it: words in the genitive case take an -s (or -asy). Even Greek, though it changed the sound: <em>tou patros</em> (of the father) — the -s became a tau, but it is still there, still marking possession.
+    </p>
+
+    <p class="narrative">
+      In German, the -s has been preserved almost in its original form. The article <span class="german-word" data-speak="true">des</span> is a fossil, a direct descendant of a word form that has not changed significantly in millennia. When you use the genitive case in German, you are using a grammatical tool that is nearly as old as language itself.
+    </p>
+
+    <!-- DES card -->
+    <div class="ety-card" id="card-des">
+      <div class="word-header">
+        <span class="word-main">des</span>
+        <span class="word-pron">/dɛs/</span>
+      </div>
+      <div class="word-meaning">of the (genitive article, masculine and neuter singular)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*tos, *to-s</span>
+        <span class="bridge-note">— the genitive marker -s ending, same form that marks possession in all old IE languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (abandoned)</span>
+        <span class="bridge-note">— English lost the system, now uses only the -'s on the noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">des</span>
+        <span class="bridge-note">— the genitive article, marks masculine and neuter possessors</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">的</span>
+        <span class="bridge-note">— de — Chinese genitive marker, shows possession (of, belonging to)</span>
+      </div>
+      <div class="story">
+        <em>des</em> is the most conservative article in German. It shows almost no change from its original Proto-Indo-European form. The -s ending is the same -s that marks the genitive in Latin (<em>amici</em> — of the friend), Greek (<em>anthropou</em> — of man), and Sanskrit (<em>tasya</em> — of that). German preserved this ancient marker almost unchanged, making the genitive case one of the oldest, most stable parts of German grammar. When you say <em>des Vaters</em>, you are using a word form that would be recognizable to speakers of Ancient Greek or Sanskrit. The Chinese particle 的 (de) serves a similar function — it marks the relationship of possession or attribution, just as the genitive does in German.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Now look at the genitive forms of other articles. When you speak of a woman (<span class="german-word" data-speak="true">die Frau</span> in nominative), the genitive becomes <span class="german-word" data-speak="true">der Frau</span> — using <span class="german-word" data-speak="true">der</span>, not <span class="german-word" data-speak="true">des</span>. Why the difference? Because in the history of German, the feminine genitive never developed the -s ending. In the original Proto-Indo-European, the feminine genitive may have used a different suffix, and that difference was preserved. In German today, feminine nouns in the genitive use <span class="german-word" data-speak="true">der</span>, while masculine and neuter use <span class="german-word" data-speak="true">des</span>.
+    </p>
+
+    <p class="narrative">
+      This inconsistency — which seems confusing to the learner — is actually a window into history. It shows us that the genitive case developed in stages, that different genders were marked differently in the past, and that German has preserved all these ancient distinctions. The genitive case in modern German is not a simplification of an older system. It is a preservation of it. Every irregularity is a clue to the past.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 4: WHY POSSESSION MATTERS IN GRAMMAR -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Here is a question that goes to the heart of why the genitive case exists at all. Why do we need a special grammatical case to show possession? Why not just say "the book of the father" instead of "the father's book"? Both mean the same thing, don't they?
+    </p>
+
+    <p class="narrative">
+      The answer lies in the nature of language itself. Language is not primarily a visual medium. It is a temporal medium. When you speak, you produce sounds in sequence, one after another. When you write, you produce letters and words in sequence. The listener or reader must process these sounds or letters in order, from beginning to end. A case system — a grammatical tool that marks relationships through changes in word form — allows you to signal important information instantly.
+    </p>
+
+    <p class="narrative">
+      Consider this English sentence: "The man's book was on the table." When you hear this sentence, the moment you hear "man's" — with that distinctive -s sound — you know immediately that the man owns something, that something belongs to him. You do not have to wait for additional information. The genitive marker gives you that information right away.
+    </p>
+
+    <p class="narrative">
+      In German, the system is slightly different but achieves the same goal. When you say <span class="german-word" data-speak="true">des Vaters Buch</span> (the father's book), the moment you hear <span class="german-word" data-speak="true">des</span> instead of <span class="german-word" data-speak="true">der</span>, you know that possession is coming. You know something will follow. The case system is a way of signaling meaning through the shape of words, allowing the listener to parse the sentence as it unfolds.
+    </p>
+
+    <p class="narrative">
+      And here is something even more important: the genitive case in German can do things that the English 's cannot easily do. In German, you can stack genitives. You can say <span class="german-word" data-speak="true">des Vaters des Bruders</span> — the father's of the brother — meaning "the father of the brother," or "the brother's father." This construction, which seems awkward in English, is natural in German because the case system makes clear who is possessing whom.
+    </p>
+
+    <p class="narrative">
+      Over the centuries, as English simplified its case system, it had to develop new ways to show these relationships. It created the word "of" as a marker of possession. "The book of John," "the father of the boy," "the brother of the king." This works, but it requires an additional word. German still has its case system, so it can show the same relationship with just a change in word form. Both strategies are valid. Both work. But they reveal different histories.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 5: GENITIVE PREPOSITIONS -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But the genitive case in German is not only about possession. It is also the case used after certain prepositions — words that show relationships of space, time, or manner. This is crucial to understand, because it shows that the genitive case is about more than just ownership. It is about showing relationships of any kind.
+    </p>
+
+    <p class="narrative">
+      Take the preposition <span class="german-word" data-speak="true">wegen</span> — because of, on account of. When you use this preposition, the noun that follows must be in the genitive case. So you would say <span class="german-word" data-speak="true">wegen des Regens</span> — because of the-genitive rain — meaning "because of the rain." You could also say <span class="german-word" data-speak="true">wegen meines Vaters</span> — because of my-genitive father — meaning "on account of my father."
+    </p>
+
+    <p class="narrative">
+      Why does "because of" require the genitive case? Because logically, it is a relationship of dependence or causation. The rain is the cause of something. My father is the reason for something. The genitive case — which shows what belongs to, depends on, or arises from something — is the natural choice.
+    </p>
+
+    <p class="narrative">
+      Another genitive preposition is <span class="german-word" data-speak="true">trotz</span> — in spite of, despite. <span class="german-word" data-speak="true">Trotz des Regens</span> — in spite of the rain. <span class="german-word" data-speak="true">Trotz meiner Angst</span> — in spite of my fear. Again, the genitive case marks a relationship where something is overcome or disregarded.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-speak="true">während</span> — during, while. <span class="german-word" data-speak="true">Während des Krieges</span> — during the war. <span class="german-word" data-speak="true">Während meines Lebens</span> — during my life. The genitive shows what something happens within the bounds of.
+    </p>
+
+    <!-- WEGEN card -->
+    <div class="ety-card" id="card-wegen">
+      <div class="word-header">
+        <span class="word-main">wegen</span>
+        <span class="word-pron">/ˈveːɡən/</span>
+      </div>
+      <div class="word-meaning">because of, on account of (+ genitive)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*weǵh-</span>
+        <span class="bridge-note">— to go, move; <em>Weg</em> (way) — originally "because of the way to/toward"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">way</span>
+        <span class="bridge-note">— English kept the noun form, "by way of," but lost the genitive structure</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wegen</span>
+        <span class="bridge-note">— <em>Weg</em> + genitive ending, literally "because of the way to"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">因为</span>
+        <span class="bridge-note">— yīnwèi (cause + is) — shows causation logically</span>
+      </div>
+      <div class="story">
+        <em>wegen</em> is a fascinating example of how the genitive case has transformed a noun into a preposition. Originally, <em>Weg</em> meant "way." In the phrase "wegen des Regens," it once meant something like "because of the way toward the rain" or "on the path of the rain." Over time, this became shortened and fossilized as a preposition meaning simply "because of." The genitive case is frozen in this preposition, a trace of its original structure. In English, we kept the word "way" but lost the genitive case: we say "by way of," using a noun rather than a preposition. German shows us what a preposition looks like when a genitive case is frozen inside it.
+      </div>
+    </div>
+
+    <!-- TROTZ card -->
+    <div class="ety-card" id="card-trotz">
+      <div class="word-header">
+        <span class="word-main">trotz</span>
+        <span class="word-pron">/tʁɔts/</span>
+      </div>
+      <div class="word-meaning">in spite of, despite (+ genitive)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*trud-</span>
+        <span class="bridge-note">— to push, thrust; originally "in opposition to, against"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (archaic "troth")</span>
+        <span class="bridge-note">— related to words meaning "truth" or "pledge," but lost the specific meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">trotz</span>
+        <span class="bridge-note">— the -z is the genitive ending, frozen in this preposition</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">尽管</span>
+        <span class="bridge-note">— jìnguǎn (exhaust + see) — metaphorically "despite seeing"</span>
+      </div>
+      <div class="story">
+        <em>trotz</em> is even more interesting because the genitive case is not just used with this preposition—it is actually part of the preposition itself. The -z ending on <em>trotz</em> is itself a genitive ending, frozen in place from ancient times. When you use <em>trotz</em>, you are using a word that is itself a noun in the genitive case, petrified into a preposition. This is how language works: words change their function slowly, over centuries. A noun becomes a preposition. A preposition becomes an adverb. A verb becomes a noun. The layers of history are visible in the structure of a single word.
+      </div>
+    </div>
+
+    <!-- WÄHREND card -->
+    <div class="ety-card" id="card-waehrend">
+      <div class="word-header">
+        <span class="word-main">während</span>
+        <span class="word-pron">/ˈvɛːʁənt/</span>
+      </div>
+      <div class="word-meaning">during, while (+ genitive)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wer-</span>
+        <span class="bridge-note">— to turn, to become; <em>Wahrheit</em> (truth) — showing change and transformation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (lost this structure)</span>
+        <span class="bridge-note">— English uses "during" or "while," both Germanic roots but different forms</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">während</span>
+        <span class="bridge-note">— present participle of <em>währen</em> (to last), + genitive, literally "lasting of"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">在...期间</span>
+        <span class="bridge-note">— zài...qījiān (at + period) — marks the time period clearly</span>
+      </div>
+      <div class="story">
+        <em>während</em> shows a different pattern. It is not exactly a noun in the genitive case, but rather a present participle (a verb form used as an adjective) that governs the genitive case. Originally, <em>während</em> meant something like "lasting" or "enduring." When you say <em>während des Krieges</em> (during the war), you are literally saying "lasting of the war" or "enduring the war." The genitive case shows what the duration encompasses. This is another example of how the genitive case extends beyond simple possession to mark other kinds of relationships—in this case, a temporal relationship.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 6: GENITIVE IN COMPOUNDS -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      One of the most beautiful aspects of German is its ability to create compound words by joining two words together. And often, the first word in the compound will appear in the genitive case. This is not mandatory — it is simply how the language feels natural. Consider <span class="german-word" data-speak="true">das Kinderzimmer</span> — the child's room, literally "children's room." Here, <em>Kinder</em> is the plural genitive form of <em>Kind</em> (child). The compound shows ownership or association.
+    </p>
+
+    <p class="narrative">
+      Or take <span class="german-word" data-speak="true">die Arbeitstag</span> — the working day, but literally "work's day," with <em>Arbeit</em> showing what kind of day it is through a genitive-like relationship. And <span class="german-word" data-speak="true">das Tageswerk</span> — the day's work, "day's work," with <em>Tages</em> in genitive form.
+    </p>
+
+    <p class="narrative">
+      These compounds are not just casual combinations. They show how the genitive case is embedded in the very structure of German word-formation. When you understand compounds, you understand that the genitive is not just a grammatical tool for sentences. It is a fundamental way that German organizes meaning at the level of words themselves.
+    </p>
+
+    <p class="narrative">
+      And when you create a new compound word — which German speakers do constantly — you are using the genitive case. You are showing relationships through the shape of words. You are speaking with the grammar of the ancients, using tools forged thousands of years ago.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 7: THE DECLINE OF THE GENITIVE -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But there is a story of change hidden in German grammar too. The genitive case is slowly disappearing from modern German, especially in spoken language. Young Germans increasingly say things like <span class="german-word" data-speak="true">wegen mir</span> (because of me-dative) instead of the "correct" <span class="german-word" data-speak="true">wegen meines</span> (because of me-genitive). They use the dative case where the genitive case was once required.
+    </p>
+
+    <p class="narrative">
+      In English, this process is much further advanced. English has essentially abandoned the genitive case as a living system. It survives only in the possessive 's, a relic of the old system. But in speech, English uses the preposition "of" instead: "the book of the king" rather than "the king's book" (though the 's form is still used in writing).
+    </p>
+
+    <p class="narrative">
+      This is not a decline in the quality of language. It is simply change. Language is always changing, always simplifying some aspects while elaborating others. The genitive case in German is slowly being eroded, but it has not disappeared. It is still taught in schools. It is still expected in formal writing. It is still understood and used by educated speakers. And its slow erosion tells us something important: the case system, for all its power and elegance, is difficult to maintain. It requires memorization. It requires attention. It requires practice. Over the centuries, speakers begin to simplify, to use other mechanisms, to avoid the harder forms.
+    </p>
+
+    <p class="narrative">
+      This is what has happened in English. The genitive case became too difficult to maintain, and so speakers gradually abandoned it, developing the "of" construction and the possessive 's as alternatives. These were simpler. These required less learning. And so the genitive case faded from the system.
+    </p>
+
+    <p class="narrative">
+      But in German, the genitive case is still hanging on. It is still powerful. It is still essential. And while it may continue to erode in the years to come, for now it remains one of the defining features of German grammar, a connection to the deepest past of language itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- QUIZ SECTION -->
+  <div class="quiz-container">
+    <h3>Test Your Understanding: The Genitive Case</h3>
+
+    <div class="quiz-question">
+      <div class="q-text">1. Which article form shows the genitive case for a masculine singular noun?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="correct">des</div>
+        <div class="quiz-option">der</div>
+        <div class="quiz-option">die</div>
+        <div class="quiz-option">das</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">2. In the phrase "des Vaters Haus," what does the genitive case primarily indicate?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">the location of the house</div>
+        <div class="quiz-option" data-answer="correct">possession or ownership</div>
+        <div class="quiz-option">the action being performed</div>
+        <div class="quiz-option">the object receiving an action</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">3. The genitive ending -s in German comes from which ancient language family?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">Latin</div>
+        <div class="quiz-option">Greek</div>
+        <div class="quiz-option" data-answer="correct">Proto-Indo-European</div>
+        <div class="quiz-option">Old Norse</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">4. Which preposition requires the genitive case and means "because of"?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">über</div>
+        <div class="quiz-option" data-answer="correct">wegen</div>
+        <div class="quiz-option">nach</div>
+        <div class="quiz-option">vor</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">5. What is the genitive article form for feminine singular nouns?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">des</div>
+        <div class="quiz-option" data-answer="correct">der</div>
+        <div class="quiz-option">die</div>
+        <div class="quiz-option">dere</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">6. The preposition "trotz" (in spite of) requires which case?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">nominative</div>
+        <div class="quiz-option">accusative</div>
+        <div class="quiz-option" data-answer="correct">genitive</div>
+        <div class="quiz-option">dative</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">7. In English, the genitive relationship has largely been replaced by:</div>
+      <div class="quiz-options">
+        <div class="quiz-option">the -ing ending</div>
+        <div class="quiz-option" data-answer="correct">the preposition "of" and the possessive -'s</div>
+        <div class="quiz-option">word order</div>
+        <div class="quiz-option">intonation</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">8. Why is the genitive case important to preserve in German?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">because it makes German harder than English</div>
+        <div class="quiz-option" data-answer="correct">because it provides immediate grammatical information and allows precise expression of relationships</div>
+        <div class="quiz-option">because only Germans can understand it</div>
+        <div class="quiz-option">because it prevents linguistic change</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">9. The preposition "während" (during) is historically connected to which word?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">wahr (true)</div>
+        <div class="quiz-option" data-answer="correct">währen (to last, to endure)</div>
+        <div class="quiz-option">waren (to be)</div>
+        <div class="quiz-option">warten (to wait)</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">10. In German compound words, what grammatical role does the first element often play?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">it always becomes a verb</div>
+        <div class="quiz-option" data-answer="correct">it often appears in the genitive case to show relationship</div>
+        <div class="quiz-option">it must be capitalized</div>
+        <div class="quiz-option">it reverses the meaning</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">11. What is happening to the genitive case in modern spoken German?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">it is growing stronger</div>
+        <div class="quiz-option" data-answer="correct">it is slowly being replaced by other cases, especially the dative</div>
+        <div class="quiz-option">it has completely disappeared</div>
+        <div class="quiz-option">it is being used more frequently</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">12. Which modern language has preserved the genitive case system most completely?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">Modern English</div>
+        <div class="quiz-option" data-answer="correct">Modern German</div>
+        <div class="quiz-option">Modern French</div>
+        <div class="quiz-option">Modern Spanish</div>
+      </div>
+    </div>
+
+    <div class="quiz-nav">
+      <button id="prevBtn" onclick="previousQuestion()">← Previous</button>
+      <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="score"></div>
+    <div class="quiz-reset">
+      <button onclick="resetQuiz()">Reset Quiz</button>
+    </div>
+    <div class="post-quiz-summary" id="postQuizSummary"></div>
+  </div>
+
+  <!-- CHAPTER END -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p style="color: rgba(212, 202, 187, 0.6); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5em;">
+      The genitive case is a window into the ancient past. Every time a German speaker uses <span class="german-word" data-speak="true">des</span> or <span class="german-word" data-speak="true">der</span> in the genitive case, they are using a grammatical form that is older than most written human history. They are speaking with the tongue of the steppe peoples who wandered across Central Asia millennia ago. The case system is not a burden or an unnecessary complication. It is a gift. A preservation of the deepest architecture of human language. Understand the genitive case, and you understand something profound about how language itself works.
+    </p>
+    <div class="next-chapter">Chapter 56: Die vier Fälle →</div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter54.html" class="nav-btn">← Chapter 54</a>
+    <a href="chapter56.html" class="nav-btn next">Chapter 56 →</a>
+  </div>
+
+</div>
+
+<script>
+  // Scroll-triggered animations
+  const scenes = document.querySelectorAll('.scene');
+  const observerOptions = { threshold: 0.1 };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+  scenes.forEach(scene => observer.observe(scene));
+
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const progress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+  });
+
+  // German word cards
+  document.querySelectorAll('.german-word').forEach(word => {
+    word.addEventListener('click', (e) => {
+      e.target.classList.toggle('revealed');
+      const cardId = 'card-' + e.target.dataset.card;
+      const card = document.getElementById(cardId);
+      if (card) {
+        card.classList.toggle('open');
+      }
+    });
+  });
+
+  // Text-to-speech for German
+  document.querySelectorAll('[data-speak="true"]').forEach(el => {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.textContent = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const utterance = new SpeechSynthesisUtterance(el.textContent);
+      utterance.lang = 'de-DE';
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+    });
+    el.appendChild(btn);
+  });
+
+  // Canvas animation (family tree branches)
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let animationId;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function drawGenitiveBranches() {
+    ctx.fillStyle = 'rgba(10, 14, 26, 0.3)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const time = Date.now() * 0.0001;
+    ctx.strokeStyle = 'rgba(232, 164, 74, 0.1)';
+    ctx.lineWidth = 2;
+
+    // Draw family tree branches
+    for (let i = 0; i < 5; i++) {
+      const startX = (canvas.width / 6) * (i + 1);
+      const startY = 100 + Math.sin(time + i) * 30;
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(startX, canvas.height - 100);
+      ctx.stroke();
+
+      // Branch out
+      for (let j = 0; j < 3; j++) {
+        const offset = (j - 1) * 40;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY + 150);
+        ctx.lineTo(startX + offset, startY + 250);
+        ctx.stroke();
+      }
+    }
+
+    animationId = requestAnimationFrame(drawGenitiveBranches);
+  }
+  drawGenitiveBranches();
+
+  // Quiz functionality
+  let currentQuestion = 0;
+  let answers = {};
+
+  function showQuestion(n) {
+    const questions = document.querySelectorAll('.quiz-question');
+    if (n >= questions.length) n = questions.length - 1;
+    if (n < 0) n = 0;
+    currentQuestion = n;
+
+    questions.forEach((q, i) => {
+      q.classList.toggle('hidden', i !== n);
+    });
+
+    document.getElementById('prevBtn').disabled = n === 0;
+    document.getElementById('nextBtn').disabled = n === questions.length - 1;
+    updateScore();
+  }
+
+  function selectAnswer(btn) {
+    const question = btn.closest('.quiz-question');
+    const options = question.querySelectorAll('.quiz-option');
+    const isCorrect = btn.dataset.answer === 'correct';
+
+    options.forEach(opt => {
+      opt.classList.remove('selected', 'incorrect');
+      if (opt === btn) {
+        opt.classList.add(isCorrect ? 'selected' : 'incorrect');
+      }
+    });
+
+    answers[currentQuestion] = isCorrect;
+  }
+
+  function updateScore() {
+    const correct = Object.values(answers).filter(v => v === true).length;
+    const total = 12;
+    if (Object.keys(answers).length === total) {
+      document.getElementById('score').textContent = `Score: ${correct}/${total}`;
+      if (correct >= 10) {
+        document.getElementById('postQuizSummary').textContent = 'Excellent! You have mastered the genitive case.';
+        document.getElementById('postQuizSummary').classList.add('show');
+      }
+    }
+  }
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.addEventListener('click', (e) => selectAnswer(e.target));
+  });
+
+  function nextQuestion() {
+    showQuestion(currentQuestion + 1);
+  }
+
+  function previousQuestion() {
+    showQuestion(currentQuestion - 1);
+  }
+
+  function resetQuiz() {
+    answers = {};
+    currentQuestion = 0;
+    showQuestion(0);
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+      opt.classList.remove('selected', 'incorrect');
+    });
+    document.getElementById('postQuizSummary').classList.remove('show');
+  }
+
+  showQuestion(0);
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">492 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(57%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:57%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 492 words across 55 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">104 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(71%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:71%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 104 patterns and grammar rules across 55 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

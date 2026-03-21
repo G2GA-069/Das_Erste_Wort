@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 22: Das Kaiserreich</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --imperial-gold: #d4af37;
+    --blood-red: #8b2f2f;
+    --mud-grey: #3d3430;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #d4af37 0%, #b8860b 8%, #8b2f2f 35%, #4a2c2c 65%, #3d3430 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- ANIMATED CANVAS --- */
+  #kaiserCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section.locked {
+    background: linear-gradient(135deg, rgba(139, 47, 47, 0.6), rgba(61, 52, 48, 0.6));
+    border: 1px solid rgba(232, 164, 74, 0.05);
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  .unlock-message {
+    font-size: 1.05rem;
+    color: rgba(232, 164, 74, 0.7);
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.08);
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+
+  .progress-indicator {
+    display: inline-block;
+    background: rgba(232, 164, 74, 0.15);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    color: var(--fire);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0 4px;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="kaiserCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twenty-Two</div>
+    <h1>Das Kaiserreich</h1>
+    <div class="subtitle">The Empire (1871-1918)</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE GOLDEN AGE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In 1871, a new empire was born. Bismarck had unified Germany by force, and now from the wreckage of fragmented kingdoms rose something unprecedented: a modern industrial nation where the German language, German science, and German ambition would reshape the world.
+    </p>
+
+    <p class="narrative">
+      For forty-seven years — from 1871 to 1918 — this empire stood at the peak of human achievement. The laboratories of Berlin, Munich, and Göttingen became pilgrimage sites for scientists across the globe. If you wanted to understand the mysteries of matter, energy, light, and time, you had to speak German.
+    </p>
+
+    <p class="narrative">
+      This was not a time of conquest. This was a time of <em>creation</em>. Max Planck discovered the quantum. Werner Heisenberg mapped the uncertainty at the heart of reality. Erwin Schrödinger built a mathematics of waves and particles. Albert Einstein, writing in German, rewrote the universe.
+    </p>
+
+    <p class="narrative">
+      And every university in the world — Oxford, Cambridge, Harvard, Tokyo, Moscow — required its students to read German. To learn physics or chemistry or medicine, you had to become, in a sense, German.
+    </p>
+
+    <p class="narrative emphasis">
+      This was the golden age of the German language. And like all golden ages, it ended in catastrophe.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: WISSENSCHAFT & FORSCHUNG ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      At the heart of this scientific empire sat two foundational words. The first captures the <em>collective enterprise</em> of knowing — the organized, systematic pursuit of truth:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wissenschaft">Wissenschaft.</span>
+    </p>
+
+    <p class="narrative">
+      Literally: <em>Wissen</em> (knowledge, what you know) + <em>-schaft</em> (collective, state of being). Translated into English as "science," but the German word carries something English doesn't. It's not just the collection of facts — it's the <em>organized system</em> of knowing. The state of possessing knowledge systematically.
+    </p>
+
+    <p class="narrative">
+      And yet, <em>Wissenschaft</em> must be pursued. The knowledge does not come to you. You must go searching for it:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="forschung">Forschung.</span> Research. Investigation. The act of searching deeply into the unknown.
+    </p>
+
+    <!-- WISSENSCHAFT card -->
+    <div class="ety-card" id="card-wissenschaft">
+      <div class="word-header">
+        <span class="word-main">Wissenschaft</span>
+        <span class="word-pron">/ˈvɪs.ən.ʃaft/</span>
+      </div>
+      <div class="word-meaning">science — the organized collective enterprise of knowing</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wissen (knowledge) + -schaft (collective state)</span>
+        <span class="bridge-note">— compound formation, uniquely German clarity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">science</span>
+        <span class="bridge-note">— from Latin "scientia" (knowing), less precise than Wissenschaft</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">科学</span>
+        <span class="bridge-note">— kēxué — Chinese "ke" (category/method) + "xué" (study): a methodical study</span>
+      </div>
+      <div class="story">
+        Wissenschaft became the term for organized knowledge-seeking in Germany, and when German science dominated global academia (1870-1920), German universities became the model all others copied. Nowhere on earth has the word "professor" been more honored. A German professor of physics or chemistry could cite Wissenschaft as a justification for their authority — not mere expertise, but participation in the organized pursuit of universal truth. The word embodies German philosophical precision: knowledge is not scattered facts but a coherent, rational system. When Chinese scholars needed a word for "science" in the late 19th century, they created 科学 (kēxué = methodology + study), which carries a similar sense of systematic organization. Both cultures understood that science is not singular discoveries but a structured way of knowing.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="forschung">Forschung</span> comes from <em>forschen</em>, to search, to investigate. It implies movement, curiosity, the willingness to venture into darkness seeking light. A Forscher is a researcher — not someone who knows, but someone who seeks. The distinction matters: in German, the scientist is defined not by what they have already discovered but by the act of searching itself.
+    </p>
+
+    <!-- FORSCHUNG card -->
+    <div class="ety-card" id="card-forschung">
+      <div class="word-header">
+        <span class="word-main">Forschung</span>
+        <span class="word-pron">/ˈfɔr.ʃʊŋ/</span>
+      </div>
+      <div class="word-meaning">research — the act of searching deeply for what is unknown</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">forschen (to search, investigate) + -ung (action/result)</span>
+        <span class="bridge-note">— the verb "forschen" has Frisian roots</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">research</span>
+        <span class="bridge-note">— from French "recherche" (re- + search), less action-oriented</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">研究</span>
+        <span class="bridge-note">— yánjīu — "yan" (grind, refine) + "jiu" (investigate): grinding away at a problem</span>
+      </div>
+      <div class="story">
+        In German laboratories, Forschung was not a bureaucratic term but a calling. A Forscher—a researcher—was engaged in the noble act of "forschen," of searching. This word captures the emotional tenor of German science: it is not passive discovery but active seeking. You do not wait for truth; you pursue it. Chinese 研究 (yánjīu) carries a similar sense of persistent effort—literally "grinding away" at a problem, refining it through repeated investigation. By the 1890s, Germany had more research institutes, more published findings in physics and chemistry, more Nobel prizes than any other nation. Forschung had become the German word for the future itself.
+      </div>
+    </div>
+
+    <p class="narrative">
+      These two words were the vocabulary of Kaiser Wilhelm II's ambition. Wissenschaft provided the theoretical foundations. Forschung provided the relentless pursuit. Together, they made Germany the undisputed master of the modern scientific world.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: ENTDECKUNG ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And when that searching succeeds — when the dark is pierced by light — the result is an <span class="german-word" data-card="entdeckung">Entdeckung.</span>
+    </p>
+
+    <p class="narrative">
+      A discovery. But listen to the word's architecture: <em>ent-</em> (to undo) + <em>Decke</em> (cover/roof) + <em>-ung</em> (action/result). Literally: <em>the action of uncovering, of removing the roof that had been hiding things.</em>
+    </p>
+
+    <p class="narrative">
+      When Max Planck discovered quanta in 1900 — when he realized that energy comes not in smooth waves but in discrete packets — he was uncovering something that had always been there but was hidden beneath the roof of classical physics. The Entdeckung was the moment the cover came off.
+    </p>
+
+    <!-- ENTDECKUNG card -->
+    <div class="ety-card" id="card-entdeckung">
+      <div class="word-header">
+        <span class="word-main">Entdeckung</span>
+        <span class="word-pron">/ˈɛnt.dɛ.kʊŋ/</span>
+      </div>
+      <div class="word-meaning">discovery — the uncovering of what had been hidden</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ent- (un-) + Decke (cover/roof) + -ung (action)</span>
+        <span class="bridge-note">— German compound precision at its finest</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">discovery</span>
+        <span class="bridge-note">— from dis- (un-) + cover, similar but less concrete</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">发现</span>
+        <span class="bridge-note">— fāxiàn — "fa" (emit, develop) + "xian" (appear): to emit something into appearance</span>
+      </div>
+      <div class="story">
+        Entdeckung shows German's architectural approach to meaning: it breaks down into concrete components. "Uncovering the roof" is more visceral, more immediate than the abstract "dis-cover." In the Belle Époque of German science (1880-1914), Entdeckungen came at a staggering pace. Röntgen's X-rays (1895), Planck's quanta (1900), Einstein's theory of relativity (1905-1915), Heisenberg's uncertainty principle (1927) — each was an Entdeckung, a moment when the roof came off and the hidden structure of reality became visible. Chinese 发现 (fāxiàn) carries the sense of something emerging, as if the discovery was always there but now it is "emitted" into visibility. Both languages capture the sense of revelation—not invention, but uncovering something true that existed before language named it.
+      </div>
+    </div>
+
+    <p class="narrative">
+      By 1914, Germany had uncovered more secrets of the physical universe than any nation in history. The Empire stood at the apex of human knowledge. Planck and Einstein were not just scientists; they were prophets, revealers of the hidden architecture of reality.
+    </p>
+
+    <p class="narrative">
+      And then, one month in the summer of 1914, everything changed.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: WELTANSCHAUUNG ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Before the war, Germans believed they possessed something transcendent: not just scientific knowledge but a complete <em>worldview</em>. A way of seeing everything. A philosophy that explained not just physics but history, culture, destiny itself.
+    </p>
+
+    <p class="narrative">
+      The word was <span class="german-word" data-card="weltanschauung">Weltanschauung.</span>
+    </p>
+
+    <p class="narrative">
+      <em>Welt</em> (world) + <em>Anschauung</em> (looking at, viewing). Together: the way you <em>look at the world</em>. Your worldview. Your ideology. Your fundamental frame for understanding everything.
+    </p>
+
+    <p class="narrative">
+      German Romantic philosophy — Hegel, Schopenhauer, later Nietzsche — built entire systems of thought that Germans called Weltanschauungen. Each philosopher offered a complete picture: how the world works, what it means, where history is going. This was more than science. This was metaphysics. This was destiny.
+    </p>
+
+    <!-- WELTANSCHAUUNG card -->
+    <div class="ety-card" id="card-weltanschauung">
+      <div class="word-header">
+        <span class="word-main">Weltanschauung</span>
+        <span class="word-pron">/ˈvɛlt.ʔan.ʃaʊ̯.ʊŋ/</span>
+      </div>
+      <div class="word-meaning">worldview — a comprehensive ideological framework for understanding everything</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Welt (world) + Anschauung (looking-at, viewing)</span>
+        <span class="bridge-note">— untranslatable compound, defines an entire German intellectual tradition</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">worldview</span>
+        <span class="bridge-note">— English needs two words; German has one</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">世界观</span>
+        <span class="bridge-note">— shìjiècguan — "shijie" (world) + "guan" (viewpoint): a direct calque of Weltanschauung</span>
+      </div>
+      <div class="story">
+        Weltanschauung is perhaps the most profound German contribution to philosophy. It names something essential: the comprehensive framework through which a person or culture understands reality. Not just knowledge, not just beliefs, but the total <em>way of seeing</em>. Hegel had a Weltanschauung. Schopenhauer had a Weltanschauung. Nietzsche had a Weltanschauung. Each was a complete system. By the time World War I began, German nationalism itself was understood as a Weltanschauung—a view of Germany's place in history, its racial destiny, its cultural supremacy. This was dangerous territory. When ideology becomes a "worldview," when it claims to explain not just politics but the fundamental structure of reality, it becomes totalizing. Significantly, when Chinese intellectuals encountered German philosophy in the late 19th and early 20th centuries, they needed a term for Weltanschauung. They created 世界观 (shìjiècguan) — a direct, literal translation, component by component. This demonstrates how powerful the concept was: Chinese thinkers recognized they needed to import not just the idea but the word itself, in translated form. The concept of a comprehensive ideological worldview became fundamental to Chinese Marxist thought (中国共产党的世界观).
+      </div>
+    </div>
+
+    <p class="narrative">
+      And now, in 1914, that worldview met the trenches. The philosophy met machine guns. The destiny met reality.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: ZEITGEIST ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Before the war, there was a word for the invisible force that seemed to propel history forward. Germans felt it in the air — a spirit of the age, a mood, a momentum:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zeitgeist">Zeitgeist.</span>
+    </p>
+
+    <p class="narrative">
+      <em>Zeit</em> (time) + <em>Geist</em> (spirit, ghost, mind). The spirit of the time. The invisible force that shapes an era. The mood of a generation.
+    </p>
+
+    <p class="narrative">
+      In the 1880s and 1890s, the Zeitgeist of Germany was one of boundless optimism. Industry was booming. Science was conquering mysteries. The empire was growing. The future looked infinite. Germans believed they were the vanguard of progress itself. Their language, their culture, their science would reshape the world. Everything felt inevitable.
+    </p>
+
+    <!-- ZEITGEIST card -->
+    <div class="ety-card" id="card-zeitgeist">
+      <div class="word-header">
+        <span class="word-main">Zeitgeist</span>
+        <span class="word-pron">/ˈtsaɪ̯t.ɡaɪ̯st/</span>
+      </div>
+      <div class="word-meaning">spirit of the time — the invisible ideological current that defines an era</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Zeit (time) + Geist (spirit/ghost/mind)</span>
+        <span class="bridge-note">— captures what is felt but not measured</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">spirit of the age / zeitgeist</span>
+        <span class="bridge-note">— English has no single word; must borrow the German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">时代精神</span>
+        <span class="bridge-note">— shídài jīngshén — "time era" + "spirit": captures the concept through translation</span>
+      </div>
+      <div class="story">
+        Zeitgeist is untranslatable into English, which is why English has simply borrowed the word. It names something essential: the collective psychological and ideological tenor of an epoch. The Zeitgeist of the 1920s was not the same as the Zeitgeist of the 1890s. You cannot measure it, but everyone feels it. It shapes what people believe is possible, what they hope for, what they fear. In fin de siècle Germany, the Zeitgeist was heady, imperial, scientifically optimistic. By 1918, it had collapsed into trauma and humiliation. The same language that had named infinite possibility now named catastrophe. Chinese 时代精神 (shídài jīngshén, literally "era spirit") attempts to capture the same concept—the intangible but very real psychological atmosphere of a historical moment. The German word became so essential to European intellectual discourse that French, Italian, and English all simply adopted it. No native equivalent seemed adequate.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Then 1914 happened. And suddenly, the Zeitgeist shifted. Within days, the spirit of scientific progress transformed into the spirit of survival. The language of ambition became the language of trenches.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: EXPRESSIONISM & KAFKA ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But before the collapse, German had one more thing to offer the world: a new way of writing. A new way of seeing. In Prague, in Berlin, in Vienna, German-language artists and writers were pushing the language to its limits, using its precision for the purposes of psychological horror and existential despair.
+    </p>
+
+    <p class="narrative">
+      Franz Kafka, writing in German from Prague, crafted sentences of extraordinary architectural complexity. Every clause nested inside another. Every word chosen with surgical precision. And yet—his words said the most irrational, most unsettling things. Logic twisted into paranoia. Clarity became the voice of nightmare.
+    </p>
+
+    <p class="narrative">
+      The Expressionists — in painting, in literature, in theater — pushed German to the breaking point. They needed new words, new combinations, to express what could not be expressed in normal language. Anxiety. Alienation. The sense that reality itself had become unreliable.
+    </p>
+
+    <p class="narrative">
+      Enter: <span class="german-word" data-card="unheimlich">Unheimlich.</span>
+    </p>
+
+    <!-- UNHEIMLICH card -->
+    <div class="ety-card" id="card-unheimlich">
+      <div class="word-header">
+        <span class="word-main">Unheimlich</span>
+        <span class="word-pron">/ʊnˈhaɪ̯m.lɪç/</span>
+      </div>
+      <div class="word-meaning">uncanny — the familiar made strange, the homely made alien</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- (not) + heimlich (homely, familiar, secret)</span>
+        <span class="bridge-note">— a negation that produces something beyond negation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">uncanny</span>
+        <span class="bridge-note">— from "canny" (knowable), but less precise than Unheimlich</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">诡异</span>
+        <span class="bridge-note">— guǐyì — "ghosts/strange" + "different": eerie strangeness</span>
+      </div>
+      <div class="story">
+        Unheimlich became Freud's term for the deepest kind of psychological horror: the uncanny. It's not the truly alien that frightens us most, but the familiar made strange. Your own home, but with something slightly wrong. A doll that looks almost human but not quite. Your face in the mirror but inverted. "Heimlich" means "homely," "familiar," "secret" (what you keep safely within your home). "Unheimlich" means the negation of that safety—not the obviously dangerous, but the wrong-in-a-way-you-can't-name. Kafka's novels are fundamentally Unheimlich: a man in his room (heimlich), but suddenly not. A trial, but not quite a trial. Bureaucracy, but turned into nightmare. The word became essential to 20th-century psychology and criticism. English "uncanny" tries to capture it but fails—it's too light, too mild. German "Unheimlich" carries the full existential weight: what happens when home becomes unhome.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This was German at the moment of transformation. The language of scientific certainty was becoming the language of psychological terror. The language of rational order was discovering the irrational. Kafka and the Expressionists were, unknowingly, preparing German for what was about to happen in the trenches.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: KINDERGARTEN & CULTURAL EXPORT ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But it was not only in high art and high science that German reshaped the world. It was also in something far simpler and far more profound: how the world learned to teach children.
+    </p>
+
+    <p class="narrative">
+      In 1840, a German educator named Friedrich Fröbel created something new: an institution where children would not be beaten into submission but allowed to grow, to play, to develop naturally. He called it <span class="german-word" data-card="kindergarten">Kindergarten.</span>
+    </p>
+
+    <p class="narrative">
+      <em>Kinder</em> (children) + <em>Garten</em> (garden). A garden for children. A space where they can grow like plants.
+    </p>
+
+    <p class="narrative">
+      This concept was so revolutionary, so perfectly named, that by 1900 it had been adopted by virtually every developed nation. English speakers borrowed the German word directly — there was no English equivalent. The whole world began using the German word for the German concept. Kindergarten became the word in English, in French (jardin d'enfants is the translation, but even this mirrors the German structure), in virtually every language.
+    </p>
+
+    <!-- KINDERGARTEN card -->
+    <div class="ety-card" id="card-kindergarten">
+      <div class="word-header">
+        <span class="word-main">Kindergarten</span>
+        <span class="word-pron">/ˈkɪn.dɐ.ɡar.tn̩/</span>
+      </div>
+      <div class="word-meaning">a school for young children — literally, a garden where children grow</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kinder (children) + Garten (garden)</span>
+        <span class="bridge-note">— Friedrich Fröbel, 1840 — revolutionary pedagogical innovation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">kindergarten</span>
+        <span class="bridge-note">— English borrowed the word directly; no native equivalent existed</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">幼儿园</span>
+        <span class="bridge-note">— yòu'éryuán — "young child" + "garden": a direct calque of Kindergarten</span>
+      </div>
+      <div class="story">
+        Kindergarten is one of the most successful German exports of the 19th century—not through conquest or commerce, but through pedagogy. Friedrich Fröbel's idea that children should be "cultivated" like plants in a garden, rather than disciplined like soldiers, transformed education worldwide. The concept was so powerful that languages worldwide simply translated it verbatim: Spanish jardín de infantes, French jardin d'enfants, Chinese 幼儿园 (yòu'éryuán), Japanese 幼稚園 (yōchien)—all are direct translations of the German compound. The German language had named something so true and so necessary that the whole world adopted it. Kindergarten became proof that German pedagogy, like German science, was leading humanity into the future. Every child in a kindergarten was, in a sense, learning German philosophy.
+      </div>
+    </div>
+
+    <p class="narrative">
+      German innovation had reached into the foundation of society itself — into how humanity raised its children. The language that had named the laws of quantum mechanics now named the spaces where the youngest human beings learned to think.
+    </p>
+
+    <p class="narrative">
+      This was the high point. This was before the fall.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: THE LINGUISTIC CASUALTIES OF WAR ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      August 1914. Within four weeks of the declaration of war, German culture faced an enemy it had never encountered: its own popularity. The world loved German science, German philosophy, German pedagogy. But now the world was at war with Germany.
+    </p>
+
+    <p class="narrative">
+      In London, German street names were changed overnight. <em>Bismarck Road</em> became <em>Cleve Road</em>. <em>German Hospital</em> became the <em>King George Hospital</em>. In America, Hamburg-American Line became the Oceanic Steamship Company. It was not enough to defeat Germany militarily. The language itself had to be erased from the public sphere.
+    </p>
+
+    <p class="narrative">
+      The <em>German shepherd</em> dog — a breed that had been carefully developed in Germany, celebrated worldwide — was suddenly rebaptized: the <em>Alsatian.</em>
+    </p>
+
+    <p class="narrative">
+      German restaurants closed. German books were burned. German music was banned from concert halls. German street signs disappeared. In some American towns, speaking German in public became a dangerous act.
+    </p>
+
+    <p class="narrative">
+      The language that had been the lingua franca of science became the language of the enemy. Within a generation, German reading was no longer required in universities. Young scientists no longer needed to learn the language to understand the latest discoveries. English — the language of the victorious British Empire and its American ally — began to replace German as the language of science.
+    </p>
+
+    <!-- ANGST card (revisited, deepened) -->
+    <div class="ety-card" id="card-angst">
+      <div class="word-header">
+        <span class="word-main">Angst</span>
+        <span class="word-pron">/ɑŋst/</span>
+      </div>
+      <div class="word-meaning">anxiety, existential dread — the free-floating fear that colonizes consciousness</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">from Old High German "angust" (narrowness, confinement)</span>
+        <span class="bridge-note">— shared with English "anguish" but deeper and more psychological</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">anxiety, dread</span>
+        <span class="bridge-note">— English borrowed "angst" directly for the psychological concept</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">焦虑</span>
+        <span class="bridge-note">— jiāolǜ — "fire-scorch" + "troubled": to be scorched with worry</span>
+      </div>
+      <div class="story">
+        After World War I, as European culture spiraled into trauma and Expressionism took hold, Angst became the defining psychological term of the modern age. Søren Kierkegaard (Danish, but writing in German intellectual tradition) had already named it as the central human condition: not fear of something specific, but the existential dread of existence itself. Sigmund Freud, writing in German, built his entire psychology on Angst. By the 1920s, Angst had entered world languages—English speakers simply borrowed the word, just as they later would borrow Angst from Existentialism. For Germans, Angst took on added meaning after 1918: the collapse of the empire, the loss of linguistic and cultural dominance, the humiliation of Versailles. A nation that had believed in its scientific and cultural destiny suddenly faced Angst on a civilizational scale.
+      </div>
+    </div>
+
+    <p class="narrative">
+      By 1920, something that had seemed impossible in 1914 had happened: German, the language of global intellectual authority, had become toxic. A German accent in London, New York, or Paris was no longer the mark of a scholar. It was the mark of the enemy.
+    </p>
+
+    <p class="narrative">
+      The golden age had ended. Not in victory, but in expulsion.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 9: KRANKHEIT & UNTERGANG ==================== -->
+  <div class="scene" id="scene9">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In 1918, as the empire collapsed, Germans used two words to describe what was happening. Both had ancient roots, but now they were being applied to the body politic itself.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="krankheit">Krankheit.</span> Illness. Disease. The state of being not-well. From <em>krank</em> (sick) + <em>-heit</em> (state of being).
+    </p>
+
+    <p class="narrative">
+      The empire had been sick. But now, a more final word loomed:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="untergang">Untergang.</span> Downfall. Sinking. The end.
+    </p>
+
+    <!-- KRANKHEIT card -->
+    <div class="ety-card" id="card-krankheit">
+      <div class="word-header">
+        <span class="word-main">Krankheit</span>
+        <span class="word-pron">/ˈkʁaŋk.haɪ̯t/</span>
+      </div>
+      <div class="word-meaning">sickness, disease — the state of the body or spirit when not well</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">krank (sick) + -heit (state/condition)</span>
+        <span class="bridge-note">— from Proto-Germanic *krank-a- (to bend, to be crooked)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">sickness, illness</span>
+        <span class="bridge-note">— different root family, less connected to physical distortion</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">疾病</span>
+        <span class="bridge-note">— jíbìng — "rapid/sudden disease" + "sickness": the acute condition</span>
+      </div>
+      <div class="story">
+        After 1918, German intellectuals spoke of "Krankheit der Gesellschaft" (sickness of society), "Krankheit des Geistes" (sickness of the spirit). In 1923, Oswald Spengler published his massive work "Der Untergang des Abendlandes" (The Decline of the West), which argued that Western civilization itself was terminally ill. The medical metaphor captured something essential: this wasn't mere political defeat, but a pathological condition. A corruption of the body politic. By the 1930s, the language of health and sickness would take on horrifying new meaning in German racial pseudoscience, but in the 1920s, it was still a language of genuine philosophical despair.
+      </div>
+    </div>
+
+    <!-- UNTERGANG card -->
+    <div class="ety-card" id="card-untergang">
+      <div class="word-header">
+        <span class="word-main">Untergang</span>
+        <span class="word-pron">/ˈʊn.tɐ.ɡaŋ/</span>
+      </div>
+      <div class="word-meaning">downfall, going-under — the sinking of something that once stood</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">unter (under, down) + Gang (going, motion)</span>
+        <span class="bridge-note">— literally: the action of going under</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">downfall, decline</span>
+        <span class="bridge-note">— English must use multiple words for what German expresses in one</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">衰落</span>
+        <span class="bridge-note">— shuāiluò — "decline" + "fall": the sense of descent is universal</span>
+      </div>
+      <div class="story">
+        Oswald Spengler's 1918 book was titled "Der Untergang des Abendlandes"—The Decline of the West. The word Untergang would haunt the 20th century. It was not just defeat, but going-under, as if civilization itself were a ship sinking into dark water. After World War II, Germans would use it again, speaking of the Untergang of 1945. The word carries a totality, a completeness of ruin, that mere "decline" or "fall" cannot convey. It is what happens when something that was founded deep crashes all the way down.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Oswald Spengler's great work, published in 1918, captured this apocalyptic mood. The title said it all: <em>Der Untergang des Abendlandes.</em> The Going-Under of the West. The very language that had named progress was now naming collapse.
+    </p>
+
+    <p class="narrative emphasis">
+      The empire had built a tower of words and reason that reached toward the stars. And now that tower was falling.
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ GATE (80% required) ==================== -->
+  <div class="scene" id="quiz-gate">
+    <div class="divider">· · ·</div>
+
+    <p class="narrative emphasis" style="text-align: center; margin: 40px 0;">
+      Before you continue to see the final words of this chapter,<br>
+      let's test what you've gathered.
+    </p>
+
+    <p class="unlock-message">
+      You need to score 80% (at least 10 correct out of 12) to proceed. You have 2 chances on each question. Remember: some questions test new words from this chapter, others test patterns from chapters past.
+    </p>
+
+    <div id="quizContainer"></div>
+
+    <div id="quizResult" style="display: none; margin: 40px 0; text-align: center;">
+      <div id="resultText" style="font-size: 1.2rem; font-style: italic; margin-bottom: 20px;"></div>
+      <div id="postQuizContent" style="display: none;">
+        <!-- Content unlocked after passing quiz -->
+      </div>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection" style="display: none;">
+    <div class="word-collection">
+      <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 0; margin-bottom: 32px;">
+        <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+        <strong style="color: var(--text-bright);">-schaft suffix creates abstract nouns</strong> — Wissenschaft (knowledge+state = science), Gesellschaft (companion+state = society). This productive suffix turns concrete ideas into abstract domains.<br><br>
+        <strong style="color: var(--text-bright);">Un- prefix for negation and dread</strong> — Unheimlich (un+homely = uncanny). Freud built an entire theory on this word: the familiar made strange, the homely turned horrifying.<br><br>
+        <strong style="color: var(--text-bright);">Untranslatable compound concepts</strong> — Weltanschauung, Zeitgeist, Angst, Kindergarten entered English because no English word could capture the same meaning. German's compounding power creates irreplaceable concepts.<br><br>
+        <strong style="color: var(--text-bright);">Unter- prefix for descent</strong> — Untergang (under+going = downfall, decline). Spengler's "Der Untergang des Abendlandes" gave the world a word for civilisational decline.
+      </div>
+
+      <h3>Words Gathered in Chapter Twenty-Two</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Wissenschaft</span><span class="cw-english">science</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Forschung</span><span class="cw-english">research</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Entdeckung</span><span class="cw-english">discovery</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Weltanschauung</span><span class="cw-english">worldview</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Zeitgeist</span><span class="cw-english">spirit of age</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Kindergarten</span><span class="cw-english">children's garden</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Angst</span><span class="cw-english">existential dread</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Unheimlich</span><span class="cw-english">uncanny</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Krankheit</span><span class="cw-english">sickness</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Untergang</span><span class="cw-english">downfall</span></div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px;">Concepts Learned in Chapter Twenty-Two</h3>
+    <div class="collected-words">
+      <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Untranslatable Words</span><span class="cw-english">Weltanschauung, Zeitgeist, Angst — concepts English had to borrow whole</span></div>
+      <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">-schaft Suffix</span><span class="cw-english">turns concrete into abstract: Wissenschaft, Gesellschaft</span></div>
+      <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Un- Prefix Dread</span><span class="cw-english">Unheimlich — Freud's uncanny, the familiar made strange</span></div>
+      <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">German Exports to English</span><span class="cw-english">Kindergarten, Angst, Zeitgeist — words that couldn't be translated</span></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">220 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(25%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:25%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wissenschaft</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">science, knowledge-creation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Forschung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">research, seeking forward</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Entdeckung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">discovery, un-covering</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Weltanschauung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">worldview</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zeitgeist</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">spirit of the age</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Kindergarten</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">children's garden</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Angst</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">existential dread</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Unheimlich</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">uncanny, unhomely</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Krankheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sickness, illness</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Untergang</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">downfall, decline</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td colspan="3" style="padding:8px 10px;text-align:center;color:rgba(212,202,187,0.4);font-size:0.8rem;border-top:1px solid rgba(232,164,74,0.08);">Chapters 1–21: ~210 more words</td></tr>
+</table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">47 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(32%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:32%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">-schaft suffix</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Wissenschaft=knowledge+state, Gesellschaft=companion+state</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Un- prefix dread</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Unheimlich=un+homely=uncanny</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Untranslatable compounds</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Weltanschauung, Zeitgeist entered English</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Unter- prefix descent</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Untergang=under+going=downfall</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">22</td></tr>
+<tr><td colspan="3" style="padding:8px 10px;text-align:center;color:rgba(212,202,187,0.4);font-size:0.8rem;border-top:1px solid rgba(155,142,196,0.08);">Chapters 1–21: ~67 more patterns</td></tr>
+</table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end" style="display: none;">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Twenty-Two
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. One golden age. One catastrophic fall.<br>
+        The empire that built the future in German language<br>
+        watched that language become toxic overnight.<br>
+        The next chapter: recovery, reinvention, and what comes after.
+      </p>
+      <div class="next-chapter">
+        Chapter Twenty-Three: Wiedergeburt (Rebirth) — coming soon
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter21.html" class="nav-btn">← Chapter 21</a>
+    <a href="chapter23.html" class="nav-btn next">Chapter 23 →</a>
+  </div>
+
+</div>
+
+<script>
+// ==================== KAISER CANVAS: IMPERIAL EAGLE TO CRUMBLING EMPIRE ====================
+const canvas = document.getElementById('kaiserCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let eagleFragments = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createEagle() {
+  // Draw ornate imperial eagle silhouette in upper third
+  const centerX = canvas.width / 2;
+  const topY = canvas.height * 0.25;
+
+  ctx.fillStyle = 'rgba(212, 175, 55, 0.3)';
+
+  // Eagle body (simplified)
+  ctx.beginPath();
+  ctx.ellipse(centerX, topY, 80, 60, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Head
+  ctx.beginPath();
+  ctx.arc(centerX, topY - 50, 25, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Left wing
+  ctx.beginPath();
+  ctx.ellipse(centerX - 60, topY, 50, 80, -0.3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Right wing
+  ctx.beginPath();
+  ctx.ellipse(centerX + 60, topY, 50, 80, 0.3, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function createScrollParticles() {
+  particles = [];
+  const scroll = window.scrollY / window.innerHeight;
+
+  // Create particles that transition from gold to red to grey
+  const count = 80;
+  for (let i = 0; i < count; i++) {
+    const phase = (i / count + scroll) % 1;
+    let color;
+    if (phase < 0.33) {
+      color = `rgba(212, 175, 55, ${0.2 - phase * 0.6})`; // Gold fading
+    } else if (phase < 0.67) {
+      color = `rgba(139, 47, 47, ${0.2 + (phase - 0.33) * 0.4})`; // Blood red emerging
+    } else {
+      color = `rgba(61, 52, 48, ${0.6})`; // Mud grey
+    }
+
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: (phase * canvas.height * 2) % canvas.height,
+      r: Math.random() * 2 + 0.5,
+      vx: (Math.random() - 0.5) * 0.2,
+      color: color,
+      phase: phase
+    });
+  }
+}
+
+function drawFrame(time) {
+  const scroll = window.scrollY / window.innerHeight;
+  const scroll01 = Math.min(scroll, 1);
+
+  // Background gradient: gold -> red -> grey
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.2)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw gradient background
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, `rgba(212, 175, 55, ${0.2 * (1 - scroll01)})`);
+  grad.addColorStop(0.35, `rgba(139, 47, 47, ${0.15 * scroll01})`);
+  grad.addColorStop(0.7, `rgba(61, 52, 48, ${0.3 * scroll01})`);
+  grad.addColorStop(1, `rgba(61, 52, 48, 0.4)`);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw particles
+  particles.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Draw cracking eagle (if scrolled enough)
+  if (scroll01 > 0.2) {
+    const crackedAlpha = Math.min((scroll01 - 0.2) / 0.5, 1);
+    ctx.strokeStyle = `rgba(139, 47, 47, ${crackedAlpha * 0.6})`;
+    ctx.lineWidth = 2 + crackedAlpha * 2;
+
+    const centerX = canvas.width / 2;
+    const topY = canvas.height * 0.25;
+
+    // Draw cracks
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.moveTo(centerX + (Math.random() - 0.5) * 100, topY + (Math.random() - 0.5) * 80);
+      for (let j = 0; j < 3; j++) {
+        const x = centerX + (Math.random() - 0.5) * 200;
+        const y = topY + (Math.random() - 0.5) * 200 + j * 40;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+  }
+
+  // Draw barbed wire at bottom (if scrolled far enough)
+  if (scroll01 > 0.7) {
+    const wireAlpha = Math.min((scroll01 - 0.7) / 0.3, 1);
+    ctx.strokeStyle = `rgba(100, 80, 50, ${wireAlpha * 0.6})`;
+    ctx.lineWidth = 1.5;
+
+    const wireY = canvas.height * 0.85;
+    ctx.beginPath();
+    ctx.moveTo(0, wireY);
+    for (let i = 0; i < canvas.width; i += 30) {
+      ctx.lineTo(i, wireY);
+      ctx.lineTo(i + 5, wireY - 8);
+      ctx.lineTo(i + 10, wireY);
+    }
+    ctx.stroke();
+
+    // Barbs
+    for (let i = 0; i < canvas.width; i += 30) {
+      ctx.fillStyle = `rgba(100, 80, 50, ${wireAlpha * 0.4})`;
+      ctx.fillRect(i + 5, wireY - 10, 2, 4);
+    }
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createScrollParticles();
+requestAnimationFrame(drawFrame);
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  createScrollParticles();
+});
+
+window.addEventListener('scroll', () => {
+  createScrollParticles();
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card && !document.querySelector('.guess-section.locked')) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  { q: "What does Wissenschaft mean?", opts: ["Science", "History", "Language", "Philosophy"], ans: 0, type: "new", hint: "Wissen (knowledge) + -schaft (collective)" },
+  { q: "What does Forschung mean?", opts: ["Research", "Teaching", "Writing", "Discovery"], ans: 0, type: "new", hint: "forschen (to search/investigate)" },
+  { q: "What does Entdeckung mean?", opts: ["Creation", "Discovery", "Invention", "Theory"], ans: 1, type: "new", hint: "ent- (un-) + Decke (cover) — uncovering" },
+  { q: "Weltanschauung literally means what?", opts: ["Life philosophy", "Historical view", "Looking at the world", "Cultural identity"], ans: 2, type: "new", hint: "Welt (world) + Anschauung (looking-at)" },
+  { q: "What does Zeitgeist capture?", opts: ["Political movement", "Spirit of the time", "Artistic trend", "Scientific theory"], ans: 1, type: "new", hint: "Zeit (time) + Geist (spirit)" },
+  { q: "Kindergarten was invented to teach what?", opts: ["Adults", "Infants", "Young children", "Teenagers"], ans: 2, type: "new", hint: "Kinder (children) + Garten (garden)" },
+  { q: "What does Unheimlich mean?", opts: ["Unsafe", "The uncanny", "Foreign", "Hostile"], ans: 1, type: "new", hint: "un- (not) + heimlich (homely) — familiar made strange" },
+  { q: "Krankheit refers to what?", opts: ["Weakness", "Sickness", "Suffering", "Fatigue"], ans: 1, type: "new", hint: "krank (sick) + -heit (state)" },
+  { q: "What does Untergang mean?", opts: ["Downfall", "Underground", "Deepening", "Descent"], ans: 0, type: "new", hint: "unter (under) + Gang (going)" },
+  { q: "From Chapter 1: Schwester is which English word?", opts: ["Father", "Sister", "Mother", "Brother"], ans: 1, type: "review" },
+  { q: "From Chapter 1: What does Nacht mean?", opts: ["Day", "Evening", "Night", "Darkness"], ans: 2, type: "review" },
+  { q: "From Chapter 1: Which German/English pair are closest?", opts: ["Feuer/Fire", "Stern/Star", "Wasser/Water", "Name/Name"], ans: 3, type: "review" }
+];
+
+let quizAnswers = [];
+let quizAttempts = {};
+
+function initQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  quizAnswers = new Array(quizData.length).fill(null);
+  quizAttempts = {};
+
+  quizData.forEach((q, idx) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'guess-section';
+    qDiv.id = `q${idx}`;
+    qDiv.innerHTML = `
+      <div class="prompt" style="font-size: 1.1rem; margin-bottom: 20px;">
+        <span style="display: inline-block; background: rgba(232, 164, 74, 0.15); padding: 4px 12px; border-radius: 6px; margin-right: 10px; font-weight: 600;">Q${idx + 1}/12</span>
+        ${q.q}
+      </div>
+      <div class="guess-options">
+        ${q.opts.map((opt, oi) => `<button class="guess-btn" onclick="answerQuestion(${idx}, ${oi})">${opt}</button>`).join('')}
+      </div>
+      <div class="guess-feedback" id="feedback${idx}"></div>
+    `;
+    container.appendChild(qDiv);
+    quizAttempts[idx] = 0;
+  });
+}
+
+function answerQuestion(qIdx, optIdx) {
+  if (quizAnswers[qIdx] !== null) return;
+
+  const q = quizData[qIdx];
+  const correct = optIdx === q.ans;
+  const btn = event.target;
+  const section = btn.closest('.guess-section');
+  const allBtns = section.querySelectorAll('.guess-btn');
+  const feedback = section.querySelector('.guess-feedback');
+
+  quizAttempts[qIdx]++;
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    quizAnswers[qIdx] = true;
+    feedback.textContent = 'Correct!';
+    feedback.classList.add('show');
+
+    // Check if quiz is complete
+    setTimeout(() => checkQuizCompletion(), 500);
+  } else {
+    btn.classList.add('incorrect');
+    if (quizAttempts[qIdx] < 2) {
+      feedback.textContent = 'Incorrect. Try again. You have one more chance.';
+      feedback.classList.add('show');
+      btn.style.pointerEvents = 'none';
+    } else {
+      allBtns.forEach(b => b.style.pointerEvents = 'none');
+      const correctBtn = Array.from(allBtns)[q.ans];
+      correctBtn.classList.add('correct');
+      feedback.textContent = `Incorrect. The answer is: ${q.opts[q.ans]}`;
+      feedback.classList.add('show');
+      quizAnswers[qIdx] = false;
+      setTimeout(() => checkQuizCompletion(), 500);
+    }
+  }
+}
+
+function checkQuizCompletion() {
+  if (quizAnswers.every(a => a !== null)) {
+    const score = quizAnswers.filter(a => a === true).length;
+    const passed = score >= 10;
+
+    const resultDiv = document.getElementById('quizResult');
+    const resultText = document.getElementById('resultText');
+    const postContent = document.getElementById('postQuizContent');
+
+    if (passed) {
+      resultText.innerHTML = `
+        <span style="color: #8ed69e;">You scored ${score}/12 — 80% or higher!</span><br>
+        <span style="font-size: 0.9rem; color: rgba(212, 202, 187, 0.7); margin-top: 10px;">The post-quiz content is now unlocked.</span>
+      `;
+
+      // Unlock scenes and remove lock from cards
+      document.querySelectorAll('.guess-section').forEach(s => s.classList.remove('locked'));
+      document.querySelectorAll('.ety-card').forEach(c => c.classList.remove('locked'));
+
+      // Show collection and end scenes
+      document.getElementById('scene-collection').style.display = 'block';
+      document.getElementById('scene-end').style.display = 'block';
+
+      // Animate reveal
+      setTimeout(() => {
+        document.getElementById('scene-collection').classList.add('visible');
+        document.getElementById('scene-end').classList.add('visible');
+        postContent.style.display = 'block';
+      }, 300);
+    } else {
+      resultText.innerHTML = `
+        <span style="color: rgba(180, 74, 74, 0.9);">You scored ${score}/12 — try again to unlock the ending.</span><br>
+        <span style="font-size: 0.9rem; color: rgba(212, 202, 187, 0.7); margin-top: 10px;">Review the etymology cards and try once more.</span>
+      `;
+    }
+
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// Initialize quiz on load
+window.addEventListener('load', () => {
+  initQuiz();
+  // Lock all etymology cards initially
+  document.querySelectorAll('.ety-card').forEach(c => c.classList.add('locked'));
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.ety-card').forEach(card => {
+    const wordEl = card.querySelector('.word-main');
+    if (wordEl && !card.querySelector('.speak-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.setAttribute('aria-label', 'Hear pronunciation');
+      btn.innerHTML = '🔊';
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        speakGerman(wordEl.textContent.trim(), btn);
+      });
+      btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        speakGerman(wordEl.textContent.trim(), btn);
+      });
+      const header = card.querySelector('.word-header');
+      if (header) header.appendChild(btn);
+    }
+  });
+});
+
+// --- MOBILE OPTIMIZATION ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+if (window.innerWidth < 600) {
+  // Reduce animations on mobile
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

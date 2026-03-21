@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 79: Die starken Verben I (Strong Verbs I)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --river: #4a9fd8;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a2a3e 0%, #0a0e1a 40%, #1a3a4a 70%, #0f2535 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #river-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--river);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--river), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(74, 159, 216, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(74, 159, 216, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(74, 159, 216, 0.1);
+  }
+
+  .ety-card .verb-forms {
+    font-size: 1.05rem;
+    color: var(--text-bright);
+    margin: 12px 0;
+    font-family: monospace;
+  }
+
+  .verb-form {
+    display: flex;
+    gap: 24px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+  }
+
+  .verb-form label {
+    font-size: 0.85rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-weight: normal;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(74, 159, 216, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(74, 159, 216, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(74, 159, 216, 0.08);
+    border: 1px solid rgba(74, 159, 216, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(74, 159, 216, 0.15);
+    border-color: var(--river);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--river);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(74, 159, 216, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(74, 159, 216, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(74, 159, 216, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(74, 159, 216, 0.08);
+    border: 1px solid rgba(74, 159, 216, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(74, 159, 216, 0.15);
+    border-color: var(--river);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(74, 159, 216, 0.08);
+    border: 1px solid rgba(74, 159, 216, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(74, 159, 216, 0.15);
+    border-color: var(--river);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--river);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(74, 159, 216, 0.08);
+    border: 1px solid rgba(74, 159, 216, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(74, 159, 216, 0.15);
+    border-color: var(--river);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(74, 159, 216, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(74, 159, 216, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(74, 159, 216, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(74, 159, 216, 0.06);
+    border: 1px solid rgba(74, 159, 216, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--river);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--river), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .verb-form { gap: 12px; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn { padding: 12px 20px; font-size: 1.1rem; min-height: 44px; -webkit-tap-highlight-color: transparent; }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="river-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Seventy-Nine</div>
+    <h1>Die starken Verben I</h1>
+    <div class="subtitle">Strong Verbs: The ei→ie→ie Family</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE FLOWING RIVER ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a river. Watch it flow. When you watch water long enough, you see that it does not flow in a straight line. It bends. It curves. It changes direction. The water you see at the surface is not the water you see three feet downstream. And yet it is the same river.
+    </p>
+
+    <p class="narrative">
+      This is what happens with strong verbs in German. The root of the word shifts, but the verb remains recognizably itself. You are watching transformation happen in real time. The infinitive gives you the starting point. The past tense shows you the midpoint of the river's journey. The past participle shows you where it has arrived.
+    </p>
+
+    <p class="narrative">
+      This is the first family of strong verbs, the <em>ei→ie→ie</em> family. The vowel of the root changes from <em>ei</em> to <em>ie</em> in the past tense, and it stays as <em>ie</em> in the past participle. The river has changed its course, but you can still trace the water back to its source.
+    </p>
+
+    <p class="narrative emphasis">
+      These are not irregular verbs that break the rules. These are verbs that follow an ancient pattern, older than German itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: BLEIBEN ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let us begin with <span class="german-word" data-card="bleiben">bleiben</span>, which means "to remain," "to stay." Watch how the vowel flows:
+    </p>
+
+    <!-- BLEIBEN card -->
+    <div class="ety-card" id="card-bleiben">
+      <div class="word-header">
+        <span class="word-main">bleiben</span>
+        <span class="word-pron">/ˈblaɪbən/</span>
+      </div>
+      <div class="word-meaning">to remain, to stay, to last</div>
+      <div class="verb-forms">
+        <div class="verb-form"><label>Infinitive:</label> <strong>bleiben</strong></div>
+        <div class="verb-form"><label>Past:</label> <strong>blieb</strong></div>
+        <div class="verb-form"><label>Past Participle:</label> <strong>geblieben</strong></div>
+      </div>
+      <div class="story">
+        <em>Bleiben</em> has been in German since its earliest days. It appears in Old High German texts from the 8th century as "blīban." The vowel shift from <em>ei</em> to <em>ie</em> is characteristic of the strong verb family it belongs to. The past tense <em>blieb</em> shows the transformation — it is no longer <em>bleiben</em>, but it is unmistakably related. When you form the past participle, you add the prefix <em>ge-</em> to show that the action is complete: <em>geblieben</em>. "Das Problem ist geblieben" — the problem has remained. The water in the river continues to flow, but we can mark the point where it turned.
+      </div>
+    </div>
+
+    <p class="narrative">
+      When you are learning German, you must learn three forms for each strong verb: the infinitive, the past tense, and the past participle. This is not busywork. This is precision. Each form tells you something different about the verb's journey through time.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: SCHREIBEN ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="schreiben">Schreiben</span> — to write. One of the most essential verbs in any language. To write is to make language permanent. It is to transform the spoken word into something that can travel across time and space. And in German, this essential verb belongs to the <em>ei→ie→ie</em> family.
+    </p>
+
+    <!-- SCHREIBEN card -->
+    <div class="ety-card" id="card-schreiben">
+      <div class="word-header">
+        <span class="word-main">schreiben</span>
+        <span class="word-pron">/ˈʃʁaɪbən/</span>
+      </div>
+      <div class="word-meaning">to write, to compose, to record</div>
+      <div class="verb-forms">
+        <div class="verb-form"><label>Infinitive:</label> <strong>schreiben</strong></div>
+        <div class="verb-form"><label>Past:</label> <strong>schrieb</strong></div>
+        <div class="verb-form"><label>Past Participle:</label> <strong>geschrieben</strong></div>
+      </div>
+      <div class="story">
+        <em>Schreiben</em> comes from an old Germanic root meaning "to cut" or "to scratch" — the original act of writing was literally scratching marks on a surface. Look at the family: <em>schreiben → schrieb → geschrieben</em>. The shift from <em>ei</em> to <em>ie</em> in the past tense shows you how old this verb pattern is. It is not unique to <em>schreiben</em> — it is a pattern shared by a whole family of verbs whose ancestors spoke the same way thousands of years ago. The past participle <em>geschrieben</em> is what you use to say "I have written" or "I had written" — <em>Ich habe einen Brief geschrieben</em> — I have written a letter.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The verb "to write" is central to human culture. It is the bridge between the ephemeral world of speech and the permanent world of record. When Wulfila wrote his Gothic Bible in the 4th century, he used verbs like <em>schreiben</em> — or their Gothic equivalents — to describe the act of translation. He was not just writing words; he was performing an act of preservation.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: OTHER VERBS IN THE FAMILY ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The <em>ei→ie→ie</em> family is not large, but it contains several important verbs. Let us meet them:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="treiben">Treiben</span> — to drive, to propel, to carry along. <em>Treiben → trieb → getrieben</em>. The engine of movement.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="leihen">Leihen</span> — to lend, to loan. <em>Leihen → lieh → geliehen</em>. The act of giving something temporarily, trusting that it will return.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="steigen">Steigen</span> — to climb, to rise, to ascend. <em>Steigen → stieg → gestiegen</em>. The movement upward.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="schweigen">Schweigen</span> — to be silent, to say nothing. <em>Schweigen → schwieg → geschwiegen</em>. Perhaps the most profound of verbs — what is not said is sometimes more important than what is.
+    </p>
+
+    <!-- TREIBEN card -->
+    <div class="ety-card" id="card-treiben">
+      <div class="word-header">
+        <span class="word-main">treiben</span>
+        <span class="word-pron">/ˈtʁaɪbən/</span>
+      </div>
+      <div class="word-meaning">to drive, to propel, to push</div>
+      <div class="verb-forms">
+        <div class="verb-form"><label>Infinitive:</label> <strong>treiben</strong></div>
+        <div class="verb-form"><label>Past:</label> <strong>trieb</strong></div>
+        <div class="verb-form"><label>Past Participle:</label> <strong>getrieben</strong></div>
+      </div>
+      <div class="story">
+        <em>Treiben</em> comes from the same root as <em>triben</em>, an old Germanic word meaning "to push" or "to thrust." The river is driven by gravity. The wind drives the leaves across the ground. A person can be driven by passion or necessity. The verb captures the sense of a force acting on something — the river changing its course, not by its own choice, but because of the terrain, the gravity, the weight of all that water behind it.
+      </div>
+    </div>
+
+    <!-- LEIHEN card -->
+    <div class="ety-card" id="card-leihen">
+      <div class="word-header">
+        <span class="word-main">leihen</span>
+        <span class="word-pron">/ˈlaɪ̯ən/</span>
+      </div>
+      <div class="word-meaning">to lend, to give temporarily</div>
+      <div class="verb-forms">
+        <div class="verb-form"><label>Infinitive:</label> <strong>leihen</strong></div>
+        <div class="verb-form"><label>Past:</label> <strong>lieh</strong></div>
+        <div class="verb-form"><label>Past Participle:</label> <strong>geliehen</strong></div>
+      </div>
+      <div class="story">
+        <em>Leihen</em> reveals something important about Germanic culture: the concept of lending, of temporary exchange. Related to this is <em>Leihe</em>, which can mean "rent" or "loan." You lend something with the understanding that it will come back. This is distinct from <em>geben</em> (to give), which implies permanent transfer. Languages reveal what a culture values — and Germanic cultures, from their earliest days, have valued the concept of temporary possession, of borrowing and returning.
+      </div>
+    </div>
+
+    <!-- STEIGEN card -->
+    <div class="ety-card" id="card-steigen">
+      <div class="word-header">
+        <span class="word-main">steigen</span>
+        <span class="word-pron">/ˈʃtaɪ̯gən/</span>
+      </div>
+      <div class="word-meaning">to climb, to ascend, to rise</div>
+      <div class="verb-forms">
+        <div class="verb-form"><label>Infinitive:</label> <strong>steigen</strong></div>
+        <div class="verb-form"><label>Past:</label> <strong>stieg</strong></div>
+        <div class="verb-form"><label>Past Participle:</label> <strong>gestiegen</strong></div>
+      </div>
+      <div class="story">
+        <em>Steigen</em> is the motion of going up — climbing a mountain, ascending a staircase, rising into the air. The word carries the sense of effort. You must push yourself upward against gravity. When something "steigt" (rises), it is fighting against the natural pull of the earth. Price steigt — prices rise. Wasser steigt — water level rises. The metaphorical meaning follows the physical: to rise in status, to ascend in society, to climb toward a goal.
+      </div>
+    </div>
+
+    <!-- SCHWEIGEN card -->
+    <div class="ety-card" id="card-schweigen">
+      <div class="word-header">
+        <span class="word-main">schweigen</span>
+        <span class="word-pron">/ˈʃvaɪ̯gən/</span>
+      </div>
+      <div class="word-meaning">to be silent, to say nothing, to hold one's tongue</div>
+      <div class="verb-forms">
+        <div class="verb-form"><label>Infinitive:</label> <strong>schweigen</strong></div>
+        <div class="verb-form"><label>Past:</label> <strong>schwieg</strong></div>
+        <div class="verb-form"><label>Past Participle:</label> <strong>geschwiegen</strong></div>
+      </div>
+      <div class="story">
+        <em>Schweigen</em> is perhaps the most philosophical verb in this family. To be silent is to speak through non-speech. In German literature and philosophy, silence has profound meaning. "Wer schweigt, stimmt zu" — who is silent, agrees. In the face of injustice, silence can be complicity. But silence can also be wisdom, restraint, the choice not to wound with words. The verb form changes over time — <em>schwiegen</em> in the past, showing you that the silence happened, the moment of not-speaking has passed, but its effects linger.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== ASIDE BOX ==================== -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">Why Strong Verbs Matter</div>
+      <p>
+        Strong verbs are not an exception in German — they are a window into the past. The vowel changes in strong verbs are called "ablaut" or "apophony," and they date back to Proto-Indo-European times. The <em>ei→ie→ie</em> pattern appears in verbs like <em>bleiben, schreiben, steigen</em>, and it reflects linguistic changes that occurred thousands of years ago in the languages of the steppe. When you learn a strong verb, you are learning a time capsule. You are speaking the way your ancestors spoke — not exactly, but recognizably so.
+      </p>
+      <p style="margin-top: 12px;">
+        In German, there are approximately 185 strong verbs still in common use. In English, there are perhaps 60-80, depending on how you count them. English has been "regularizing" its strong verbs for centuries, converting them to weak verbs (those that form the past tense by adding -ed or -t). But German has held onto more of its strong verbs. In the German language, you can see history preserved in verb conjugation.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        If <strong style="color: var(--german);">schreiben</strong> means "to write," and it follows the pattern schreiben → schrieb → geschrieben,<br><br>
+        what would <strong style="color: var(--german);">schrieb</strong> be?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: think about time.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">will write</button>
+        <button class="guess-btn" onclick="guess(this, true)">wrote (past tense)</button>
+        <button class="guess-btn" onclick="guess(this, false)">is writing</button>
+        <button class="guess-btn" onclick="guess(this, false)">writing process</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        The verb <strong style="color: var(--german);">steigen</strong> means "to climb" or "to rise."<br><br>
+        What does the past participle <strong style="color: var(--german);">gestiegen</strong> tell you?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: think about a journey that has been completed.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">we are climbing now</button>
+        <button class="guess-btn" onclick="guess(this, true)">has climbed / had climbed</button>
+        <button class="guess-btn" onclick="guess(this, false)">climb tomorrow</button>
+        <button class="guess-btn" onclick="guess(this, false)">climbing is easy</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">684 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(80%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:80%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 684 words across 79 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">128 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(88%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:88%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 128 patterns and grammar rules across 79 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter 79</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">bleiben</span><span class="cw-english">to remain</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">schreiben</span><span class="cw-english">to write</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">treiben</span><span class="cw-english">to drive</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">leihen</span><span class="cw-english">to lend</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">steigen</span><span class="cw-english">to climb</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">schweigen</span><span class="cw-english">to be silent</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Ablaut in Action</strong> — Strong verbs use vowel changes (ablaut) to show tense. The ei→ie→ie pattern is ancient, tracing back to Proto-Indo-European.<br><br>
+      <strong style="color: var(--text-bright);">Three Forms to Learn</strong> — For each strong verb, memorize: infinitive, past tense, past participle. This precision reveals how the verb functions across time.<br><br>
+      <strong style="color: var(--text-bright);">The River Metaphor</strong> — Like a river changing course, strong verbs change their vowels but remain recognizably themselves. The root is visible in each form.<br><br>
+      <strong style="color: var(--text-bright);">Core Verbs</strong> — The ei→ie→ie family contains some of the most essential verbs in German: to write, to stay, to climb, to be silent.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Seventy-Nine
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Six verbs, six stories of transformation. The ei→ie→ie family shows us how German preserves ancient patterns in its very grammar.<br>
+        The river flows, changes course, but the water remembers where it came from.<br>
+        Bleiben, schreiben, treiben, leihen, steigen, schweigen — these verbs are the waterways of German language.<br>
+        Learn them, and you learn to navigate the currents of time.
+      </p>
+      <div class="next-chapter">
+        Chapter Eighty: Die starken Verben II — the i→a→u family
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter78.html" class="nav-btn">← Chapter 78</a>
+    <a href="chapter80.html" class="nav-btn next">Chapter 80 →</a>
+  </div>
+
+</div>
+
+<script>
+
+const canvas = document.getElementById('river-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let riverSegments = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createRiverSegments();
+}
+
+function createRiverSegments() {
+  riverSegments = [];
+  const segmentHeight = canvas.height / 8;
+  for (let i = 0; i < 8; i++) {
+    riverSegments.push({
+      y: i * segmentHeight,
+      waveOffset: Math.random() * Math.PI * 2,
+      amplitude: 20 + Math.random() * 20,
+      frequency: 0.5 + Math.random() * 0.3
+    });
+  }
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 8000) :
+    Math.floor((canvas.width * canvas.height) / 6000);
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random() * 0.4 + 0.1,
+      speed: Math.random() * 0.15 + 0.08,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.01 + 0.003
+    });
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 20, 35, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw flowing river lines
+  riverSegments.forEach(seg => {
+    ctx.strokeStyle = `rgba(74, 159, 216, ${0.1 + scroll * 0.2})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    for (let x = 0; x < canvas.width; x += 20) {
+      const waveY = Math.sin((x * 0.01) + seg.waveOffset + time * 0.0005) * seg.amplitude;
+      const y = seg.y + waveY;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+  });
+
+  particles.forEach((p, idx) => {
+    p.x -= p.speed + scroll * 0.2;
+    p.wobble += p.wobbleSpeed;
+    p.y += Math.sin(p.wobble) * 0.3 + Math.sin(time * 0.001 + idx) * (scroll * 0.15);
+
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(100, 180, 220, ${p.alpha})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'You understand the flow of strong verbs.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about how time flows through verb forms.';
+    feedback.classList.add('show');
+  }
+}
+
+const quizData = [
+  {
+    question: "What is the past tense of 'bleiben' (to stay)?",
+    options: ["blieb", "bleibet", "bleibte", "bleibed"],
+    correct: 0,
+    explanation: "Blieb is the past tense form. The vowel shifts from ei to ie."
+  },
+  {
+    question: "Which of these is a past participle from a strong verb?",
+    options: ["schreibet", "geschrieben", "schreibend", "schreiben"],
+    correct: 1,
+    explanation: "Geschrieben is the past participle. It uses the ge- prefix and shows completed action."
+  },
+  {
+    question: "What does the verb 'schweigen' mean?",
+    options: ["to move", "to be silent", "to write", "to climb"],
+    correct: 1,
+    explanation: "Schweigen means to be silent or to say nothing."
+  },
+  {
+    question: "The ei→ie→ie pattern in strong verbs is called:",
+    options: ["Umlaut", "Ablaut", "Mutation", "Aphaeresis"],
+    correct: 1,
+    explanation: "Ablaut (or apophony) is the systematic vowel change in strong verbs."
+  },
+  {
+    question: "Which verb is NOT part of the ei→ie→ie family?",
+    options: ["steigen", "leihen", "treiben", "singen"],
+    correct: 3,
+    explanation: "Singen belongs to the i→a→u family, not ei→ie→ie."
+  },
+  {
+    question: "What is the infinitive form of 'schrieb'?",
+    options: ["schreiben", "schreiben", "schrieben", "schribung"],
+    correct: 0,
+    explanation: "Schreiben is the infinitive. Schrieb is the past tense."
+  },
+  {
+    question: "How many forms must you memorize for each strong verb?",
+    options: ["2", "3", "4", "5"],
+    correct: 1,
+    explanation: "Infinitive, past tense, and past participle — three forms for each strong verb."
+  },
+  {
+    question: "The verb 'treiben' (to drive) shows the concept of:",
+    options: ["receiving", "giving", "pushing or propelling force", "staying still"],
+    correct: 2,
+    explanation: "Treiben carries the sense of a force acting on something — driving it forward."
+  },
+  {
+    question: "What does 'Ich bin gestiegen' mean?",
+    options: ["I am climbing", "I have climbed", "I will climb", "I was climbing"],
+    correct: 1,
+    explanation: "The past participle gestiegen with 'bin' (am) forms the present perfect: I have climbed."
+  },
+  {
+    question: "Which language preserved more strong verbs over time?",
+    options: ["English", "German", "Swedish", "Dutch"],
+    correct: 1,
+    explanation: "German has kept more of its strong verbs. English has been regularizing them for centuries."
+  },
+  {
+    question: "The past tense of 'leihen' (to lend) is:",
+    options: ["leihte", "lieh", "leih", "liehen"],
+    correct: 1,
+    explanation: "Lieh is the past tense. The vowel changes from ei to ie."
+  },
+  {
+    question: "What does the metaphor 'river changing course' represent in this chapter?",
+    options: ["the flow of time", "how strong verbs transform while remaining recognizable", "the movement of peoples", "the migration of words"],
+    correct: 1,
+    explanation: "The river metaphor shows how strong verbs change their vowels but stay recognizably related across different tenses."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Progress Update</strong>
+      <p style="margin-top: 8px;">You now understand the first family of strong verbs: ei→ie→ie. These verbs show you how ancient patterns persist in modern German. The next chapter will introduce the i→a→u family, expanding your understanding of how strong verbs work across Germanic languages.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+initializeQuiz();
+
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

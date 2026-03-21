@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 56: Die vier Fälle</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --cases: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 1000px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .grammar-table {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 32px 0;
+    overflow-x: auto;
+  }
+
+  .grammar-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .grammar-table th, .grammar-table td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+    color: var(--text);
+  }
+
+  .grammar-table th {
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+
+  .grammar-table tr:hover td {
+    background: rgba(232, 164, 74, 0.05);
+  }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  .case-pillar {
+    display: inline-block;
+    background: linear-gradient(180deg, rgba(232, 164, 74, 0.15), rgba(232, 164, 74, 0.05));
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 8px 4px;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .case-pillar .case-name {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--fire);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .case-pillar .case-function {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.7);
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .grammar-table { padding: 16px; font-size: 0.85rem; }
+    .grammar-table th, .grammar-table td { padding: 10px 6px; font-size: 0.8rem; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Fifty-Six</div>
+    <h1>Die vier Fälle</h1>
+    <div class="subtitle">The Four Cases — The Architecture of Grammar</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- SCENE 1: THE FOUR PILLARS -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a building. Not a small house, but something larger. A temple, perhaps, or a great hall. The building is supported by four great pillars, and each pillar has a different purpose. One pillar bears the weight of the roof. One pillar supports the walls. One pillar anchors the foundation. One pillar reinforces the interior structure. Remove any one of these pillars, and the building begins to collapse. But together, they create a whole. An architecture that is balanced, functional, and beautiful.
+    </p>
+
+    <p class="narrative">
+      This is what the case system in German is like. Four cases. Four pillars. Each one marking a different grammatical relationship, a different role that a noun can play in a sentence. And together, they create the architecture of German grammar — a system so ancient, so fundamental, that it reaches back to the languages spoken on the steppes of Central Asia before writing existed.
+    </p>
+
+    <p class="narrative emphasis">
+      The four cases are not decorations. They are not optional complexity. They are the very structure of German grammar. Understanding them is understanding how the German language thinks.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 2: THE NOMINATIVE -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The first pillar is the <span class="german-word" data-speak="true">Nominativ</span> — the nominative case. This is the case of the subject, the case of the doer, the agent. When you say "The dog barks," the dog is in the nominative case. The dog is doing the action. The dog is the subject.
+    </p>
+
+    <p class="narrative">
+      In German, you say <span class="german-word" data-speak="true">Der Hund bellt</span> — the-nominative dog barks. The article is <span class="german-word" data-speak="true">der</span> (masculine singular nominative). The nominative case marks the agent, the actor, the one performing the action.
+    </p>
+
+    <p class="narrative">
+      The nominative case is also the case of the predicate nominative — the case used after linking verbs like "is" or "becomes." When you say "John is a teacher," the word "teacher" is in the nominative case in German: <span class="german-word" data-speak="true">John ist ein Lehrer</span>. Both the subject and the predicate are in nominative because they refer to the same thing — they are linked by the verb "to be."
+    </p>
+
+    <p class="narrative">
+      The nominative case is the case you learn first. It is the case used in dictionary entries. When you look up a German noun, you find it in the nominative case. This makes sense: the nominative case is the basic, the default, the fundamental form. It is the pillar that holds up the entire system.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 3: THE ACCUSATIVE -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The second pillar is the <span class="german-word" data-speak="true">Akkusativ</span> — the accusative case. This is the case of the direct object, the case of the thing being affected by the action. When you say "The dog eats the bone," the bone is in the accusative case. The action (eating) directly affects the bone. The bone is what is eaten.
+    </p>
+
+    <p class="narrative">
+      In German: <span class="german-word" data-speak="true">Der Hund isst den Knochen</span> — the-nominative dog eats the-accusative bone. Notice the change: the article shifts from <span class="german-word" data-speak="true">der</span> (nominative) to <span class="german-word" data-speak="true">den</span> (accusative) when we move from the subject to the direct object. That change — from one article form to another — is how German marks the change in grammatical function.
+    </p>
+
+    <p class="narrative">
+      The accusative case is also used after certain prepositions — prepositions that indicate motion toward something. <span class="german-word" data-speak="true">Ich gehe in das Haus</span> — I go into the house. The house is the destination, the object being moved toward, so it takes the accusative case <span class="german-word" data-speak="true">das</span> (if it were stationary in the house, it would be dative).
+    </p>
+
+    <p class="narrative">
+      The accusative is the case of direct action, of intention, of movement. It marks what happens to, what is done to, what is affected by the verb. It is the pillar that gives direction to the sentence.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 4: THE DATIVE -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The third pillar is the <span class="german-word" data-speak="true">Dativ</span> — the dative case. This is the case of the indirect object, the case of the recipient or beneficiary. When you say "I give the book to the student," the student is the indirect object, the one who receives the benefit of the action.
+    </p>
+
+    <p class="narrative">
+      In German: <span class="german-word" data-speak="true">Ich gebe dem Schüler das Buch</span> — I give the-dative student the-accusative book. Notice the structure: there are two objects here. The book (accusative) is what is given. The student (dative) is the one who receives it. The accusative is the direct object (the thing that moves). The dative is the indirect object (the one who benefits).
+    </p>
+
+    <p class="narrative">
+      The dative case is also used to show location, position at rest. When you are somewhere, not moving toward it, you use the dative: <span class="german-word" data-speak="true">Ich bin im Hause</span> — I am in-the-dative house. Notice the contrast: "I go into the house" (accusative, motion) versus "I am in the house" (dative, location).
+    </p>
+
+    <p class="narrative">
+      The dative case is also used with many verbs that express states rather than actions: <span class="german-word" data-speak="true">Der Buch gefällt mir</span> — The book pleases me. Literally, it is "the book is-pleasing to me" with "me" in the dative case. German sees this not as a transitive action (I like the book) but as something happening to me (the book is pleasing to me).
+    </p>
+
+    <p class="narrative">
+      The dative is the case of relationship, of proximity, of reception. It marks what something is for, who benefits, where something is resting. It is the pillar that gives structure to space and relationship.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 5: THE GENITIVE -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The fourth pillar, which we have already explored in the previous chapter, is the <span class="german-word" data-speak="true">Genitiv</span> — the genitive case. This is the case of possession, of ownership, of relationship. It marks what belongs, what depends on, what arises from something else.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-speak="true">Das Buch des Schülers</span> — the book of the student, the student's book. The genitive case <span class="german-word" data-speak="true">des</span> marks possession, relationship, dependency. The book depends on the student in some way; it is the student's book.
+    </p>
+
+    <p class="narrative">
+      The genitive is also used after prepositions that indicate causation or temporal relationship: <span class="german-word" data-speak="true">wegen</span> (because of), <span class="german-word" data-speak="true">trotz</span> (despite), <span class="german-word" data-speak="true">während</span> (during). Each of these shows a relationship where one thing arises from, opposes, or encompasses another.
+    </p>
+
+    <p class="narrative">
+      The genitive is the case of depth and history. It shows connection, dependency, relationship across time. It is the pillar that connects past to present, owner to possession, cause to effect.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 6: THE COMPLETE SYSTEM -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now let us see all four cases together, the complete architecture. Here is the definite article in all four cases, across all three genders and the plural:
+    </p>
+
+    <div class="grammar-table">
+      <table>
+        <tr>
+          <th>Case</th>
+          <th>Masculine</th>
+          <th>Feminine</th>
+          <th>Neuter</th>
+          <th>Plural</th>
+        </tr>
+        <tr>
+          <td><strong>Nominative</strong><br><em>(subject)</em></td>
+          <td>der</td>
+          <td>die</td>
+          <td>das</td>
+          <td>die</td>
+        </tr>
+        <tr>
+          <td><strong>Accusative</strong><br><em>(direct object)</em></td>
+          <td>den</td>
+          <td>die</td>
+          <td>das</td>
+          <td>die</td>
+        </tr>
+        <tr>
+          <td><strong>Dative</strong><br><em>(indirect object, location)</em></td>
+          <td>dem</td>
+          <td>der</td>
+          <td>dem</td>
+          <td>den</td>
+        </tr>
+        <tr>
+          <td><strong>Genitive</strong><br><em>(possession, relationship)</em></td>
+          <td>des</td>
+          <td>der</td>
+          <td>des</td>
+          <td>der</td>
+        </tr>
+      </table>
+    </div>
+
+    <p class="narrative">
+      Look at this table. Do you see the patterns? The nominative masculine is <span class="german-word" data-speak="true">der</span>. The accusative masculine is <span class="german-word" data-speak="true">den</span>. The dative masculine is <span class="german-word" data-speak="true">dem</span>. The genitive masculine is <span class="german-word" data-speak="true">des</span>. All different. All signal different grammatical relationships.
+    </p>
+
+    <p class="narrative">
+      But look at the feminine: nominative and genitive both use <span class="german-word" data-speak="true">der</span>, while accusative and dative use <span class="german-word" data-speak="true">die</span> and <span class="german-word" data-speak="true">der</span> respectively. And the neuter: nominative and accusative both use <span class="german-word" data-speak="true">das</span>, while dative and genitive use <span class="german-word" data-speak="true">dem</span> and <span class="german-word" data-speak="true">des</span>. And the plural: most cases use <span class="german-word" data-speak="true">die</span>, except the dative and genitive which both use <span class="german-word" data-speak="true">den</span> and <span class="german-word" data-speak="true">der</span>.
+    </p>
+
+    <p class="narrative">
+      This is not random. This is pattern. This is history. These patterns reflect the way the case system developed in Proto-Indo-European, how it changed as the Germanic languages developed, and how it has been preserved (imperfectly but recognizably) in modern German. Every irregularity is a clue to the past. Every exception shows where the system once worked differently and gradually, over centuries, merged into new patterns.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 7: WHY CASES MATTER -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A language student often asks: why do we need all these cases? Why can't German be more like English, where word order alone determines meaning? Why do we need nominative and accusative and dative and genitive? Why can't the article just stay the same?
+    </p>
+
+    <p class="narrative">
+      The answer lies in a fundamental difference between how English and German organize grammar. English relies on word order. In English, the sentence "The dog bites the man" and "The man bites the dog" have completely different meanings because the order changes who does the biting and who is bitten. German does not rely so heavily on word order. German can say <span class="german-word" data-speak="true">Der Hund beißt den Mann</span> (the-nominative dog bites the-accusative man) and also <span class="german-word" data-speak="true">Den Mann beißt der Hund</span> (the-accusative man bites the-nominative dog) — and both mean the same thing, because the case marking tells you who is the subject and who is the object, regardless of word order.
+    </p>
+
+    <p class="narrative">
+      This freedom allows for poetry, for emphasis, for variation that would be impossible in English. A German poet can rearrange words for effect, knowing that the case system will preserve meaning. This is why German literature has such freedom, such flexibility in expression. The case system gives the language power.
+    </p>
+
+    <p class="narrative">
+      But more than that, the case system reflects something about how Germans think about language. English asks: what order do the words go in? German asks: what role does this word play? German organizes meaning around function, not just sequence. The nominative is the actor. The accusative is the acted-upon. The dative is the recipient. The genitive is the possessor. These roles are marked explicitly, in the shape of the article, in the ending of the noun.
+    </p>
+
+    <p class="narrative">
+      This is powerful. This is also harder to learn. But once you understand the logic of the cases, once you see them as four pillars supporting an architectural whole, the system becomes not a burden but a tool of great elegance and precision.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 8: ADJECTIVES AND THE CASE SYSTEM -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But the case system in German extends beyond just the article. It also affects adjectives. When you use an adjective in German, the adjective itself must change to match the case of the noun it modifies. <span class="german-word" data-speak="true">Der große Hund</span> (the large dog — nominative), but <span class="german-word" data-speak="true">den großen Hund</span> (the large dog — accusative). The adjective shifts from <span class="german-word" data-speak="true">große</span> to <span class="german-word" data-speak="true">großen</span> to match the accusative case.
+    </p>
+
+    <p class="narrative">
+      This is crucial. The case system is not just a feature of the articles. It is woven throughout the entire grammar. Adjectives, pronouns, and sometimes even nouns themselves change form to mark case. When a German speaker hears <span class="german-word" data-speak="true">den großen</span>, they know immediately that they are about to hear the direct object of a sentence. The accusative case is announced not just by the article but by the adjective form as well.
+    </p>
+
+    <p class="narrative">
+      This redundancy — this repetition of the case marker across multiple words — might seem inefficient. But it serves an important function: it makes the grammatical structure unmistakable. Even if you do not hear the article clearly, you can still determine the case from the adjective. The information is not just conveyed once; it is reinforced, repeated, made certain.
+    </p>
+
+    <p class="narrative">
+      This is one reason why learning German requires attention to these small shifts and changes. They are not cosmetic variations. They are the very substance of how German grammar communicates meaning. Each change of article, each shift in adjective ending, is a signal. The language is constantly announcing its grammatical structure through the shape of words.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- SCENE 9: THE EROSION OF CASES -->
+  <div class="scene" id="scene9">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But here is something important: the case system in German is under pressure. Slowly, over generations, it is eroding. Young German speakers sometimes confuse cases. Sometimes they use the wrong case marker. And in a few hundred years, if the trend continues, German might lose much of its case system, the way English lost most of its case system over the centuries.
+    </p>
+
+    <p class="narrative">
+      English once had a full case system. Old English had nominative, accusative, dative, and genitive cases for nouns and articles, just like German does today. But over the centuries, the endings became hard to hear, the distinctions became fuzzy, and speakers began to rely more on word order to determine meaning. The case system gradually eroded away.
+    </p>
+
+    <p class="narrative">
+      Today's English has almost no case system. Only pronouns retain some of it: "he" versus "him," "I" versus "me." The case system that was once as elaborate as German's has been reduced to a few pronouns and the genitive 's on nouns. The rest of the meaning is carried by word order.
+    </p>
+
+    <p class="narrative">
+      German today is where English was eight hundred years ago. The case system is still strong, still central to grammar. But if the trend continues — if young speakers continue to simplify, to use the same form for multiple cases, to rely more on word order and less on case marking — then in a few centuries, German might look more like English does today.
+    </p>
+
+    <p class="narrative">
+      This is not a tragedy. It is simply change. Language is constantly changing, always simplifying in some ways while elaborating in others. The case system might eventually fade from German, the way it faded from English. But for now, German preserves it. For now, when you learn German, you are learning a grammar that reaches back to the ancient past, that maintains structures that have survived for thousands of years.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- QUIZ SECTION -->
+  <div class="quiz-container">
+    <h3>Test Your Understanding: The Four Cases</h3>
+
+    <div class="quiz-question">
+      <div class="q-text">1. Which case marks the subject of a sentence (the doer of the action)?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="correct">Nominative</div>
+        <div class="quiz-option">Accusative</div>
+        <div class="quiz-option">Dative</div>
+        <div class="quiz-option">Genitive</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">2. In the sentence "Der Hund isst den Knochen," what case is "Knochen" (bone) in?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">Nominative</div>
+        <div class="quiz-option" data-answer="correct">Accusative</div>
+        <div class="quiz-option">Dative</div>
+        <div class="quiz-option">Genitive</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">3. Which case is used for the indirect object (the recipient)?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">Nominative</div>
+        <div class="quiz-option">Accusative</div>
+        <div class="quiz-option" data-answer="correct">Dative</div>
+        <div class="quiz-option">Genitive</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">4. What is the accusative form of the masculine singular article?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">der</div>
+        <div class="quiz-option" data-answer="correct">den</div>
+        <div class="quiz-option">dem</div>
+        <div class="quiz-option">des</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">5. In "Ich bin im Haus" (I am in the house), what case is used after the preposition?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">Nominative</div>
+        <div class="quiz-option">Accusative</div>
+        <div class="quiz-option" data-answer="correct">Dative</div>
+        <div class="quiz-option">Genitive</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">6. Which of the following is TRUE about word order in German?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">Word order determines all grammatical meaning</div>
+        <div class="quiz-option" data-answer="correct">Cases allow more flexible word order because they mark grammatical relationships</div>
+        <div class="quiz-option">German has the same word order rules as English</div>
+        <div class="quiz-option">Word order in German is less important than in English</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">7. The dative case in German shows both indirect objects and:</div>
+      <div class="quiz-options">
+        <div class="quiz-option">possession</div>
+        <div class="quiz-option">action toward something</div>
+        <div class="quiz-option" data-answer="correct">location or position at rest</div>
+        <div class="quiz-option">causation or reason</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">8. What is the dative form of the feminine singular article?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">die</div>
+        <div class="quiz-option" data-answer="correct">der</div>
+        <div class="quiz-option">dem</div>
+        <div class="quiz-option">den</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">9. When an adjective is used in German, what must it do?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">change gender based on the speaker</div>
+        <div class="quiz-option">remain in nominative case</div>
+        <div class="quiz-option" data-answer="correct">change to match the case of the noun it modifies</div>
+        <div class="quiz-option">reverse its meaning</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">10. What is happening to the case system in modern spoken German?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">it is becoming more complex</div>
+        <div class="quiz-option" data-answer="correct">it is slowly eroding, with speakers sometimes confusing or mixing cases</div>
+        <div class="quiz-option">it is being abandoned completely</div>
+        <div class="quiz-option">it is unchanged since medieval times</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">11. In Old English, the case system was:</div>
+      <div class="quiz-options">
+        <div class="quiz-option">non-existent</div>
+        <div class="quiz-option" data-answer="correct">as complete as in modern German</div>
+        <div class="quiz-option">simpler than in modern German</div>
+        <div class="quiz-option">used only for pronouns</div>
+      </div>
+    </div>
+
+    <div class="quiz-question">
+      <div class="q-text">12. Why is the case system important for understanding German grammar?</div>
+      <div class="quiz-options">
+        <div class="quiz-option">it makes German harder than other languages</div>
+        <div class="quiz-option">it is only important in formal writing</div>
+        <div class="quiz-option" data-answer="correct">it shows grammatical relationships explicitly, allowing flexibility and precision in word order</div>
+        <div class="quiz-option">it is a remnant that should be eliminated</div>
+      </div>
+    </div>
+
+    <div class="quiz-nav">
+      <button id="prevBtn" onclick="previousQuestion()">← Previous</button>
+      <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="score"></div>
+    <div class="quiz-reset">
+      <button onclick="resetQuiz()">Reset Quiz</button>
+    </div>
+    <div class="post-quiz-summary" id="postQuizSummary"></div>
+  </div>
+
+  <!-- CHAPTER END -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p style="color: rgba(212, 202, 187, 0.6); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5em;">
+      The four cases are the four pillars of German grammar. Nominative, accusative, dative, genitive — each marking a different relationship, a different role, a different function. Together, they create an architecture of such precision and elegance that once you understand it, you understand not just German but something fundamental about how language itself can organize and express meaning. The case system is not a flaw or a complication. It is a gift from the past, a tool of great power, a window into the very foundations of human language.
+    </p>
+    <div class="next-chapter">Chapter 57: Wohin? Wo? Woher? →</div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter55.html" class="nav-btn">← Chapter 55</a>
+    <a href="chapter57.html" class="nav-btn next">Chapter 57 →</a>
+  </div>
+
+</div>
+
+<script>
+  const scenes = document.querySelectorAll('.scene');
+  const observerOptions = { threshold: 0.1 };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+  scenes.forEach(scene => observer.observe(scene));
+
+  window.addEventListener('scroll', () => {
+    const progress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+  });
+
+  document.querySelectorAll('.german-word').forEach(word => {
+    word.addEventListener('click', (e) => {
+      e.target.classList.toggle('revealed');
+    });
+  });
+
+  document.querySelectorAll('[data-speak="true"]').forEach(el => {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.textContent = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const utterance = new SpeechSynthesisUtterance(el.textContent);
+      utterance.lang = 'de-DE';
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+    });
+    el.appendChild(btn);
+  });
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let animationId;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function drawFourPillars() {
+    ctx.fillStyle = 'rgba(10, 14, 26, 0.3)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const time = Date.now() * 0.0001;
+    const centerY = canvas.height / 2;
+    const spacing = canvas.width / 5;
+
+    ctx.strokeStyle = 'rgba(232, 164, 74, 0.15)';
+    ctx.lineWidth = 3;
+    ctx.fillStyle = 'rgba(232, 164, 74, 0.05)';
+
+    // Draw four pillars supporting an arch
+    for (let i = 0; i < 4; i++) {
+      const x = spacing * (i + 1);
+      const height = 200 + Math.sin(time + i * 0.5) * 40;
+
+      // Pillar
+      ctx.fillRect(x - 20, centerY + 100, 40, height);
+      ctx.strokeRect(x - 20, centerY + 100, 40, height);
+
+      // Top of pillar
+      ctx.beginPath();
+      ctx.arc(x, centerY + 100 - Math.sin(time + i) * 10, 25, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Draw arch above pillars
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2 - 100, spacing * 1.8, Math.PI, 0, true);
+    ctx.stroke();
+
+    animationId = requestAnimationFrame(drawFourPillars);
+  }
+  drawFourPillars();
+
+  let currentQuestion = 0;
+  let answers = {};
+
+  function showQuestion(n) {
+    const questions = document.querySelectorAll('.quiz-question');
+    if (n >= questions.length) n = questions.length - 1;
+    if (n < 0) n = 0;
+    currentQuestion = n;
+
+    questions.forEach((q, i) => {
+      q.classList.toggle('hidden', i !== n);
+    });
+
+    document.getElementById('prevBtn').disabled = n === 0;
+    document.getElementById('nextBtn').disabled = n === questions.length - 1;
+    updateScore();
+  }
+
+  function selectAnswer(btn) {
+    const question = btn.closest('.quiz-question');
+    const options = question.querySelectorAll('.quiz-option');
+    const isCorrect = btn.dataset.answer === 'correct';
+
+    options.forEach(opt => {
+      opt.classList.remove('selected', 'incorrect');
+      if (opt === btn) {
+        opt.classList.add(isCorrect ? 'selected' : 'incorrect');
+      }
+    });
+
+    answers[currentQuestion] = isCorrect;
+  }
+
+  function updateScore() {
+    const correct = Object.values(answers).filter(v => v === true).length;
+    const total = 12;
+    if (Object.keys(answers).length === total) {
+      document.getElementById('score').textContent = `Score: ${correct}/${total}`;
+      if (correct >= 10) {
+        document.getElementById('postQuizSummary').textContent = 'Excellent! You understand the four cases.';
+        document.getElementById('postQuizSummary').classList.add('show');
+      }
+    }
+  }
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.addEventListener('click', (e) => selectAnswer(e.target));
+  });
+
+  function nextQuestion() {
+    showQuestion(currentQuestion + 1);
+  }
+
+  function previousQuestion() {
+    showQuestion(currentQuestion - 1);
+  }
+
+  function resetQuiz() {
+    answers = {};
+    currentQuestion = 0;
+    showQuestion(0);
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+      opt.classList.remove('selected', 'incorrect');
+    });
+    document.getElementById('postQuizSummary').classList.remove('show');
+  }
+
+  showQuestion(0);
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">500 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(58%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:58%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 500 words across 56 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">105 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(72%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:72%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 105 patterns and grammar rules across 56 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

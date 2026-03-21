@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 26: Die Gegenwart (The Present)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --amber: #d4a574;
+    --gold: #f4e8d0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0e1a 0%, #1a1410 30%, #2d1f10 60%, #4a3a2a 85%, #e8d7c3 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  /* --- PROGRESS BAR --- */
+  #progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--fire), var(--fire-glow), var(--amber), var(--gold));
+    width: 0%;
+    z-index: 10000;
+    transition: width 0.1s ease;
+  }
+
+  /* --- CANVAS --- */
+  #cityscape {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    background: transparent;
+  }
+
+  /* --- MAIN CONTAINER --- */
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* --- NAVIGATION --- */
+  .nav-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 60px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.15);
+    padding-bottom: 20px;
+    font-size: 0.95rem;
+  }
+
+  .nav-chapter {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(232, 164, 74, 0.5);
+  }
+
+  .nav-link {
+    color: var(--fire);
+    text-decoration: none;
+    transition: opacity 0.3s;
+  }
+
+  .nav-link:hover {
+    opacity: 0.7;
+  }
+
+  /* --- CHAPTER HEADER --- */
+  .chapter-header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .chapter-title {
+    font-size: 2.8rem;
+    font-weight: 400;
+    margin-bottom: 12px;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+  }
+
+  .chapter-subtitle {
+    font-size: 1.3rem;
+    color: rgba(232, 164, 74, 0.6);
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+
+  .chapter-period {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    margin: 28px 0;
+    color: var(--text);
+  }
+
+  .narrative em {
+    color: var(--fire);
+    font-style: italic;
+  }
+
+  .narrative strong {
+    color: var(--text-bright);
+    font-weight: 600;
+  }
+
+  .narrative.emphasis {
+    font-size: 1.15rem;
+    color: var(--fire-glow);
+    text-align: center;
+    margin: 40px 0;
+    font-style: italic;
+  }
+
+  .narrative.small {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.3);
+    padding-bottom: 2px;
+  }
+
+  .german-word:hover {
+    border-bottom-color: var(--german);
+    opacity: 0.8;
+  }
+
+  .german-word.revealed {
+    color: var(--fire-glow);
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+  }
+
+  .ety-card.open {
+    max-height: 2000px;
+    opacity: 1;
+  }
+
+  .word-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .word-main {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--german);
+    letter-spacing: 0.03em;
+  }
+
+  .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-family: 'Noto Serif', serif;
+  }
+
+  .speak-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    margin-left: 12px;
+  }
+
+  .speak-btn:hover {
+    opacity: 1;
+  }
+
+  .speak-btn.speaking {
+    opacity: 1;
+    animation: pulse 0.6s ease-in-out;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .word-meaning {
+    font-size: 1.1rem;
+    color: var(--fire-glow);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .bridge {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+    font-size: 0.95rem;
+  }
+
+  .bridge:last-of-type {
+    border-bottom: none;
+  }
+
+  .bridge-label {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .bridge-label.pie {
+    background: rgba(155, 142, 196, 0.2);
+    color: var(--pie);
+  }
+
+  .bridge-label.eng {
+    background: rgba(138, 155, 174, 0.2);
+    color: var(--english);
+  }
+
+  .bridge-label.deu {
+    background: rgba(232, 164, 74, 0.2);
+    color: var(--german);
+  }
+
+  .bridge-label.zho {
+    background: rgba(196, 154, 108, 0.2);
+    color: var(--chinese);
+  }
+
+  .bridge-word {
+    font-weight: 600;
+    color: var(--text-bright);
+    font-family: 'Noto Serif', serif;
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+  }
+
+  .bridge-note {
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+    flex-basis: 100%;
+    font-size: 0.9rem;
+  }
+
+  .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    color: rgba(212, 202, 187, 0.85);
+    font-size: 0.95rem;
+    line-height: 1.75;
+  }
+
+  /* --- SCENE MARKERS --- */
+  .scene {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: none;
+  }
+
+  /* --- CHARACTER DISPLAY (CHINESE) --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box.denglisch {
+    background: rgba(232, 164, 74, 0.06);
+    border-left-color: rgba(232, 164, 74, 0.3);
+  }
+
+  .aside-box.falsefriendsbox {
+    background: rgba(180, 100, 74, 0.06);
+    border-left-color: rgba(180, 100, 74, 0.3);
+  }
+
+  .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .aside-box.denglisch .aside-title {
+    color: var(--german);
+  }
+
+  .aside-box.falsefriendsbox .aside-title {
+    color: #d47d60;
+  }
+
+  /* --- DATA TABLES --- */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.95rem;
+  }
+
+  .data-table th {
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--text-bright);
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid rgba(232, 164, 74, 0.2);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .data-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+  }
+
+  .data-table tr:hover {
+    background: rgba(232, 164, 74, 0.02);
+  }
+
+  .data-table .german-ex {
+    color: var(--german);
+    font-weight: 600;
+  }
+
+  .data-table .english-ex {
+    color: var(--english);
+  }
+
+  .data-table .note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .quiz-title {
+    font-size: 1.8rem;
+    color: var(--fire-glow);
+    margin-bottom: 12px;
+  }
+
+  .quiz-note {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+  }
+
+  .quiz-item {
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-question .q-number {
+    color: rgba(232, 164, 74, 0.5);
+    font-weight: 400;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.04);
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.08);
+    border-color: var(--fire);
+  }
+
+  .quiz-option input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  .quiz-option.correct {
+    background: rgba(74, 180, 100, 0.12);
+    border-color: #4ab464;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.08);
+    border-color: rgba(180, 74, 74, 0.3);
+    opacity: 0.5;
+  }
+
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+
+  .quiz-feedback.show {
+    opacity: 1;
+    max-height: 300px;
+  }
+
+  .quiz-feedback.correct {
+    background: rgba(74, 180, 100, 0.1);
+    color: #8ed69e;
+    border: 1px solid rgba(74, 180, 100, 0.2);
+  }
+
+  .quiz-feedback.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    color: #e89b9b;
+    border: 1px solid rgba(180, 74, 74, 0.2);
+  }
+
+  .quiz-submit {
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.15), rgba(244, 198, 122, 0.1));
+    border: 2px solid var(--fire);
+    color: var(--fire-glow);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    padding: 16px 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 32px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .quiz-submit:hover {
+    background: rgba(232, 164, 74, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .quiz-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-result {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 24px;
+    margin-top: 32px;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.5s ease;
+  }
+
+  .quiz-result.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .result-score {
+    font-size: 2.5rem;
+    color: var(--fire);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .result-message {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+
+  .result-status {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+  }
+
+  .result-status.passed {
+    color: #8ed69e;
+  }
+
+  .result-status.failed {
+    color: #e89b9b;
+  }
+
+  .quiz-locked {
+    background: rgba(10, 14, 26, 0.5);
+    border: 1px solid rgba(180, 74, 74, 0.3);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    margin-top: 32px;
+    display: none;
+  }
+
+  .quiz-locked.show {
+    display: block;
+  }
+
+  .quiz-locked-message {
+    color: rgba(212, 202, 187, 0.7);
+    margin-bottom: 12px;
+  }
+
+  .quiz-locked-score {
+    font-size: 1.8rem;
+    color: var(--fire);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  /* --- PHASE 1 SUMMARY --- */
+  .phase1-summary {
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.08), rgba(244, 198, 122, 0.04));
+    border: 2px solid rgba(232, 164, 74, 0.2);
+    border-radius: 16px;
+    padding: 48px 32px;
+    margin: 60px 0;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+  }
+
+  .phase1-summary.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .summary-title {
+    font-size: 2rem;
+    color: var(--fire-glow);
+    margin-bottom: 24px;
+  }
+
+  .summary-stat {
+    font-size: 1.2rem;
+    color: var(--text-bright);
+    margin: 16px 0;
+    line-height: 1.8;
+  }
+
+  .summary-stat .stat-number {
+    color: var(--fire);
+    font-weight: 600;
+    font-size: 1.4rem;
+  }
+
+  .summary-text {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(232, 164, 74, 0.2);
+    color: rgba(212, 202, 187, 0.8);
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .summary-reference {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+    margin-top: 20px;
+  }
+
+  .turn-page {
+    font-size: 1.3rem;
+    color: var(--fire);
+    font-weight: 600;
+    margin-top: 32px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
+    .content {
+      padding: 24px 20px;
+    }
+
+    .chapter-title {
+      font-size: 2rem;
+    }
+
+    .word-collection {
+      padding: 32px 20px;
+    }
+
+    .quiz-container {
+      padding: 32px 20px;
+    }
+
+    .data-table {
+      font-size: 0.85rem;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 8px;
+    }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div id="progressBar"></div>
+<canvas id="cityscape"></canvas>
+
+<div class="nav-top">
+  <span class="nav-chapter">Chapter 25 — Die Nachkriegszeit</span>
+  <a href="chapter1.html" class="nav-link">← Home</a>
+</div>
+
+<div class="content">
+
+  <!-- ==================== CHAPTER HEADER ==================== -->
+  <div class="chapter-header">
+    <div class="chapter-subtitle">Chapter Twenty-Six</div>
+    <h1 class="chapter-title">Die Gegenwart</h1>
+    <div class="chapter-subtitle">The Present</div>
+    <div class="chapter-period">~1989–today · 6,000 Years Complete</div>
+  </div>
+
+  <!-- ==================== OPENING SCENE ==================== -->
+  <div class="scene" id="scene-opening">
+    <p class="narrative">
+      You stand in Berlin. 2026. The air smells of coffee, city, possibility. Around you, the old and the new press against each other: the Brandenburg Gate, rebuilt after decades of division, stands near a glass office tower. The Reichstag's dome reflects the sky. A teenage girl walks past you, texting on her phone, humming a song in German.
+    </p>
+
+    <p class="narrative">
+      She says nothing that would surprise the Grimm brothers or the linguists of the 1890s. The words she uses — the grammar, the case endings, the verb-final clauses — are all descended, directly and unbroken, from the Proto-Indo-European language spoken on the steppes six thousand years ago. Every word in her text message carries six thousand years of history in its DNA.
+    </p>
+
+    <p class="narrative">
+      But something is new. Something that would have astonished her ancestors.
+    </p>
+
+    <p class="narrative">
+      Her phone screen shows: "Ich hab dir ne Message geschickt."
+    </p>
+
+    <p class="narrative emphasis">
+      She has just spoken four languages at once.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: DENGLISCH ==================== -->
+  <div class="scene" id="scene-denglisch">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Modern German faces a paradox. For the first time in its history, it is not primarily competing with neighboring Germanic or Romance languages. It is competing with English.
+    </p>
+
+    <p class="narrative">
+      Not English the language of conquering Normans, not English the language of far-off kingdoms. English the language of global technology, finance, science, entertainment. English the language that flows through the internet at light speed. English the language that has, in the last fifty years, absorbed more German vocabulary than German has absorbed from all other languages combined.
+    </p>
+
+    <p class="narrative">
+      The result is called <em>Denglisch</em> — a blend so thorough that some German linguists worry the language is drowning. Others see it as what German has always done: evolve, absorb, adapt, and survive.
+    </p>
+
+    <p class="narrative">
+      Here is the thing that makes this moment unique: when a German speaker says <span class="german-word" data-card="downloaden">downloaden</span>, they are not borrowing an English word. They are digesting it into German grammar. Watch:
+    </p>
+
+    <p class="narrative">
+      English: "I downloaded the file."<br>
+      German (traditional): "Ich habe die Datei heruntergeladen." (I have the file down-loaded)<br>
+      German (modern): "Ich habe die Datei gedownloadet."
+    </p>
+
+    <p class="narrative">
+      That "ge-" prefix and "-et" suffix? Pure Germanic. The "download" in the middle? Pure English. But when they combine, they obey German rules. The past participle prefix "ge-" attaches. The regular weak verb ending "-et" attaches. The result is an English root wearing a German costume so perfectly that it becomes German.
+    </p>
+
+    <!-- DOWNLOADEN etymology card -->
+    <div class="ety-card" id="card-downloaden">
+      <div class="word-header">
+        <span class="word-main">gedownloadet</span>
+        <span class="word-pron">/gəˈdaʊnloːdət/</span>
+      </div>
+      <div class="word-meaning">downloaded — the act of bringing digital information down from the cloud to earth</div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">download</span>
+        <span class="bridge-note">— down + load, literally: bring downward + cargo</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ge-download-et</span>
+        <span class="bridge-note">— prefix + English root + German weak verb ending</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*dʰeu- (down) + *h₂el- (move)</span>
+        <span class="bridge-note">— even the English components trace back to ancient roots</span>
+      </div>
+      <div class="story">
+        This is the modern miracle of German grammar. Take an English verb, add the German present-tense prefix, add the German weak past-participle ending, and you have transformed a foreign word into a native speaker. The same happens with "mailen" (to email), "chatten" (to chat), "texten" (to text). Each follows the same pattern: English root + German morphology = a word that feels native because, after just one application of German grammar, it is native. This is not language corruption. This is language doing what language has always done — feeding on the foreign and making it its own.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Modern German teenagers use hundreds of these words. They are not being unpatriotic or lazy. They are being German in the way Germans have always been German — by adapting, by changing, by staying alive. The teenage girl who texts "Ich hab dir ne Message geschickt" is using:
+    </p>
+
+    <ul class="narrative" style="margin-left: 32px; color: rgba(212, 202, 187, 0.8);">
+      <li><strong>"Ich"</strong> — Proto-Germanic *ik (PIE *égoh₂) — 6,000 years old</li>
+      <li><strong>"hab"</strong> — have, from PIE *kh₂bʰ- — 6,000 years old</li>
+      <li><strong>"dir"</strong> — you (dative), from PIE *tewoi — 6,000 years old</li>
+      <li><strong>"ne"</strong> — a (shortened), from PIE *h₁oynos — 6,000 years old</li>
+      <li><strong>"Message"</strong> — English borrowing, but subject to German grammar — 50 years old</li>
+      <li><strong>"geschickt"</strong> — sent, from PIE *skeyd- — 6,000 years old</li>
+    </ul>
+
+    <p class="narrative">
+      She is speaking a language that is five ancient and one modern. And it feels entirely natural to her.
+    </p>
+
+    <div class="aside-box denglisch">
+      <div class="aside-title">Denglisch: A Glossary</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>German (modern)</th>
+            <th>Borrowed From</th>
+            <th>Meaning</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="german-ex">das Handy</td>
+            <td class="english-ex">English "handy"</td>
+            <td>mobile phone</td>
+            <td class="note">The false friend! English speakers never say "handy" for a phone.</td>
+          </tr>
+          <tr>
+            <td class="german-ex">downloaden</td>
+            <td class="english-ex">English "download"</td>
+            <td>to download</td>
+            <td class="note">Past tense: "gedownloadet" (with German prefix and suffix)</td>
+          </tr>
+          <tr>
+            <td class="german-ex">mailen</td>
+            <td class="english-ex">English "mail"</td>
+            <td>to email</td>
+            <td class="note">Often used instead of the native "per E-Mail schicken"</td>
+          </tr>
+          <tr>
+            <td class="german-ex">chillen</td>
+            <td class="english-ex">English "chill"</td>
+            <td>to relax/hang out</td>
+            <td class="note">Popular with young Germans: "Lass uns chillen" = Let's hang out</td>
+          </tr>
+          <tr>
+            <td class="german-ex">der Computer</td>
+            <td class="english-ex">English "computer"</td>
+            <td>computer</td>
+            <td class="note">Masculine in German. "Der Computer ist schnell." (The computer is fast.)</td>
+          </tr>
+          <tr>
+            <td class="german-ex">das Meeting</td>
+            <td class="english-ex">English "meeting"</td>
+            <td>meeting</td>
+            <td class="note">Used in business contexts; formal German still prefers "Besprechung"</td>
+          </tr>
+          <tr>
+            <td class="german-ex">cool / super cool</td>
+            <td class="english-ex">English "cool"</td>
+            <td>cool/excellent</td>
+            <td class="note">Declines like an adjective: "eine coole Party" (a cool party)</td>
+          </tr>
+          <tr>
+            <td class="german-ex">das Workout</td>
+            <td class="english-ex">English "workout"</td>
+            <td>exercise session</td>
+            <td class="note">Neuter in German. "Das Workout war hart." (The workout was hard.)</td>
+          </tr>
+          <tr>
+            <td class="german-ex">die Message</td>
+            <td class="english-ex">English "message"</td>
+            <td>message</td>
+            <td class="note">Feminine in German. Subject to case declension: "die Message," "der Message," etc.</td>
+          </tr>
+          <tr>
+            <td class="german-ex">das App / die App</td>
+            <td class="english-ex">English "app"</td>
+            <td>application</td>
+            <td class="note">Gender varies by speaker; often treated as feminine</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="narrative">
+      But here is what is remarkable: the grammar itself remains untouched. German still inflects nouns by case. A borrowed noun like "Message" must still follow the accusative when it is a direct object, the dative when it is indirect, the genitive when it shows possession. The verb-final clause structure remains. The separable verbs remain. The modal auxiliary constructions remain. The teenager is not speaking English with German decorations. She is speaking German with English words.
+    </p>
+
+    <!-- HANDY etymology card (false friend) -->
+    <div class="ety-card" id="card-handy">
+      <div class="word-header">
+        <span class="word-main">Handy</span>
+        <span class="word-pron">/ˈhɛndi/</span>
+      </div>
+      <div class="word-meaning">mobile phone — a false friend that exists only in German</div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">handy</span>
+        <span class="bridge-note">— meaning: convenient, useful (adj.), never a noun in English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Handy</span>
+        <span class="bridge-note">— a mobile phone; masculine noun; only used this way in German</span>
+      </div>
+      <div class="story">
+        The word "Handy" is one of the most famous false friends in English-German. German speakers learned the English word "handy" (meaning useful/convenient) and in the 1980s, when mobile phones first appeared, they named the device a "Handy" — presumably because it was small and convenient to carry. But English speakers never adopted this term. They say "mobile phone," "cell phone," or now just "phone." If a German says "Handy" to an English speaker, they will be met with confusion. Meanwhile, in the minds of millions of German speakers, "Handy" = mobile phone is absolute truth. This is what happens when words migrate without their native speakers to guide them — they transform into something entirely new.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: FALSE FRIENDS ==================== -->
+  <div class="scene" id="scene-falsefriendsbox">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But Denglisch creates more than just new words. It creates false friends — words that look related but have completely different meanings.
+    </p>
+
+    <p class="narrative">
+      The most famous: the German word <span class="german-word" data-card="gift">Gift</span> (poison) looks identical to the English "gift" (present). A German saying "Achtung, das ist Gift!" means "Warning, that's poison!" — not "Beware of the gift!"
+    </p>
+
+    <div class="aside-box falsefriendsbox">
+      <div class="aside-title">False Friends: Words That Betray You</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>German</th>
+            <th>Looks Like</th>
+            <th>German Meaning</th>
+            <th>English Trap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="german-ex">Gift</td>
+            <td>English "gift"</td>
+            <td>poison</td>
+            <td class="note">English "gift" = present (Geschenk in German). Related: "giftig" = poisonous.</td>
+          </tr>
+          <tr>
+            <td class="german-ex">bekommen</td>
+            <td>English "become"</td>
+            <td>to get/receive</td>
+            <td class="note">English "become" = werden in German. This verb has nothing to do with "becoming."</td>
+          </tr>
+          <tr>
+            <td class="german-ex">Kunst</td>
+            <td>English "cunning"?</td>
+            <td>art</td>
+            <td class="note">From Middle High German "Kunst," originally "skill/craft." English "can" from same root.</td>
+          </tr>
+          <tr>
+            <td class="german-ex">mein</td>
+            <td>English "mine"</td>
+            <td>my (possessive)</td>
+            <td class="note">True cognate! "Mein" = "my," "Mine" = of/belonging to me. Both from same ancient root.</td>
+          </tr>
+          <tr>
+            <td class="german-ex">Rats</td>
+            <td>English "rats" (the animals)?</td>
+            <td>counsel/advice (noun)</td>
+            <td class="note">"Rat geben" = to give advice. Ancient root, no connection to rodents.</td>
+          </tr>
+          <tr>
+            <td class="german-ex">Lust</td>
+            <td>English "lust"</td>
+            <td>desire (can be innocent) / pleasure</td>
+            <td class="note">"Ich habe Lust" = I feel like/I want to. Not necessarily sexual.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- GIFT etymology card -->
+    <div class="ety-card" id="card-gift">
+      <div class="word-header">
+        <span class="word-main">Gift</span>
+        <span class="word-pron">/ɡɪft/</span>
+      </div>
+      <div class="word-meaning">poison — a substance that causes death or harm; from the verb "to give"</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gift</span>
+        <span class="bridge-note">— from Old High German "Gift," originally meaning "dose" or "potion"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*gʰebʰ-</span>
+        <span class="bridge-note">— to give; a poison was something "given" to someone, often secretly</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">gift</span>
+        <span class="bridge-note">— a present; from the same root, but with a very different meaning</span>
+      </div>
+      <div class="story">
+        The history of these two words reveals the dangers of translation. In Old English, "gift" meant exactly what German "Gift" means now — a dose, a potion, something given to someone. Over time, English speakers became more polite (or forgetful), and "gift" came to mean any present given to someone, with the dangerous associations fading. German kept the original meaning. Today, thousands of German learners of English have been confused by this pair, and thousands of English learners of German think they're being poisoned when someone warns them. Both words come from PIE *gʰebʰ-, "to give." One evolved toward kindness, the other toward death. Same source, opposite destinations.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE ANCIENT STRUCTURES ==================== -->
+  <div class="scene" id="scene-structures">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And yet, beneath the surface of Denglisch and false friends and borrowed tech vocabulary, something ancient persists. Something that refuses to change.
+    </p>
+
+    <p class="narrative">
+      The cases remain. German still has four of them — nominative, accusative, dative, genitive — and every noun is still bound to them. Every adjective still agrees with the case. Every article still reflects it. A teenager texting in German must still decline:
+    </p>
+
+    <p class="narrative">
+      Der Mann sieht den Mann. (The man sees the man.)<br>
+      Der Mann gibt dem Mann das Buch. (The man gives the man the book.)<br>
+      Das Buch des Mannes ist groß. (The book of the man is large.)
+    </p>
+
+    <p class="narrative">
+      These case endings are not decoration. They are the skeleton of Germanic grammar, and they come directly from the Proto-Indo-European language spoken six thousand years ago. The dative ending "-em" on "dem" appears in Sanskrit, in Old Church Slavonic, in Latin. Same case, same purpose, same ancient origin.
+    </p>
+
+    <p class="narrative">
+      The verb-final clause remains. In English, word order became fixed: subject-verb-object. In German, subordinate clauses still place the verb at the end:
+    </p>
+
+    <p class="narrative">
+      English: "I know that she will come tomorrow."<br>
+      German: "Ich weiß, dass sie morgen kommt." (I know that she tomorrow comes.)
+    </p>
+
+    <p class="narrative">
+      This word order is a fossil. It is the structure that PIE languages favored — the verb-final construction where the main action comes last, leaving it suspended in the minds of listeners until the final moment. In English, we lost it after a thousand years in the British Isles. In German, it survived. In Hindi and Tamil, it survives. In Turkish and Hungarian, it survives. Tens of millions of speakers carry this ancient grammar in their mouths, and they don't even know it.
+    </p>
+
+    <p class="narrative">
+      The gender system remains. Every noun still has a gender — masculine, feminine, or neuter. And gender, in German as in all the Indo-European languages, is not about sex. It is a grammatical classification system older than Christianity, older than the Romans, older than writing. A "Mädchen" (girl) is neuter. A "Frau" (woman) is feminine. A "Mensch" (human, person) is masculine. The genders make no logical sense — they are the frozen accidents of six thousand years of language change. But they persist.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="nachhaltigkeit">Nachhaltigkeit</span> — sustainability — is a modern word. The Grimm brothers never spoke it. It didn't exist in the 1800s. But watch its structure:
+    </p>
+
+    <p class="narrative">
+      Nach- (after, later) + halten (to hold, to keep) + -ig (adjective-forming suffix) + -keit (noun-forming suffix)
+    </p>
+
+    <p class="narrative">
+      "After-holding-ness." To hold something for what comes after. The word is brand new — it emerged in the 1970s as environmentalism spread — but its building blocks are all 6,000 years old. The prefix "nach" appears in proto-Germanic. The root "halten" appears in Sanskrit and Latin and Greek, all with the meaning "to hold." The suffixes "-ig" and "-keit" are ancient Germanic formations.
+    </p>
+
+    <!-- NACHHALTIGKEIT etymology card -->
+    <div class="ety-card" id="card-nachhaltigkeit">
+      <div class="word-header">
+        <span class="word-main">Nachhaltigkeit</span>
+        <span class="word-pron">/ˈnaːxˌhaltɪçkaɪ̯t/</span>
+      </div>
+      <div class="word-meaning">sustainability — holding on for what comes after us</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">nach + halten + -ig + -keit</span>
+        <span class="bridge-note">— after + to hold + adjective-forming + noun-forming suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*-nach (after) + *h₂el- (to hold)</span>
+        <span class="bridge-note">— both components appear across all Indo-European languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Nachbar (neighbor) — after-dweller</span>
+        <span class="bridge-note">— showing how the prefix "nach" builds meaning in German</span>
+      </div>
+      <div class="story">
+        "Nachhaltigkeit" is the perfect modern German word. It did not exist before the 1970s, when Germans coined it to capture the concept of environmental responsibility — holding something so it persists into the future. The concept is modern, but the word is made entirely of ancient components. This is what makes German so powerful as a language for the modern world: its prefix-and-suffix system allows speakers to build entirely new concepts using 6,000-year-old building blocks. When a German scientist speaks of "Nachhaltigkeit," they are invoking an ancient Indo-European vision of time — the future as something we hold in our hands now. The word contains philosophy in its morphology.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This is why German can absorb thousands of English words and still remain German. The grammar is untouched. The structure is untouched. The ancient mechanisms that allow Germans to build meaning — cases, genders, verbal aspects, word order, prefix-and-suffix combinations — remain exactly as they were a thousand years ago, five thousand years ago, six thousand years ago.
+    </p>
+
+    <p class="narrative">
+      German is not drowning in English. German is digesting English.
+    </p>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: VERSTÄNDIGUNG ==================== -->
+  <div class="scene" id="scene-verstaendigung">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      There is a word that captures the entire journey of this book: <span class="german-word" data-card="verstaendigung">Verständigung.</span>
+    </p>
+
+    <p class="narrative">
+      English translation: "understanding," "communication," "mutual comprehension."
+    </p>
+
+    <p class="narrative">
+      But the German word is more precise. Breaking it down:
+    </p>
+
+    <p class="narrative">
+      Ver- (prefix indicating a process or transformation) + ständig (constant, standing, from stehen = to stand) + -ung (noun-forming suffix)
+    </p>
+
+    <p class="narrative">
+      "Ver-standing-ness." A constant standing-together. A state of having reached a place of mutual stability.
+    </p>
+
+    <p class="narrative">
+      This is what happened over six thousand years and twenty-six chapters. The scattered dialects of Proto-Indo-European stood together in that first campfire on the steppe. They split apart across continents and centuries. They changed so radically that their descendants could no longer understand each other. But through all that change, through invasion and plague and war and atomic bombs and the internet, something persisted: the echo of that first "standing-together."
+    </p>
+
+    <p class="narrative">
+      And now, for the first time in history, we can hear that echo. We can reconstruct the words. We can trace the patterns. We can explain why English "mother" and German "Mutter" are the same word even though they look different and are spoken a thousand kilometers apart.
+    </p>
+
+    <!-- VERSTÄNDIGUNG etymology card -->
+    <div class="ety-card" id="card-verstaendigung">
+      <div class="word-header">
+        <span class="word-main">Verständigung</span>
+        <span class="word-pron">/fɛɐ̯ˈʃtɛndɪɡʊŋ/</span>
+      </div>
+      <div class="word-meaning">mutual understanding, communication, the state of standing together</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + ständig + -ung</span>
+        <span class="bridge-note">— toward + standing/constant + noun-forming suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*steh₂- (to stand)</span>
+        <span class="bridge-note">— same root as English "stand," Latin "stare," Sanskrit "sthitá"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">verstehen (to understand) — literally "to stand in the middle of"</span>
+        <span class="bridge-note">— same root, with the meaning transformed through the verb "ver-"</span>
+      </div>
+      <div class="story">
+        "Verständigung" carries within it the metaphor that all understanding requires: the image of standing. To "understand" in German is literally to stand in the middle of something, to position yourself within it, to reach a state of balance and comprehension. Over six thousand years, languages have preserved this metaphor. English "understand" = stand-under, as if understanding means being beneath something and holding it up. German "verstehen" = to stand-in, to stand within. Both languages chose the verb "stand" to describe the abstract act of comprehension. This is the kind of deep similarity that only appears when you dig into the history of words.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: HOMECOMING ==================== -->
+  <div class="scene" id="scene-home">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The final destination is home. The circle closes.
+    </p>
+
+    <p class="narrative">
+      In German, the word for "at home" is <span class="german-word" data-card="zuhause">Zuhause.</span> Watch it closely: Zu (at, toward) + Hause (house, home).
+    </p>
+
+    <p class="narrative">
+      "At-home." Or better: "toward-home," the state of being oriented toward home, at rest in the place that is yours.
+    </p>
+
+    <p class="narrative">
+      Over six thousand years, the German language carried certain words with it, like refugees carrying photographs of the only home they had ever known:
+    </p>
+
+    <p class="narrative">
+      <strong>Mutter.</strong> Mother. From PIE *meh₂- (to measure, to prosper). The root that also gave us "meter" and "mother" in English, "mère" in French, "мать" (mat') in Russian, "माता" (mātā) in Hindi. The first name every child speaks.<br>
+      <br>
+      <strong>Vater.</strong> Father. From PIE *ph₂tḗr. Also English "father," Latin "pater," Sanskrit "pitṛ." The head of the household.<br>
+      <br>
+      <strong>Wasser.</strong> Water. From PIE *wódr̥. The substance of survival, the same root across all Germanic and European languages.<br>
+      <br>
+      <strong>Feuer.</strong> Fire. From PIE *péh₂ur-. The light that held back the dark on that first steppe night, and on millions of nights after.
+    </p>
+
+    <!-- ZUHAUSE etymology card -->
+    <div class="ety-card" id="card-zuhause">
+      <div class="word-header">
+        <span class="word-main">Zuhause</span>
+        <span class="word-pron">/ˈtsuːˌhaʊzə/</span>
+      </div>
+      <div class="word-meaning">at home — the place you belong, the center of your world</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zu (toward) + Haus (house)</span>
+        <span class="bridge-note">— literally: toward-house, or: in the direction of house</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kewH- (to cover, to make a roof)</span>
+        <span class="bridge-note">— the root of "house" across Germanic languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">house</span>
+        <span class="bridge-note">— same root, same meaning: a covered place, a shelter</span>
+      </div>
+      <div class="story">
+        "Zuhause" is simple and untranslatable. It is not "home" (which can be abstract), not "house" (which is a building), but the state of being-at-home, the feeling of arrival, of belonging. It contains in three syllables the entire story of human migration: the movement (zu = toward) and the destination (Haus = house). Every person who speaks German, from Berlin to Vienna to Zurich to Buenos Aires, carries in this single word the concept of seeking and finding. The root *kewH- goes back to the first houses humans built — the covered places where families gathered around fires like the one on that ancient steppe. Six thousand years later, a German speaker says "Zuhause" and is standing, invisibly, in all of those places at once.
+      </div>
+    </div>
+
+    <p class="narrative">
+      These words survived everything. War, diaspora, famine, plague, climate change, empire, revolution, division, reunification. A woman on the steppe six thousand years ago said "Mutter" to her child. A teenager in Berlin says it today. Same sound, same meaning, same love in the voice.
+    </p>
+
+    <p class="narrative emphasis">
+      This is what it means to be human. To carry words across time.
+    </p>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: LOOKING FORWARD ==================== -->
+  <div class="scene" id="scene-forward">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And yet the language changes still. It will continue to change. English words will keep flooding in. New technologies will force new words to be created or borrowed. Young people will speak differently than their grandparents. This is not death. This is the opposite of death.
+    </p>
+
+    <p class="narrative">
+      The future is called <span class="german-word" data-card="zukunft">Zukunft</span> in German. Breaking it down: Zu (toward) + Kunft (coming). "Toward-coming." What comes toward us. The past is "Vergangenheit" — ver-gone-ness, what has gone away. The present is "Gegenwart" — what we face against, what stands against us right now.
+    </p>
+
+    <p class="narrative">
+      These words show how German grammar metaphorizes time. The future is something approaching us. The past is something receding. The present is something we stand against, facing it directly. And this vision of time comes from the deepest layers of Proto-Indo-European — the idea that time is a journey, that we are moving through space, that some things approach and others recede.
+    </p>
+
+    <!-- ZUKUNFT etymology card -->
+    <div class="ety-card" id="card-zukunft">
+      <div class="word-header">
+        <span class="word-main">Zukunft</span>
+        <span class="word-pron">/ˈtsuːˌkʊnft/</span>
+      </div>
+      <div class="word-meaning">future — what is coming toward us</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zu (toward) + kunft (coming)</span>
+        <span class="bridge-note">— from kommen (to come), a verb as old as language itself</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*gʷem- (to go, to come)</span>
+        <span class="bridge-note">— same root in English "come," Latin "venio" (→ adventure), Sanskrit "gam"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Zusammenarbeit (cooperation) — together-work</span>
+        <span class="bridge-note">— showing how German builds complex ideas from simple verb roots</span>
+      </div>
+      <div class="story">
+        The word "Zukunft" reveals something profound about how Indo-European speakers conceive of time. They imagine the future as approaching, as something coming toward them. Chinese does something different: 未来 (wèilái) literally means "not-yet + come," but the emphasis is more on the state of not-having-arrived. Both languages use motion verbs (coming, arriving), but they position the speaker differently in relation to time. English uses similar metaphors: "the future is ahead of us," "the past is behind us." This is not universal to all languages. Some cultures have different orientations. But in German, as in all Indo-European languages, time is a journey, the future is motion, and we are standing at the boundary between what has come and what is coming.
+      </div>
+    </div>
+
+    <p class="narrative">
+      What is the future of German? Some worry that English will dissolve it. Others see a language too sturdy, too grammatically complex, too rooted in six thousand years of ancestral change, to ever be truly erased.
+    </p>
+
+    <p class="narrative">
+      The reality is probably both. German will change. It will absorb English. It will create new words to describe new realities. Young people will use Denglisch without guilt or self-consciousness. But the deep structure will remain. The cases, the genders, the verb-final clauses, the prefix-and-suffix system that allows endless word creation — these will persist. Because they are not learned. They are absorbed with your mother's milk. They are how your brain organizes reality.
+    </p>
+
+    <p class="narrative">
+      And speaking German, in fifty years or a hundred years, a speaker will still be carrying six thousand years of history in every sentence.
+    </p>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: THE FINAL WORD ==================== -->
+  <div class="scene" id="scene-final">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      There is one more word to collect. The most important word in any language. The word that outlasts empires and ideologies, that survives war and division, that connects us to the first humans who ever spoke these sounds.
+    </p>
+
+    <p class="narrative">
+      The word is: <span class="german-word" data-card="liebe">Liebe.</span>
+    </p>
+
+    <p class="narrative">
+      Love.
+    </p>
+
+    <p class="narrative">
+      From Proto-Germanic *lubō. Related to English "believe" (to hold as dear) and "leave" (to remain, to persist). The root carries the meaning "to remain, to adhere, to hold dear." The German word looks different from the English "love," but they are the same word, shaped by different centuries, different climates, different histories.
+    </p>
+
+    <!-- LIEBE etymology card -->
+    <div class="ety-card" id="card-liebe">
+      <div class="word-header">
+        <span class="word-main">Liebe</span>
+        <span class="word-pron">/ˈliːbə/</span>
+      </div>
+      <div class="word-meaning">love — to remain, to hold dear, to adhere to</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*lewbʰ- (to care for, to remain)</span>
+        <span class="bridge-note">— possibly related to "remain," "believe," "lief" (German for "dear")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">love</span>
+        <span class="bridge-note">— Old English "lufu"; also related to "believe" and "leave"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Liebe</span>
+        <span class="bridge-note">— the state of remaining faithful, of holding something dear</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">爱</span>
+        <span class="bridge-note">— ài — ancient character containing 心 (heart) at its center</span>
+      </div>
+      <div class="story">
+        "Liebe" is perhaps the most personal German word. To say "Ich liebe dich" (I love you) is to speak in German in perhaps its most intimate register. The root *lewbʰ- carries the meaning of adhering, of remaining steadfast, and this resonates through the centuries. A parent's love is the willingness to remain, to hold fast. A lover's declaration is the promise to adhere. And the Chinese character 爱 (ài), though it evolved completely separately over thousands of years in a different linguistic family, arrived at the same visual metaphor: a heart at the center. Love, in German as in Chinese, in English as in Hindi, is defined by the organ that beats, by the capacity to remain, by the promise to hold fast. This is what survives conquest and time.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Six thousand years of history. From the steppe to Berlin. From the campfire to the smartphone. From one family speaking in the darkness to billions of speakers scattered across the world. And at the center of it all, the same words that matter: mother, father, water, fire, night, star, home, future, and love.
+    </p>
+
+    <p class="narrative emphasis">
+      These words carry us forward.
+    </p>
+
+  </div>
+
+
+<!-- ==================== PATTERNS DISCOVERED ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Denglisch: English absorption</strong> — Handy (mobile phone), downloaden, Laptop — modern German absorbs English words wholesale, but often gives them new meanings (Handy is not English!).<br><br>
+    <strong style="color: var(--text-bright);">Nach- prefix for sustainability</strong> — Nachhaltigkeit (after+holding+ness = sustainability). The word literally means "the quality of holding after" — ensuring something endures beyond the present moment.<br><br>
+    <strong style="color: var(--text-bright);">Gegen- prefix for presence and opposition</strong> — Gegenwart (against+waiting = the present). The present moment is what stands against you, what waits before you. Gegenteil (opposite), Gegenüber (the one facing you).<br><br>
+    <strong style="color: var(--text-bright);">Zu- prefix for belonging</strong> — Zuhause (to+house = at home), Zukunft (to+coming = future). The future is literally "what is coming towards you."
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Twenty-Six</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Willkommen</span><span class="cw-english">welcome</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Handy</span><span class="cw-english">mobile phone</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Nachhaltigkeit</span><span class="cw-english">sustainability</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Verständigung</span><span class="cw-english">understanding</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Zuhause</span><span class="cw-english">at home</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Zukunft</span><span class="cw-english">future</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Vergangenheit</span><span class="cw-english">past</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Gegenwart</span><span class="cw-english">present</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Zusammenarbeit</span><span class="cw-english">cooperation</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Liebe</span><span class="cw-english">love</span></div>
+      </div>
+    </div>
+  </div>
+
+<!-- ==================== CONCEPTS LEARNED ==================== -->
+  <h3 style="margin-top:32px;">Concepts Learned in Chapter Twenty-Six</h3>
+  <div class="collected-words">
+    <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Denglisch</span><span class="cw-english">English words absorbed into German, sometimes with new meanings</span></div>
+    <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Gegen- Prefix</span><span class="cw-english">Gegenwart, Gegenteil — what stands against or before you</span></div>
+    <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Zu- Prefix</span><span class="cw-english">Zukunft, Zuhause — direction and belonging</span></div>
+    <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Language Never Stops</span><span class="cw-english">German continues evolving — absorbing, compounding, creating</span></div>
+  </div>
+
+  <!-- ==================== QUIZ: 80% GATE ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <div class="quiz-title">The Phase 1 Challenge</div>
+        <div class="quiz-note">You've traveled 6,000 years and learned the stories of 255 German words.<br>
+        To enter Phase 2, you must score 80% on this comprehensive review: <strong>12 questions</strong>.</div>
+      </div>
+
+      <form id="quizForm">
+        <!-- Question 1: Modern German -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">1.</span> In the sentence "Ich habe dir ne Message geschickt," how many languages are being spoken?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q1" value="a"> Two (German and English)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q1" value="b"> Four (ancient Germanic, medieval German, modern German, and English)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q1" value="c"> Only German, because English words have been digested into German grammar
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb1"></div>
+        </div>
+
+        <!-- Question 2: PIE Reconstruction -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">2.</span> The Proto-Indo-European root *steh₂- appears in which of these modern words?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q2" value="a"> Verständigung (understanding) and Stand (stand)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q2" value="b"> Stellung (position) and vestehen (understand)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q2" value="c"> All of the above
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb2"></div>
+        </div>
+
+        <!-- Question 3: Grimm's Law -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">3.</span> According to Grimm's Law, which sound correspondence is correct?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q3" value="a"> Latin "p" → Germanic "f" (pater → father, Vater)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q3" value="b"> Latin "t" → Germanic "d" (tres → three, drei)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q3" value="c"> Both A and B
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb3"></div>
+        </div>
+
+        <!-- Question 4: False Friends -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">4.</span> The German word "Gift" is a false friend. What does it mean?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q4" value="a"> Poison (a dangerous substance)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q4" value="b"> A present or gift (like English "gift")
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q4" value="c"> Talent or ability
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb4"></div>
+        </div>
+
+        <!-- Question 5: Denglisch -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">5.</span> When Germans say "Ich habe gedownloadet," what are the German morphological components?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q5" value="a"> ge- (past participle prefix) + download + -et (weak verb ending)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q5" value="b"> Pure English with German pronunciation
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q5" value="c"> A mix of English and German that breaks German grammar rules
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb5"></div>
+        </div>
+
+        <!-- Question 6: Chinese Comparison -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">6.</span> How does Chinese handle meaning differently from Indo-European languages?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q6" value="a"> Through shifting sounds; English and German use enduring written forms
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q6" value="b"> Through enduring visual forms (characters); Indo-European uses shifting sounds
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q6" value="c"> There is no meaningful difference
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb6"></div>
+        </div>
+
+        <!-- Question 7: German Grammar -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">7.</span> Which of these is still true of modern German grammar?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q7" value="a"> German has lost most of its case system due to English influence
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q7" value="b"> German still uses four cases (nominative, accusative, dative, genitive)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q7" value="c"> German now uses fixed word order like English
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb7"></div>
+        </div>
+
+        <!-- Question 8: Prefix Etymology -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">8.</span> The word "Nachhaltigkeit" (sustainability) breaks down as:</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q8" value="a"> Nach- (not) + halten (ability) + -igkeit (noun)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q8" value="b"> Nach- (after/later) + halten (to hold) + -ig + -keit
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q8" value="c"> A modern English borrowing with German pronunciation
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb8"></div>
+        </div>
+
+        <!-- Question 9: Word Origins -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">9.</span> Which of these words traces back to the same PIE root?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q9" value="a"> Wasser (water) and Feuer (fire)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q9" value="b"> Mutter (mother), Vater (father), and Bruder (brother)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q9" value="c"> Nacht (night) and Stern (star)
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb9"></div>
+        </div>
+
+        <!-- Question 10: Language Change -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">10.</span> What does the absorption of English words into German represent?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q10" value="a"> The death of German as a language
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q10" value="b"> What German has always done: evolve, absorb, and survive
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q10" value="c"> A temporary phenomenon that will reverse in 50 years
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb10"></div>
+        </div>
+
+        <!-- Question 11: Time Metaphor -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">11.</span> How does German conceptualize the future in the word "Zukunft"?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q11" value="a"> As something that exists before us (like English "ahead")
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q11" value="b"> As something coming toward us (zu = toward; kunft = coming)
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q11" value="c"> As an abstract concept with no spatial metaphor
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb11"></div>
+        </div>
+
+        <!-- Question 12: Comprehensive Review -->
+        <div class="quiz-item">
+          <div class="quiz-question"><span class="q-number">12.</span> Throughout this 26-chapter journey, what has remained constant in German despite all the language change?</div>
+          <div class="quiz-options">
+            <label class="quiz-option">
+              <input type="radio" name="q12" value="a"> The exact pronunciation of every word
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q12" value="b"> The deep grammatical structures: cases, genders, verb-final clauses, prefix-suffix combinations
+            </label>
+            <label class="quiz-option">
+              <input type="radio" name="q12" value="c"> The complete vocabulary remains unchanged
+            </label>
+          </div>
+          <div class="quiz-feedback" id="fb12"></div>
+        </div>
+
+        <button type="submit" class="quiz-submit">Check Answers</button>
+      </form>
+
+      <div class="quiz-result" id="quizResult">
+        <div class="result-score" id="resultScore">0%</div>
+        <div class="result-message">Your Journey Through Phase 1</div>
+        <div class="result-status" id="resultStatus"></div>
+      </div>
+
+      <div class="quiz-locked" id="quizLocked">
+        <div class="quiz-locked-message">You have not yet reached 80%.</div>
+        <div class="quiz-locked-score" id="lockedScore">Score: 0%</div>
+        <div class="quiz-locked-message">Review the chapters and try again. Phase 2 awaits.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">260 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(30%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:30%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Willkommen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">welcome</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Handy</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">mobile phone</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Nachhaltigkeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sustainability</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Verständigung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">understanding, communication</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zuhause</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">at home</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zukunft</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">future</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Vergangenheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">past</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gegenwart</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">present</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zusammenarbeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">cooperation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Liebe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">love</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~249 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–25</td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">55 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(37%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:37%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Denglisch neologism</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Handy, downloaden — English absorption with new meanings</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Nach- sustainability</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Nachhaltigkeit (after+holding+ness)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gegen- presence</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Gegenwart (against+waiting = present), Gegenteil (opposite)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zu- belonging</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Zuhause (to+house), Zukunft (to+coming = future)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">26</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~83 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–25</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== PHASE 1 SUMMARY ==================== -->
+  <div class="scene" id="scene-summary">
+    <div class="phase1-summary" id="phaseSummary">
+      <div class="summary-title">Phase 1 Complete</div>
+      <div class="summary-stat">
+        You have traveled <span class="stat-number">6,000 years</span> through language history.
+      </div>
+      <div class="summary-stat">
+        You have learned the stories of <span class="stat-number">~255 German words</span> — and can now decode thousands more.
+      </div>
+      <div class="summary-stat">
+        You understand <span class="stat-number">56 patterns</span> that unlock word families across English, German, and all of Indo-European.
+      </div>
+      <div class="summary-stat">
+        You have discovered <span class="stat-number">WHY</span> German sounds the way it does, <span class="stat-number">WHERE</span> each word came from, and <span class="stat-number">HOW</span> history shaped every sentence.
+      </div>
+      <div class="summary-text">
+        Phase 1 taught you to <strong>HEAR</strong> German. To listen to the ancient patterns preserved in every word. To understand that when a German speaks, they are not just using language — they are inheriting it, channeling it, carrying forward a system of meaning that has survived six thousand years of change.<br><br>
+        Phase 2 will teach you to <strong>SEE THROUGH</strong> German. To look beneath the surface. To understand how meaning is constructed, how grammar builds thought, how language shapes the way we understand reality.
+      </div>
+      <div class="summary-reference">
+        This is where your journey began: in the rain of London, holding a stolen book, wondering what it meant to truly learn a language. Now you understand. Language is not words. Language is time. It is migration and history and the accumulated choices of millions of speakers. It is the campfire on the steppe that still burns in Berlin. It is the woman who said "Mutter" six thousand years ago, and the teenager saying it today.
+      </div>
+      <div class="turn-page">
+        → Turn the page. Phase 2 awaits.</div>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Twenty-Six
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten stories. The journey from the steppe to the present.<br>
+        Six thousand years. Twenty-six chapters. One unbroken thread of language.<br>
+        <br>
+        You now understand the architecture of German.
+      </p>
+      <div class="next-chapter">
+        <a href="chapter27.html" style="color: var(--fire); text-decoration: none;">Chapter Twenty-Seven: Phase 2 Begins — coming soon</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter25.html" class="nav-btn">← Chapter 25</a>
+    <a href="chapter27.html" class="nav-btn next">Chapter 27 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 26: BERLIN CITYSCAPE + DATA STREAMS ---
+const canvas = document.getElementById('cityscape');
+const ctx = canvas.getContext('2d');
+let stars = [];
+let dataParticles = [];
+let shootingStars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createStars() {
+  stars = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 12000) :
+    Math.floor((canvas.width * canvas.height) / 8000);
+  for (let i = 0; i < count; i++) {
+    const y = Math.random() * (canvas.height * 0.5);
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: y,
+      r: Math.random() * 1.2 + 0.2,
+      alpha: Math.random() * 0.6 + 0.1,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function createShootingStar() {
+  shootingStars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * (canvas.height * 0.3),
+    vx: (Math.random() + 0.5) * 2,
+    vy: (Math.random() + 0.5) * 2,
+    life: 1,
+    maxLife: 1.5
+  });
+}
+
+function drawBerlinSkyline(centerX, topY) {
+  const scroll = window.scrollY / window.innerHeight;
+  const colorPhase = Math.min(scroll, 1);
+
+  // Dynamic background: night blue -> amber -> white-gold
+  const nightColor = [10, 14, 26];
+  const amberColor = [212, 164, 74];
+  const goldColor = [232, 220, 200];
+
+  let bgR, bgG, bgB;
+  if (colorPhase < 0.5) {
+    const t = colorPhase * 2;
+    bgR = Math.round(nightColor[0] + (amberColor[0] - nightColor[0]) * t);
+    bgG = Math.round(nightColor[1] + (amberColor[1] - nightColor[1]) * t);
+    bgB = Math.round(nightColor[2] + (amberColor[2] - nightColor[2]) * t);
+  } else {
+    const t = (colorPhase - 0.5) * 2;
+    bgR = Math.round(amberColor[0] + (goldColor[0] - amberColor[0]) * t);
+    bgG = Math.round(amberColor[1] + (goldColor[1] - amberColor[1]) * t);
+    bgB = Math.round(amberColor[2] + (goldColor[2] - amberColor[2]) * t);
+  }
+
+  // Draw Berlin skyline silhouette
+  const skylinePoints = [
+    {x: 0, y: topY + 150},
+    {x: centerX * 0.3, y: topY + 80},  // Building
+    {x: centerX * 0.35, y: topY + 100},
+    {x: centerX * 0.45, y: topY + 40}, // TV Tower top
+    {x: centerX * 0.5, y: topY + 30},
+    {x: centerX * 0.55, y: topY + 40},
+    {x: centerX * 0.7, y: topY + 120}, // Brandenburg Gate outline
+    {x: centerX * 0.8, y: topY + 90},
+    {x: centerX * 0.9, y: topY + 110},
+    {x: centerX * 1.1, y: topY + 70},
+    {x: centerX * 1.2, y: topY + 85},
+    {x: centerX * 1.3, y: topY + 60},  // Modern tower
+    {x: centerX * 1.4, y: topY + 100},
+    {x: centerX * 1.5, y: topY + 50},
+    {x: canvas.width, y: topY + 150}
+  ];
+
+  ctx.fillStyle = `rgba(${bgR * 0.5}, ${bgG * 0.5}, ${bgB * 0.5}, 0.6)`;
+  ctx.beginPath();
+  ctx.moveTo(skylinePoints[0].x, skylinePoints[0].y);
+  skylinePoints.forEach(pt => ctx.lineTo(pt.x, pt.y));
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(0, canvas.height);
+  ctx.fill();
+
+  // TV Tower (Fernsehturm)
+  const tvTowerX = centerX * 0.48;
+  const tvTowerBase = topY + 100;
+  ctx.strokeStyle = `rgba(${bgR * 0.8}, ${bgG * 0.8}, ${bgB * 0.8}, 0.4)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(tvTowerX, tvTowerBase);
+  ctx.lineTo(tvTowerX - 2, topY + 35);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(tvTowerX, tvTowerBase);
+  ctx.lineTo(tvTowerX + 2, topY + 35);
+  ctx.stroke();
+
+  // Tower sphere
+  ctx.fillStyle = `rgba(${bgR}, ${bgG}, ${bgB}, 0.3)`;
+  ctx.beginPath();
+  ctx.arc(tvTowerX, topY + 28, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Smartphone outline (bottom right)
+  const phoneX = canvas.width - 80;
+  const phoneY = topY + 120;
+  ctx.strokeStyle = `rgba(${amberColor[0]}, ${amberColor[1]}, ${amberColor[2]}, 0.3)`;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = `rgba(${bgR * 0.8}, ${bgG * 0.8}, ${bgB * 0.8}, 0.2)`;
+  ctx.fillRect(phoneX - 20, phoneY - 40, 40, 80);
+  ctx.strokeRect(phoneX - 20, phoneY - 40, 40, 80);
+
+  // Campfire glow in the center (warm light breaking through)
+  const fireX = centerX;
+  const fireY = topY + 90;
+  const gradient = ctx.createRadialGradient(fireX, fireY, 0, fireX, fireY, 150);
+  gradient.addColorStop(0, `rgba(232, 164, 74, ${0.4 * (1 - colorPhase * 0.5)})`);
+  gradient.addColorStop(1, `rgba(232, 164, 74, 0)`);
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(fireX, fireY, 150, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Small campfire for emphasis
+  if (colorPhase < 0.7) {
+    ctx.fillStyle = `rgba(232, 164, 74, ${(1 - colorPhase) * 0.3})`;
+    ctx.beginPath();
+    ctx.arc(fireX, fireY + 10, 8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawFrame(time) {
+  const scroll = window.scrollY / window.innerHeight;
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw stars
+  stars.forEach(s => {
+    const alpha = s.alpha + Math.sin(time * s.twinkleSpeed + s.twinkleOffset) * 0.15;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 220, 200, ${Math.max(0, alpha)})`;
+    ctx.fill();
+  });
+
+  // Draw shooting stars
+  shootingStars = shootingStars.filter(ss => ss.life > 0);
+  shootingStars.forEach(ss => {
+    ss.x += ss.vx;
+    ss.y += ss.vy;
+    ss.life -= 0.01;
+
+    const alpha = (ss.life / ss.maxLife) * 0.7;
+    ctx.strokeStyle = `rgba(232, 220, 200, ${alpha})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(ss.x, ss.y);
+    ctx.lineTo(ss.x - ss.vx * 20, ss.y - ss.vy * 20);
+    ctx.stroke();
+  });
+
+  if (Math.random() < 0.003) {
+    createShootingStar();
+  }
+
+  // Draw cityscape
+  const centerX = canvas.width / 2;
+  const topY = canvas.height * 0.3;
+  drawBerlinSkyline(centerX, topY);
+
+  // Draw data particles (digital streams)
+  dataParticles = dataParticles.filter(p => p.age < p.lifespan);
+  dataParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.age++;
+
+    const alpha = p.alpha * (1 - p.age / p.lifespan);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 164, 74, ${Math.max(0, alpha)})`;
+    ctx.fill();
+  });
+
+  // Spawn data particles
+  if (Math.random() < 0.08) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * (canvas.height * 0.6);
+    dataParticles.push({
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 1,
+      vy: -Math.random() * 0.6 - 0.1,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random() * 0.4 + 0.2,
+      lifespan: Math.random() * 120 + 60,
+      age: 0
+    });
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createStars();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createStars(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+      if (entry.target.id === 'scene-summary') {
+        setTimeout(() => {
+          document.getElementById('phaseSummary').classList.add('show');
+        }, 200);
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- QUIZ LOGIC ---
+document.getElementById('quizForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const answers = {
+    q1: 'c',  // Four languages (ancient Germanic, medieval German, modern German, English) - but digested
+    q2: 'c',  // All of the above (steh₂)
+    q3: 'c',  // Both A and B (Grimm's Law)
+    q4: 'a',  // Poison
+    q5: 'a',  // ge- + download + -et
+    q6: 'b',  // Chinese uses visual forms; Indo-European uses shifting sounds
+    q7: 'b',  // German still uses four cases
+    q8: 'b',  // Nach- + halten + -ig + -keit
+    q9: 'b',  // Mutter, Vater, Bruder (all family terms)
+    q10: 'b', // What German has always done: evolve, absorb, survive
+    q11: 'b', // Coming toward us (zu + kunft)
+    q12: 'b'  // Deep grammatical structures
+  };
+
+  let correct = 0;
+  let total = Object.keys(answers).length;
+
+  for (let i = 1; i <= total; i++) {
+    const qName = 'q' + i;
+    const selected = document.querySelector(`input[name="${qName}"]:checked`);
+    const feedback = document.getElementById('fb' + i);
+
+    if (selected) {
+      const isCorrect = selected.value === answers[qName];
+      if (isCorrect) {
+        correct++;
+        feedback.className = 'quiz-feedback correct show';
+        feedback.innerHTML = '✓ Correct';
+      } else {
+        feedback.className = 'quiz-feedback incorrect show';
+        feedback.innerHTML = '✗ Incorrect — the correct answer is: ' +
+          (answers[qName] === 'a' ? 'A' : answers[qName] === 'b' ? 'B' : 'C');
+      }
+    } else {
+      feedback.className = 'quiz-feedback incorrect show';
+      feedback.innerHTML = '✗ No answer selected';
+    }
+  }
+
+  const percentage = Math.round((correct / total) * 100);
+  const passed = percentage >= 80;
+
+  const result = document.getElementById('quizResult');
+  document.getElementById('resultScore').textContent = percentage + '%';
+  document.getElementById('resultStatus').textContent =
+    passed ?
+    'You have earned entry to Phase 2. Congratulations — you understand the architecture of German.' :
+    'You have scored ' + correct + ' out of ' + total + '. Review and try again.';
+  document.getElementById('resultStatus').className =
+    'result-status ' + (passed ? 'passed' : 'failed');
+  result.classList.add('show');
+
+  const locked = document.getElementById('quizLocked');
+  if (!passed) {
+    document.getElementById('lockedScore').textContent = 'Score: ' + percentage + '%';
+    locked.classList.add('show');
+  } else {
+    locked.classList.remove('show');
+  }
+
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+// --- SPEECH SYNTHESIS ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- MOBILE OPTIMIZATION ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+if (window.innerWidth < 600) {
+  stars = stars.slice(0, Math.floor(stars.length / 2));
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

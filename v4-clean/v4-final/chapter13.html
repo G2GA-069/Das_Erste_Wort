@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 13: Der schwarze Tod</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #7a8a96;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #7a8a96 0%, #8b9aaa 40%, #6a7a86 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- PLAGUE CANVAS --- */
+  #plagueSky {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: #8b6b5c;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, #8b6b5c, transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER NAVIGATION --- */
+  .chapter-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+    color: rgba(232, 164, 74, 0.6);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.3s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--fire);
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- QUIZ GATE --- */
+  .quiz-gate {
+    background: linear-gradient(135deg, rgba(30, 40, 60, 0.95), rgba(20, 25, 40, 0.95));
+    border: 2px solid rgba(232, 164, 74, 0.2);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .quiz-gate .gate-title {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    margin-bottom: 10px;
+  }
+
+  .quiz-gate .gate-subtitle {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.6);
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(20, 28, 45, 0.8);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.12);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected-correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.selected-incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.4);
+  }
+
+  .quiz-feedback {
+    font-size: 0.95rem;
+    margin-top: 12px;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+    min-height: 1.5em;
+  }
+
+  .quiz-result {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-top: 32px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .quiz-result.show {
+    opacity: 1;
+  }
+
+  .quiz-result.pass {
+    background: rgba(74, 180, 100, 0.1);
+    border-color: rgba(74, 180, 100, 0.25);
+    color: #8ed69e;
+  }
+
+  .quiz-result.fail {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.25);
+    color: #d69e8e;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+
+    .quiz-gate { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-question .q-text { font-size: 1.05rem; }
+    .quiz-option { padding: 12px 14px; font-size: 0.95rem; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+    .quiz-question { padding: 12px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="plagueSky"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Thirteen</div>
+    <h1>Der schwarze Tod</h1>
+    <div class="subtitle">The Black Death · 1348–1400</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE ARRIVAL ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In 1348, ships arrived in the ports of the Mediterranean carrying spices from the East. They carried something else too — in the bellies of rats in the hold, in the very air of the cargo hold — a bacterium so small that no living human had ever seen it.
+    </p>
+
+    <p class="narrative">
+      Within three years, thirty million people were dead.
+    </p>
+
+    <p class="narrative">
+      That is one in three. One in three. Imagine a city. Imagine every third person — your neighbor, your child, your priest — stepping into darkness.
+    </p>
+
+    <p class="narrative">
+      In 1300, the German-speaking lands had a population of perhaps five million. By 1350, no one knew the exact number anymore. Villages had gone silent. Fields lay fallow. Entire dialects — the speech of whole regions, the small languages of local peoples — vanished because there was no one left to speak them.
+    </p>
+
+    <p class="narrative">
+      This is the story of how <span class="german-word" data-card="pest">Pest</span> — plague — changed the German language not through conquest or trade, but through loss. Through devastation. Through the crushing silence of the dead.
+    </p>
+    <!-- PEST etymology card -->
+    <div class="ety-card" id="card-pest">
+      <div class="word-header">
+        <span class="word-main">Pest</span>
+        <span class="word-pron">/pɛst/</span>
+      </div>
+      <div class="word-meaning">plague — the pestilence that comes from outside, the word itself borrowed because Germanic peoples had no name for disease at this scale</div>
+      <div class="bridge">
+        <span class="bridge-label pie">LATIN</span>
+        <span class="bridge-word">pestis</span>
+        <span class="bridge-note">— from Latin, meaning plague or pest. A loan into German because this epidemic was unprecedented.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">pestilence, pest</span>
+        <span class="bridge-note">— both from Latin pestis, arriving through Norman French</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Pest</span>
+        <span class="bridge-note">— adopted directly from Latin in the 14th century as German had no word for epidemic</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">瘟疫</span>
+        <span class="bridge-note">— wēnyì (disease + calamity) — a native Chinese coinage combining two elements</span>
+      </div>
+      <div class="story">
+        Pest is a fascinating word because it reveals a gap in the Germanic vocabulary. The ancient Germanic peoples had no epidemic disease — they had smallpox, they had leprosy, but nothing like the bubonic plague. So when it arrived, they borrowed the Latin word. This is the pattern of vocabulary expansion: you borrow words for things you've never encountered. The word Pest entered German fully formed from Latin, and it stuck. German could have created a new word from Germanic roots — something like "Sterbenseuche" (death-sickness) — but instead, it accepted the Latin term. This is linguistically honest: the plague was not a Germanic phenomenon; it was an import. The word itself came from outside.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: STERBEN & ANGST ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The word for death in German is <span class="german-word" data-card="sterben">sterben</span>. It is old — so old that it connects to English "starve," which originally meant "to die" in general, not just from hunger. Both come from the same Germanic root, *sterbaną, which means the same thing across two thousand years: to perish, to cease, to end.
+    </p>
+
+    <p class="narrative">
+      But during the plague, the word took on a weight it had never carried. It was no longer abstract. It was hourly. Constant. A medieval chronicle from 1349 records the aftermath in one German city: "They buried so many that they gave up counting. In some houses, an entire family was dead by morning. In others, the servants had already fled to escape the pestilence that was surely to come."
+    </p>
+
+    <p class="narrative">
+      Germans needed a new vocabulary of death. Not just the act of dying, but the fear of it, the smell of it, the knowledge that it was coming for you next.
+    </p>
+
+    <!-- STERBEN etymology card -->
+    <div class="ety-card" id="card-sterben">
+      <div class="word-header">
+        <span class="word-main">Sterben</span>
+        <span class="word-pron">/ˈʃtɛʁbən/</span>
+      </div>
+      <div class="word-meaning">to die — the ultimate silence, the one end that awaits all</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sterbh-</span>
+        <span class="bridge-note">— to be stiff, rigid, dead. The body in rigor.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">starve</span>
+        <span class="bridge-note">— Old English "steorfan" — originally meant to die, not just from hunger</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Sterben</span>
+        <span class="bridge-note">— Old High German "sterban" — carries the full weight of mortality</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">死</span>
+        <span class="bridge-note">— sǐ — a character that means finality, extinction, the end of life</span>
+      </div>
+      <div class="story">
+        The connection to "starve" reveals something profound: in early Germanic languages, all death was a kind of starvation — a wasting away. The body grows stiff, the breath ceases. The difference between dying of hunger and dying of plague was a matter of speed, not essence. The plague made every death feel like starvation: the body wasting in days, the fever consuming from within. Germans were not just dying. They were starving to death.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And fear filled the space where hope had been. The German word is <span class="german-word" data-card="angst">Angst</span> — fear and dread so deep it becomes bodily, a tightening, a constriction. It comes from the same root as "anguish" — a narrowing, a choking. During the plague, Angst was not an emotion. It was the baseline of existence.
+    </p>
+
+    <!-- ANGST etymology card -->
+    <div class="ety-card" id="card-angst">
+      <div class="word-header">
+        <span class="word-main">Angst</span>
+        <span class="word-pron">/ɑŋst/</span>
+      </div>
+      <div class="word-meaning">anxiety, dread, fear that grips the chest — the tightness of a throat about to scream</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₂enǵh-</span>
+        <span class="bridge-note">— narrow, tight, constricted. Fear as a physical tightness.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">anguish</span>
+        <span class="bridge-note">— the same root, same sensation of being squeezed by terror</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Angst</span>
+        <span class="bridge-note">— modern German preserved this word from Old High German "angust"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">恐惧</span>
+        <span class="bridge-note">— kǒngjù (fear) — literally "tremble-fear," a double emphasis on physical shaking</span>
+      </div>
+      <div class="story">
+        Angst emerged from German philosophy in the 20th century as a word for existential dread. But it was born six hundred years earlier, in the plague years, when Angst was not philosophical — it was visceral. Your throat closed. Your heart would not slow. You waited for the first signs: the boil, the blackening of the fingers, the fever that would not break. Every shadow could be death. Every cough could be yours. Angst was the only reasonable response to living in a world where one in three people you knew was gone.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: HOFFNUNG & GLAUBE ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And yet people survived. Some lived. Some recovered. Some never caught the sickness at all. Why? No one knew. It seemed random, cruel, like the will of God — and perhaps that is what it was.
+    </p>
+
+    <p class="narrative">
+      When nearly everything is taken, what remains becomes sacred. <span class="german-word" data-card="hoffnung">Hoffnung</span> — hope — became the only currency that mattered. But it was a different hope than before. In earlier times, hope had been about worldly goods, about abundance, about safety. Now hope was smaller. Hope was that your child would live until tomorrow. Hope was that the fever would break. Hope was a single breath.
+    </p>
+
+    <!-- HOFFNUNG etymology card -->
+    <div class="ety-card" id="card-hoffnung">
+      <div class="word-header">
+        <span class="word-main">Hoffnung</span>
+        <span class="word-pron">/ˈhɔfnʊŋ/</span>
+      </div>
+      <div class="word-meaning">hope — the anchor to tomorrow when today is unbearable</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">hoffen + -ung</span>
+        <span class="bridge-note">— "hoffen" from Old High German, originally to leap, to have faith in jumping forward</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">hope</span>
+        <span class="bridge-note">— Old English "hopa" — origin obscure, possibly "to hop" or "to leap toward"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">希望</span>
+        <span class="bridge-note">— xīwàng (rare + look-toward) — also a looking toward, a future vision</span>
+      </div>
+      <div class="story">
+        Hope during the plague was not passive waiting. It was active: you hoped that prayer would save you, that isolation would protect you, that the fever would break. Every sick person who survived reinforced hope. Every recovery — and there were many, perhaps enough — became proof that God had not abandoned the world entirely. Hope during plague was a kind of stubbornness. A refusal to accept that the end had come. It was survival itself.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Linked to hope was <span class="german-word" data-card="glaube">Glaube</span> — faith and belief. The root is ancient: from Proto-Germanic *galaubō, which meant something like "to hold dear, to consider worthy of trust." It shares ancestry with English "believe" and modern German "lieb" (dear, beloved). To believe is to hold something dear.
+    </p>
+
+    <p class="narrative">
+      And during the plague, faith became everything. When medicine failed — and it always did — when your knowledge of the world proved useless, you turned inward. You prayed. You believed. The church exploded with mystical theology, with visions, with the raw need to understand suffering.
+    </p>
+
+    <!-- GLAUBE etymology card -->
+    <div class="ety-card" id="card-glaube">
+      <div class="word-header">
+        <span class="word-main">Glaube</span>
+        <span class="word-pron">/ˈɡlaʊbə/</span>
+      </div>
+      <div class="word-meaning">belief, faith — the conviction that something is true even when the world shows otherwise</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ǵelbʰ-</span>
+        <span class="bridge-note">— to give trust, to hold in confidence. The root of "believe."</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">believe</span>
+        <span class="bridge-note">— Old English "belyfan" — to have faith in, to consider true</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Glaube</span>
+        <span class="bridge-note">— Old High German "giloubo" — the act of giving trust to the divine</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">信仰</span>
+        <span class="bridge-note">— xìnyǎng (trust + look-up/admire) — faith as trusting in something higher</span>
+      </div>
+      <div class="story">
+        During the plague, Glaube was not rational. You could see your loved ones dying, see the evidence that prayer did not always save, and still believe. You had to believe. The alternative was complete hopelessness. The church encouraged belief, cultivated it, made it the foundation of survival. Meister Eckhart, the great mystic of the era, wrote that Glaube was not intellectual agreement but a kind of surrender — letting yourself fall into the hands of God and trusting that you would be caught.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: STILLE & FRIEDEN ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the silence after the death, there was a new vocabulary. <span class="german-word" data-card="stille">Stille</span> — silence, stillness. Pure Germanic, and the word sounds like what it means: the soft ess at the start, the closed vowels, the final 'e' like a breath ceasing. Stille. Listen to it. That is what a million empty villages sounded like.
+    </p>
+
+    <p class="narrative">
+      And with the silence came a longing for <span class="german-word" data-card="frieden">Frieden</span> — peace. Peace and freedom share a root in the Germanic languages. *Friþuz. To be at peace was to be free — free from fear, free from the contagion, free from death. By 1360, after the worst waves had passed, peace became something Germans could almost imagine again.
+    </p>
+
+    <!-- STILLE etymology card -->
+    <div class="ety-card" id="card-stille">
+      <div class="word-header">
+        <span class="word-main">Stille</span>
+        <span class="word-pron">/ˈʃtɪlə/</span>
+      </div>
+      <div class="word-meaning">silence, stillness, quietness — the absence of sound that is its own presence</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">From Old High German "still"</span>
+        <span class="bridge-note">— probably from Proto-Germanic, meaning "motionless, not flowing"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">still</span>
+        <span class="bridge-note">— same root, used in English for both "quiet" and "motionless"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">寂静</span>
+        <span class="bridge-note">— jìjìng (lone-quiet) — a double emphasis on isolation and quiet</span>
+      </div>
+      <div class="story">
+        The sound of Stille is itself quiet. The word is onomatopoeia for silence. German preserved this capacity to make words that sound like their meaning — the language is full of them. During the plague, Stille became sacred. Silence was not absence; it was presence. It was the souls of the dead. It was what remained when everything else was taken. Mystics sat in Stille and found God there. Not in the noise of the church, but in the profound quiet.
+      </div>
+    </div>
+
+    <!-- FRIEDEN etymology card -->
+    <div class="ety-card" id="card-frieden">
+      <div class="word-header">
+        <span class="word-main">Frieden</span>
+        <span class="word-pron">/ˈfriːdən/</span>
+      </div>
+      <div class="word-meaning">peace — freedom from strife, from fear, from the chaos of being hunted</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pri- or *prei-</span>
+        <span class="bridge-note">— to move forward freely, to prosper. Peace as freedom to move.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">free</span>
+        <span class="bridge-note">— same root as German "Frieden" — related to freedom and liberty</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Frieden, frei</span>
+        <span class="bridge-note">— peace and freedom share ancestry in German, as they do in meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">和平</span>
+        <span class="bridge-note">— héping (harmony + level) — peace as equilibrium and balance</span>
+      </div>
+      <div class="story">
+        Peace after the plague was not just absence of war. It was the beginning of freedom from terror. The years after 1350 saw a strange paradox: labor became valuable because there were so few workers. Survivors found they could demand wages, choose their lords, move freely across the land. Frieden meant that the survivors, at last, could rest. Could breathe. Could look at a tomorrow that might not bring death.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: PRAYER & COMFORT ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In 1350, as the worst waves of plague receded, the survivors turned to ritual, to prayer, to the structures that gave meaning to suffering. The word for prayer in German is <span class="german-word" data-card="gebet">Gebet</span>, which comes from "bitten" (to ask, to beg) with the "ge-" prefix that marks completion. A prayer is a completed asking — you ask and you release it to the divine.
+    </p>
+
+    <p class="narrative">
+      And they needed <span class="german-word" data-card="trost">Trost</span> — comfort and consolation. But this was not comfort in the sense of luxury or ease. It was the comfort that comes from being held, from knowing that your suffering has been witnessed. The root is ancient: *traustą, the same root as English "trust." Comfort and trust share bloodlines. To be comforted is to be trusted into the hands of something larger than yourself.
+    </p>
+
+    <!-- GEBET etymology card -->
+    <div class="ety-card" id="card-gebet">
+      <div class="word-header">
+        <span class="word-main">Gebet</span>
+        <span class="word-pron">/ɡəˈbeːt/</span>
+      </div>
+      <div class="word-meaning">prayer — the words we speak to the divine when all else fails</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">bitten + ge-</span>
+        <span class="bridge-note">— "to ask" + completion prefix = "the completed act of asking"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">bid, bade</span>
+        <span class="bridge-note">— Old English "biddan" — related root, to ask or command</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">祈祷</span>
+        <span class="bridge-note">— qǐdào (request + invite-speak) — an invocation and request to heaven</span>
+      </div>
+      <div class="story">
+        Prayer during the plague was not polite. It was desperate. People prayed for their children's lives, for an end to the dying, for a reason to believe the world still made sense. The repetition of prayer — the rosary, the psalms, the liturgies — became a kind of hypnosis, a way to survive by surrender. Meister Eckhart taught that true prayer was not asking for things but letting go of wanting, letting yourself be empty so that God could fill you. After plague, prayer was how you learned to live with unbearable loss.
+      </div>
+    </div>
+
+    <!-- TROST etymology card -->
+    <div class="ety-card" id="card-trost">
+      <div class="word-header">
+        <span class="word-main">Trost</span>
+        <span class="word-pron">/tʁɔst/</span>
+      </div>
+      <div class="word-meaning">comfort, consolation — the presence that soothes grief</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*treus-</span>
+        <span class="bridge-note">— to have faith, to trust. The same root as "trust" in English.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">trust</span>
+        <span class="bridge-note">— Old Norse "traust" — confidence, firmness. To be firm in trust.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Trost, trauen</span>
+        <span class="bridge-note">— comfort and to trust are siblings in German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">安慰</span>
+        <span class="bridge-note">— ānwèi (safe + comfort) — to be comforted is to be made safe</span>
+      </div>
+      <div class="story">
+        Trost was what you gave to the grieving. A hand on the shoulder. A meal brought to the door. A word that acknowledged that nothing could fix the loss, but that the loss was witnessed. During the plague, whole families were gone. Who did you grieve with? The answer was: whoever was left. Trost was the binding force that held the survivors together.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: GELASSENHEIT ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And from the depths of this suffering came one of the most profound words in the German language — a word that had never existed before, invented by a mystic in the darkness.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gelassenheit">Gelassenheit</span>.
+    </p>
+
+    <p class="narrative">
+      Meister Eckhart, the philosopher-priest, lived through the plague. He watched the dying. He listened to the desperate prayers. And in the midst of it, he wrote of "Gelassenheit" — letting-be, serenity, a state of having let go of all resistance to what is. The word comes from "lassen" (to let, to allow) plus "ge-" (completion) plus "-heit" (state or quality). It means: the state of having truly let go.
+    </p>
+
+    <p class="narrative">
+      This was not passive resignation. It was not defeat. It was something deeper: a cessation of the desperate grasping that makes suffering unbearable. If death is coming and you cannot stop it, Eckhart taught, then stop trying. Open yourself to it. Let it be. In that opening, there is peace.
+    </p>
+
+    <!-- GELASSENHEIT etymology card -->
+    <div class="ety-card" id="card-gelassenheit">
+      <div class="word-header">
+        <span class="word-main">Gelassenheit</span>
+        <span class="word-pron">/ɡəˈlɑsənhaɪt/</span>
+      </div>
+      <div class="word-meaning">serenity, letting-be, releasement — the peace that comes from ceasing to fight what cannot be changed</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">lassen + ge- + -heit</span>
+        <span class="bridge-note">— to let + completion + state-of = the state of having let go entirely</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">let, lax, laze</span>
+        <span class="bridge-note">— related roots expressing release, relaxation, and freedom</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">放下</span>
+        <span class="bridge-note">— fàngxià (release + down) — to put down, to stop carrying the burden</span>
+      </div>
+      <div class="story">
+        Gelassenheit is a word that English cannot truly translate. "Releasement" is close, but it's awkward. "Letting-be" captures the meaning but not the grace of it. The word itself is made of German roots that have been in the language since its birth — lassen (to let) from Proto-Germanic *letaną. But Eckhart did something revolutionary: he made it a philosophical principle. He gave the act of surrender a dignified name. After the plague, when it seemed that faith had failed, Gelassenheit offered an answer: faith was not about being saved; it was about being able to bear what comes. This word would influence German thought for six centuries. It would appear in philosophy, poetry, and music. Heidegger would wrestle with it. It is still the closest German comes to expressing the Buddhist concept of acceptance.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== ASIDE BOX: MEISTER ECKHART ==================== -->
+  <div class="aside-box">
+    <div class="aside-title">Meister Eckhart: The Mystic Who Invented Words</div>
+    <p>
+      Meister Eckhart (1260–1327) was born in the German Rhineland. He became a Dominican friar, a philosopher, and one of the greatest preachers of his era. His career spanned the transition to the plague years. He wrote in German instead of Latin — a revolutionary choice — and his writing shaped the language itself.
+    </p>
+    <p style="margin-top: 12px;">
+      Eckhart is credited with inventing or popularizing several foundational philosophical words in German: Gelassenheit (letting-be), Bildung (formation, education — still central to German thought), Eindruck (impression), Einheit (unity). He took the fluid, poetic possibilities of the German vernacular and made it a language of profound philosophy. In a time when Latin was considered the language of serious thought, Eckhart proved that German could be equally profound. After his death, his writings would influence German mysticism, theology, and philosophy into the present day.
+    </p>
+  </div>
+
+  <!-- ==================== ASIDE BOX: DEMOGRAPHIC CATASTROPHE ==================== -->
+  <div class="aside-box">
+    <div class="aside-title">The Demographic Collapse and Lost Dialects</div>
+    <p>
+      The plague eliminated not just people but entire linguistic populations. A dialect is not a written thing — it is spoken, lived, passed from mouth to mouth. When an entire village dies, its unique way of speaking dies with it. Linguists estimate that medieval German had far more regional variation than modern German does. Towns separated by only a few days' travel might speak quite differently.
+    </p>
+    <p style="margin-top: 12px;">
+      The plague simplified German by erasure. In the chaos after 1350, survivors migrated. They left empty villages behind and moved to towns where work could be found. They came into contact with different dialects. Over generations, they adapted, blended, compromised. The result was a kind of linguistic leveling: extreme local variation gave way to regional standards. German became more uniform — not because of any conscious effort at standardization, but because a third of the speakers were dead.
+    </p>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED IN THIS CHAPTER ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Crisis Vocabulary</strong> — Pest, Sterben, Angst — words born from catastrophe. The vocabulary of the Black Death reveals how language responds to mass mortality, not by borrowing from others, but by reaching deeper into its own Germanic roots.<br><br>
+    <strong style="color: var(--text-bright);">Mystical Coinages</strong> — Meister Eckhart invented Gelassenheit (letting-be, serenity), a word that would shape German philosophy for six centuries. A single person can change a language by creating the words it needs in moments of crisis.<br><br>
+    <strong style="color: var(--text-bright);">Dialect Collapse</strong> — 40% population loss killed entire dialect regions. Medieval German had far more regional variation than modern German does. Towns separated by only a few days' travel might speak quite differently. The plague simplified German by erasure: survivors migrated, came into contact with different dialects, and gradually adapted and blended them.<br><br>
+    <strong style="color: var(--text-bright);">Emotional Depth</strong> — German words for inner states: Angst (constriction, anxiety), Trost (comfort), Stille (silence), Hoffnung (hope), Glaube (faith), Frieden (peace). These words reveal how the language encoded psychological and spiritual experience in the face of catastrophe.
+  </div>
+
+  <!-- ==================== WORDS GATHERED IN THIS CHAPTER ==================== -->
+  <div class="scene" id="scene-words-ch13" style="margin-top: 48px;">
+    <div class="scene-marker"></div>
+    <h3 style="text-align: center; margin-bottom: 24px; color: var(--text-bright);">Words Gathered in Chapter 13</h3>
+    <div class="collected-words">
+      <div class="collected-word" data-delay="0"><span class="cw-german">Pest</span><span class="cw-english">plague</span></div>
+      <div class="collected-word" data-delay="100"><span class="cw-german">Sterben</span><span class="cw-english">to die</span></div>
+      <div class="collected-word" data-delay="200"><span class="cw-german">Angst</span><span class="cw-english">anxiety/dread</span></div>
+      <div class="collected-word" data-delay="300"><span class="cw-german">Hoffnung</span><span class="cw-english">hope</span></div>
+      <div class="collected-word" data-delay="400"><span class="cw-german">Glaube</span><span class="cw-english">faith</span></div>
+      <div class="collected-word" data-delay="500"><span class="cw-german">Stille</span><span class="cw-english">silence</span></div>
+      <div class="collected-word" data-delay="600"><span class="cw-german">Frieden</span><span class="cw-english">peace</span></div>
+      <div class="collected-word" data-delay="700"><span class="cw-german">Gebet</span><span class="cw-english">prayer</span></div>
+      <div class="collected-word" data-delay="800"><span class="cw-german">Trost</span><span class="cw-english">comfort</span></div>
+      <div class="collected-word" data-delay="900"><span class="cw-german">Gelassenheit</span><span class="cw-english">serenity</span></div>
+    </div>
+  </div>
+
+  <!-- ==================== CONCEPTS LEARNED IN THIS CHAPTER ==================== -->
+  <div class="scene" id="scene-concepts-ch13" style="margin-top: 48px;">
+    <div class="scene-marker"></div>
+    <h3 style="text-align: center; margin-bottom: 24px; color: var(--text-bright);">Concepts Learned in Chapter 13</h3>
+    <div class="collected-words">
+      <div class="collected-word" data-delay="0"><span class="cw-german" style="color:#9b8ec4;">Crisis Vocabulary</span><span class="cw-english">Pest, Sterben, Angst — words born from catastrophe</span></div>
+      <div class="collected-word" data-delay="100"><span class="cw-german" style="color:#9b8ec4;">Mystical Coinages</span><span class="cw-english">Meister Eckhart invented Gelassenheit</span></div>
+      <div class="collected-word" data-delay="200"><span class="cw-german" style="color:#9b8ec4;">Dialect Collapse</span><span class="cw-english">40% population loss killed entire dialect regions</span></div>
+      <div class="collected-word" data-delay="300"><span class="cw-german" style="color:#9b8ec4;">Emotional Depth</span><span class="cw-english">German words for inner states: Angst, Trost, Stille</span></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-section">
+      <h2 style="font-size: 1.4rem; color: var(--text-bright); margin-bottom: 24px; text-align: center;">Test Your Knowledge</h2>
+      <p style="text-align: center; color: var(--text); margin-bottom: 32px; font-style: italic;">Answer at least 2 of 3 to test your understanding.</p>
+
+      <!-- Q1 -->
+      <div class="guess-section" id="quiz-q1">
+        <div class="prompt">During the Black Death, what happened to German dialects?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q1')">entire dialects vanished as speakers died</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q1')">they became more diverse and varied</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q1')">they merged with Latin</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q1"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="guess-section" id="quiz-q2">
+        <div class="prompt">Which word comes directly from Latin because Germans had no word for disease at this scale?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q2')">Pest</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q2')">Sterben</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q2')">Angst</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q2"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="guess-section" id="quiz-q3">
+        <div class="prompt">Who invented the word "Gelassenheit" (letting-be, serenity)?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q3')">Meister Eckhart</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q3')">Pope Urban II</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q3')">Walther von der Vogelweide</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q3"></div>
+      </div>
+
+      <div id="quiz-result" style="text-align: center; margin-top: 32px; font-size: 1.1rem; color: var(--fire-glow); font-style: italic; display: none;"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">130 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(15%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:15%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Pest</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Plague</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sterben</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">To die</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Angst</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Anxiety</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Hoffnung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Hope</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Glaube</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Faith</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stille</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Silence</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Frieden</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Peace</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gebet</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Prayer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Trost</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Comfort</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gelassenheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Serenity</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–12: ~120 more words · Scroll for full list</td></tr>
+</table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">29 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(20%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:20%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Crisis vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Pest, Sterben, Angst born from catastrophe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mystical coinages</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Eckhart invented Gelassenheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Dialect collapse</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">40% population loss killed dialects</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Emotional depth</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Angst, Trost, Stille, Hoffnung, Glaube, Frieden</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">13</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–12: ~30 more patterns</td></tr>
+</table>
+    </div>
+  </div>
+
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end" style="text-align: center; margin: 64px 0;">
+    <div class="end-line"></div>
+    <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+      End of Chapter 13
+    </p>
+    <p class="narrative small" style="text-align: center;">
+      Ten words from the darkness. A vocabulary born from catastrophe.<br>
+      The Black Death killed a third of Europe, but language endured. In the silence of whole villages, Meister Eckhart found new words for spiritual resilience.<br>
+      Dialect regions vanished forever, yet from the rubble came linguistic unity — the seeds of a standardized German language.<br>
+      Gelassenheit: the letting-go that becomes a philosophy, and a word that would reshape German thought for six centuries to come.
+    </p>
+    <div class="next-chapter">
+      Chapter 14: Die Druckerpresse — coming next
+    </div>
+  </div>
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <div class="nav-section">
+    <a href="chapter12.html" class="nav-btn">← Chapter 12</a>
+    <a href="chapter14.html" class="nav-btn next">Chapter 14 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 13: THE BLACK DEATH PLAGUE CANVAS ---
+const canvas = document.getElementById('plagueSky');
+const ctx = canvas.getContext('2d');
+let ashParticles = [];
+let graveCrosses = [];
+let candleFlames = [];
+let bellShape = { angle: 0 };
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createAsh() {
+  ashParticles = [];
+  const count = window.innerWidth < 600 ? 20 : 50;
+  for (let i = 0; i < count; i++) {
+    ashParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: Math.random() * 0.05 + 0.02,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random() * 0.3 + 0.1,
+      wobbleSpeed: Math.random() * 0.01 + 0.002,
+      wobbleOffset: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function createGraves() {
+  graveCrosses = [];
+  // Start with a few crosses at bottom
+  for (let i = 0; i < 3; i++) {
+    graveCrosses.push({
+      x: (i + 1) * (canvas.width / 4),
+      y: canvas.height * 0.8,
+      scale: 0.6,
+      alpha: 0.3
+    });
+  }
+}
+
+function createCandles() {
+  candleFlames = [];
+  // 2-3 flickering candle flames scattered
+  for (let i = 0; i < 2; i++) {
+    candleFlames.push({
+      x: Math.random() * canvas.width * 0.8 + canvas.width * 0.1,
+      y: Math.random() * canvas.height * 0.6 + canvas.height * 0.15,
+      flicker: Math.random() * Math.PI * 2,
+      flickerSpeed: Math.random() * 0.05 + 0.03,
+      alive: true,
+      deathTime: Math.random() * 2000 + 1000
+    });
+  }
+}
+
+function drawBell() {
+  const bellX = canvas.width / 2;
+  const bellY = canvas.height * 0.12;
+
+  // Bell shape (simple dome)
+  ctx.strokeStyle = 'rgba(150, 130, 100, 0.2)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(bellX, bellY, 40, Math.PI, 0, false);
+  ctx.stroke();
+
+  // Bell clapper (small line swinging slightly)
+  ctx.save();
+  ctx.translate(bellX, bellY);
+  ctx.rotate(bellShape.angle);
+  ctx.strokeStyle = 'rgba(150, 130, 100, 0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, 25);
+  ctx.stroke();
+  ctx.restore();
+
+  // Slow sway
+  bellShape.angle = Math.sin(Date.now() * 0.0002) * 0.03;
+}
+
+function drawCandleFlame(flame, time) {
+  if (!flame.alive) return;
+
+  const flicker = 0.6 + Math.sin(time * flame.flickerSpeed + flame.flicker) * 0.3;
+  const alpha = flicker * 0.5;
+
+  // Candle body
+  ctx.fillStyle = `rgba(220, 200, 180, ${alpha * 0.3})`;
+  ctx.fillRect(flame.x - 2, flame.y + 15, 4, 20);
+
+  // Flame
+  ctx.fillStyle = `rgba(220, 150, 80, ${alpha})`;
+  ctx.beginPath();
+  ctx.moveTo(flame.x - 4, flame.y + 15);
+  ctx.quadraticCurveTo(flame.x - 2 + Math.sin(time * 0.01) * 2, flame.y - 5, flame.x, flame.y - 15);
+  ctx.quadraticCurveTo(flame.x + 2 - Math.sin(time * 0.01) * 2, flame.y - 5, flame.x + 4, flame.y + 15);
+  ctx.fill();
+}
+
+function drawGraveCross(cross, scrollFraction) {
+  const alpha = cross.alpha + scrollFraction * 0.4;
+
+  ctx.strokeStyle = `rgba(100, 90, 80, ${alpha})`;
+  ctx.lineWidth = 2;
+
+  // Vertical line
+  ctx.beginPath();
+  ctx.moveTo(cross.x, cross.y - 30 * cross.scale);
+  ctx.lineTo(cross.x, cross.y);
+  ctx.stroke();
+
+  // Horizontal line
+  ctx.beginPath();
+  ctx.moveTo(cross.x - 10 * cross.scale, cross.y - 15 * cross.scale);
+  ctx.lineTo(cross.x + 10 * cross.scale, cross.y - 15 * cross.scale);
+  ctx.stroke();
+}
+
+function drawFrame(time) {
+  const scroll = window.scrollY / window.innerHeight;
+  const stainSpread = Math.min(scroll * 0.8, 1);
+
+  // Background: grey-blue that bleeds to reddish-brown
+  const bgStart = `rgba(122, 138, 150, ${1 - stainSpread * 0.4})`;
+  const bgEnd = `rgba(120, 100, 90, ${stainSpread * 0.6})`;
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, 'rgba(122, 138, 150, 1)');
+  gradient.addColorStop(0.3, 'rgba(130, 140, 145, 1)');
+  gradient.addColorStop(0.7 + stainSpread * 0.2, `rgba(140, 100, 90, ${0.3 + stainSpread * 0.4})`);
+  gradient.addColorStop(1, `rgba(110, 80, 70, ${0.4 + stainSpread * 0.4})`);
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Stain spreads from edges inward (subtle)
+  if (stainSpread > 0.2) {
+    ctx.fillStyle = `rgba(160, 80, 60, ${(stainSpread - 0.2) * 0.15})`;
+    ctx.fillRect(0, 0, canvas.width * stainSpread * 0.3, canvas.height);
+    ctx.fillRect(canvas.width * (1 - stainSpread * 0.3), 0, canvas.width * stainSpread * 0.3, canvas.height);
+  }
+
+  // Draw falling ash
+  ashParticles.forEach(ash => {
+    ash.x += ash.vx + Math.sin(time * ash.wobbleSpeed + ash.wobbleOffset) * 0.05;
+    ash.y += ash.vy;
+
+    if (ash.y > canvas.height) {
+      ash.y = -10;
+      ash.x = Math.random() * canvas.width;
+    }
+
+    ctx.beginPath();
+    ctx.arc(ash.x, ash.y, ash.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(150, 140, 130, ${ash.alpha})`;
+    ctx.fill();
+  });
+
+  // Draw bell at top
+  drawBell();
+
+  // Draw candle flames
+  candleFlames.forEach(flame => {
+    if (time - (Date.now() % 10000) > flame.deathTime && flame.alive) {
+      flame.alive = false;
+    }
+    drawCandleFlame(flame, time);
+  });
+
+  // Draw grave crosses (increase as scroll progresses)
+  graveCrosses.forEach((cross, idx) => {
+    drawGraveCross(cross, scroll);
+  });
+
+  // Add more graves as you scroll
+  if (scroll > 0.3 && graveCrosses.length < 5 + Math.floor(scroll * 10)) {
+    graveCrosses.push({
+      x: Math.random() * canvas.width * 0.8 + canvas.width * 0.1,
+      y: canvas.height * (0.7 + Math.random() * 0.2),
+      scale: 0.5 + Math.random() * 0.3,
+      alpha: 0.2
+    });
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createAsh();
+createGraves();
+createCandles();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createAsh(); createGraves(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate collected words
+      if (entry.target.classList.contains('word-collection')) {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- QUIZ LOGIC ---
+let quizAnswers = {};
+let quizGuesses = {};
+let quizScore = 0;
+let quizAnswered = 0;
+const maxQuestions = 3;
+const passThreshold = 2;
+
+function quizGuess(btn, correct, questionId) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = '✓ Correct!';
+    feedback.classList.add('show');
+    quizScore++;
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+  } else {
+    const guesses = section.querySelectorAll('.guess-btn.incorrect').length;
+    if (guesses === 0) {
+      btn.classList.add('incorrect');
+      feedback.textContent = 'Not quite — try again.';
+      feedback.classList.add('show');
+    } else {
+      btn.classList.add('incorrect');
+      btn.style.pointerEvents = 'none';
+      allBtns.forEach(b => b.style.pointerEvents = 'none');
+      feedback.textContent = 'Better luck on the next one.';
+      feedback.classList.add('show');
+    }
+  }
+
+  quizAnswered++;
+  if (quizAnswered === maxQuestions) {
+    showQuizResult();
+  }
+}
+
+function showQuizResult() {
+  const resultDiv = document.getElementById('quiz-result');
+
+  let message = '';
+  if (quizScore >= passThreshold) {
+    message = `Excellent! You scored ${quizScore}/${maxQuestions}. You understand the words of the plague.`;
+  } else {
+    message = `You scored ${quizScore}/${maxQuestions}. You need ${passThreshold} to pass. Try again!`;
+    // Re-enable quiz buttons for retry
+    document.querySelectorAll('.guess-btn').forEach(btn => {
+      btn.classList.remove('correct', 'incorrect');
+      btn.style.pointerEvents = 'auto';
+    });
+    document.querySelectorAll('.guess-feedback').forEach(f => f.classList.remove('show'));
+    quizScore = 0;
+    quizAnswered = 0;
+  }
+
+  resultDiv.textContent = message;
+  resultDiv.style.display = 'block';
+  resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.querySelectorAll('.quiz-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const qIdx = parseInt(option.dataset.question);
+    const correct = option.dataset.correct;
+    const isCorrect = correct !== 'false';
+
+    if (!quizGuesses[qIdx]) quizGuesses[qIdx] = 0;
+    quizGuesses[qIdx]++;
+
+    if (quizGuesses[qIdx] > 2) return; // Only 2 guesses allowed
+
+    const section = option.closest('.quiz-question');
+    const feedback = section.querySelector('.quiz-feedback');
+    const allOptions = section.querySelectorAll('.quiz-option');
+
+    if (isCorrect) {
+      quizAnswers[qIdx] = true;
+      option.classList.add('selected-correct');
+      allOptions.forEach(o => { if (o !== option) o.disabled = true; });
+      feedback.textContent = 'Correct! You know the words of loss and survival.';
+      feedback.style.opacity = '1';
+      checkQuizCompletion();
+    } else {
+      option.classList.add('selected-incorrect');
+      if (quizGuesses[qIdx] >= 2) {
+        allOptions.forEach(o => { if (o !== option) o.disabled = true; });
+        feedback.textContent = 'Out of guesses. Think about the word\'s history...';
+        feedback.style.opacity = '1';
+      } else {
+        feedback.textContent = 'Not quite — you have one more guess.';
+        feedback.style.opacity = '1';
+      }
+    }
+  });
+});
+
+function checkQuizCompletion() {
+  const correct = Object.keys(quizAnswers).length;
+  if (correct >= 7) {
+    const result = document.getElementById('quizResult');
+    result.textContent = 'You passed. The words endure. Proceed to the next chapter.';
+    result.classList.add('show', 'pass');
+  } else if (correct + 3 < 7) { // Can't possibly reach 7 anymore
+    const result = document.getElementById('quizResult');
+    result.textContent = 'The threshold is not met. Reread the chapter and try again.';
+    result.classList.add('show', 'fail');
+  }
+}
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

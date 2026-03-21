@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 47: Der/Die/Das (Gender)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --gender-der: #6eb5d4;
+    --gender-die: #e87d8b;
+    --gender-das: #d4af7a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- GENDER PARTICLES CANVAS --- */
+  #gender-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- GENDER RULES TABLE --- */
+  .gender-rules {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    font-size: 1rem;
+  }
+
+  .gender-rules h4 {
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .gender-rule {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+    margin-bottom: 12px;
+  }
+
+  .gender-rule:last-child {
+    border-bottom: none;
+  }
+
+  .gender-rule .suffix {
+    color: var(--fire);
+    font-weight: 600;
+  }
+
+  .gender-rule .count {
+    color: rgba(212, 202, 187, 0.5);
+    font-size: 0.9rem;
+    margin-left: 12px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .gender-rules { padding: 24px 16px; font-size: 0.95rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="gender-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Forty-Seven</div>
+    <h1>Der/Die/Das</h1>
+    <div class="subtitle">Gender as Logic, Not Accident</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE PUZZLE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Walk into any German classroom in the world, and you will hear the same complaint. The same frustrated sigh. The same question asked by learners in frustration:
+    </p>
+
+    <p class="narrative emphasis">
+      "Why? Why does a table have a gender? Why is a spoon masculine and a fork feminine and a knife neuter? This makes no sense!"
+    </p>
+
+    <p class="narrative">
+      And the traditional answer, delivered with a shrug of resignation: "It's just how German is. You have to memorize it. There are no rules. It's random."
+    </p>
+
+    <p class="narrative">
+      But this is wrong. And this wrongness is a tragedy, because it makes learners feel stupid. It makes them believe that German gender is arbitrary, chaotic, beyond logic. They waste hours memorizing lists of articles, fighting against the system, resenting the language for not being "rational."
+    </p>
+
+    <p class="narrative">
+      The truth is almost the opposite. German gender is <em>remarkably</em> logical. Eighty percent of the time, you can predict a noun's gender just by looking at its ending or understanding its meaning. The rules are there. They're powerful. They're elegant. Most teachers and textbooks simply haven't bothered to teach them.
+    </p>
+
+    <p class="narrative">
+      In this chapter, we're going to understand gender not as a mystery to be suffered through, but as a logical system to be mastered. We're going to see why gender exists, where it came from, and how it actually works.
+    </p>
+
+    <p class="narrative">
+      Because this is the architecture of German: gender is how the language organizes meaning. It is logic made visible in three colored streams.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: WHAT IS GENDER? ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let's start with a simple fact: not all languages have gender. <span class="german-word" data-speak="true">Chinese</span> doesn't. Japanese doesn't. English has almost completely lost it. You can say "a table," "a spoon," "a book" — the article never changes. The word stands alone, genderless, independent.
+    </p>
+
+    <p class="narrative">
+      But German — and most of the Romance languages that descended from Latin — kept gender. Why? What purpose does it serve?
+    </p>
+
+    <p class="narrative">
+      The answer is: agreement. Gender is a way of coordinating words across a sentence. When you say <span class="german-word" data-speak="true">der Tisch</span> (the table), the article <em>der</em> tells you three things: it tells you the noun is masculine, it tells you it's singular, and it tells you it's in the nominative case. When you see <em>der</em>, you know: male, singular, subject.
+    </p>
+
+    <p class="narrative">
+      This creates a kind of coherence. Every adjective, every article, every pronoun has to match the gender of the noun it modifies. <span class="german-word" data-speak="true">Der rote Tisch</span> — the red table. Not <em>die</em> rote table (that would be feminine). Not <em>das</em> rote table (that would be neuter). <em>Der</em> — masculine. <em>Rote</em> — agrees with masculine. The agreement creates meaning. It creates clarity. It's a system.
+    </p>
+
+    <p class="narrative">
+      In Proto-Indo-European, gender served an even more important function. With case endings, word order could vary more freely because the agreement system told you which words modified which. A masculine article, a masculine adjective, a masculine noun — they formed a unit, regardless of word order. Gender was the "glue" that held meaning together.
+    </p>
+
+    <p class="narrative">
+      So gender is not random. It's a logical system for organizing agreement across a sentence. The question is not: "Why do nouns have genders?" The question is: "Why does each noun have the gender it does?" And that — that is where logic and meaning converge.
+    </p>
+
+    <p class="narrative small" style="margin-top: 2em; padding: 20px; background: rgba(232, 164, 74, 0.06); border-radius: 8px;">
+      <strong>The Bridge: Chinese Precision</strong><br>
+      Chinese has no grammatical gender at all. Instead of changing articles and adjectives, Chinese speakers rely on context, word order, and particles. 这个 (zhège) means "this" regardless of whether you're talking about a table, a spoon, or a book. Feminine, masculine, neuter — these concepts don't exist. Is this more "primitive" or less "advanced"? Neither. It's simply a different solution to the same linguistic problem. Chinese solved the agreement problem through word order and particles. German solved it through gender marking. Both work.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE RULES ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now: the rules. And there are rules.
+    </p>
+
+    <p class="narrative">
+      Some of these rules are so reliable, so consistent, that they cover thousands of German words:
+    </p>
+
+    <div class="gender-rules">
+      <h4>The Suffix Rules (These Are Gold)</h4>
+      <div class="gender-rule">
+        <span class="suffix">-ung</span> always <span style="color: var(--gender-die);">die</span> (feminine)
+        <span class="count">Examples: Wanderung, Erziehung, Hoffnung — nearly 2,000+ words</span>
+      </div>
+      <div class="gender-rule">
+        <span class="suffix">-heit</span> always <span style="color: var(--gender-die);">die</span> (feminine)
+        <span class="count">Examples: Schönheit, Wahrheit, Freiheit — 800+ words</span>
+      </div>
+      <div class="gender-rule">
+        <span class="suffix">-keit</span> always <span style="color: var(--gender-die);">die</span> (feminine)
+        <span class="count">Examples: Möglichkeit, Schnelligkeit, Fähigkeit — 1,500+ words</span>
+      </div>
+      <div class="gender-rule">
+        <span class="suffix">-schaft</span> always <span style="color: var(--gender-die);">die</span> (feminine)
+        <span class="count">Examples: Freundschaft, Wissenschaft, Gesellschaft — 500+ words</span>
+      </div>
+      <div class="gender-rule">
+        <span class="suffix">-ie</span> usually <span style="color: var(--gender-die);">die</span> (feminine)
+        <span class="count">Examples: Geographie, Musik, Chemie — 300+ words</span>
+      </div>
+      <div class="gender-rule">
+        <span class="suffix">-chen/-lein</span> always <span style="color: var(--gender-das);">das</span> (neuter)
+        <span class="count">Examples: Mädchen, Frauchen, Häuschen, Kätzchen — 400+ words</span>
+      </div>
+      <div class="gender-rule">
+        <span class="suffix">-er</span> usually <span style="color: var(--gender-der);">der</span> (masculine)
+        <span class="count">Examples: Lehrer, Schüler, Arbeiter, Fahrer — 2,000+ words</span>
+      </div>
+      <div class="gender-rule">
+        <span class="suffix">-e (at end)</span> usually <span style="color: var(--gender-die);">die</span> (feminine)
+        <span class="count">Examples: Lampe, Gabel, Mutter, Tante — 1,000+ words</span>
+      </div>
+    </div>
+
+    <p class="narrative">
+      Just these rules alone — these eight patterns — cover thousands of German words. If you know that every word ending in -ung is feminine, you've just unlocked an entire category. You don't need to memorize. You can <em>predict</em>.
+    </p>
+
+    <p class="narrative">
+      But there's more. Beyond suffixes, there are semantic rules — rules based on <em>meaning</em>.
+    </p>
+
+    <div class="gender-rules">
+      <h4>The Semantic Rules (Logic Hidden in Meaning)</h4>
+      <div class="gender-rule">
+        Days, months, seasons: <span style="color: var(--gender-der);">der</span> Montag, <span style="color: var(--gender-der);">der</span> Januar, <span style="color: var(--gender-der);">der</span> Winter
+        <span class="count">Consistent across dozens of words</span>
+      </div>
+      <div class="gender-rule">
+        Cardinal directions: <span style="color: var(--gender-der);">der</span> Norden, <span style="color: var(--gender-der);">der</span> Süden, <span style="color: var(--gender-der);">der</span> Osten, <span style="color: var(--gender-der);">der</span> Westen
+        <span class="count">Abstract notions of place</span>
+      </div>
+      <div class="gender-rule">
+        Seasons/weather phenomena: <span style="color: var(--gender-der);">der</span> Schnee, <span style="color: var(--gender-der);">der</span> Regen, <span style="color: var(--gender-der);">der</span> Wind
+        <span class="count">Forces of nature, often masculine</span>
+      </div>
+      <div class="gender-rule">
+        Mountains/rocks: <span style="color: var(--gender-der);">der</span> Berg, <span style="color: var(--gender-das);">das</span> Gestein, <span style="color: var(--gender-der);">der</span> Stein
+        <span class="count">Masculine or neuter, rarely feminine</span>
+      </div>
+    </div>
+
+    <p class="narrative">
+      These are not arbitrary. They reflect deep patterns in how humans categorize the world. Months and days are recurring cycles — they have a "flow" quality. Masculine. Directions are fixed points — they have a "solidity" quality. Masculine. Water and weather are often fluid, formless — feminine in many cases. Stones are hard, solid — masculine or neuter.
+    </p>
+
+    <p class="narrative">
+      Are these patterns universal across all languages? No. But within German, they are consistent. And that consistency is what makes the system learnable.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE WORDS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let's look at the ten words that will make this chapter concrete. These are the objects of daily life — items a person encounters in any room, in any home. And each one has a gender that can be explained:
+    </p>
+
+    <!-- TISCH card -->
+    <div class="ety-card" id="card-tisch">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-der);">Der Tisch</span>
+        <span class="word-pron">/tɪʃ/</span>
+      </div>
+      <div class="word-meaning">table — a flat surface for eating or working</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Tisch (masculine)</span>
+        <span class="bridge-note">— why masculine? Solid furniture, hard object</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">table</span>
+        <span class="bridge-note">— borrowed from Latin, no gender in English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">桌子</span>
+        <span class="bridge-note">— zhuōzi (no gender distinction) — purely functional term</span>
+      </div>
+      <div class="story">
+        <em>Der Tisch</em> is masculine. Why? The rule is not explicit, but tables are typically associated with solidity, permanence, masculine strength. Notice the English word: it has no article at all. In Chinese, 桌子 is just "table-thing" — a descriptor, not a gendered noun. German assigns it masculine, and that assignment is stable across all furniture of this type. Once you learn <em>der Tisch</em>, you can predict that other furniture words will likely follow the same pattern: <em>der Schrank</em> (the cupboard), <em>der Stuhl</em> (the chair). Furniture is sturdy, masculine, fixed in place.
+      </div>
+    </div>
+
+    <!-- LAMPE card -->
+    <div class="ety-card" id="card-lampe">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-die);">Die Lampe</span>
+        <span class="word-pron">/ˈlampə/</span>
+      </div>
+      <div class="word-meaning">lamp — a device that produces light</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Lampe (feminine)</span>
+        <span class="bridge-note">— why feminine? Ends in -e, a reliable feminine marker</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">lamp</span>
+        <span class="bridge-note">— same word, no gender</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">灯</span>
+        <span class="bridge-note">— dēng — a pictographic character showing a flame</span>
+      </div>
+      <div class="story">
+        <em>Die Lampe</em> is feminine. The clearest explanation: it ends in -e, and words ending in -e in German are usually feminine. This is not a coincidence. Historically, many feminine diminutives and diminutive forms ended in -e, and the suffix "stuck" to all words of that form. The Chinese character 灯 is simpler — it's a pictograph showing a flame emerging from a base, which is why it specifically means "lamp" or "light." But in German, the ending is the predictor.
+      </div>
+    </div>
+
+    <!-- BUCH card -->
+    <div class="ety-card" id="card-buch">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-das);">Das Buch</span>
+        <span class="word-pron">/buːx/</span>
+      </div>
+      <div class="word-meaning">book — a bound collection of written pages</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Buch (neuter)</span>
+        <span class="bridge-note">— why neuter? Short syllable ending in -ch, often neuter</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">book</span>
+        <span class="bridge-note">— related to "beech," the tree on which early pages were written</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">书</span>
+        <span class="bridge-note">— shū — a pictograph showing clasped hands protecting written text</span>
+      </div>
+      <div class="story">
+        <em>Das Buch</em> is neuter. Many short German nouns ending in -ch, -ck, or -ft are neuter. This is a pattern from Proto-Germanic: short, hard-sounding endings often marked neuter nouns. The English word "book" relates to "beech," because before paper, Anglo-Saxon people wrote on beech-tree bark. The Chinese character 书 is a pictograph showing hands protecting written knowledge. Three languages, three ways of representing the same concept — but only German assigns a gender.
+      </div>
+    </div>
+
+    <!-- LÖFFEL card -->
+    <div class="ety-card" id="card-loffel">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-der);">Der Löffel</span>
+        <span class="word-pron">/ˈlœfl̩/</span>
+      </div>
+      <div class="word-meaning">spoon — an eating utensil with a small bowl</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Löffel (masculine)</span>
+        <span class="bridge-note">— why masculine? Ends in -el, often masculine in German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">spoon</span>
+        <span class="bridge-note">— originally meant "splinter of wood," then "wooden eating tool"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">汤匙</span>
+        <span class="bridge-note">— tāngsháo (soup + spoon) — descriptive compound</span>
+      </div>
+      <div class="story">
+        <em>Der Löffel</em> is masculine. Words ending in -el are typically masculine in German. This is a pattern: agents, tools, and implements often end in -er or -el, and both are masculine. A spoon is a tool. A tool is active, purposeful — masculine. The English etymology is fascinating: "spoon" originally meant "a splinter of wood," because spoons were made by splitting wood. Then it came to mean the eating tool. Chinese, meanwhile, creates a compound: soup-spoon, describing what it's for rather than what it is.
+      </div>
+    </div>
+
+    <!-- GABEL card -->
+    <div class="ety-card" id="card-gabel">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-die);">Die Gabel</span>
+        <span class="word-pron">/ˈɡaːbl̩/</span>
+      </div>
+      <div class="word-meaning">fork — an eating utensil with multiple prongs</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gabel (feminine)</span>
+        <span class="bridge-note">— why feminine? Ends in -el with a feminine -e shifted out: Gab-el</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">fork</span>
+        <span class="bridge-note">— originally a prong, then a pitchfork, then a table fork</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">叉子</span>
+        <span class="bridge-note">— chāzi (fork + diminutive) — "little fork"</span>
+      </div>
+      <div class="story">
+        <em>Die Gabel</em> is feminine. This is interesting: like <em>der Löffel</em>, it ends in -el, yet it's feminine. The pattern here is more subtle. Historically, <em>Gabel</em> came from a root that was feminine, and the feminine marker was preserved even as the ending shifted. Some words preserve their original gender regardless of modern endings. This is where German history matters: you're seeing layers of sound change across centuries. The English "fork" is fascinating because it originally meant a prong or branch of a tree, then a pitchfork, and only later a table utensil. Chinese uses a diminutive form: 叉子 — "little fork" — using a particle to indicate something small and delicate.
+      </div>
+    </div>
+
+    <!-- MESSER card -->
+    <div class="ety-card" id="card-messer">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-das);">Das Messer</span>
+        <span class="word-pron">/ˈmɛsɐ/</span>
+      </div>
+      <div class="word-meaning">knife — a cutting tool with a sharp blade</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Messer (neuter)</span>
+        <span class="bridge-note">— why neuter? Short, hard-ending word; historically neuter marking</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (no related word)</span>
+        <span class="bridge-note">— "knife" comes from Old Norse, a different root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">刀</span>
+        <span class="bridge-note">— dāo — a pictograph showing a blade</span>
+      </div>
+      <div class="story">
+        <em>Das Messer</em> is neuter. The pattern here is age-based: this is an old word, and it retained its neuter gender from Proto-Germanic times. Short, consonant-ending words from the ancient language often stayed neuter. Interestingly, English completely diverged here: our word "knife" comes from Old Norse, not from the same Germanic root as German <em>Messer</em>. This is a reminder that English and German made different choices in which words to borrow and which to keep. The Chinese character 刀 is a pictograph: it literally looks like a blade.
+      </div>
+    </div>
+
+    <!-- STUHL card -->
+    <div class="ety-card" id="card-stuhl">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-der);">Der Stuhl</span>
+        <span class="word-pron">/ʃtuːl/</span>
+      </div>
+      <div class="word-meaning">chair — a piece of furniture for sitting</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stuhl (masculine)</span>
+        <span class="bridge-note">— why masculine? Hard, solid furniture; masculine pattern</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stool</span>
+        <span class="bridge-note">— originally a footrest, then any seat</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">椅子</span>
+        <span class="bridge-note">— yǐzi — a pictograph of wood + a seat</span>
+      </div>
+      <div class="story">
+        <em>Der Stuhl</em> is masculine. Like <em>der Tisch</em>, furniture is typically masculine in German. The connection is semantic: solid, fixed, durable objects are masculine. English "stool" originally meant just a footrest, something small, and only later became any kind of seat. The Chinese character 椅 is a wood radical (木) attached to another element indicating a seat, creating a compound pictograph for "wooden seat."
+      </div>
+    </div>
+
+    <!-- TÜR card -->
+    <div class="ety-card" id="card-tur">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-die);">Die Tür</span>
+        <span class="word-pron">/tyːʁ/</span>
+      </div>
+      <div class="word-meaning">door — an entryway, something that opens and closes</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Tür (feminine)</span>
+        <span class="bridge-note">— why feminine? Ancient feminine marker, preserved historically</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">door</span>
+        <span class="bridge-note">— same root, but no gender in English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">门</span>
+        <span class="bridge-note">— mén — a pictograph showing a gate or portal</span>
+      </div>
+      <div class="story">
+        <em>Die Tür</em> is feminine. This is one of the core vocabulary words that retained its ancient gender marker. In Proto-Germanic, <em>dür</em> was feminine, and German kept it that way. English "door" is the same word, but without gender marking. The Chinese character 门 is a pictograph that literally looks like a gate or doorway with two vertical lines and a horizontal opening. All three languages express the same concept — an opening to passage — but only German assigns a gender.
+      </div>
+    </div>
+
+    <!-- FENSTER card -->
+    <div class="ety-card" id="card-fenster">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-das);">Das Fenster</span>
+        <span class="word-pron">/ˈfɛnstɐ/</span>
+      </div>
+      <div class="word-meaning">window — an opening that allows light to enter</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Fenster (neuter)</span>
+        <span class="bridge-note">— why neuter? Latin-borrowed word retained neuter in German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">window</span>
+        <span class="bridge-note">— from Old Norse "vindauga" (wind's eye)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">窗户</span>
+        <span class="bridge-note">— chuānghu (window + door) — describes its dual nature</span>
+      </div>
+      <div class="story">
+        <em>Das Fenster</em> is neuter. This is a Latin borrowing — from Latin <em>fenestra</em> — that German adopted during the medieval period as architectural knowledge spread. German kept it neuter, perhaps matching neuter forms in Latin or perhaps assigning it neuter based on its ending pattern. Meanwhile, English chose a completely different word: "window" comes from Old Norse "windauga," literally "wind's eye," which is poetic and descriptive. The Chinese word 窗户 is a compound meaning "window-door," emphasizing both its visual transparency and its function as a portal.
+      </div>
+    </div>
+
+    <!-- SCHRANK card -->
+    <div class="ety-card" id="card-schrank">
+      <div class="word-header">
+        <span class="word-main" style="color: var(--gender-der);">Der Schrank</span>
+        <span class="word-pron">/ʃʁaŋk/</span>
+      </div>
+      <div class="word-meaning">cupboard — a storage cabinet, usually wooden</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schrank (masculine)</span>
+        <span class="bridge-note">— why masculine? Furniture, solid, masculine pattern</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (no direct word)</span>
+        <span class="bridge-note">— English uses "cabinet" or "cupboard" from French/Old English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">柜</span>
+        <span class="bridge-note">— guì — wood radical + container; literally "wooden box"</span>
+      </div>
+      <div class="story">
+        <em>Der Schrank</em> is masculine. It's furniture — like <em>der Tisch</em> and <em>der Stuhl</em> — so it follows the same pattern. The word originally meant "a fence" or "a barrier," and then came to mean a closed container. It's related to English "shrank" (to shrink), with the idea of something being compressed or enclosed. The Chinese word 柜 is a wood radical (木) combined with an element for "container," creating a semantic compound for "wooden cabinet."
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE PATTERN EMERGES ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Look at these ten words. Five rooms, ten objects. And already a pattern emerges:
+    </p>
+
+    <p class="narrative">
+      <span style="color: var(--gender-der); font-weight: 600;">Masculine:</span> Tisch, Löffel, Stuhl, Schrank — mostly furniture and tools. Four objects. Three are furniture (solid, durable, fixed in place). One is a tool (purposeful, active).
+    </p>
+
+    <p class="narrative">
+      <span style="color: var(--gender-die); font-weight: 600;">Feminine:</span> Lampe, Gabel, Tür — three objects. A lamp (ends in -e, typical feminine marker), a fork (complex historical reasons), a door (ancient feminine marker preserved).
+    </p>
+
+    <p class="narrative">
+      <span style="color: var(--gender-das); font-weight: 600;">Neuter:</span> Buch, Messer, Fenster — three objects. An old book (short consonant-ending word), an old tool (ancient neuter word), and a borrowed word from Latin (often assigned neuter).
+    </p>
+
+    <p class="narrative">
+      This is not random. The patterns are:
+    </p>
+
+    <p class="narrative">
+      <strong>1. Suffix-based:</strong> If you see -e, expect feminine. Gabel would be less predictable without this, but the historical -e marker is there.
+    </p>
+
+    <p class="narrative">
+      <strong>2. Semantic:</strong> If it's furniture, expect masculine. If it's a diminutive or abstract noun, expect feminine or neuter.
+    </p>
+
+    <p class="narrative">
+      <strong>3. Phonetic:</strong> Short, hard consonant endings often mean neuter or masculine. Longer, softer endings (especially -e) mean feminine.
+    </p>
+
+    <p class="narrative">
+      <strong>4. Historical:</strong> Some words retain their ancient gender regardless of modern patterns. Diese (this feminine), das (this neuter) — the markers are buried in the language's history.
+    </p>
+
+    <p class="narrative">
+      Understanding these patterns doesn't make German easy. But it makes it <em>logical</em>. And logic is learnable. Logic doesn't require blind memorization. Logic requires understanding the system.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== ASIDE BOX ==================== -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">Chinese Comparison: A Language Without Gender</div>
+      <p>
+        Chinese demonstrates what language looks like without grammatical gender. Instead of different articles for masculine, feminine, and neuter — Chinese uses the same article regardless:
+      </p>
+      <p style="margin-top: 12px; font-family: monospace; font-size: 0.95rem; color: rgba(212, 202, 187, 0.6);">
+        这个 <span style="color: var(--chinese);">桌子</span> (this table)<br>
+        这个 <span style="color: var(--chinese);">灯</span> (this lamp)<br>
+        这个 <span style="color: var(--chinese);">书</span> (this book)<br>
+      </p>
+      <p style="margin-top: 12px; font-size: 0.95rem;">
+        The article 这个 (zhège) never changes. There's no "this-table (masculine)" or "this-lamp (feminine)." The gender information is simply absent. Instead, Chinese relies on word order, particles, and context. Both systems work. German's system adds a layer of agreement-marking that can seem redundant to speakers of genderless languages, but it served an important function in older Indo-European languages where case and gender marking helped maintain clarity even with more flexible word order.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        Based on the suffix rule you learned: words ending in <strong style="color: var(--fire);">-ung</strong> are always feminine.<br><br>
+        What would be the gender and article for <strong style="color: var(--german);">Schöpfung</strong> (creation)?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: look at the ending.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">der Schöpfung (masculine)</button>
+        <button class="guess-btn" onclick="guess(this, true)">die Schöpfung (feminine)</button>
+        <button class="guess-btn" onclick="guess(this, false)">das Schöpfung (neuter)</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        You know that words ending in <strong style="color: var(--fire);">-er</strong> are usually masculine (agents, doers, masculine pattern).<br><br>
+        What would be the gender of <strong style="color: var(--german);">Lehrer</strong> (teacher)?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: person who teaches.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">der Lehrer (masculine)</button>
+        <button class="guess-btn" onclick="guess(this, false)">die Lehrer (feminine)</button>
+        <button class="guess-btn" onclick="guess(this, false)">das Lehrer (neuter)</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge of Gender</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">428 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(50%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:50%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 428 words across 47 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">96 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(66%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:66%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 96 patterns and grammar rules across 47 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Forty-Seven</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">der Tisch</span><span class="cw-english">table</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">die Lampe</span><span class="cw-english">lamp</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">das Buch</span><span class="cw-english">book</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">der Löffel</span><span class="cw-english">spoon</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">die Gabel</span><span class="cw-english">fork</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">das Messer</span><span class="cw-english">knife</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">der Stuhl</span><span class="cw-english">chair</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">die Tür</span><span class="cw-english">door</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">das Fenster</span><span class="cw-english">window</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">der Schrank</span><span class="cw-english">cupboard</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Gender is Logic, Not Random</strong> — Eighty percent of German noun genders can be predicted from suffixes and semantic patterns. Memorization is not necessary; understanding the system is.<br><br>
+      <strong style="color: var(--text-bright);">The Suffix Rule</strong> — Words ending in -ung, -heit, -keit, -schaft are always feminine. Words ending in -chen, -lein are always neuter. Words ending in -er are usually masculine. These patterns cover thousands of words.<br><br>
+      <strong style="color: var(--text-bright);">The Semantic Pattern</strong> — Solid, durable furniture is usually masculine. Abstract qualities ending in -ung are feminine. Days, months, seasons are masculine. Understanding meaning helps predict gender.<br><br>
+      <strong style="color: var(--text-bright);">Chinese Comparison</strong> — Chinese has no grammatical gender at all. 这个 (zhège) works for everything. It's a different solution to the same problem: how do you coordinate agreement across words? German uses gender. Chinese uses word order and particles. Both work.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Forty-Seven
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Three genders. One logical system.<br>
+        Gender is not a mystery to be suffered. It is architecture to be understood.<br>
+        Every noun has a gender not because the language is chaotic, but because the language is organized. The patterns are there. You simply have to learn to see them.<br>
+        Next, we turn to the most fundamental verb of all: being.
+      </p>
+      <div class="next-chapter">
+        Chapter Forty-Eight: Ich Bin — The Irregular Architecture of Existence
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter46.html" class="nav-btn">← Chapter 46</a>
+    <a href="chapter48.html" class="nav-btn next">Chapter 48 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 47: GENDER - THREE-STREAM PARTICLES ---
+const canvas = document.getElementById('gender-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 8000) :
+    Math.floor((canvas.width * canvas.height) / 6000);
+
+  for (let i = 0; i < count; i++) {
+    const stream = Math.floor(Math.random() * 3); // 0=der, 1=die, 2=das
+    const colors = ['#6eb5d4', '#e87d8b', '#d4af7a'];
+
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random() * 0.5 + 0.2,
+      speed: Math.random() * 0.15 + 0.08,
+      stream: stream,
+      color: colors[stream],
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.012 + 0.003,
+      vx: (stream === 0 ? -0.1 : stream === 1 ? 0 : 0.1) + (Math.random() - 0.5) * 0.05
+    });
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  particles.forEach((p, idx) => {
+    p.x += p.vx;
+    p.y -= p.speed + scroll * 0.15;
+
+    p.wobble += p.wobbleSpeed;
+    p.y += Math.sin(p.wobble) * 0.3;
+
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color + Math.floor(p.alpha * 255).toString(16).padStart(2, '0');
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- AUDIO FOR GERMAN WORDS ---
+function speakGerman(word) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Perfect! You understand the gender rules.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — remember the suffix patterns!';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What percentage of German nouns can have their gender predicted from patterns?",
+    options: ["approximately 80%", "approximately 50%", "approximately 30%", "nearly 0% — it's completely random"],
+    correct: 0,
+    explanation: "Around 80% of German nouns follow predictable gender patterns based on suffixes and semantics. This makes German gender systematic, not random."
+  },
+  {
+    question: "Which suffix is ALWAYS feminine in German?",
+    options: ["-er", "-ung", "-el", "-ch"],
+    correct: 1,
+    explanation: "Words ending in -ung are always feminine. This suffix covers thousands of German words (Wanderung, Hoffnung, Erziehung, etc.)."
+  },
+  {
+    question: "What is the primary function of grammatical gender in German?",
+    options: ["To make the language difficult for learners", "To create agreement patterns that coordinate words in a sentence", "To distinguish between singular and plural", "None of the above"],
+    correct: 1,
+    explanation: "Gender creates agreement across articles, adjectives, and nouns. This agreement marking helps maintain clarity, especially with flexible word order."
+  },
+  {
+    question: "Which of these words is feminine?",
+    options: ["der Tisch", "die Lampe", "das Buch", "der Stuhl"],
+    correct: 1,
+    explanation: "Die Lampe is feminine. It ends in -e, which is a common feminine marker in German."
+  },
+  {
+    question: "Why are most furniture words masculine in German?",
+    options: ["Random tradition", "Because Latin borrowed words are masculine", "Because furniture is typically solid, durable, fixed in place — masculine qualities", "Because German speakers are male"],
+    correct: 2,
+    explanation: "Semantic patterns matter: solid, durable, permanent objects are typically masculine. This reflects how languages categorize meaning."
+  },
+  {
+    question: "What is the Chinese approach to grammatical gender?",
+    options: ["Chinese has three genders like German", "Chinese has no grammatical gender; it uses word order and particles instead", "Chinese uses gender only for animate nouns", "Chinese is not related to gender discussion"],
+    correct: 1,
+    explanation: "Chinese has no grammatical gender at all. 这个 (zhège) works for every noun. Chinese solves the agreement problem differently than German."
+  },
+  {
+    question: "Which suffix is ALWAYS neuter?",
+    options: ["-ung", "-heit", "-chen", "-er"],
+    correct: 2,
+    explanation: "Words ending in -chen or -lein are always neuter. This includes diminutives like Mädchen, Häuschen, and Kätzchen."
+  },
+  {
+    question: "What does 'der Tisch' literally mean?",
+    options: ["a wooden object", "table (furniture)", "a place to eat", "the hard masculine thing"],
+    correct: 1,
+    explanation: "'Der Tisch' is simply 'the table' in German. It's masculine because furniture is typically masculine in German."
+  },
+  {
+    question: "Which of these words ends in a feminine-marking suffix?",
+    options: ["der Löffel", "die Freundschaft", "das Fenster", "der König"],
+    correct: 1,
+    explanation: "'Die Freundschaft' (friendship) ends in -schaft, which is always feminine. This word demonstrates one of the most reliable suffix rules."
+  },
+  {
+    question: "What is one reason German might have kept grammatical gender when English largely lost it?",
+    options: ["Germans are more traditional", "Gender helped maintain clarity with more flexible word order in older forms of German", "Gender makes languages sound better", "There is no linguistic reason"],
+    correct: 1,
+    explanation: "In older Germanic languages, flexible word order combined with gender marking allowed speakers to maintain clarity. As word order became more fixed, gender became less essential but remained in the language."
+  },
+  {
+    question: "How would you say 'three cups' in German if you knew that 'Tasse' (cup) is feminine?",
+    options: ["drei der Tasse", "drei die Tasse", "drei Tassen", "drei das Tasse"],
+    correct: 2,
+    explanation: "In the accusative plural, you simply add the plural marker -n to the noun. The article is not needed. So: drei Tassen (three cups)."
+  },
+  {
+    question: "What does the existence of gender in German suggest about language structure?",
+    options: ["German is primitive and underdeveloped", "Language is an organized system with logical patterns, even if those patterns aren't immediately obvious", "Gender is a design flaw that should be eliminated", "All languages must have gender"],
+    correct: 1,
+    explanation: "Gender in German demonstrates that language is systematically organized. The patterns exist for reasons (agreement, clarity, meaning-making). Understanding those reasons makes the system learnable rather than arbitrary."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>448 words and patterns</strong> across forty-seven chapters. You understand the deep architecture of German: how PIE scattered into Germanic dialects, how those dialects evolved through migration and contact, and now — how the grammar itself organizes meaning. Gender is not an obstacle. It's a window into how language works.</p>
+      <p style="margin-top: 8px;"><strong>Architecture Unlocked:</strong> You can now see that German grammar is a logical system. The patterns are there. Eighty percent of genders follow rules based on suffixes and meaning. The remaining twenty percent are historical artifacts — words that retained their ancient genders. Understanding this distinction transforms gender from a mystery into a system to master.</p>
+      <p style="margin-top: 8px;">Next, we explore the most irregular verb: sein (to be). Why is it so strange? Because it's ancient. Because it's fundamental. Because the very concept of existence in German carries grammar in its bones.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+initializeQuiz();
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

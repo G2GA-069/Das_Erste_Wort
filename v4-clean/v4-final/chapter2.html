@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 2: The Forest Tongue</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --forest: #4a7c6d;
+    --leaf: #6ba87a;
+    --sunlight: #b8a572;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a1a0e 0%, #0a1a0e 30%, #1a2a1f 70%, #2a3a2f 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- FOREST PARTICLES CANVAS --- */
+  #forest-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--leaf);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--leaf), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 1200px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+  .bridge-label.pgmc { background: rgba(75, 124, 109, 0.15); color: var(--forest); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(75, 124, 109, 0.06);
+    border-left: 2px solid rgba(75, 124, 109, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--forest);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .chapter-end .next-chapter a {
+    color: rgba(212, 202, 187, 0.4);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .chapter-end .next-chapter a:hover {
+    color: rgba(212, 202, 187, 0.6);
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="forest-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Two</div>
+    <h1>Die Waldsprache</h1>
+    <div class="subtitle">The Forest Tongue</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: DEPARTURE FROM STEPPE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      For two thousand years, the Proto-Indo-European people had wandered the steppes. Two thousand years of slow, inevitable drift — not conquest, not invasion, but something quieter and more profound. Families moved. Herds followed. One generation settled in a new region. The next generation moved further. Slowly, imperceptibly, they spread across the ancient world.
+    </p>
+
+    <p class="narrative">
+      One branch went west. Into Anatolia. Into Greece. Into the Balkans. And one particular branch — pushed by climate, drawn by rumor of game, following rivers that cut like silver threads through unknown forests — went deeper west and north. Into the dense woodlands of what we now call Europe.
+    </p>
+
+    <p class="narrative">
+      These were the Proto-Germanic peoples. And the forest changed everything.
+    </p>
+
+    <p class="narrative emphasis">
+      Language does not evolve in abstraction. It evolves in the world.
+    </p>
+
+    <p class="narrative">
+      The steppe had been vast, open, horizontal — endless sky pressing down on endless grass. The vocabulary of the steppe reflected this: words for herds, for plains, for wind, for the distant horizon. But a forest is a different universe. Vertical. Dense. Intimate. The sky becomes a rumor you hear through leaves. The distance becomes fifty meters instead of fifty miles. The danger is not a predator seen from a mile away but something lurking in the brown shadows.
+    </p>
+
+    <p class="narrative">
+      The Proto-Germanic peoples, settling in this new world, began to speak with new words. Not because the old language died — but because the forest demanded adjectives and concepts the steppe had never needed. The language began to split. To drift. To become something new.
+    </p>
+
+    <p class="narrative">
+      And here is the miracle that will unfold across this entire chapter: the words they created in this forest, in 1500 BCE, in a dialect no one has spoken in three thousand years — those words are <em>still being spoken today</em>, utterly unchanged, in the mouths of people living in London and Berlin, New York and Munich, Sydney and Toronto.
+    </p>
+
+    <p class="narrative">
+      Proto-Germanic. The last language that an English speaker and a German speaker would recognize, if somehow they traveled back in time and listened. They would understand each other, barely, with difficulty, catching perhaps one word in three. But they would <em>understand</em>. They would know they were related.
+    </p>
+
+    <p class="narrative">
+      Because the split hasn't happened yet. These two languages — English and German — are still one tongue.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: WALD ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The word for forest itself tells the story of transformation. When you name something new, you create it twice — once in the world, once in language. And the Proto-Germanic peoples, standing at the edge of vast woodlands, needed a name for what surrounded them.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wald">Wald.</span> Forest. The very word is Germanic, born in the depths of those tangled northern woodlands. It echoes in English as <em>wold</em> — but watch what happened: the German kept the meaning (a forested, ruled place), while English narrowed it to mean an <em>open</em> rolling field. The same root, but diverged into opposite meanings, like siblings who chose different paths.
+    </p>
+
+    <p class="narrative">
+      The Proto-Indo-European, with their steppe vocabulary, had no specific word for forest. They had <em>wildnis</em> perhaps — something wild, uncultivated. But <em>Wald</em> is something different. It comes from the PGmc *walþuz — and it carries within it something the steppe peoples never had to express: the idea of <em>territory</em>. A ruled place. The woods that your people know, that you hunt in, that you are bound to by blood and custom. A place that has been taken and claimed, even if it is wild.
+    </p>
+
+    <p class="narrative">
+      This is remarkable: a word that means both "wild" and "ruled," both "forest" and "possession." Language holding a paradox.
+    </p>
+
+    <!-- WALD etymology card -->
+    <div class="ety-card" id="card-wald">
+      <div class="word-header">
+        <span class="word-main">Wald</span>
+        <span class="word-pron">/valt/</span>
+      </div>
+      <div class="word-meaning">forest — the wild wood, the governed territory, the boundary of the known world</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*walþuz</span>
+        <span class="bridge-note">— born in the Germanic forests, ~1500 BCE</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wold</span>
+        <span class="bridge-note">— Old English "weald" or "wold" — opposite meaning (open field)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wald</span>
+        <span class="bridge-note">— German preserves the original sense: a ruled and known place</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">森林</span>
+        <span class="bridge-note">— sēnlín — tree (木) + tree + tree = forest. Stacking meaning.</span>
+      </div>
+      <div class="story">
+        Proto-Germanic *walþuz is a perfect example of how a single root-word can fracture into opposite meanings as languages diverge and speakers reinterpret what the word "should" mean. In German, <em>Wald</em> is forest — a place of rules and governance, where humans belong. In English, <em>wold</em> became the opposite: open rolling countryside, often without trees. Both came from the same root. Both are correct, in their own linguistic universe. The English <em>Wealdene</em> — "valley of the Weald" — still exists in place names, showing where forests once stood. Now look at Chinese: 森林 (sēnlín) builds the concept by repetition. 森 (sēn) itself means "forest of trees," formed by stacking three instances of 木 (mù, wood/tree) vertically. This is not borrowed from an ancient root — it's <em>constructed</em> in the characters themselves, visible meaning built from components.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The forest stretched for hundreds of miles. Dense oak and beech and pine. Rivers cutting through the canopy. Animals the steppe peoples had never hunted. New dangers. New possibilities. And the people living there began to need new words to describe their new world.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: BAUM & STEIN ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the steppe, there had been few trees. The Proto-Indo-European word for tree was something like *dhrew-os, a word they kept because trees, though rare, were noticed. But now, surrounded by them, the Proto-Germanic peoples developed an entire vocabulary of wood and timber. Trees were not exotic anymore. They were the material of existence.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="baum">Baum.</span> Tree. The word echoes through both German and English with crystalline clarity. Compare: <em>baum/beam</em>. A <em>beam</em> in English now means a plank of wood — a beam supporting a roof. But originally, a beam was a tree-trunk. The transformation is simple: the material changed because the context changed. When you live in a forest, you don't think of trees as exotic. You think of them as <em>building material</em>.
+    </p>
+
+    <p class="narrative">
+      And here is something that reveals the deep identity of English and German: both languages <em>still carry this root</em>, in their most common building words. <em>Baum</em> in German. <em>Beam</em> in English. The material of the forest became the material of civilization. From word to world — the tree became the beam, and the forest became the house.
+    </p>
+
+    <!-- BAUM etymology card -->
+    <div class="ety-card" id="card-baum">
+      <div class="word-header">
+        <span class="word-main">Baum</span>
+        <span class="word-pron">/baʊm/</span>
+      </div>
+      <div class="word-meaning">tree — the vertical wood, the structure of the forest</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*baumaz</span>
+        <span class="bridge-note">— developed in the forests, central to Germanic life</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">beam</span>
+        <span class="bridge-note">— originally "tree-trunk," then "plank," now "structural beam"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Baum</span>
+        <span class="bridge-note">— German keeps the original sense: any tree, any standing timber</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">树</span>
+        <span class="bridge-note">— shù — the character shows a tree with spreading roots</span>
+      </div>
+      <div class="story">
+        Notice the semantic drift: "Baum" and "beam" diverged in meaning because English speakers began to think of trees differently — not as living things but as building materials. The word narrowed. Yet they still carry the same ancient root. And look at 树 (shù): the character literally depicts a tree with visible roots and branches, a picture-word that hasn't needed to change its meaning in three thousand years. Where Germanic languages shift their meanings and abstractions, Chinese characters remain anchored to the visual form of the thing they represent. Tree in German, beam in English, picture of a tree in Chinese — three different strategies for the same thing, three different answers to the question: <em>How do we hold a tree in language?</em>
+      </div>
+    </div>
+
+    <p class="narrative">
+      But the forest is not just trees. It is stone. Rocky outcroppings. Boulders tumbled from ancient mountains. Flint for making blades. Granite that will not break.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="stein">Stein.</span> Stone. Listen to it against English: <em>stein/stone</em>. The same word, barely disguised. The "st" at the beginning is identical. The vowel is the same. Only the ending has shifted — because English softened it in the thousand years that separated these languages. But pronounce them: "shtine" and "stone" — you can almost hear the relationship.
+    </p>
+
+    <p class="narrative">
+      A beer stein — a <em>Stein</em> — is literally a stone mug, hard and lasting. The word itself captures this sense of hardness, of permanence, of things that endure beyond human lifespans. The forests that will grow back. The stones that will not.
+    </p>
+
+    <!-- STEIN etymology card -->
+    <div class="ety-card" id="card-stein">
+      <div class="word-header">
+        <span class="word-main">Stein</span>
+        <span class="word-pron">/ʃtaɪn/</span>
+      </div>
+      <div class="word-meaning">stone — hardness, permanence, the bedrock beneath</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*stainaz</span>
+        <span class="bridge-note">— identical in English and German, one of the most stable words</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stone</span>
+        <span class="bridge-note">— Old English "stan" — pronounced identically to German "Stein"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stein</span>
+        <span class="bridge-note">— unchanged for three thousand years, picture of solidity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">石</span>
+        <span class="bridge-note">— shí — the character depicts a stone against rock, solidity itself</span>
+      </div>
+      <div class="story">
+        *stainaz is one of those words so fundamental and universal that it barely changed between Proto-Germanic and modern English/German. The Proto-Germanic *st- pronunciation (which sounds like "sht") is still preserved in German phonetics: "Stein" sounds like "shtine." English lost the "h" sound over the centuries, but kept the letters, leaving us with a "silent gh" pattern in words like "light" or "tight" — ghosts of sounds that once lived. The character 石 (shí) shows a small stone pictorially, a piece of rock, perhaps against another rock — again, Chinese culture encoding meaning in visible form rather than sound-change. Stone is stone to German ears, to English speakers, and to Chinese eyes.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Wood and stone. These are the materials of the forest. These are the tools that made civilization possible. And the Germanic peoples, surrounded by these materials, built their entire vocabulary around them.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: REGEN & GRÜN ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The steppe was dry. Or at least, it had different seasons — dry winters, sudden flooding springs. But the northern forests were different. They were <em>wet</em>. Constantly wet. Rain on the rocks. Fog rising from morning streams. Moisture seeping from the rotting leaves. The forest was a lesson in water, in dampness, in the ceaseless weight of moisture pressing down. In spring, rivers overflowed. In summer, the canopy sweated. In autumn, fog wrapped around the trees like gauze.
+    </p>
+
+    <p class="narrative">
+      So the Proto-Germanic peoples created a word specifically for rain — not just water, not just wetness, but the <em>falling</em> of water from the sky. The PIE root was something like *reg-, meaning "to move in a direction, to flow, to direct." From this they made <span class="german-word" data-card="regen">Regen</span> — rain. Rain as a directed, purposeful thing. Rain as power. Rain as the defining characteristic of their world.
+    </p>
+
+    <!-- REGEN etymology card -->
+    <div class="ety-card" id="card-regen">
+      <div class="word-header">
+        <span class="word-main">Regen</span>
+        <span class="word-pron">/ˈreːɡən/</span>
+      </div>
+      <div class="word-meaning">rain — the water falling, directed downward, relentless</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*reg-</span>
+        <span class="bridge-note">— root meaning "to direct, to flow, to move"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*regną</span>
+        <span class="bridge-note">— became the Germanic word for rain itself, not just wetness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">rain</span>
+        <span class="bridge-note">— Old English "regn" — you can almost hear the sound of falling drops</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Regen</span>
+        <span class="bridge-note">— the German form preserves the original sense perfectly, rain with direction</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">雨</span>
+        <span class="bridge-note">— yǔ — the character depicts rain falling from clouds</span>
+      </div>
+      <div class="story">
+        The root *reg- is fascinating because it shows how meaning crystallizes around motion and direction. "Regen" (rain) comes from a word meaning "to flow/move" — rain is water with purpose, water with direction. English "rain" is similar, from Old Norse origins but the same concept: directed water. And look at 雨 (yǔ): the character literally shows dots or lines falling from above, like drops of rain. It resembles the character for clouds (云, yún) seen from above. The Chinese approach is pictorial and concrete; the Germanic approach is etymological — but both arrived at the same understanding: rain is water with direction, water with purpose, water falling from the sky, not sitting in lakes.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And with the rain came the eternal greenness. In the steppe, spring was violent and brief — sudden flowers, sudden growth, then brown drying. But in the forest, the green never wholly left. Winter it faded, yes. But it lingered. And spring it erupted with a vigor the steppe peoples had never known. Moss on the stones. New shoots on every branch. Ferns uncoiling. The forest speaking in green.
+    </p>
+
+    <p class="narrative">
+      The word for green itself is new to the Germanic branch. It comes from a root meaning "to grow" — *ghrew-. And from this came <span class="german-word" data-card="grün">grün</span> — green. The color of growth. The color of the forest. The color of life itself, asserting itself again and again through seasons and centuries.
+    </p>
+
+    <!-- GRÜN etymology card -->
+    <div class="ety-card" id="card-grün">
+      <div class="word-header">
+        <span class="word-main">grün</span>
+        <span class="word-pron">/ɡʁyːn/</span>
+      </div>
+      <div class="word-meaning">green — the color of growth, of life, of the living forest</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*grōniz</span>
+        <span class="bridge-note">— from *ghrew-, meaning "to grow, to flourish"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">green</span>
+        <span class="bridge-note">— Old English "grene" — the color that means alive, that means growing</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">grün</span>
+        <span class="bridge-note">— German "grün" carries the etymological sense: growing, verdant, alive</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">绿</span>
+        <span class="bridge-note">— lǜ — from "green silk," the color created by dyeing, not naturally growing</span>
+      </div>
+      <div class="story">
+        Here is a cultural difference encoded in language: Germanic *grōniz comes from the root for "growth." Green is the <em>living</em> color, the color of verdancy, of growth, of nature asserting life. Chinese 绿 (lǜ) comes from a different root entirely — it originally meant "silk dyed green," 「绿」indicating an <em>artificial</em> color, something created by human hands. Germanic speakers, surrounded by forests, thought of green as natural, growing, alive. Chinese speakers, in different ecological contexts with different cultural values, thought of green as something made, dyed, created. The forest created one meaning. The silk trade created another. Language reflects the world you live in, the things your people value, the colors they notice first.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Rain and green. These are the two defining colors of the forest. The sounds of water. The sight of life. And they demanded words.
+    </p>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        The forest is deep, dark, wet. The people have learned to hunt animals the steppe peoples never knew. They've tamed one animal in particular, to hunt alongside them.<br><br>
+        What do you think <strong style="color: var(--german);">Hund</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: it hunts alongside humans, eats what you give it.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">hand</button>
+        <button class="guess-btn" onclick="guess(this, true)">hound / dog</button>
+        <button class="guess-btn" onclick="guess(this, false)">hunt</button>
+        <button class="guess-btn" onclick="guess(this, false)">hundred</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: HUND & HOUSE ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The forest required different hunting strategies than the open steppe. Cattle could still be herded, but the forest had deer, boar, elk — prey that moved fast through dense undergrowth, prey that required cunning and coordination. And so the people developed a new relationship with another animal: the dog.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="hund">Hund.</span> Dog. Hound. The word is identical in meaning in German and English, though the English form — <em>hound</em> — has narrowed to mean specifically a hunting dog. But the root is the same: *hundaz in Proto-Germanic. A dog that hunts with you. A dog that lives with you. A domesticated animal, part of your family and your survival. The word carries the intimacy of that relationship — not a wild animal, but something that has chosen (or been made to choose) to stay.
+    </p>
+
+    <p class="narrative">
+      Here is something curious: English didn't keep this word as its primary term for dog. English has both <em>hound</em> and <em>dog</em>, and <em>dog</em> is now the common word. Where did <em>dog</em> come from? No one knows. It appears suddenly in Middle English with no clear ancestry. It may come from Old Norse. It may be onomatopoeia — the sound a dog makes. It is one of language's mysteries, one of the places where English has forgotten its Germanic past.
+    </p>
+
+    <p class="narrative">
+      But German kept the old word. Hund. The Proto-Germanic dog. Three thousand years of continuity in a single syllable.
+    </p>
+
+    <!-- HUND etymology card -->
+    <div class="ety-card" id="card-hund">
+      <div class="word-header">
+        <span class="word-main">Hund</span>
+        <span class="word-pron">/hʊnt/</span>
+      </div>
+      <div class="word-meaning">dog — the hunting companion, the domesticated animal, part of the family</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*hundaz</span>
+        <span class="bridge-note">— the forest hunter, essential to Germanic survival</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">hound</span>
+        <span class="bridge-note">— Old English "hund" — now means specifically a hunting dog</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Hund</span>
+        <span class="bridge-note">— German kept the word for any dog, not just hunting dogs</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">狗</span>
+        <span class="bridge-note">— gǒu — the character contains the radical for animal (犭) plus meaning element</span>
+      </div>
+      <div class="story">
+        The trajectory of "hound" in English is revealing: it started as a general term for dog, then narrowed to mean specifically a hunting dog. Meanwhile, English borrowed "dog" from somewhere (origin debated — possibly from Old Norse hundr via a dog-specific breeder jargon?) and made it the general term. German stayed faithful to the old word. This pattern — where one language preserves the ancient form and another narrows or broadens its meaning — happens constantly in linguistic history. 狗 (gǒu) is built from the "animal" radical (犭, also called 犭部 or the "dog radical") plus another element, showing how Chinese systematically categorizes animals by building the character with meaningful components. Each language, in its own way, solves the problem of naming this domestic creature that has been at humanity's side for thousands of years.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And the people themselves had to change. The steppe allowed for mobile herding communities — you could follow your herds, living in tents, moving with the seasons. But the forest demanded something different. Here, you settled. You built. You stayed. You planted crops that would grow year after year in the same soil. You built structures that would last beyond a season.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="haus">Haus.</span> House. Now here is a word that will astound you: look at it side by side with English <em>house</em>. They are <em>identical</em>. Not similar. Not cousins who can barely recognize each other. Identical. The same sound, the same spelling (nearly), the same meaning, preserved across three thousand years and two diverged languages.
+    </p>
+
+    <p class="narrative">
+      This is what it means to be part of the same linguistic family. Not borrowed words. Not similar words from a shared source. <em>Identical</em> words, waiting in both languages like coins minted from the same die. When you say "house" in English, and a German speaker says "Haus," you are both saying the same ancient word, the same syllable, that the forest peoples spoke three thousand years ago when they built the first structures that would last.
+    </p>
+
+    <!-- HAUS etymology card -->
+    <div class="ety-card" id="card-haus">
+      <div class="word-header">
+        <span class="word-main">Haus</span>
+        <span class="word-pron">/haʊs/</span>
+      </div>
+      <div class="word-meaning">house — shelter, home, the center of life</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*hūsą</span>
+        <span class="bridge-note">— literally unchanged in German, identical in English pronunciation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">house</span>
+        <span class="bridge-note">— Old English "hūs" — you could travel back 1300 years and be understood</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Haus</span>
+        <span class="bridge-note">— three thousand years unchanged — this is linguistic bedrock</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">房子</span>
+        <span class="bridge-note">— fángzi — from 房 (fáng, room, shelter) + 子 (diminutive suffix)</span>
+      </div>
+      <div class="story">
+        "Haus" and "house" are so identical that it's easy to forget they've been diverging for three millennia. The word is one of the most ancient and stable in the Germanic family. It appears in all Germanic languages, unchanged across centuries: German Haus, English house, Dutch huis, Swedish hus, Icelandic hús. The reason is simple: a house is so fundamental to human life that the word becomes bedrock. It cannot change. It must stay clear, must stay the same, so that every child can learn to understand it perfectly. It is the sound of shelter, the sound of staying, the sound of choosing a place and declaring: <em>This is home.</em> 房子 (fángzi) is built differently, compositely: 房 (fáng, literally a structure, a room, a shelter) + 子 (zǐ, the diminutive suffix that makes a word "small and familiar," often used with concrete nouns). So "房子" literally means "little rooms" or "room-ish places" — a poetic way of building the concept from components rather than preserving an ancient root. Each language chose a different path: Germanic chose continuity of sound, Chinese chose transparency of composition.
+      </div>
+    </div>
+
+    <p class="narrative">
+      With the house came settlement. With settlement came civilization. Not the empires of Egypt or Mesopotamia — the forest would not allow for such centralizations. But the quiet, persistent civilization of the forest peoples. Settlements. Villages. A people beginning to stay in one place long enough to plant and harvest, to build structures that would outlast a season, to think in terms of generations rather than years.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: BROT & ERDE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And when people stay in one place, they plant. They cultivate. The steppe had been for herding, for following the animals. But the forest demanded agriculture. They cleared small patches. They planted grain. They waited for growth. They learned the patience that farming requires — the patience to wait an entire season, to invest labor now for food later.
+    </p>
+
+    <p class="narrative">
+      Bread rises from yeast and grain. In the forest settlements, bread became not just food but <em>the</em> food — the staff of life, the foundation of every meal, the first word you teach your children about sustenance. The difference between a good year and a starving year.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="brot">Brot.</span> Bread. From the Proto-Germanic *braudą. Say it aloud: <em>brot/brood</em>. English kept a version — <em>brood</em> — but it narrowed the meaning. A brood is a group of chicks, birds kept together, things that are broken up and clustered. But the original word was broader: <em>bread</em> as broken pieces, as something crumbled and shared, as nourishment broken down and divided, fragments that together make a whole meal.
+    </p>
+
+    <p class="narrative">
+      The Germanic peoples, settling in the forests, began to cultivate grain. They learned to grind it, to ferment it, to bake it over fire. Bread became the center of life. And the word endured, unchanged in German, slightly shifted in English — but still recognizable if you know where to listen.
+    </p>
+
+    <!-- BROT etymology card -->
+    <div class="ety-card" id="card-brot">
+      <div class="word-header">
+        <span class="word-main">Brot</span>
+        <span class="word-pron">/broːt/</span>
+      </div>
+      <div class="word-meaning">bread — the broken pieces, the staple food, the foundation of civilization</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*braudą</span>
+        <span class="bridge-note">— originally meant "pieces, fragments," then came to mean the staple grain food</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">bread</span>
+        <span class="bridge-note">— Old English "brēad" — the same word, same meaning, same centrality to life</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Brot</span>
+        <span class="bridge-note">— German kept the original sense and pronunciation with perfect clarity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">面包</span>
+        <span class="bridge-note">— miànbāo — "flour" (面) + "wrap" (包) = what bread essentially IS</span>
+      </div>
+      <div class="story">
+        The shift from "braud-" (broken pieces) to "bread" (the baked staple) shows how semantic meaning crystallizes around the most important use of a word. English "brood" narrowed differently — it kept the "things broken up into groups" sense and applied it to animals. German Brot kept the full meaning. Meanwhile, 面包 (miànbāo) is a beautiful example of Chinese descriptive composition: it literally means "flour-wrapped," describing what bread essentially IS — flour transformed, wrapped in crust, transformed by heat and time. Each language explains bread through its own cultural lens: Germanic through history (broken pieces that feed us, that sustain us), Chinese through transformation (flour that has been wrapped and baked). Germanic languages are etymological, preserving ancient roots. Chinese languages are compositional, building meaning visible in the characters.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And bread comes from earth. From soil. From the ground that the Germanic peoples learned to cultivate, to plant, to depend upon. The steppe peoples had herded — they had traveled with their animals. But these forest peoples learned to stay. To put roots down. Literally and figuratively.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="erde">Erde.</span> Earth. Soil. Ground. From the Proto-Germanic *erþō. Listen to it next to English: <em>erde/earth</em>. Not identical — the final sound shifted. But you can hear the kinship. The same root, the same element, the same word for the ground beneath your feet, the ground that feeds you, the ground that you are now, for the first time, staying on.
+    </p>
+
+    <!-- ERDE etymology card -->
+    <div class="ety-card" id="card-erde">
+      <div class="word-header">
+        <span class="word-main">Erde</span>
+        <span class="word-pron">/ˈɛʁdə/</span>
+      </div>
+      <div class="word-meaning">earth — soil, ground, the world itself, the element that feeds</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*erþH-</span>
+        <span class="bridge-note">— also gave Sanskrit "prithvi" (Earth goddess), Greek "era" (ground)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*erþō</span>
+        <span class="bridge-note">— the ground, the soil, the world beneath, the element of settlement</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">earth</span>
+        <span class="bridge-note">— Old English "eorðe" — the solid ground, contrasted with sky and sea</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Erde</span>
+        <span class="bridge-note">— German preserves the full sense: earth as element, as world, as soil</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">地</span>
+        <span class="bridge-note">— dì — the character for earth, ground, place, territory</span>
+      </div>
+      <div class="story">
+        *erþH- is ancient — so ancient that it appears across multiple branches of Indo-European: Sanskrit prithvi (the goddess Earth, the mother), Greek era (ground, earth), Germanic Erde. The "th" sound in English earth preserves this ancient consonant that would have been pronounced as a rough, guttural sound in Proto-Indo-European. German changed it slightly but kept the essence. Together, "Erde" and "earth" are living fossils of Proto-Germanic, unchanged in meaning, still referring to the soil that feeds us, the ground we stand on, the planet we inhabit. 地 (dì) in Chinese means earth, ground, place, territory — the character itself shows earth (土, tǔ) with a dot or mark indicating specific location, "marked earth," territory claimed and known. Once again: Germanic languages preserve sound and meaning from ancient roots. Chinese languages build meaning visually, showing the relationships between things through character composition.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And on this earth, the people built their <em>Haus</em>. They planted their <em>Brot</em>. They hunted with their <em>Hund</em>. They lived in their <em>Wald</em>.
+    </p>
+
+    <p class="narrative emphasis">
+      The language of the forest had been born.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: MILCH & STRONG VERBS ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But there is one more word that reveals something profound about the Germanic peoples and their innovation. The steppe had given them cattle. But cattle gave them something new to the forest: milk.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="milch">Milch.</span> Milk. From the Proto-Germanic *meluks. Now here is the beautiful thing: English and German diverged so thoroughly that you might think they lost this connection entirely. But look: English <em>milk</em>, German <em>Milch</em>. The "m" and "l" are the same. The vowel is similar. The ending has shifted — English kept it softer, German made it sharper with the "ch" sound.
+    </p>
+
+    <p class="narrative">
+      But the word itself is there, in both languages, a silent witness to the fact that these two languages — which have diverged so far that modern English speakers cannot understand modern German — still carry within them the bones of a common ancestor. When you say "milk" and hear "Milch," you are hearing the same ancient word, transformed by time, by distance, by the different sounds that English and German speakers developed in their separate lands.
+    </p>
+
+    <!-- MILCH etymology card -->
+    <div class="ety-card" id="card-milch">
+      <div class="word-header">
+        <span class="word-main">Milch</span>
+        <span class="word-pron">/mɪlç/</span>
+      </div>
+      <div class="word-meaning">milk — the sustenance from animals, nutrition made liquid</div>
+      <div class="bridge">
+        <span class="bridge-label pgmc">PGMC</span>
+        <span class="bridge-word">*meluks</span>
+        <span class="bridge-note">— the fundamental animal product, crucial to survival</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">milk</span>
+        <span class="bridge-note">— Old English "meolc" — the same word, same significance, same bond to herds</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Milch</span>
+        <span class="bridge-note">— German developed the "ch" sound, softening the final consonant differently</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">奶</span>
+        <span class="bridge-note">— nǎi — older form was "乳" (rǔ), meaning "breast/milk," from human feeding</span>
+      </div>
+      <div class="story">
+        "Milch" and "milk" reveal a subtle pattern in how English and German diverged: English preserved the softer "k" sound, German shifted to "ch" (a guttural fricative, like the "ch" in "Bach"). This is not random — it's part of broader sound-shifts that happened after Proto-Germanic split into its branch languages. German *meluks became Milch. English *meolucs became milk. Neither is "more correct" — both preserve the ancient word, just transformed by the sound-changes their respective languages underwent after they diverged. 奶 (nǎi) is interesting: the older Chinese character was 乳 (rǔ, literally "breast"), and 奶 evolved from that to mean "milk" more broadly, often from animals, especially in compounds. Like the Germanic languages, Chinese tied milk to the idea of nursing and sustenance, just encoded it differently — through the visual picture of a breast, rather than through phonetic evolution.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And here is something the Germanic peoples invented that transformed language itself. Look at this sentence: I <em>sing</em>. I <em>sang</em>. I have <em>sung</em>.
+    </p>
+
+    <p class="narrative">
+      The verb changes its <em>vowel</em>. This is called "strong verb" conjugation — a pattern unique to Germanic languages, found nowhere else in the Indo-European family. The steppe peoples, the Proto-Indo-Europeans, had simple verbs. But the Germanic peoples — perhaps because they were thinking in more complex narratives, perhaps because the forest demanded more sophisticated grammar, perhaps simply because of innovations that arose and stuck — they invented this system where verbs <em>change their insides</em> to show time.
+    </p>
+
+    <p class="narrative">
+      English kept this system: sing/sang/sung, drink/drank/drunk, swim/swam/swum. German kept it too: singen/sang/gesungen, trinken/trank/getrunken, schwimmen/schwamm/geschwommen. These are not borrowed patterns. These are ancient Germanic innovations, still alive in the mouths of modern speakers, three thousand years after the forest people first developed them. They survive because they sound right, because they feel fundamental, because they are wired into the way English and German speakers think about time and change.
+    </p>
+
+    <p class="narrative">
+      The alternative — "weak verbs" — adds a suffix instead: love/loved/loved, walk/walked/walked. These too are Germanic, but they're the "later" system, what happens when weak verbs are created from nouns. A <em>love</em> (noun) becomes to <em>love</em> (verb) becomes <em>loved</em> (past tense). But the strong verbs, the ancient verbs — they transform from within. They change their very substance. They are the inheritance of the Proto-Germanic peoples, coded into every child's mouth.
+    </p>
+
+    <p class="narrative">
+      This is the gift of the Proto-Germanic peoples to modern English and German: a way of conjugating verbs that is both ancient and entirely alive, still unexpected, still surprising even to modern speakers who have never seen the word before. You know that <em>sing/sang/sung</em> is "right" not because you learned it from a book, but because it echoes something so deep it's encoded in your linguistic DNA.
+    </p>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        You've learned the forest vocabulary. The roots of English and German are still identical, still bound together by three thousand years of common ancestry.<br><br>
+        From the patterns you've seen, what do you think <strong style="color: var(--german);">trinken</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: it's what you do with water. Think of an animal at a stream.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">think</button>
+        <button class="guess-btn" onclick="guess(this, true)">drink</button>
+        <button class="guess-btn" onclick="guess(this, false)">trunk</button>
+        <button class="guess-btn" onclick="guess(this, false)">wrinkle</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: THE UNFOLDING ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The Proto-Germanic peoples had taken the old steppe language and transformed it. The core remained — mother, father, night, star, water, fire, name — these words stayed nearly unchanged. They carried the weight of six thousand years of history. But everything else shifted. New words for forests and trees and stone and rain. New ways of conjugating verbs. New sounds, new patterns, new ways of thinking about the world.
+    </p>
+
+    <p class="narrative">
+      And still they were <em>one people</em>. One language. You could travel from the Danube to the Rhine to the coast of what is now Denmark, and you would hear the same tongue, the same words, the same way of making grammar. A Dane and a German would understand each other, would share laughter and stories, would know they were kin.
+    </p>
+
+    <p class="narrative">
+      But time was about to split them apart. Not violence. Not conquest. Not even particularly dramatic events. But geography, and chance, and the slow drift of human migration. A group would move further north. Another would stay on the continent. One — sometime around 450 CE, five hundred years after the fall of Rome — would be pushed by Saxons and other Germanic peoples across the narrow waters to the island of Britain.
+    </p>
+
+    <p class="narrative">
+      And as they separated, their languages began to separate.
+    </p>
+
+    <p class="narrative">
+      English and German would not become strangers for another thousand years — not until the Norman Conquest of 1066, when French words flooded into English, changing it forever. But the seeds of their separation were already being sown, in the sixth century, when geography began to split what language had kept together.
+    </p>
+
+    <p class="narrative">
+      The language spoken by the Angles — one group of Proto-Germanic peoples — would in time become English. The language spoken by those who stayed on the continent would become German. And though they would forget their kinship for centuries, the words would remember.
+    </p>
+
+    <p class="narrative emphasis">
+      The words would always remember.
+    </p>
+
+    <p class="narrative">
+      Haus and house. Brot and bread. Baum and beam. Wald and wold. Stein and stone. Three thousand years, two languages, one unbroken chain of words stretching back to the forests of the ancient world.
+    </p>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Germanic strong verbs</strong> — The Germanic peoples invented a new verb system: sing/sang/sung, drink/drank/drunk. These "ablaut" patterns don't exist in Latin or Greek. They are uniquely Germanic — and both English and German inherited them.<br><br>
+    <strong style="color: var(--text-bright);">Forest vocabulary cognates</strong> — Words born in the Germanic forests remain almost identical across English and German: Wald/wold, Baum/beam, Stein/stone, Regen/rain, grün/green. The shared environment created shared words.<br><br>
+    <strong style="color: var(--text-bright);">Settlement vocabulary cognates</strong> — When the Germanic peoples settled, they created words for home life that both languages kept: Haus/house, Brot/bread, Milch/milk, Erde/earth, Hund/hound.<br><br>
+    <strong style="color: var(--text-bright);">Environment drives language</strong> — Proto-Indo-European on the open steppe became Proto-Germanic in the dense forests. Same people, new world, new language. The pattern repeats throughout history: when the world changes, the words change with it.
+  </div>
+
+  <!-- ==================== WORDS & CONCEPTS GATHERED ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Two</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Haus</span><span class="cw-english">house</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Brot</span><span class="cw-english">bread</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Milch</span><span class="cw-english">milk</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Baum</span><span class="cw-english">tree</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Wald</span><span class="cw-english">wold/forest</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Hund</span><span class="cw-english">hound</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Stein</span><span class="cw-english">stone</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Regen</span><span class="cw-english">rain</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">grün</span><span class="cw-english">green</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Erde</span><span class="cw-english">earth</span></div>
+      </div>
+
+      <h3 style="margin-top:32px;">Concepts Learned in Chapter Two</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="1000" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Strong Verbs</span><span class="cw-english">sing/sang/sung — a Germanic invention</span></div>
+        <div class="collected-word" data-delay="1100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Forest Cognates</span><span class="cw-english">Wald/wold, Baum/beam, Stein/stone</span></div>
+        <div class="collected-word" data-delay="1200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Settlement Words</span><span class="cw-english">Haus/house, Brot/bread, Milch/milk</span></div>
+        <div class="collected-word" data-delay="1300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Environment → Language</span><span class="cw-english">new world, new words</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">20 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(2%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:2%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mutter</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">mother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Feuer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fire</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wasser</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">water</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stern</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">star</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Vater</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">father</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schwester</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sister</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wort</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">word</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Haus</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">house</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Brot</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">bread</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Milch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">milk</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Baum</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">tree</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wald</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">forest</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Hund</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">hound</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stein</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">stone</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Regen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">rain</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">grün</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">green</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Erde</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">earth</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">7 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(4%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:4%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">gh = ch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night/Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">sw = schw</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">swim/schwimmen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">th = d/t</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother/Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">V = F</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Vater = "Fahter"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">st/sp = sht/shp</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Stern = "shtern"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Strong verbs</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sing/sang/sung — Germanic invention</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Environment → vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Wald/wold, Stein/stone, Haus/house</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">2</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Two
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Nineteen words gathered. Ten stories told. Environment shapes language.<br>
+        The forest people learned to build houses, to plant bread, to live in one place.<br>
+        English and German are still one language — but not for much longer.
+      </p>
+      <div class="next-chapter">
+        <a href="chapter3.html" style="color: rgba(212, 202, 187, 0.4); text-decoration: none;">Chapter Three: The Great Divide — coming soon</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter1.html" class="nav-btn">← Chapter 1</a>
+    <a href="chapter3.html" class="nav-btn next">Chapter 3 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 2: GERMANIC FOREST WITH FIREFLIES & FALLING LEAVES ---
+const canvas = document.getElementById('forest-canvas');
+const ctx = canvas.getContext('2d');
+let fireflies = [];
+let leaves = [];
+let fogLayers = [];
+let trees = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createTrees();
+}
+
+function createTrees() {
+  trees = [];
+  for (let i = 0; i < (window.innerWidth < 600 ? 8 : 15); i++) {
+    trees.push({
+      x: Math.random() * canvas.width,
+      depth: Math.random() * 0.8 + 0.2,
+      height: canvas.height * (0.4 + Math.random() * 0.5)
+    });
+  }
+  trees.sort((a, b) => a.depth - b.depth);
+}
+
+function createFireflies() {
+  fireflies = [];
+  const count = window.innerWidth < 600 ? 25 : 50;
+  for (let i = 0; i < count; i++) {
+    fireflies.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      r: Math.random() * 0.8 + 0.3,
+      alpha: Math.random() * 0.5 + 0.2,
+      flashSpeed: Math.random() * 0.04 + 0.01,
+      flashOffset: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function createLeaves() {
+  leaves = [];
+  const count = window.innerWidth < 600 ? 15 : 35;
+  for (let i = 0; i < count; i++) {
+    leaves.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: Math.random() * 0.05 + 0.02,
+      size: Math.random() * 8 + 3,
+      alpha: Math.random() * 0.3 + 0.15,
+      sway: Math.random() * 0.02,
+      swayOffset: Math.random() * Math.PI * 2,
+      rotation: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(10, 26, 14, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw tree trunks with depth effect
+  trees.forEach(tree => {
+    const opacity = tree.depth * (0.15 + scroll * 0.1);
+    const width = 3 + tree.depth * 5;
+    ctx.strokeStyle = `rgba(30, 50, 30, ${opacity})`;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(tree.x, 0);
+    ctx.lineTo(tree.x + Math.sin(time * 0.0002) * 5, tree.height);
+    ctx.stroke();
+  });
+
+  // Draw fog layers with parallax
+  const fogDensity = 0.1 + scroll * 0.15;
+  for (let layer = 0; layer < 3; layer++) {
+    const layerY = (canvas.height * 0.5) + (layer * 40) + scroll * (layer + 1) * 10;
+    const grad = ctx.createLinearGradient(0, layerY - 20, 0, layerY + 40);
+    grad.addColorStop(0, `rgba(42, 52, 42, ${fogDensity * 0.1})`);
+    grad.addColorStop(0.5, `rgba(42, 52, 42, ${fogDensity * 0.2})`);
+    grad.addColorStop(1, `rgba(42, 52, 42, ${fogDensity * 0.1})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, layerY - 30, canvas.width, 60);
+  }
+
+  // Update and draw fireflies
+  fireflies.forEach(f => {
+    f.x += f.vx;
+    f.y += f.vy;
+
+    if (f.x < 0) f.x = canvas.width;
+    if (f.x > canvas.width) f.x = 0;
+    if (f.y < 0) f.y = canvas.height;
+    if (f.y > canvas.height) f.y = 0;
+
+    const flash = Math.sin(time * f.flashSpeed + f.flashOffset) * 0.4 + 0.6;
+    const alpha = Math.max(0.1, f.alpha * flash);
+
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(184, 200, 100, ${alpha})`;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r * 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(184, 200, 100, ${alpha * 0.2})`;
+    ctx.fill();
+  });
+
+  // Update and draw falling leaves
+  leaves.forEach(l => {
+    l.y += l.vy;
+    l.x += l.vx + Math.sin(time * l.sway + l.swayOffset) * 0.1;
+    l.rotation += 0.02;
+
+    if (l.y > canvas.height) {
+      l.y = -l.size;
+      l.x = Math.random() * canvas.width;
+    }
+
+    ctx.save();
+    ctx.translate(l.x, l.y);
+    ctx.rotate(l.rotation);
+    ctx.fillStyle = `rgba(107, 168, 122, ${l.alpha})`;
+    ctx.fillRect(-l.size / 2, -l.size / 2, l.size, l.size);
+    ctx.restore();
+  });
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createFireflies();
+createLeaves();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createFireflies(); createLeaves(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Exactly right. The patterns are already in your mind.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about what you\'ve seen in the forest words...';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+if (window.innerWidth < 600) {
+  particles = particles.slice(0, Math.floor(particles.length / 2));
+}
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 28: Das Gegenteil (The Opposite)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --mirror: #7a9fb8;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a2540 0%, #0f1525 40%, #0a0f1a 70%, #050810 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- MIRROR PARTICLES CANVAS --- */
+  #mirror-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--mirror);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--mirror), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--mirror), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="mirror-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twenty-Eight</div>
+    <h1>Das Gegenteil</h1>
+    <div class="subtitle">The Opposite</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE MIRROR ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Stand before a mirror in a dark room lit only by candlelight. Look at your reflection. It mirrors you perfectly — every movement, every gesture, every detail. You raise your right hand; your reflection raises its right hand. You turn your head; the image turns in exactly the same way. Perfect symmetry.
+    </p>
+
+    <p class="narrative">
+      But here is what fascinates us about mirrors: they show us the opposite. Not opposite in appearance — the reflection looks identical to us — but opposite in direction. What lies to your left in the mirror lies to the right of your image. The symmetry is perfect, yet it inverts.
+    </p>
+
+    <p class="narrative">
+      Language works the same way. Every language has a way of creating opposites. English uses different roots: happy/sad, big/small, beautiful/ugly. But German has something more systematic. The prefix <span class="german-word" data-card="un">un-</span> works like a linguistic mirror. It takes a word and reflects it into its opposite.
+    </p>
+
+    <p class="narrative emphasis">
+      This chapter is about negation. About the prefix that says "no." About the mirror that transforms meaning by inverting it.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE PREFIX OF NEGATION ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The German prefix <span class="german-word" data-card="un">un-</span> is one of the most productive and straightforward prefixes in the language. It appears in roughly 1,500 German words, and its meaning is simple and direct: it negates, it opposes, it creates the opposite.
+    </p>
+
+    <p class="narrative">
+      Fascinatingly, <span class="german-word" data-card="un">un-</span> works identically in English. English and German share this prefix, inherited from Proto-Germanic. When you see <span class="german-word" data-speak="true">unmöglich</span> (impossible), you might immediately recognize it: it is not so different from the English "un-" in words like "unhappy," "unclear," or "unable."
+    </p>
+
+    <p class="narrative">
+      This is a lesson about linguistic kinship. German and English are both Germanic languages, and they share deep structures. The grammar of negation is one of those shared structures. We negate in similar ways because we inherit our ways of negating from a common ancestor language, spoken thousands of years ago by peoples whose descendants would eventually settle throughout Europe and eventually the world.
+    </p>
+
+    <p class="narrative">
+      The <span class="german-word" data-speak="true">un-</span> prefix, like <span class="german-word" data-speak="true">ver-</span>, is inseparable. It never detaches from the root. When you conjugate <span class="german-word" data-speak="true">unmöglich</span> (impossible), the "un-" stays permanently attached.
+    </p>
+
+    <!-- UN card -->
+    <div class="ety-card" id="card-un">
+      <div class="word-header">
+        <span class="word-main">un-</span>
+        <span class="word-pron">/ʊn/</span>
+      </div>
+      <div class="word-meaning">prefix — negation, opposition, the absence or opposite of the root meaning</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ne- / *uno-</span>
+        <span class="bridge-note">— negation at the Proto-Indo-European level</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">un-</span>
+        <span class="bridge-note">— identical usage in English: unhappy, unclear, unable</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un-</span>
+        <span class="bridge-note">— inseparable prefix, works with adjectives, nouns, and some verbs</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">不 / 非</span>
+        <span class="bridge-note">— bù / fēi — negation particles that precede words rather than attach as prefixes</span>
+      </div>
+      <div class="story">
+        The <em>un-</em> prefix is one of the most ancient tools for negation in Indo-European languages. It appears in Germanic, Romance, Celtic, and other branches. English and German inherited it directly from Proto-Germanic, which is why they are so similar in this regard. Interestingly, Chinese uses a different strategy: rather than prefixes, Chinese uses independent negation particles like 不 (bù) or 非 (fēi) that precede the word to negate it. This is a fundamental difference in how languages mark negation: Germanic languages attach negation to the word as a prefix, while Sino-Tibetan languages use separate negation particles that can be placed in different positions depending on grammatical context.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And here is what is remarkable: Chinese shows us that there is no single way to express negation. Where German uses a prefix, Chinese uses an independent particle. Both work. Both are logical. Both are effective. Language shows us that there are many ways to say "no."
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: EIGHT DOORS OF NEGATION ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let me show you eight words formed with the <span class="german-word" data-speak="true">un-</span> prefix, each one a door opened onto the opposite of its root. These words show how systematic German negation is.
+    </p>
+
+    <p class="narrative small">
+      The first: <span class="german-word" data-card="unmoeglich">unmöglich</span> — impossible. From <em>möglich</em> (possible). The opposite of possibility is impossibility. The <span class="german-word" data-speak="true">un-</span> inverts the entire meaning.
+    </p>
+
+    <p class="narrative small">
+      The second: <span class="german-word" data-card="unglaublich">unglaublich</span> — unbelievable. From <em>glaublich</em> (believable). When something is unbelievable, it transcends the boundary of what we can credit as true.
+    </p>
+
+    <p class="narrative small">
+      The third: <span class="german-word" data-card="unglueck">Unglück</span> — misfortune. From <em>Glück</em> (luck, fortune). But <span class="german-word" data-speak="true">Unglück</span> is not merely the absence of luck — it is active misfortune, the presence of bad things.
+    </p>
+
+    <p class="narrative small">
+      The fourth: <span class="german-word" data-card="unbekannt">unbekannt</span> — unknown. From <em>bekannt</em> (known, famous). What is not known is mysterious, obscure, foreign to us.
+    </p>
+
+    <p class="narrative small">
+      The fifth: <span class="german-word" data-card="unsinn">Unsinn</span> — nonsense. From <em>Sinn</em> (meaning, sense). Nonsense is speech without meaning, words that lack coherence.
+    </p>
+
+    <p class="narrative small">
+      The sixth: <span class="german-word" data-card="unheimlich">unheimlich</span> — uncanny. From <em>heimlich</em> (homely, intimate). The uncanny is the opposite of the familiar — it is strange and disquieting, yet somehow intimate in its strangeness.
+    </p>
+
+    <p class="narrative small">
+      The seventh: <span class="german-word" data-card="unschuld">Unschuld</span> — innocence. From <em>Schuld</em> (guilt, debt). Innocence is the absence of guilt, but it is not a mere void — it is a state of purity.
+    </p>
+
+    <p class="narrative small">
+      The eighth: <span class="german-word" data-card="ungefaehr">ungefähr</span> — approximately. From <em>gefähr</em> (exact). When something is approximate, it is not exact, but it approaches exactness.
+    </p>
+
+    <!-- UNMÖGLICH card -->
+    <div class="ety-card" id="card-unmoeglich">
+      <div class="word-header">
+        <span class="word-main">unmöglich</span>
+        <span class="word-pron">/ʊnˈmøːklɪç/</span>
+      </div>
+      <div class="word-meaning">impossible — not possible, not capable of happening</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + möglich</span>
+        <span class="bridge-note">— not + possible = impossible</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">impossible</span>
+        <span class="bridge-note">— from Latin "im-" + "possibilis," but derived from same PIE root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">不可能</span>
+        <span class="bridge-note">— búkěnéng (not + able + ability) — Chinese requires three elements for English one</span>
+      </div>
+      <div class="story">
+        <em>Unmöglich</em> is a straightforward negation: the opposite of possibility is impossibility. But the word carries nuance: something impossible is not merely unlikely, but genuinely incapable of occurring. The negative prefix is absolute and final. Compare the Chinese approach: 不可能 requires three morphemes (not, able/can, ability/capability) to express what German says in one prefix. German's compactness comes from the productive use of negation prefixes.
+      </div>
+    </div>
+
+    <!-- UNGLAUBLICH card -->
+    <div class="ety-card" id="card-unglaublich">
+      <div class="word-header">
+        <span class="word-main">unglaublich</span>
+        <span class="word-pron">/ʊnˈɡlaʊ̯plɪç/</span>
+      </div>
+      <div class="word-meaning">unbelievable — not believable, incredible, astounding</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + glaublich</span>
+        <span class="bridge-note">— not + believable = unbelievable</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">incredible</span>
+        <span class="bridge-note">— from Latin "in-" + "credibilis," expressing the same negation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">难以置信</span>
+        <span class="bridge-note">— nányǐ zhìxìn (difficult + to + place + trust) — emphasizing the challenge of belief</span>
+      </div>
+      <div class="story">
+        <em>Unglaublich</em> carries emotional weight beyond mere negation. Something unbelievable is not just false — it is so extraordinary, so contrary to expectation, that it transcends the normal bounds of credibility. The prefix <em>un-</em> doesn't just negate <em>glauben</em> (to believe); it transforms the word into an expression of amazement. In German, <em>unglaublich</em> is often used to mean "amazing" or "incredible" in a positive sense, showing how negation can actually amplify emotion rather than merely cancel meaning.
+      </div>
+    </div>
+
+    <!-- UNGLÜCK card -->
+    <div class="ety-card" id="card-unglueck">
+      <div class="word-header">
+        <span class="word-main">Unglück</span>
+        <span class="word-pron">/ˈʊnɡlʏk/</span>
+      </div>
+      <div class="word-meaning">misfortune, bad luck — an event or circumstance that brings unhappiness</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + Glück</span>
+        <span class="bridge-note">— not + luck = misfortune</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">misfortune</span>
+        <span class="bridge-note">— from Latin "mis-" + "fortuna," structurally identical</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">不幸</span>
+        <span class="bridge-note">— búxìng (not + fortune/luck) — also using negation to express misfortune</span>
+      </div>
+      <div class="story">
+        <em>Unglück</em> is interesting because it is not just the absence of luck — it is a noun that describes a state or event of active misfortune. Glück (luck) is positive; Unglück (misfortune) is negative. The prefix transforms an abstract noun of fortune into an abstract noun of calamity. Both German and Chinese recognize that misfortune deserves its own word, not merely the negation of fortune.
+      </div>
+    </div>
+
+    <!-- UNBEKANNT card -->
+    <div class="ety-card" id="card-unbekannt">
+      <div class="word-header">
+        <span class="word-main">unbekannt</span>
+        <span class="word-pron">/ʊnbəˈkant/</span>
+      </div>
+      <div class="word-meaning">unknown — not known, unfamiliar, obscure</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + bekannt</span>
+        <span class="bridge-note">— not + known = unknown</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">unknown</span>
+        <span class="bridge-note">— from "un-" + "known," structurally identical to German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">未知</span>
+        <span class="bridge-note">— wèizhī (not yet + know) — emphasizing the potential to know in the future</span>
+      </div>
+      <div class="story">
+        <em>Unbekannt</em> is the word for anything outside the realm of knowledge. It appears in mathematics: an <em>unbekannte Größe</em> is an unknown quantity. It describes states of ignorance, mystery, and unfamiliarity. The Chinese 未知 carries a slightly different nuance: it means "not yet known," suggesting that knowledge might come in the future. German's <em>unbekannt</em> is more absolute: something unknown is not necessarily knowable.
+      </div>
+    </div>
+
+    <!-- UNSINN card -->
+    <div class="ety-card" id="card-unsinn">
+      <div class="word-header">
+        <span class="word-main">Unsinn</span>
+        <span class="word-pron">/ˈʊnzɪn/</span>
+      </div>
+      <div class="word-meaning">nonsense — speech or writing that is meaningless or absurd</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + Sinn</span>
+        <span class="bridge-note">— not + meaning = nonsense</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">nonsense</span>
+        <span class="bridge-note">— from "non-" + "sense," derived from Latin but expressing the same negation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">胡言乱语</span>
+        <span class="bridge-note">— húyán luànyǔ (nonsensical + speech + chaotic + language) — more elaborate than German</span>
+      </div>
+      <div class="story">
+        <em>Unsinn</em> captures a very German concern: sense, meaning, logic. Nonsense is the failure of meaning, the breakdown of rational discourse. <em>Sinn</em> (meaning, sense) is fundamental to German thought, and <em>Unsinn</em> (nonsense) is its complete negation. The word suggests not merely incorrect speech, but speech that abandons sense entirely. It is chaos rather than error.
+      </div>
+    </div>
+
+    <!-- UNHEIMLICH card -->
+    <div class="ety-card" id="card-unheimlich">
+      <div class="word-header">
+        <span class="word-main">unheimlich</span>
+        <span class="word-pron">/ʊnˈhaɪ̯mlɪç/</span>
+      </div>
+      <div class="word-meaning">uncanny — strange or mysterious, arousing unease or fear while remaining somehow familiar</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + heimlich</span>
+        <span class="bridge-note">— not + homely/intimate = uncanny</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">uncanny</span>
+        <span class="bridge-note">— from "un-" + "canny," structurally identical to German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">诡异</span>
+        <span class="bridge-note">— guǐyì (sinister + strange) — emphasizing the element of deception and strangeness</span>
+      </div>
+      <div class="story">
+        <em>Unheimlich</em> is one of the most powerful words in German. It was famously analyzed by Freud, who called it "the uncanny." What makes something unheimlich is precisely that it is not merely strange — it is familiar made strange, the homely made unsettling. The <em>un-</em> prefix inverts the meaning of <em>heimlich</em> (intimate, secret, homely) into something that is intimately terrible. It is the opposite of comfort masked in familiarity.
+      </div>
+    </div>
+
+    <!-- UNSCHULD card -->
+    <div class="ety-card" id="card-unschuld">
+      <div class="word-header">
+        <span class="word-main">Unschuld</span>
+        <span class="word-pron">/ˈʊnʃʊlt/</span>
+      </div>
+      <div class="word-meaning">innocence — the quality of being free from guilt or blame</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + Schuld</span>
+        <span class="bridge-note">— not + guilt = innocence</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">innocence</span>
+        <span class="bridge-note">— from Latin "innocens," expressing freedom from harm/guilt but with different etymology</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">无辜</span>
+        <span class="bridge-note">— wúgū (without + guilt) — also expressing the absence of culpability</span>
+      </div>
+      <div class="story">
+        <em>Unschuld</em> is a state of freedom from guilt. But in German, guilt (<em>Schuld</em>) carries additional weight — it can mean both "guilt" (moral culpability) and "debt" (financial or otherwise). Thus, <em>Unschuld</em> means not just freedom from blame, but also freedom from obligation, from indebtedness. Innocence is purity and liberation combined. The Chinese concept 无辜 (wúgū, "without guilt") approaches this through negation of a single concept.
+      </div>
+    </div>
+
+    <!-- UNGEFÄHR card -->
+    <div class="ety-card" id="card-ungefaehr">
+      <div class="word-header">
+        <span class="word-main">ungefähr</span>
+        <span class="word-pron">/ʊnɡəˈfɛːɐ/</span>
+      </div>
+      <div class="word-meaning">approximately — roughly, about, in the neighborhood of</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">un- + gefähr</span>
+        <span class="bridge-note">— not + exact = approximate</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">approximately</span>
+        <span class="bridge-note">— from Latin "approximare," structurally different despite similar meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">大约</span>
+        <span class="bridge-note">— dàyuē (big + approximately) — a more abstract expression than German</span>
+      </div>
+      <div class="story">
+        <em>Ungefähr</em> is fascinating because it uses negation to express approximation. Something that is <em>ungefähr</em> is not exact, but approaches exactness. It is a subtle use of negation — the prefix doesn't simply negate; it moderates. When you say something is <em>ungefähr 10 kilometers away</em>, you are saying it is not exactly 10, but approximately 10. The negation becomes a softening, a hedge against absolute claim.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: ENGLISH AND GERMAN, MIRRORS OF EACH OTHER ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Here is something that will surprise you: English and German are not so different in how they form negatives. Look at these pairs:
+
+      <span class="german-word" data-speak="true">unmöglich</span> — <span class="german-word" data-speak="true">impossible</span>
+      <span class="german-word" data-speak="true">unbekannt</span> — <span class="german-word" data-speak="true">unknown</span>
+      <span class="german-word" data-speak="true">unglaublich</span> — <span class="german-word" data-speak="true">unbelievable</span>
+
+      In German, the prefix is <span class="german-word" data-speak="true">un-</span>. In English, we also use <span class="german-word" data-speak="true">un-</span> for many words. Both languages inherited this prefix from their common Germanic ancestor.
+    </p>
+
+    <p class="narrative">
+      But English has a problem that German does not: English borrowed heavily from Latin and French after the Norman Conquest. So when English wants to negate Latin roots, we often use <span class="german-word" data-speak="true">in-</span> or <span class="german-word" data-speak="true">im-</span> instead of <span class="german-word" data-speak="true">un-</span>. We say "impossible" (from Latin) but "unclear" (from Germanic). We say "incredible" (from Latin) but "unknown" (from Germanic).
+    </p>
+
+    <p class="narrative">
+      German kept its system cleaner. German primarily uses the Germanic <span class="german-word" data-speak="true">un-</span> prefix for negation, making the language more systematic and predictable. This is one reason why German grammar, though complex, is often more regular than English grammar.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE LESSON OF THE MIRROR ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      The mirror shows you yourself, inverted. The <span class="german-word" data-speak="true">un-</span> prefix shows meaning, inverted. Both reveal truth through reversal.
+    </p>
+
+    <p class="narrative">
+      When you negate something, you are not merely saying it is absent — you are creating a new concept, a new way of thinking about reality. <span class="german-word" data-speak="true">Unglück</span> (misfortune) is not just the absence of luck; it is a state with its own character, its own weight, its own presence. <span class="german-word" data-speak="true">Unheimlich</span> (uncanny) is not merely the absence of homeliness; it is the familiar made terrible.
+    </p>
+
+    <p class="narrative">
+      The <span class="german-word" data-speak="true">un-</span> prefix teaches us that negation is creative. It does not merely destroy meaning; it builds new meaning from the mirror image of the old.
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <h3>The Opposite: Quiz</h3>
+    <div id="quiz-questions"></div>
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Back</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score" style="display: none;"></div>
+    <div class="quiz-reset" id="quiz-reset" style="display: none;">
+      <button onclick="resetQuiz()">Reset Quiz</button>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">276 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(32%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:32%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 276 words across 28 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">59 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(40%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:40%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 59 patterns and grammar rules across 28 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="word-collection" id="word-collection">
+    <h3>Words Unlocked</h3>
+    <div class="collected-words" id="collected-words"></div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p class="next-chapter">← Chapter 27 · Chapter 29 →</p>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter27.html" class="nav-btn">← Chapter 27</a>
+    <a href="chapter29.html" class="nav-btn next">Chapter 29 →</a>
+  </div>
+
+</div>
+
+<script>
+
+/* --- MIRROR CANVAS ANIMATION --- */
+const canvas = document.getElementById('mirror-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.6;
+    this.vy = (Math.random() - 0.5) * 0.6;
+    this.size = Math.random() * 1 + 0.5;
+    this.opacity = Math.random() * 0.3 + 0.1;
+    this.mirrorSide = Math.random() > 0.5 ? 1 : -1;
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x < -10) this.x = canvas.width + 10;
+    if (this.x > canvas.width + 10) this.x = -10;
+    if (this.y < -10) this.y = canvas.height + 10;
+    if (this.y > canvas.height + 10) this.y = -10;
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = `rgba(122, 159, 184, ${this.opacity})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+const particleCount = window.innerWidth < 768 ?
+  Math.floor((canvas.width * canvas.height) / 8000) :
+  Math.floor((canvas.width * canvas.height) / 5000);
+
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle());
+}
+
+// Draw mirror line and reflections
+function drawMirrors() {
+  const time = Date.now() * 0.0003;
+  const centerX = canvas.width / 2;
+
+  // Central mirror line
+  ctx.strokeStyle = `rgba(122, 159, 184, 0.2)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(centerX, 0);
+  ctx.lineTo(centerX, canvas.height);
+  ctx.stroke();
+
+  // Symmetric reflection patterns
+  const waves = 3;
+  for (let w = 0; w < waves; w++) {
+    const waveY = (canvas.height / (waves + 1)) * (w + 1);
+    const waveAmp = Math.sin(time + w) * 20;
+
+    ctx.strokeStyle = `rgba(122, 159, 184, ${0.1 + Math.abs(Math.sin(time + w)) * 0.1})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 100 + waveAmp, waveY);
+    ctx.quadraticCurveTo(centerX, waveY + 10, centerX + 100 - waveAmp, waveY);
+    ctx.stroke();
+  }
+}
+
+function animate() {
+  ctx.fillStyle = 'rgba(10, 15, 26, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.update();
+    p.draw(ctx);
+  });
+
+  drawMirrors();
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* --- PROGRESS BAR --- */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+/* --- SCENE OBSERVER --- */
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+/* --- ETYMOLOGY CARDS --- */
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+/* --- AUDIO PRONUNCIATION --- */
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// All german-word spans that don't have cards are speak-only
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+// Add speak buttons to etymology cards
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+/* --- QUIZ SYSTEM --- */
+const quizData = [
+  {
+    question: "What does the un- prefix express in German?",
+    options: ["repetition or doing again", "negation and opposition", "location or position", "cause or reason"],
+    correct: 1,
+    explanation: "The un- prefix creates negation and opposition, expressing the opposite or absence of the root meaning."
+  },
+  {
+    question: "Which language also uses an 'un-' prefix similarly to German?",
+    options: ["Chinese", "Latin", "English", "All of the above"],
+    correct: 2,
+    explanation: "English uses 'un-' similarly to German (unknown, unclear, unhappy), inherited from Proto-Germanic. Both languages are Germanic language cousins."
+  },
+  {
+    question: "From the chapter: What does unmöglich mean?",
+    options: ["possible with effort", "nearly possible", "impossible", "very possible"],
+    correct: 2,
+    explanation: "Unmöglich = un- (not) + möglich (possible) = impossible."
+  },
+  {
+    question: "What makes unheimlich (uncanny) different from just 'strange'?",
+    options: ["it is merely unfamiliar", "it is the familiar made unsettling — intimately terrible", "it is boring", "it is always dangerous"],
+    correct: 1,
+    explanation: "Unheimlich is specifically the familiar made strange and unsettling — a concept Freud famously analyzed. It is not just strange, but strangely intimate."
+  },
+  {
+    question: "How does Chinese express negation, compared to German?",
+    options: ["Chinese uses prefixes like German", "Chinese uses independent negation particles rather than prefixes", "Chinese cannot express negation", "Chinese uses suffixes"],
+    correct: 1,
+    explanation: "Chinese uses separate negation particles like 不 (bù) that precede words, rather than German's prefix system that attaches to word beginnings."
+  },
+  {
+    question: "Why might English have both 'impossible' (Latin) and 'unclear' (Germanic)?",
+    options: ["English loves variety", "English borrowed from both Latin/French and kept Germanic roots", "German speakers insisted", "Random chance"],
+    correct: 1,
+    explanation: "After the Norman Conquest, English borrowed heavily from Latin and French, which use 'im-' or 'in-' for negation, while keeping Germanic 'un-' for Germanic roots."
+  },
+  {
+    question: "From Chapter 27: What does the ver- prefix generally express?",
+    options: ["negation and opposition", "completion, fullness, or transformation", "location and movement", "past tense"],
+    correct: 1,
+    explanation: "The ver- prefix (from Chapter 27) expresses completion, fullness, and transformation — a different function from the un- prefix of negation."
+  },
+  {
+    question: "From Chapter 6: What is Heimat in the context of migration?",
+    options: ["a distant country", "a type of travel", "the home you've left behind — emotionally and spiritually", "a German city"],
+    correct: 2,
+    explanation: "Heimat is the emotional sense of homeland — the place you belong to even when far away, especially relevant to displaced peoples during migration."
+  },
+  {
+    question: "Which is a paired example from the chapter showing English-German similarity?",
+    options: ["unmöglich/impossible", "unbekannt/known", "unglück/happy", "unsinn/reason"],
+    correct: 0,
+    explanation: "Unmöglich (un- + möglich) parallels impossible, showing how both German and English negate similar concepts with negation prefixes."
+  },
+  {
+    question: "What does ungefähr demonstrate about negation?",
+    options: ["negation always creates opposites", "negation can soften or moderate meaning (not exact = approximately)", "negation always creates anger", "negation has no use"],
+    correct: 1,
+    explanation: "Ungefähr (not exact) shows how negation can create a moderated meaning — something approximately right is 'not exactly' right, a softer concept than pure opposition."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.style.display = 'block';
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    setTimeout(() => {
+      document.getElementById('word-collection').classList.add('show');
+      document.getElementById('quiz-reset').style.display = 'block';
+      populateWordCollection();
+    }, 500);
+  } else {
+    document.getElementById('quiz-reset').style.display = 'block';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+  document.getElementById('quiz-summary').classList.remove('show');
+  document.getElementById('word-collection').classList.remove('show');
+  document.getElementById('quiz-reset').style.display = 'none';
+  document.getElementById('quiz-score').style.display = 'none';
+  initializeQuiz();
+}
+
+const collectedWordsList = [
+  { de: 'unmöglich', en: 'impossible' },
+  { de: 'unglaublich', en: 'unbelievable' },
+  { de: 'Unglück', en: 'misfortune' },
+  { de: 'unbekannt', en: 'unknown' },
+  { de: 'Unsinn', en: 'nonsense' },
+  { de: 'unheimlich', en: 'uncanny' },
+  { de: 'Unschuld', en: 'innocence' },
+  { de: 'ungefähr', en: 'approximately' }
+];
+
+function populateWordCollection() {
+  const container = document.getElementById('collected-words');
+  container.innerHTML = '';
+
+  collectedWordsList.forEach((word, idx) => {
+    const div = document.createElement('div');
+    div.className = 'collected-word';
+    div.style.animationDelay = `${idx * 0.1}s`;
+    div.innerHTML = `<div class="cw-german">${word.de}</div><div class="cw-english">${word.en}</div>`;
+    container.appendChild(div);
+
+    setTimeout(() => div.classList.add('show'), idx * 100);
+  });
+}
+
+initializeQuiz();
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

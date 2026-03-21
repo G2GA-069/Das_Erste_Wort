@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 99: Hochdeutsch und Dialekt</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --bay-blue: #4a7c9e;
+    --swab-green: #6b9e76;
+    --sax-purple: #8b7ab8;
+    --north-red: #c45a5a;
+    --swiss-white: #e8dcc8;
+    --austria-gold: #d4af37;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 30%, #1a2a1a 55%, #2a1a2e 85%, #1a0f2e 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* --- DIALECT MAP CANVAS --- */
+  #dialect-map { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  .content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 60px 24px 120px; }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px; }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1s forwards;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint { position: absolute; bottom: 40px; animation: bob 2s ease-in-out infinite; opacity: 0.5; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative { font-size: 1.15rem; line-height: 1.95; margin-bottom: 1.8em; color: var(--text); }
+  .narrative em { color: var(--text-bright); font-style: italic; }
+  .narrative strong { color: var(--fire); font-weight: 600; }
+  .narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); font-weight: 400; }
+  .narrative.small { font-size: 1rem; color: rgba(212, 202, 187, 0.7); }
+
+  /* --- GERMAN WORDS (CLICKABLE) --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    data-speak: true;
+  }
+  .german-word:hover { background: rgba(232, 164, 74, 0.1); }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 1000px;
+    opacity: 1;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 60px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .bridge-label.standard { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.bavarian { background: rgba(212, 124, 52, 0.15); color: #d47c34; }
+  .bridge-label.swiss { background: rgba(232, 220, 200, 0.15); color: var(--swiss-white); }
+  .bridge-label.northern { background: rgba(196, 90, 90, 0.15); color: #d47c7c; }
+  .bridge-label.swabian { background: rgba(107, 158, 118, 0.15); color: var(--swab-green); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .ety-card .dialect-note {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  /* --- COMPARISON TABLE --- */
+  .comparison-table {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.9), rgba(15, 20, 35, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    overflow-x: auto;
+  }
+
+  .comparison-table h3 {
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    font-size: 1.3rem;
+  }
+
+  .comparison-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .comparison-table th {
+    background: rgba(232, 164, 74, 0.1);
+    color: var(--fire);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.2);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .comparison-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+    color: var(--text);
+    font-size: 1rem;
+  }
+
+  .comparison-table tr:hover td {
+    background: rgba(232, 164, 74, 0.04);
+  }
+
+  .comparison-table .word-col {
+    color: var(--german);
+    font-weight: 600;
+  }
+
+  .comparison-table .dialect-col {
+    color: rgba(212, 202, 187, 0.8);
+    font-size: 0.95rem;
+  }
+
+  /* --- SCENE SECTIONS --- */
+  .scene { margin-bottom: 80px; }
+  .scene-marker { height: 40px; margin-bottom: 40px; background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.2), transparent); }
+  .divider { text-align: center; color: rgba(232, 164, 74, 0.3); margin: 60px 0; font-size: 1.5rem; letter-spacing: 0.3em; }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border-left: 4px solid rgba(232, 164, 74, 0.4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 40px 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-title {
+    color: var(--text-bright);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  /* --- QUIZ CONTAINER --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .quiz-question { margin-bottom: 40px; }
+  .quiz-question.hidden { display: none; }
+
+  .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .quiz-nav button {
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--fire);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .quiz-nav button:hover:not(:disabled) {
+    background: rgba(232, 164, 74, 0.25);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .quiz-score {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(50, 50, 50, 0.5);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .post-quiz-summary {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid var(--fire);
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; }
+    .ety-card { padding: 20px 16px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .comparison-table { padding: 20px 16px; overflow-x: auto; }
+    .comparison-table table { font-size: 0.9rem; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="dialect-map"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Ninety-Nine</div>
+    <h1>Hochdeutsch und Dialekt</h1>
+    <div class="subtitle">Standard German and the Regional Voices of History</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <div class="scene">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Travel across the vast geography of German-speaking regions. Stand in Munich's beer gardens and listen. Travel north to Hamburg and listen again. The language changes. Not in isolated words, but in the very <em>music</em> of speech — the rise and fall of intonation, the softening or hardening of consonants, the rhythm and pace of conversation. In Vienna, the language dances. In Berlin, it strides. In Basel, it whispers.
+    </p>
+
+    <p class="narrative">
+      For thirteen centuries, before printing presses, before national schools, before broadcasting networks, there was no single "German." There were dozens of Germanies. The Rhine valley had one language, the Bavarian Alps another. Saxony another. A merchant from Cologne could barely understand a farmer from Regensburg. A nobleman from Hamburg might struggle with a peasant from Swabia. These were not minor differences in accent or vocabulary. These were profoundly different languages, separated by geography, by time, by the slow divergence that happens when mountains and forests isolate communities.
+    </p>
+
+    <p class="narrative">
+      A young man leaves his village in the Tyrol. He has walked the same paths his ancestors walked for generations. He speaks Tyrolean. Then he travels north to Berlin to seek work. The first day, at the market, he cannot understand the baker. The baker speaks rapid Berlin German — a dialect he has never heard. Across the same empire that shares a "language," mutual comprehension is not guaranteed. Geography is destiny. Mountains are barriers. Rivers are boundaries. Each valley speaks its own speech.
+    </p>
+
+    <p class="narrative emphasis">
+      Then came the printing press. Then came schools. Then came national broadcasting. And slowly, across centuries, one dialect — the dialect of Saxon bureaucrats, the dialect of Luther's Bible, the dialect of Prussian power — rose above the others. This became <em>Hochdeutsch</em>: Standard German. The compromise language, the negotiated space where all Germans could meet and speak.
+    </p>
+
+    <p class="narrative">
+      But the old dialects did not die. They did not vanish into history. They went underground. Today, in villages and rural regions across the German-speaking world, they still survive — still spoken by grandmothers and grandfathers, still preserved in folk traditions, still alive in the language of the people. And here is something revolutionary that most schoolteachers never tell you:
+    </p>
+
+    <p class="narrative emphasis">
+      The dialects are not corruptions of Standard German. They are its siblings. Some of the sounds in Bavarian German are older than anything in Standard German. Some of the grammatical structures in Swiss German preserve features of Old High German that have completely disappeared from the standard language. When you speak a dialect, you are not speaking incorrectly. You are speaking a language with deeper roots, with history embedded in every sound.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the North, where the landscape flattens into plains, greetings are brisk and economical. <span class="german-word" data-card="moin">Moin</span> — just one word. "Moin." Nobody quite agrees on where it comes from. Perhaps it is abbreviated from "Morgen" (morning). Perhaps it is ancient, with roots deeper than anyone knows. But it means something like "good morning" in the South, yet in the North it is used at <em>any time of day</em>. What does this tell you? That efficiency matters more than ceremony. That a single syllable suffices. No article, no verb, no elaboration — just <em>Moin</em>, and you have acknowledged another person's existence.
+    </p>
+
+    <p class="narrative">
+      In Bavaria and Austria, the greeting is different. <span class="german-word" data-card="grussgott">Grüß Gott</span> — "greet God." Two words where the North uses one. A whole theology of greeting. An acknowledgment not just of the other person but of the divine. When Bavarians and Austrians say goodbye, they say <span class="german-word" data-card="servus">Servus</span> — from the Latin <em>servus</em> (servant). It is both formal and intimate at once. It says: I am your servant. I honor you. It is a remnant from the centuries when the South was under the influence of Rome and the Catholic Church, while the North was more austere, more direct, more influenced by Protestantism and its rejection of ceremony.
+    </p>
+
+    <p class="narrative">
+      And in Switzerland, where mountains have always isolated villages from each other, the greeting is <span class="german-word" data-card="gruezi">Grüezi</span> — a contraction of "Gegrüßet seiest du" (may you be greeted), a form that survived in the mountains long after it disappeared elsewhere. In the Swiss German dialect, you hear sounds that disappeared from everywhere else in the Germanic world 500 years ago. The language preserved in the mountains is older than the standard written in cities. The mountains are linguistic time machines.
+    </p>
+
+    <p class="narrative">
+      Even the simplest objects have different names depending on where you are. A bread roll. A common, everyday object that sits on every breakfast table. In the North and in Standard German, it is a <span class="german-word" data-card="broetchen">Brötchen</span>. In Bavaria and Austria, it is a <span class="german-word" data-card="semmel">Semmel</span>. In Swabia, it is a <span class="german-word" data-card="wecken">Wecken</span>. In Berlin, uniquely, it is a <span class="german-word" data-card="schrippe">Schrippe</span> — a word whose origins are lost to time. One object. Four names in different regions. Perfectly correct in each region. When you cross from one region to another, you do not just cross a border on a map — you enter a different linguistic world where the words for everyday things change.
+    </p>
+
+    <p class="narrative">
+      And a <span class="german-word" data-card="kartoffel">Kartoffel</span> — a potato. In Standard German, that is what you call it. But in Austria, it is an <em>Erdapfel</em> — "earth apple." Why an apple? Because the plant produces small, round fruits in the ground, and someone centuries ago called them apples. In parts of Switzerland and Swabia, it is a <em>Grundbirne</em> — "ground pear." Why a pear? Different farmers, different regions, different metaphors emerged independently. Potatoes have different names in different valleys because farmers in different valleys first encountered the plant and named it according to what it most resembled to them. Language is not invented in cities by bureaucrats — it is born in fields and markets by people naming the things they see.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the South, you hear <span class="german-word" data-card="bub">Bub</span> for a boy or young man — a word that remains in the dialect long after it has disappeared from Standard German. In the North, they say <em>Junge</em>. In Bavaria, a girl is a <span class="german-word" data-card="madel">Mädel</span> (pronounced MAY-dul) — corrupted from the old word <em>Magd</em> (maid). This is not a mistake in pronunciation. This is how language changes. Over centuries, <em>Magd</em> became <em>Mägd</em> (plural) became <em>Mädel</em> (singular derived from plural). This is a phonetic transformation that happened centuries ago in the South and was never standardized in the North. These are not literary words. These are the voice of regions, the living speech of people, the accumulation of small changes that happened over centuries of isolation.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-card="tschuss">Tschüss</span> — goodbye. Originally from the North, originally from Low German, slowly spreading south and now everywhere. The word shows how dialects are not frozen in time. They influence each other. Standard German and regional speech are in constant conversation, borrowing from each other, mixing, changing. Tschüss is younger, more informal than traditional regional goodbyes like Servus or Auf Wiedersehen. It is the sound of modernization, of younger generations adopting more economical forms.
+    </p>
+
+    <p class="narrative">
+      These dialectal words are linguistic fossils. They preserve history. In Bavarian and Austrian German, you hear echoes of older forms that have vanished from Standard German entirely. Linguists can trace these dialects back to the Old High German period, around the 8th century, when the language first began to splinter into regional variants. Some of what schoolteachers call "mistakes" in dialects are actually older, more original forms than the Standard German taught in schools. A Bavarian grandmother speaking her dialect is speaking a form of German that goes back a thousand years.
+    </p>
+
+    <p class="narrative emphasis">
+      Speaking a dialect is not uneducated. It is not a failure to master the standard. It is choosing to speak a language with deeper roots, with older history embedded in every word. A Bavarian grandmother speaking her dialect to her grandchildren is not corrupting the language — she is preserving it, keeping alive ways of speaking that go back centuries, ways that were already ancient when Standard German did not exist.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- COMPARISON TABLE -->
+  <div class="scene">
+    <div class="comparison-table">
+      <h3>Regional Variation: The Same Words, Different Voices Across the German-Speaking World</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 16%;">English</th>
+            <th style="width: 21%;">Hochdeutsch (Standard)</th>
+            <th style="width: 21%;">Bavarian/Austrian</th>
+            <th style="width: 21%;">Swiss German</th>
+            <th style="width: 21%;">Northern German</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Hello/Goodbye</strong></td>
+            <td class="word-col">Guten Tag / Auf Wiedersehen</td>
+            <td class="dialect-col">Grüß Gott / Servus</td>
+            <td class="dialect-col">Grüezi / Auf Wiedersehen</td>
+            <td class="dialect-col">Moin / Auf Wiedersehen</td>
+          </tr>
+          <tr>
+            <td><strong>Bread roll</strong></td>
+            <td class="word-col">Brötchen</td>
+            <td class="dialect-col">Semmel</td>
+            <td class="dialect-col">Weggli</td>
+            <td class="dialect-col">Schrippe</td>
+          </tr>
+          <tr>
+            <td><strong>Potato</strong></td>
+            <td class="word-col">Kartoffel</td>
+            <td class="dialect-col">Erdapfel</td>
+            <td class="dialect-col">Härdöpfel</td>
+            <td class="dialect-col">Kartoffel</td>
+          </tr>
+          <tr>
+            <td><strong>Boy</strong></td>
+            <td class="word-col">Junge</td>
+            <td class="dialect-col">Bub</td>
+            <td class="dialect-col">Junge / Bub</td>
+            <td class="dialect-col">Junge</td>
+          </tr>
+          <tr>
+            <td><strong>Girl</strong></td>
+            <td class="word-col">Mädchen</td>
+            <td class="dialect-col">Mädel</td>
+            <td class="dialect-col">Meitli</td>
+            <td class="dialect-col">Mädchen</td>
+          </tr>
+          <tr>
+            <td><strong>Goodbye (casual)</strong></td>
+            <td class="word-col">Tschüss (informal)</td>
+            <td class="dialect-col">Servus</td>
+            <td class="dialect-col">Ade / Tschüss</td>
+            <td class="dialect-col">Tschüss</td>
+          </tr>
+          <tr>
+            <td><strong>House</strong></td>
+            <td class="word-col">Haus</td>
+            <td class="dialect-col">Haus</td>
+            <td class="dialect-col">Huus</td>
+            <td class="dialect-col">Haus</td>
+          </tr>
+          <tr>
+            <td><strong>Children</strong></td>
+            <td class="word-col">Kinder</td>
+            <td class="dialect-col">Kinder</td>
+            <td class="dialect-col">Chind</td>
+            <td class="dialect-col">Kinder</td>
+          </tr>
+          <tr>
+            <td><strong>Good morning</strong></td>
+            <td class="word-col">Guten Morgen</td>
+            <td class="dialect-col">Guten Morgen / Grüß Gott</td>
+            <td class="dialect-col">Guten Morgen</td>
+            <td class="dialect-col">Moin / Guten Morgen</td>
+          </tr>
+          <tr>
+            <td><strong>Thank you</strong></td>
+            <td class="word-col">Danke</td>
+            <td class="dialect-col">Danke / Dank dir</td>
+            <td class="dialect-col">Merci / Danke</td>
+            <td class="dialect-col">Danke</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- HISTORICAL CONTEXT -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">The Truth About Standard German</div>
+      <p>Hochdeutsch was not the "correct" form of German that existed before the others. It was a <em>compromise</em>, a constructed standard created for practical reasons: printing, schools, administration, state power. Luther's Bible, printed in the Saxon dialect (modified to be more accessible), helped standardize the language. Prussian bureaucracy then made it official. But this is politics, not linguistics. The dialects are linguistically equal. Many are older. Some preserve features lost in the standard. Standard German won not because it was superior — it won because powerful institutions made it official.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- CHINESE BRIDGE -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">The Chinese Parallel: Mandarin and the "Dialects"</div>
+      <p>This exact situation exists in Chinese. <em>Mandarin</em> (普通话, Pǔtōnghuà — "common speech") was standardized in the 20th century for national unity. But Cantonese, Shanghainese, Hokkien, Hakka — these are not "dialects" of Mandarin in the linguistic sense. They are separate languages that evolved from a common ancestor, just like German dialects evolved from Proto-Germanic. A Cantonese speaker and a Mandarin speaker cannot understand each other if they only know their own "dialect." They are mutually unintelligible — which by definition makes them separate languages, not dialects. Yet Mandarin was made the standard, taught in schools, broadcast on television. The other "languages" went underground, preserved by families and regions. The story of Hochdeutsch and the German dialects is precisely the story of <em>Mandarin and the Chinese languages.</em> What is called a "dialect" is often just a language that lost the political game.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- VOCABULARY CARDS -->
+
+  <div class="scene">
+    <div class="ety-card" id="card-grussgott">
+      <div class="word-header"><span class="word-main">Grüß Gott</span></div>
+      <div class="word-meaning">hello (Bavarian/Austrian) — literally "greet God"</div>
+      <div class="bridge">
+        <span class="bridge-label bavarian">BAVARIAN</span>
+        <span class="bridge-word">formal, ceremonial greeting</span>
+        <span class="bridge-note">— the theology of greeting</span>
+      </div>
+      <div class="story">Grüß Gott is the greeting of the South, reflecting centuries of Catholic influence and formal courtesy. To greet someone is to greet God. This is not found in the North, where Protestantism was stronger and ceremony was less valued. A single greeting carries within it a history of religious difference.</div>
+      <div class="dialect-note">This word shows how religious history shapes language — the South's centuries under Catholic influence differ from the North's Protestant traditions. Germany's religious split is echoed in its greetings.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-servus">
+      <div class="word-header"><span class="word-main">Servus</span></div>
+      <div class="word-meaning">goodbye (Bavarian/Austrian) — from Latin servus, "servant"</div>
+      <div class="bridge">
+        <span class="bridge-label bavarian">BAVARIAN</span>
+        <span class="bridge-word">formal and intimate</span>
+        <span class="bridge-note">— preserved from Roman influence</span>
+      </div>
+      <div class="story">Servus is preserved in Austrian and Bavarian German, showing the lasting influence of Rome and the Latin language on the South. The word has survived for centuries in regional speech even as Standard German moved away from Latin forms. When a Bavarian says "Servus," they are speaking a word that Roman soldiers may have spoken in the Danube valley.</div>
+      <div class="dialect-note">A single word can encode centuries of history — Servus carries within it the presence of Roman legionaries, the Austro-Hungarian Empire, centuries of Southern tradition.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-moin">
+      <div class="word-header"><span class="word-main">Moin</span></div>
+      <div class="word-meaning">hello/good morning (Northern German) — brief, pragmatic</div>
+      <div class="bridge">
+        <span class="bridge-label northern">NORTHERN</span>
+        <span class="bridge-word">minimal greeting</span>
+        <span class="bridge-note">— efficiency in one syllable</span>
+      </div>
+      <div class="story">Moin is purely Northern, perhaps from "Morgen" (morning), perhaps from older sources lost to history. One word. No elaboration. No theology. It reflects the pragmatism and efficiency of the flat landscapes of the North, where people are less ceremonial, more direct. The North's geography of open plains produced open, economical speech.</div>
+      <div class="dialect-note">Geography shapes language profoundly — flat plains produce brisk speech; mountains produce elaborate courtesy; each landscape creates its own music of language.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-gruezi">
+      <div class="word-header"><span class="word-main">Grüezi</span></div>
+      <div class="word-meaning">hello (Swiss German) — contracted form of "gegrüßet seiest du"</div>
+      <div class="bridge">
+        <span class="bridge-label swiss">SWISS</span>
+        <span class="bridge-word">mountain greeting</span>
+        <span class="bridge-note">— an archaic form preserved in isolation</span>
+      </div>
+      <div class="story">Grüezi is the Swiss greeting, contracted from an older, more formal greeting that has disappeared elsewhere. Preserved in the mountains, this word is a linguistic fossil of how Germans greeted each other in the Middle Ages. The mountains kept it alive when the rest of the world moved on. It is as if a visitor from the 15th century could recognize themselves in Swiss greetings.</div>
+      <div class="dialect-note">Mountains are linguistic time machines — they preserve forms and sounds that vanish in accessible regions exposed to standardization and change.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-broetchen">
+      <div class="word-header"><span class="word-main">Brötchen</span></div>
+      <div class="word-meaning">bread roll (Standard/Northern German)</div>
+      <div class="bridge">
+        <span class="bridge-label standard">STANDARD</span>
+        <span class="bridge-word">Northern term adopted as standard</span>
+        <span class="bridge-note">— the politics of vocabulary</span>
+      </div>
+      <div class="story">Brötchen is Standard German, the form taught in schools, the form in official dictionaries. But in Bavaria, they say Semmel. In Swabia, Wecken. In Switzerland, Weggli. In Berlin, Schrippe. One object, five names. Brötchen became standard not because it is linguistically superior, not because it is more logical, but because it is from the North, and Prussian power and the printing press made it official. What counts as "correct" is often just what powerful regions decide to standardize.</div>
+      <div class="dialect-note">What counts as "standard" is often just what powerful regions decide to standardize. Language is shaped by power as much as by grammar.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-semmel">
+      <div class="word-header"><span class="word-main">Semmel</span></div>
+      <div class="word-meaning">bread roll (Bavarian/Austrian)</div>
+      <div class="bridge">
+        <span class="bridge-label bavarian">BAVARIAN</span>
+        <span class="bridge-word">Southern term for bread roll</span>
+        <span class="bridge-note">— equally correct, different region</span>
+      </div>
+      <div class="story">Semmel is not wrong — it is simply the Bavarian word. In Austria and Bavaria, Semmel is what you call a bread roll. If you travel to Munich and ask for a Brötchen, people will understand you, but a local would say Semmel. This is not a mistake. This is the voice of a region, the word that has been used for centuries in that place.</div>
+      <div class="dialect-note">Speaking the regional word shows respect for the place you are visiting and the people who live there. It acknowledges that their language is valid, not a corruption of some standard.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-wecken">
+      <div class="word-header"><span class="word-main">Wecken</span></div>
+      <div class="word-meaning">bread roll (Swabian)</div>
+      <div class="bridge">
+        <span class="bridge-label swabian">SWABIAN</span>
+        <span class="bridge-word">Swabian regional term</span>
+        <span class="bridge-note">— the fragmentation of speech</span>
+      </div>
+      <div class="story">Wecken is the Swabian word, showing how even within regions, languages fragment. Swabia has its own dialect, distinct from Bavaria, distinct from Standard German. The variation is so fine-grained that you can almost map dialects village by village. Three different words for one simple object shows how profound the geographic fragmentation of German was and still is.</div>
+      <div class="dialect-note">In medieval times, before standardization, you could travel ten kilometers and encounter a new word for bread. Language was as varied as landscape.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-schrippe">
+      <div class="word-header"><span class="word-main">Schrippe</span></div>
+      <div class="word-meaning">bread roll (Berlin)</div>
+      <div class="bridge">
+        <span class="bridge-label northern">NORTHERN</span>
+        <span class="bridge-word">Berlin-specific term</span>
+        <span class="bridge-note">— urban dialect preservation</span>
+      </div>
+      <div class="story">Schrippe is uniquely Berlin. Origins unknown — possibly from a Yiddish influence, possibly from older Low German. It shows how cities preserve distinct words and forms. Every major city in the German-speaking world has its own way of speaking, its own words for everyday things. Berlin is not just a city — it is a linguistic center with its own character and history.</div>
+      <div class="dialect-note">Cities are not Standard German factories — they are linguistic centers with their own character and history, preserving words and forms that are found nowhere else.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-kartoffel">
+      <div class="word-header"><span class="word-main">Kartoffel</span></div>
+      <div class="word-meaning">potato (Standard German)</div>
+      <div class="bridge">
+        <span class="bridge-label standard">STANDARD</span>
+        <span class="bridge-word">Standard form</span>
+        <span class="bridge-note">— but regional alternatives exist</span>
+      </div>
+      <div class="story">Kartoffel is the word taught in schools. But in Austria, farmers call it Erdapfel — earth apple. In Switzerland, Härdöpfel. In Swabia, Grundbirne — ground pear. Each region developed a metaphor for this new plant when it arrived from the New World in the 16th century. Different regions saw different resemblances. The fragmentation of German is visible in how we name the potatoes we eat. No central authority assigned the names — farmers did, in their fields, seeing what they saw.</div>
+      <div class="dialect-note">New plants brought new words — and regions invented their own words independently. Language is born in fields and markets, not in academies.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-bub">
+      <div class="word-header"><span class="word-main">Bub</span></div>
+      <div class="word-meaning">boy (Southern German)</div>
+      <div class="bridge">
+        <span class="bridge-label bavarian">BAVARIAN</span>
+        <span class="bridge-word">Southern form</span>
+        <span class="bridge-note">— while Northern uses Junge</span>
+      </div>
+      <div class="story">Bub is the Southern word for a boy, still surviving in Bavarian and Austrian speech. In the North, they say Junge. This simple word shows the geographic division of the German-speaking world — different regions developed different words for the young, and these differences have survived centuries. The difference is not random. It reflects how populations evolved differently after the Volkerwanderung.</div>
+      <div class="dialect-note">Family words often show the deepest regional differences — they are learned in childhood and rarely change. If you call your child a Bub or a Junge, you are speaking a history.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-madel">
+      <div class="word-header"><span class="word-main">Mädel</span></div>
+      <div class="word-meaning">girl (Southern German) — from Magd, "maid"</div>
+      <div class="bridge">
+        <span class="bridge-label bavarian">BAVARIAN</span>
+        <span class="bridge-word">Southern form</span>
+        <span class="bridge-note">— a phonetic transformation</span>
+      </div>
+      <div class="story">Mädel is the Southern word for a girl, corrupted from Magd (maid). Over centuries, <em>Magd</em> became <em>Mägd</em> (plural) became <em>Mädel</em> (singular derived from plural). This is how language changes — through small shifts that accumulate. In the North, they use Mädchen, a different word entirely. Same concept, different etymologies in different regions. When you see Mädel, you are seeing language in the process of transformation.</div>
+      <div class="dialect-note">Dialects show language changing in real time — we can see the transformations that usually take centuries of invisible change.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="ety-card" id="card-tschuss">
+      <div class="word-header"><span class="word-main">Tschüss</span></div>
+      <div class="word-meaning">goodbye (informal, originally Northern)</div>
+      <div class="bridge">
+        <span class="bridge-label northern">NORTHERN</span>
+        <span class="bridge-word">from Low German</span>
+        <span class="bridge-note">— now spreading everywhere</span>
+      </div>
+      <div class="story">Tschüss is interesting because it shows dialects in motion. It started in the North, from Low German, and is now spreading south and becoming more universal. It is younger, more informal than traditional regional goodbyes like Servus or Auf Wiedersehen. Tschüss shows how regional words compete and spread, how language is always changing. Young Bavarians say Tschüss more often than Servus. The dialects are not frozen — they influence each other constantly.</div>
+      <div class="dialect-note">Dialects are not frozen in time — they influence each other constantly, borrowing words and forms. Language is always in motion.</div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- DIALECT PRESERVATION SECTION -->
+  <div class="scene">
+    <p class="narrative">
+      The words we have learned — <em>Grüß Gott</em> and <em>Servus</em>, <em>Bub</em> and <em>Mädel</em>, <em>Semmel</em> and <em>Erdapfel</em> — are not mistakes or corruptions. They are the living voice of regions and centuries. They show how human language fragments when geography isolates people. They show how different metaphors emerge in different places. They preserve history. Every dialect word is a time capsule.
+    </p>
+
+    <p class="narrative">
+      Speaking a dialect is not a sign of being uneducated. It is a sign of being rooted in a place, of carrying forward traditions, of participating in something deeper than what schools teach. When a Bavarian grandmother speaks her dialect to her grandchildren, she is not failing to teach them Standard German — she is teaching them something far more valuable. She is teaching them the voice of their home. She is teaching them the history of their region. She is teaching them that language is not abstract rules but the living breath of a community.
+    </p>
+
+    <p class="narrative">
+      And this matters: as the world homogenizes, as Standard German spreads through schools and media, these regional voices are being lost. Young people in Bavaria increasingly speak Standard German. The old Bavarian dialect is fading. Swabian is disappearing from cities. Swiss German in the mountains survives better, but even it is changing, influenced by television and the internet. The dialects of German are linguistic endangered species, and we lose something irreplaceable when they vanish. We lose the sound of history.
+    </p>
+
+    <p class="narrative emphasis">
+      To speak a dialect is an act of preservation. To learn a dialect is to learn not just vocabulary but a way of seeing the world, a way of being human rooted in a specific place and history. Every dialect is a universe.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- FINAL SECTION: THE HIERARCHY OF LANGUAGE -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">The Illusion of Correctness</div>
+      <p>Schools teach you that Standard German is "correct" and dialects are "wrong." This is a useful fiction for educational purposes, but it is not linguistically true. Standard German is simply the dialect that institutions chose to standardize. Linguistically, all dialects are equally valid, equally systematic, equally capable of expressing complex thoughts, profound emotions, nuanced ideas. The reason Standard German is "correct" in formal settings is not because it is linguistically superior — it is because powerful institutions decided it should be standard. The north decided, through power and printing, that their way of speaking would be THE way. But that decision was political, not linguistic.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- QUIZ SECTION -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Chapter 99 Quiz: Dialects and Regions</h3>
+      <p style="color: rgba(212, 202, 187, 0.7); margin-bottom: 20px;">15 questions about Hochdeutsch, regional dialects, and how geography shapes language.</p>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <!-- CHAPTER END -->
+  <div class="scene">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="text-align: center; margin-bottom: 2em;">
+        One standard language. A thousand regional voices. Each one carrying history, place, identity.
+      </p>
+      <p class="narrative" style="text-align: center;">
+        Next chapter: The final word. The journey complete. Das letzte Wort.
+      </p>
+      <div class="next-chapter">→ Chapter 100: Das letzte Wort</div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter98.html" class="nav-btn">← Chapter 98</a>
+    <a href="chapter100.html" class="nav-btn next">Chapter 100 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// Dialect Map Canvas - showing regional distribution
+const canvas = document.getElementById('dialect-map');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let regions = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createRegions() {
+  regions = [
+    { x: canvas.width * 0.3, y: canvas.height * 0.3, label: 'Saxony', color: '#8b7ab8', radius: 80 },
+    { x: canvas.width * 0.25, y: canvas.height * 0.5, label: 'Bavaria', color: '#4a7c9e', radius: 100 },
+    { x: canvas.width * 0.15, y: canvas.height * 0.4, label: 'Austria', color: '#d4af37', radius: 90 },
+    { x: canvas.width * 0.1, y: canvas.height * 0.55, label: 'Swiss', color: '#e8dcc8', radius: 70 },
+    { x: canvas.width * 0.35, y: canvas.height * 0.15, label: 'North', color: '#c45a5a', radius: 110 },
+    { x: canvas.width * 0.55, y: canvas.height * 0.4, label: 'Swabia', color: '#6b9e76', radius: 75 }
+  ];
+}
+
+function createParticles() {
+  particles = [];
+  const count = Math.floor((canvas.width * canvas.height) / 5000);
+  regions.forEach(region => {
+    for (let i = 0; i < count / regions.length; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * region.radius;
+      particles.push({
+        x: region.x + Math.cos(angle) * dist,
+        y: region.y + Math.sin(angle) * dist,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.6 + 0.2,
+        regionIdx: regions.indexOf(region),
+        region: region
+      });
+    }
+  });
+}
+
+function drawCanvas(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw region circles with transparency
+  regions.forEach(region => {
+    ctx.fillStyle = region.color + '15';
+    ctx.beginPath();
+    ctx.arc(region.x, region.y, region.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = region.color + '40';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Update and draw particles
+  particles.forEach((p, idx) => {
+    p.x += p.vx;
+    p.y += p.vy;
+
+    // Keep particles within canvas
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    // Color based on region
+    ctx.fillStyle = p.region.color + Math.floor(p.alpha * 255).toString(16).padStart(2, '0');
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Draw region labels
+  ctx.fillStyle = 'rgba(232, 164, 74, 0.4)';
+  ctx.font = 'italic 14px Cormorant Garamond';
+  ctx.textAlign = 'center';
+  regions.forEach(region => {
+    ctx.fillText(region.label, region.x, region.y + region.radius + 30);
+  });
+
+  requestAnimationFrame(drawCanvas);
+}
+
+window.addEventListener('scroll', () => {
+  const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+resizeCanvas();
+createRegions();
+createParticles();
+requestAnimationFrame(drawCanvas);
+window.addEventListener('resize', () => { resizeCanvas(); createRegions(); createParticles(); });
+
+// German word audio
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', (e) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(word.textContent.trim());
+      utterance.lang = 'de-DE';
+      utterance.rate = 0.8;
+      speechSynthesis.speak(utterance);
+    }
+    e.stopPropagation();
+  });
+});
+
+// Chapter 99 Quiz - 15 questions
+const quizData = [
+  { question: "What is Hochdeutsch?", options: ["the oldest German dialect", "the dialect of Saxon bureaucrats that became standard through institutional power", "the language of the South", "a modern invention"], correct: 1, explanation: "Hochdeutsch became standard not because it was superior, but because printing presses, schools, and Prussian power made it official." },
+  { question: "Are dialects 'wrong' versions of Standard German?", options: ["yes, they are mistakes", "no, they are equally valid languages that evolved from the same ancestor", "some are correct, some are not", "they are less evolved"], correct: 1, explanation: "Dialects are not corruptions — they are siblings that diverged over centuries due to geographic separation." },
+  { question: "What does 'Grüß Gott' mean literally?", options: ["good morning", "greet God", "hello friend", "welcome home"], correct: 1, explanation: "Grüß Gott is a theological greeting, showing how religious tradition shapes language." },
+  { question: "Where is 'Servus' commonly used?", options: ["Northern Germany", "Bavaria and Austria", "Switzerland only", "Berlin"], correct: 1, explanation: "Servus (from Latin 'servant') is preserved in the South, showing Roman influence in that region." },
+  { question: "What does 'Moin' mean?", options: ["hello only in the morning", "hello at any time of day", "goodbye", "good evening"], correct: 1, explanation: "Despite being related to 'Morgen,' Moin is used as a universal greeting in the North." },
+  { question: "What is a bread roll called in Bavaria?", options: ["Brötchen", "Semmel", "Schrippe", "Weggli"], correct: 1, explanation: "In Bavaria and Austria, a bread roll is a Semmel, not a Brötchen." },
+  { question: "In Austria, a potato is called:", options: ["Kartoffel", "Erdapfel", "Grundbirne", "Härdöpfel"], correct: 1, explanation: "Erdapfel means 'earth apple' — a metaphor for the round, underground fruit." },
+  { question: "Why did different regions create different words for the potato?", options: ["they were confused", "they developed independent metaphors based on what the plant resembled to them", "one region was wrong", "potatoes have the same name everywhere"], correct: 1, explanation: "When potatoes arrived from the New World, different regions developed their own metaphors — earth apple, ground pear, etc." },
+  { question: "What does the Chinese parallel (Mandarin vs. dialects) show?", options: ["Chinese dialects are different from German dialects", "the exact same dynamic — standard language imposed over regional languages", "Chinese is simpler than German", "nothing relevant"], correct: 1, explanation: "Mandarin was standardized for national unity, just like Hochdeutsch. Both situations show how political power creates 'standards.'" },
+  { question: "Are languages in dialect regions 'less evolved' than Standard German?", options: ["yes, dialects are primitive", "no, some dialects preserve older forms that have disappeared from Standard German", "yes, they are incomplete", "no, they are equally evolved"], correct: 1, explanation: "Some dialects preserve Old High German features that vanished from Standard German centuries ago." },
+  { question: "What does 'Tschüss' show about dialects?", options: ["they are static", "they are in constant motion, borrowing from each other", "they never change", "they are unrelated to each other"], correct: 1, explanation: "Tschüss originated in the North and is spreading everywhere, showing dialects influence each other constantly." },
+  { question: "Is speaking a dialect a sign of being uneducated?", options: ["yes", "no, it is rooted in place and culture and deserves respect", "sometimes", "dialects have nothing to do with education"], correct: 1, explanation: "Speaking a dialect is not about education — it is about identity, place, and cultural continuity." },
+  { question: "What is happening to German dialects today?", options: ["they are spreading", "they are being lost as Standard German spreads through media and schools", "they are staying the same", "they are becoming more diverse"], correct: 1, explanation: "As globalization and standardized education spread, regional dialects are fading, especially in younger generations." },
+  { question: "What does 'Mädel' show about how languages change?", options: ["languages change dramatically overnight", "languages change through small phonetic shifts that accumulate over centuries", "languages don't change", "change only happens in writing"], correct: 1, explanation: "Magd → Mägd → Mädel shows language transformation across centuries through regular sound changes." },
+  { question: "Why was Saxon dialect chosen as the basis for Standard German?", options: ["it was the best linguistically", "Luther printed his Bible in it, and Prussian power made it official — it was political, not linguistic", "it was the oldest", "all dialects are equally standard"], correct: 1, explanation: "Standard German became standard through institutions and power, not through linguistic superiority." }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Complete Chapter' : 'Next →';
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => { if (ans === quizData[idx].correct) score++; });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.innerHTML = `<strong>Chapter 99 Score: ${score}/${quizData.length} (${percentage}%)</strong>`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  const summary = document.getElementById('post-quiz-summary');
+  summary.innerHTML = `
+    <p><strong>Understanding Dialects:</strong> You have learned how geography fragments language, how Standard German became standard through institutions rather than linguistic superiority, and how regional dialects preserve older features of the language.</p>
+    <p><strong>The Key Insight:</strong> Hochdeutsch and the German dialects are like Mandarin and Chinese languages — one imposed as standard, others preserved in regions. Neither is "wrong." Both tell the story of how humans divide and unify language.</p>
+    <p style="margin-top: 12px;">→ Ready for the final chapter? Move forward to Das letzte Wort — The Last Word.</p>
+  `;
+}
+
+initializeQuiz();
+
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">844 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(99%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:99%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 844 words across 99 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">145 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(100%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 145 patterns and grammar rules across 99 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

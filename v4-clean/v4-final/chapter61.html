@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 61: Ich werde machen (Futur)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --fire: #e8a44a; --fire-glow: #f4c67a; --ember: #c45d2c; --night: #0a0e1a; --night-mid: #131a2e;
+  --night-light: #1c2640; --star: #e8dcc8; --text: #d4cabb; --text-bright: #efe8db;
+  --german: #e8a44a; --chinese: #c49a6c; --english: #8a9bae; --pie: #9b8ec4; --future: #d4a8b4;
+}
+html { scroll-behavior: smooth; background: var(--night); }
+body {
+  background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+  background-attachment: fixed; color: var(--text); font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem; line-height: 1.85; overflow-x: hidden; -webkit-text-size-adjust: 100%; min-height: 100dvh;
+}
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, var(--fire), var(--fire-glow));
+  width: 0%; z-index: 999; }
+.content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 60px 24px 120px; }
+.title-screen { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; text-align: center; padding: 40px 20px; }
+.title-screen .chapter-number { font-size: 3.5rem; font-weight: 700; color: var(--fire);
+  opacity: 0; animation: fadeUp 2s ease 0.4s forwards; }
+.title-screen h1 { font-size: 3.2rem; font-weight: 500; color: var(--text-bright);
+  opacity: 0; animation: fadeUp 2s ease 0.7s forwards; margin-bottom: 0.5em; }
+.title-screen .subtitle { font-size: 1.3rem; font-weight: 300; font-style: italic; color: var(--future);
+  opacity: 0; animation: fadeUp 2s ease 1.1s forwards; margin-bottom: 2em; }
+.scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3);
+  font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 3em; }
+.scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+.scene.visible { opacity: 1; transform: translateY(0); }
+.scene-marker { display: block; width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--fire), transparent); margin: 0 auto 40px; }
+.narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+.narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center;
+  font-style: italic; margin: 2em 0; }
+.narrative.small { font-size: 1.05rem; color: rgba(212, 202, 187, 0.6); line-height: 1.7; }
+.german-word { color: var(--german); font-weight: 600; cursor: pointer;
+  border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; }
+.german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+.canvas-container { background: linear-gradient(135deg, rgba(26, 35, 55, 0.4), rgba(15, 20, 35, 0.4));
+  border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 24px; margin: 32px 0;
+  display: flex; justify-content: center; align-items: center; min-height: 400px; }
+canvas { display: block; width: 100%; max-width: 100%; height: auto; }
+.ety-card {
+  background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 28px 32px; margin: 24px 0 32px;
+  max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.5s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+}
+.ety-card.open { max-height: 1200px; opacity: 1; }
+.ety-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.ety-card .word-main { font-size: 2rem; font-weight: 700; color: var(--german); }
+.ety-card .word-pron { font-size: 1rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+.ety-card .word-meaning { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 20px;
+  padding-bottom: 16px; border-bottom: 1px solid rgba(232, 164, 74, 0.1); }
+.ety-card .bridge { display: flex; align-items: center; gap: 12px; margin: 10px 0; font-size: 1rem; flex-wrap: wrap; }
+.bridge-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em;
+  padding: 2px 8px; border-radius: 4px; font-family: 'Noto Serif', serif; min-width: 55px; text-align: center; }
+.bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+.bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+.bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+.bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+.bridge-word { font-size: 1.15rem; font-weight: 500; color: var(--text-bright); }
+.bridge-word.zh { font-family: 'Noto Sans SC', sans-serif; font-size: 1.5rem; }
+.bridge-note { font-size: 0.9rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+.ety-card .story { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232, 164, 74, 0.1);
+  font-size: 1rem; color: rgba(212, 202, 187, 0.75); line-height: 1.7; }
+.grammar-table { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 10px; padding: 24px; margin: 32px 0; overflow-x: auto; }
+.grammar-table table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+.grammar-table th, .grammar-table td { padding: 12px 16px; text-align: left;
+  border-bottom: 1px solid rgba(232, 164, 74, 0.1); color: var(--text); }
+.grammar-table th { background: rgba(232, 164, 74, 0.08); color: var(--fire); font-weight: 600;
+  text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; }
+.grammar-table tr:hover td { background: rgba(232, 164, 74, 0.05); }
+.divider { text-align: center; margin: 60px 0; color: rgba(232, 164, 74, 0.3); font-size: 1.5rem; letter-spacing: 0.5em; }
+.aside-box { background: rgba(212, 168, 180, 0.06); border-left: 2px solid rgba(212, 168, 180, 0.3);
+  padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  line-height: 1.7; color: rgba(212, 202, 187, 0.8); }
+.aside-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--future); margin-bottom: 8px; }
+.example-sentence { background: rgba(232, 164, 74, 0.05); border-left: 3px solid var(--fire);
+  padding: 16px 20px; margin: 16px 0; font-size: 1.1rem; color: var(--text-bright); font-style: italic; }
+.example-translation { padding-left: 20px; color: rgba(212, 202, 187, 0.7); font-size: 1rem;
+  font-style: normal; margin-top: 6px; }
+.content-section { margin-bottom: 48px; }
+.content-section h2 { font-size: 1.8rem; color: var(--fire); margin-bottom: 24px;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(232, 164, 74, 0.2); }
+.quiz-container { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.12); border-radius: 16px; padding: 40px 32px; margin: 60px 0; }
+.quiz-question { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.08);
+  border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+.quiz-question.hidden { display: none; }
+.quiz-option { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2);
+  color: var(--text); padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif; font-size: 1rem; text-align: left; }
+.quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+.quiz-nav button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25);
+  color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1rem; padding: 12px 28px;
+  border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-score { text-align: center; font-size: 1.3rem; color: var(--fire-glow); margin: 24px 0; font-weight: 500; }
+.chapter-end { text-align: center; margin: 80px 0 40px; padding-top: 40px;
+  border-top: 1px solid rgba(232, 164, 74, 0.15); color: rgba(212, 202, 187, 0.5); }
+.speak-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+  border: 1px solid rgba(232, 164, 74, 0.25); border-radius: 50%; background: rgba(232, 164, 74, 0.08);
+  color: var(--fire); cursor: pointer; font-size: 0.9rem; margin-left: 8px; transition: all 0.3s ease; }
+.speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="content">
+  <div class="title-screen">
+    <div class="chapter-number">61</div>
+    <h1>Ich werde machen</h1>
+    <div class="subtitle">The Futur: Talking About Tomorrow, Expressing Probability</div>
+    <div class="scroll-hint"><span>↓</span> Scroll to begin</div>
+  </div>
+
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+    <div class="narrative">
+      The German future tense, called the <span class="german-word">Futur</span> (pronounced "foo-TUR"), is one of the most misunderstood grammar features by English speakers learning German. Why? Because Germans use it far less often than English speakers expect. The Futur is real, it is grammatically perfect, but it is not the primary way Germans talk about future events. This chapter will show you not just how to form the Futur, but when and why Germans actually use it—and more importantly, when they don't.
+    </div>
+    <div class="narrative emphasis">
+      The Futur is formed with werden (to become) in the present tense + the infinitive of the main verb, positioned at the end of the clause.
+    </div>
+    <div class="narrative small">
+      Once you master the Futur, you will have seen all three major meanings of the word werden: becoming, future, and passive voice. These three uses appear throughout German conversation and writing, and understanding them is essential to reading and speaking with confidence.
+    </div>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="canvas" width="750" height="380"></canvas>
+  </div>
+
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <div class="content-section">
+      <h2>The Basic Structure: Werden + Infinitive</h2>
+      <div class="narrative">
+        The Futur tense consists of two parts: the present tense of the auxiliary verb <span class="german-word">werden</span> + the infinitive of the main verb. The infinitive is always placed at the end of the clause. This is a critical rule: the infinitive NEVER moves, regardless of word order.
+      </div>
+
+      <div class="example-sentence">
+        <strong>Ich werde das Buch lesen.</strong>
+        <div class="example-translation">I will read the book.</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Du wirst morgen kommen.</strong>
+        <div class="example-translation">You will come tomorrow.</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Er wird nächste Woche fahren.</strong>
+        <div class="example-translation">He will drive next week.</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Wir werden gemeinsam arbeiten.</strong>
+        <div class="example-translation">We will work together.</div>
+      </div>
+
+      <div class="narrative small">
+        Notice that the subject comes first (ich, du, er, wir), then the conjugated form of werden, then any objects or time words, and finally the infinitive at the very end. This pattern is absolutely consistent. The infinitive at the end is what signals to the listener that a Futur construction is being used.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Conjugation of Werden in Futur</h2>
+      <div class="narrative">
+        The word werden changes depending on the subject (person and number). Here is the complete conjugation table. Pay close attention: these forms appear in conversation constantly, and you must recognize them instantly.
+      </div>
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Werden Form</th>
+              <th>Example Infinitive</th>
+              <th>Full Sentence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ich (I)</td>
+              <td><strong>werde</strong></td>
+              <td>machen (to make)</td>
+              <td>Ich werde es machen. (I will make it.)</td>
+            </tr>
+            <tr>
+              <td>du (you, informal)</td>
+              <td><strong>wirst</strong></td>
+              <td>machen</td>
+              <td>Du wirst es machen. (You will make it.)</td>
+            </tr>
+            <tr>
+              <td>er/sie/es (he/she/it)</td>
+              <td><strong>wird</strong></td>
+              <td>machen</td>
+              <td>Er wird es machen. (He will make it.)</td>
+            </tr>
+            <tr>
+              <td>wir (we)</td>
+              <td><strong>werden</strong></td>
+              <td>machen</td>
+              <td>Wir werden es machen. (We will make it.)</td>
+            </tr>
+            <tr>
+              <td>ihr (you all, informal)</td>
+              <td><strong>werdet</strong></td>
+              <td>machen</td>
+              <td>Ihr werdet es machen. (You all will make it.)</td>
+            </tr>
+            <tr>
+              <td>sie/Sie (they/you formal)</td>
+              <td><strong>werden</strong></td>
+              <td>machen</td>
+              <td>Sie werden es machen. (You will make it / They will make it.)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="narrative small">
+        Notice that <strong>wir</strong> and <strong>sie/Sie</strong> both use the form <strong>werden</strong>. You distinguish them by context. Also notice that the werden conjugations follow a pattern: <strong>werde, wirst, wird, werden, werdet, werden</strong>. This is the standard pattern for most German auxiliary verbs, so once you master it here, it will appear again and again in your learning.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>The Etymological Heart of Werden</h2>
+      <div class="ety-card">
+        <div class="word-header">
+          <div class="word-main">werden</div>
+          <div class="word-pron">[VER-den]</div>
+        </div>
+        <div class="word-meaning">to become (primary meaning); to grow into; auxiliary for future and passive</div>
+        <div class="bridge">
+          <span class="bridge-label pie">PIE Root</span>
+          <span class="bridge-word">*wert- (to turn, to become)</span>
+        </div>
+        <div class="bridge">
+          <span class="bridge-label eng">English</span>
+          <span class="bridge-word">weird (originally meaning to turn, to change fate)</span>
+          <span class="bridge-note">Modern "weird" means strange, but the root is about turning or transformation</span>
+        </div>
+        <div class="bridge">
+          <span class="bridge-label deu">German</span>
+          <span class="bridge-word">Wort (word, from turning sounds into meaning)</span>
+          <span class="bridge-note">Words "turn" sounds into meanings</span>
+        </div>
+        <div class="bridge">
+          <span class="bridge-label zho">Chinese</span>
+          <span class="bridge-word">变 (biàn) - to change, to transform</span>
+          <span class="bridge-note">Same concept: transformation and change</span>
+        </div>
+        <div class="story">
+          The word werden is ancient, from Proto-Indo-European *wert-, meaning to turn or transform. This root captures something fundamental: becoming is a turning, a transformation from one state into another. English has almost lost this word (except in "weird," which originally meant "turning fate"), but German has preserved it as one of the most important verbs in the language. When a German says "Ich werde Arzt" (I will become a doctor), the word werden still carries the sense of a transformation, a turning from one identity to another. The Futur tense uses this same verb: "Ich werde gehen" uses the becoming-verb to mark a transformation from present to future.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="content-section">
+      <h2>The Critical Truth: Germans Rarely Use Futur in Conversation</h2>
+      <div class="narrative">
+        Here is the insight that will revolutionize your understanding of German: the Futur tense exists, is grammatically correct, and is used—but Germans prefer to use the present tense with a time word to express the future. This is more common, more natural, and more authentic than the Futur.
+      </div>
+
+      <div class="example-sentence">
+        <strong>Morgen gehe ich ins Kino.</strong>
+        <div class="example-translation">"Tomorrow I go to the movies." (understood as future by context)</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Ich werde morgen ins Kino gehen.</strong>
+        <div class="example-translation">"I will go to the movies tomorrow." (using Futur)</div>
+      </div>
+
+      <div class="narrative small">
+        Both sentences are grammatically correct. But the first is how Germans actually speak in everyday conversation. The present tense with a time indicator (morgen = tomorrow, nächste Woche = next week, in zwei Stunden = in two hours) is the preferred way to talk about the future. Why? Because German is a pragmatic language. If the future is already marked by a time word, the Futur auxiliary feels redundant.
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Why This Matters</div>
+        <div>When you hear Germans talk about the future in casual conversation, you will almost always hear present tense + time word, NOT the Futur. If you only study the Futur and ignore this pattern, you will sound unnatural. But if you understand and use present + time word, you will sound like a native speaker.</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Comparing Present + Time Word vs. Futur</h2>
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Time Reference</th>
+              <th>Present + Time Word (More Common)</th>
+              <th>Futur (More Formal)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tomorrow</td>
+              <td>Morgen fahre ich zur Arbeit.</td>
+              <td>Ich werde morgen zur Arbeit fahren.</td>
+            </tr>
+            <tr>
+              <td>Next week</td>
+              <td>Nächste Woche kommt mein Bruder.</td>
+              <td>Mein Bruder wird nächste Woche kommen.</td>
+            </tr>
+            <tr>
+              <td>In an hour</td>
+              <td>In einer Stunde essen wir Mittag.</td>
+              <td>Wir werden in einer Stunde Mittag essen.</td>
+            </tr>
+            <tr>
+              <td>This evening</td>
+              <td>Heute Abend sehe ich einen Film.</td>
+              <td>Ich werde heute Abend einen Film sehen.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="narrative small">
+        In all these examples, the first version (present + time word) is more authentic to how Germans actually speak. The Futur version is correct but sounds more formal, emphatic, or like someone reading from a textbook.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>When Germans DO Use Futur</h2>
+      <div class="narrative">
+        The Futur is not absent from German. It is used in specific situations, and understanding these will help you recognize when Germans choose Futur over present + time word.
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Situation 1: Formal or Solemn Statements</div>
+        <div>Ich werde mich bemühen, euch zu helfen. (I will make an effort to help you.) — This sounds more serious and emphatic than the present tense would.</div>
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Situation 2: Promises or Oaths</div>
+        <div>Ich werde dir immer treu sein. (I will always be true to you.) — The Futur emphasizes the commitment and seriousness of the promise.</div>
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Situation 3: Predictions Without a Specific Time</div>
+        <div>Es wird ein kalter Winter. (It will be a cold winter.) — Without a specific time word, the Futur is more natural than the present.</div>
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Situation 4: Written or Formal Communication</div>
+        <div>Der Kurs wird im September beginnen. (The course will begin in September.) — In official announcements or written German, the Futur is more common.</div>
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="content-section">
+      <h2>The Three Faces of Werden</h2>
+      <div class="narrative">
+        The verb werden is a shape-shifter in German. It has three completely different meanings, depending on what follows it. Learning to recognize all three is essential to mastering German grammar.
+      </div>
+
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Use</th>
+              <th>Meaning</th>
+              <th>Structure</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. BECOME</strong><br>(Main verb)</td>
+              <td>to become; to grow into; to turn into</td>
+              <td>werden + nominative noun or adjective</td>
+              <td>Ich werde Arzt. (I become a doctor.)<br>Das wird kalt. (That becomes cold.)</td>
+            </tr>
+            <tr>
+              <td><strong>2. FUTURE</strong><br>(Auxiliary)</td>
+              <td>will; shall; marking future tense</td>
+              <td>werden + infinitive at end of clause</td>
+              <td>Ich werde gehen. (I will go.)<br>Du wirst kommen. (You will come.)</td>
+            </tr>
+            <tr>
+              <td><strong>3. PASSIVE</strong><br>(Auxiliary)</td>
+              <td>is/are being...; marks passive voice</td>
+              <td>werden + past participle</td>
+              <td>Das Buch wird gelesen. (The book is being read.)<br>Das Auto wird repariert. (The car is being repaired.)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="narrative small">
+        Each of these three meanings is completely different, yet they all use the same word. This is not a coincidence. The underlying idea is transformation: becoming a different state, moving into the future, being transformed (passive voice). All three uses carry the sense of change or transition that is embedded in the root of werden.
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">How to Distinguish Them</div>
+        <div>
+          <strong>Look at what follows werden:</strong>
+          <ul style="margin-top: 12px; margin-left: 24px; color: rgba(212, 202, 187, 0.8);">
+            <li>Noun or adjective = BECOME</li>
+            <li>Infinitive verb = FUTURE</li>
+            <li>Past participle (often -t or -en ending) = PASSIVE</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>The Three Werden Uses in Context</h2>
+
+      <div class="narrative">
+        <strong>Become (Main verb meaning):</strong>
+      </div>
+      <div class="example-sentence">
+        <strong>Er wird Lehrer.</strong>
+        <div class="example-translation">He becomes a teacher. / He will become a teacher.</div>
+      </div>
+      <div class="example-sentence">
+        <strong>Das Wetter wird schlechter.</strong>
+        <div class="example-translation">The weather is becoming worse. / The weather is getting worse.</div>
+      </div>
+      <div class="example-sentence">
+        <strong>Ich werde älter jeden Tag.</strong>
+        <div class="example-translation">I become older every day. / I'm getting older every day.</div>
+      </div>
+
+      <div class="narrative">
+        <strong>Future (auxiliary with infinitive):</strong>
+      </div>
+      <div class="example-sentence">
+        <strong>Wir werden spielen.</strong>
+        <div class="example-translation">We will play.</div>
+      </div>
+      <div class="example-sentence">
+        <strong>Sie wird sehr überrascht sein.</strong>
+        <div class="example-translation">She will be very surprised.</div>
+      </div>
+      <div class="example-sentence">
+        <strong>Du wirst das verstehen.</strong>
+        <div class="example-translation">You will understand that.</div>
+      </div>
+
+      <div class="narrative">
+        <strong>Passive (auxiliary with past participle):</strong>
+      </div>
+      <div class="example-sentence">
+        <strong>Das Haus wird gebaut.</strong>
+        <div class="example-translation">The house is being built.</div>
+      </div>
+      <div class="example-sentence">
+        <strong>Die Tür wird geöffnet.</strong>
+        <div class="example-translation">The door is being opened.</div>
+      </div>
+      <div class="example-sentence">
+        <strong>Es wird schnell fertig.</strong>
+        <div class="example-translation">It's being completed quickly. (It becomes finished quickly.)</div>
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="content-section">
+      <h2>Futur for Probability and Assumption</h2>
+      <div class="narrative">
+        The Futur has a hidden use that surprises many learners: it is used to express probability or assumption about the PRESENT. When a German speaker uses Futur with an adverb like <span class="german-word">wohl</span> (probably) or <span class="german-word">bestimmt</span> (certainly), they are making an educated guess about what is true right now, not predicting the future.
+      </div>
+
+      <div class="example-sentence">
+        <strong>Er wird wohl krank sein.</strong>
+        <div class="example-translation">He's probably sick. (He must be sick.)</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Das wird stimmen.</strong>
+        <div class="example-translation">That's probably true. (That must be right.)</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Sie wird es vermutlich wissen.</strong>
+        <div class="example-translation">She probably knows it. (She must know it.)</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Das wird bestimmt eine gute Idee sein.</strong>
+        <div class="example-translation">That's certainly a good idea.</div>
+      </div>
+
+      <div class="narrative small">
+        This use of Futur is very German. In English, you would say "He must be sick" or "He's probably sick" to express present probability. In German, the Futur tense serves this function. The adverbs wohl, bestimmt, vermutlich, vielleicht, and sicherlich often accompany this use. When you hear these combinations, you know the speaker is making an assumption about the present, not predicting the future.
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Key Adverbs for Probability</div>
+        <div>
+          <strong>wohl</strong> — probably, presumably (most common)<br>
+          <strong>bestimmt</strong> — certainly, for sure<br>
+          <strong>vermutlich</strong> — presumably, probably<br>
+          <strong>vielleicht</strong> — perhaps, maybe<br>
+          <strong>sicherlich</strong> — surely, certainly
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Comparing Futur for Future vs. Probability</h2>
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Context</th>
+              <th>Example</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Real Future</strong></td>
+              <td>Ich werde morgen nach Berlin fahren.</td>
+              <td>I will drive to Berlin tomorrow. (plan for the future)</td>
+            </tr>
+            <tr>
+              <td><strong>Probability (Present)</strong></td>
+              <td>Er wird wohl in Berlin sein.</td>
+              <td>He's probably in Berlin. (assumption about now)</td>
+            </tr>
+            <tr>
+              <td><strong>Probability (Present)</strong></td>
+              <td>Sie wird es schon wissen.</td>
+              <td>She probably already knows it. (assumption, with "schon" = already)</td>
+            </tr>
+            <tr>
+              <td><strong>Real Future (Formal)</strong></td>
+              <td>Die Konferenz wird im Juni stattfinden.</td>
+              <td>The conference will take place in June. (planned future event)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="content-section">
+      <h2>Key Vocabulary for Talking About the Future</h2>
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>German Word</th>
+              <th>Pronunciation</th>
+              <th>Meaning / Usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>werden</strong></td>
+              <td>VER-den</td>
+              <td>to become; auxiliary for Futur and passive</td>
+            </tr>
+            <tr>
+              <td><strong>morgen</strong></td>
+              <td>MOR-gen</td>
+              <td>tomorrow (or morning, context-dependent)</td>
+            </tr>
+            <tr>
+              <td><strong>nächste Woche</strong></td>
+              <td>NAYKstuh VOH-kuh</td>
+              <td>next week</td>
+            </tr>
+            <tr>
+              <td><strong>bald</strong></td>
+              <td>balt</td>
+              <td>soon; in the near future</td>
+            </tr>
+            <tr>
+              <td><strong>irgendwann</strong></td>
+              <td>IRG-end-vahn</td>
+              <td>sometime; at some point in the future</td>
+            </tr>
+            <tr>
+              <td><strong>später</strong></td>
+              <td>SHPAY-ter</td>
+              <td>later</td>
+            </tr>
+            <tr>
+              <td><strong>Zukunft</strong></td>
+              <td>TSOO-kunft</td>
+              <td>future (noun); the future in general</td>
+            </tr>
+            <tr>
+              <td><strong>wahrscheinlich</strong></td>
+              <td>VAR-shine-likh</td>
+              <td>probably; likely</td>
+            </tr>
+            <tr>
+              <td><strong>bestimmt</strong></td>
+              <td>buh-SHTIMMT</td>
+              <td>certainly; definitely</td>
+            </tr>
+            <tr>
+              <td><strong>vermutlich</strong></td>
+              <td>fer-MOOT-likh</td>
+              <td>presumably; probably</td>
+            </tr>
+            <tr>
+              <td><strong>wohl</strong></td>
+              <td>vole</td>
+              <td>probably; presumably (with Futur for probability)</td>
+            </tr>
+            <tr>
+              <td><strong>in zwei Stunden</strong></td>
+              <td>in TSVYUH SHTOON-den</td>
+              <td>in two hours</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="content-section">
+      <h2>Summary: When to Use Futur vs. Present + Time Word</h2>
+      <div class="aside-box">
+        <div class="aside-title">Use PRESENT + TIME WORD For:</div>
+        <div style="margin-top: 12px;">
+          <strong>Everyday conversation about the future</strong> — Morgen gehe ich einkaufen.<br>
+          <strong>Planned events with a specific time</strong> — Nächste Woche kommt mein Freund.<br>
+          <strong>Casual plans</strong> — In einer Stunde essen wir.<br>
+          <strong>Authentic, natural German</strong> — This is how native speakers actually talk.
+        </div>
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">Use FUTUR (werden + Infinitive) For:</div>
+        <div style="margin-top: 12px;">
+          <strong>Formal or official statements</strong> — Die Versammlung wird stattfinden.<br>
+          <strong>Solemn promises or oaths</strong> — Ich werde dir treu sein.<br>
+          <strong>Emphasis or certainty</strong> — Es wird funktionieren!<br>
+          <strong>Probability about the present</strong> — Er wird wohl schlafen.<br>
+          <strong>Written communication</strong> — Official emails, announcements, formal letters.
+        </div>
+      </div>
+
+      <div class="narrative emphasis">
+        Remember: Present + time word is how Germans actually speak. If you want to sound natural, master this pattern first. The Futur is correct, but it is reserved for specific situations.
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" id="scene-quiz">
+    <div class="divider">❋</div>
+    <div class="quiz-container">
+      <h3>Master Futur: 12-Question Quiz</h3>
+      <div id="quiz-questions"></div>
+      <div id="quiz-score"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" id="scene-end">
+    <div class="divider">✦</div>
+    <div class="chapter-end">
+      <p>You have learned the Futur — and more importantly, you have learned that Germans prefer the present tense for future events. You understand the three faces of werden: becoming, future, and passive. You recognize when Germans use Futur for probability about the present.</p>
+      <div style="margin-top: 32px; font-size: 1.15rem; color: var(--fire);">→ Continue to Chapter 62: Das Verb am Ende (Word Order)</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <a href="chapter60.html" class="nav-btn">← Chapter 60</a>
+    <a href="chapter62.html" class="nav-btn next">Chapter 62 →</a>
+  </div>
+
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What is the structure of the Futur tense?",
+    options: ["werden + past participle", "werden + infinitive", "werden + adjective", "infinitive + werden"],
+    correct: 1,
+    explanation: "Futur = werden (present) + infinitive at the end. Example: Ich werde machen (I will make). The infinitive always comes at the end."
+  },
+  {
+    question: "What is the first-person singular form of werden?",
+    options: ["werde", "wirst", "wird", "werdet"],
+    correct: 0,
+    explanation: "Ich werde. The full conjugation: ich werde, du wirst, er/sie/es wird, wir werden, ihr werdet, sie/Sie werden."
+  },
+  {
+    question: "How do Germans most commonly express the future in everyday conversation?",
+    options: ["always use Futur", "use present tense + time word", "use Perfekt", "use Präteritum"],
+    correct: 1,
+    explanation: "Germans prefer present + time word: 'Morgen gehe ich' (I go tomorrow) rather than 'Ich werde morgen gehen'. It's more natural."
+  },
+  {
+    question: "Complete: 'Nächste Woche ___ du nach Berlin fahren.'",
+    options: ["wirst", "werden", "werdet", "werde"],
+    correct: 0,
+    explanation: "du wirst. You are the subject, so the second person singular conjugation of werden is wirst."
+  },
+  {
+    question: "When is the Futur primarily used in German?",
+    options: ["for everyday future plans", "for emphasis, formality, or probability", "for past events", "for passive voice only"],
+    correct: 1,
+    explanation: "The Futur is used for formal statements, promises, and also with adverbs like 'wohl' to express probability about the present."
+  },
+  {
+    question: "Which sentence is more natural in German conversation?",
+    options: ["Ich werde nächste Woche fahren.", "Ich fahre nächste Woche.", "Ich bin nächste Woche gefahren.", "Ich fuhr nächste Woche."],
+    correct: 1,
+    explanation: "The present with a time word (nächste Woche) is more natural in spoken German. It sounds more authentic and is how Germans actually speak."
+  },
+  {
+    question: "What does 'Er wird wohl krank sein' mean?",
+    options: ["He will be sick.", "He is probably sick.", "He became sick.", "He will become sick."],
+    correct: 1,
+    explanation: "Futur + 'wohl' expresses probability about the PRESENT: 'He's probably sick' or 'He must be sick'. This is a hidden use of Futur."
+  },
+  {
+    question: "What are the three meanings of werden?",
+    options: ["only 'will'", "become, will, passive auxiliary", "go, will, passive", "have, will, being"],
+    correct: 1,
+    explanation: "Werden means: (1) become (Er wird Arzt), (2) will/future (Ich werde gehen), (3) passive auxiliary (Es wird gemacht)."
+  },
+  {
+    question: "In which position does the infinitive go in Futur?",
+    options: ["right after werden", "at the beginning of the sentence", "at the end of the clause", "before the subject"],
+    correct: 2,
+    explanation: "In Futur, the infinitive ALWAYS comes at the end: 'Ich werde das Buch lesen' (not 'Ich werde lesen das Buch'). This is a strict rule."
+  },
+  {
+    question: "What conjugation is 'wir werden'?",
+    options: ["first person singular", "third person singular", "first person plural", "third person plural"],
+    correct: 2,
+    explanation: "wir werden = we will (first person plural). Note that 'sie/Sie werden' also uses 'werden', but it means 'they/you' (third person)."
+  },
+  {
+    question: "Which adverb is most commonly used with Futur to express probability?",
+    options: ["schnell (quickly)", "wohl (probably)", "nie (never)", "immer (always)"],
+    correct: 1,
+    explanation: "'Wohl' is the key adverb for expressing probability with Futur: 'Er wird wohl hier sein' (He's probably here). Other probability adverbs include bestimmt, vermutlich, vielleicht."
+  },
+  {
+    question: "How does German preserve futurity when not using Futur?",
+    options: ["using special word order", "using present tense + time word like 'morgen'", "using only Perfekt", "using subjunctive mood"],
+    correct: 1,
+    explanation: "German makes the future clear through context: present tense + time word (Morgen gehe ich) is sufficient and more natural than Futur."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+    let html = `<div style="font-size: 1.1rem; color: var(--text-bright); margin-bottom: 16px; font-weight: 500;">${idx + 1}. ${q.question}</div><div style="display: flex; flex-direction: column; gap: 10px;">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = currentQuestion === 0;
+  nextBtn.textContent = currentQuestion === quizData.length - 1 ? 'Submit Quiz' : 'Next →';
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) score++;
+  });
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">Futur mastered! ✓</p>';
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: rgba(212, 202, 187, 0.6);">Keep practicing the three uses of werden!</p>';
+  }
+}
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// Canvas animation: Road to horizon with particles
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 750;
+canvas.height = 380;
+
+let particles = [];
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 3,
+      vy: (Math.random() - 0.5) * 3 + 0.5,
+      life: Math.random() * 255,
+      maxLife: 255
+    });
+  }
+}
+
+function drawCanvas() {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.5)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const time = Date.now() * 0.0005;
+
+  // Draw horizon lines
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.2)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const yPos = canvas.height / 2 - i * 20 + Math.sin(time) * 10;
+    ctx.beginPath();
+    ctx.moveTo(0, yPos);
+    ctx.lineTo(canvas.width, yPos);
+    ctx.stroke();
+  }
+
+  // Update and draw particles
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 2;
+
+    if (p.life <= 0) {
+      p.x = Math.random() * canvas.width;
+      p.y = Math.random() * canvas.height;
+      p.life = p.maxLife;
+    }
+
+    const alpha = (p.life / p.maxLife) * 0.6;
+    ctx.fillStyle = `rgba(232, 164, 74, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2 + Math.sin(time + p.x) * 1, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Draw rising sun
+  ctx.fillStyle = `rgba(232, 164, 74, ${0.3 + Math.sin(time) * 0.1})`;
+  ctx.beginPath();
+  ctx.arc(canvas.width / 2, canvas.height / 2 + Math.sin(time * 0.5) * 20, 60, 0, Math.PI * 2);
+  ctx.fill();
+
+  requestAnimationFrame(drawCanvas);
+}
+
+initParticles();
+drawCanvas();
+
+// German text-to-speech for clickable words
+document.querySelectorAll('.german-word').forEach(el => {
+  if (!el.classList.contains('revealed')) {
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const text = this.textContent;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'de-DE';
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    });
+  }
+});
+
+initializeQuiz();
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">540 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(63%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:63%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 540 words across 61 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">110 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(75%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:75%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 110 patterns and grammar rules across 61 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 35: Die Verwandlung</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --metamorph: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- METAMORPHOSIS CANVAS --- */
+  #metamorph-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="metamorph-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Thirty-Five</div>
+    <h1>Die Verwandlung</h1>
+    <div class="subtitle">The Transformation</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE SUFFIX THAT CREATES NOUNS ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      We have climbed far into the realm of German words. From the oldest sounds of fire and water, through the labyrinth of cases and genders, past the infinite worlds of compound nouns. But now we arrive at one of the most powerful mechanisms in German grammar — a secret door through which any verb can be transformed into a noun. A simple door with a simple sign above it: <strong>-ung</strong>.
+    </p>
+
+    <p class="narrative">
+      This is not arbitrary. This is not a special trick reserved for a handful of words. This is a rule so reliable, so constant, that it approaches certainty. Take any verb in German. Any verb whatsoever. Add the suffix <span class="german-word" data-speak="true">-ung</span> to its root, and you create a noun. The verb becomes a thing. An action becomes an object you can hold in your mind.
+    </p>
+
+    <p class="narrative">
+      When you <span class="german-word" data-speak="true">bilden</span> — to form, to educate, to shape — what you create is <span class="german-word" data-card="bildung">Bildung.</span> Education. Formation. The state of having been shaped. When you <span class="german-word" data-speak="true">erfahren</span> — to experience, to learn through doing — you generate <span class="german-word" data-card="erfahrung">Erfahrung.</span> Experience. The accumulated knowledge from having lived through something.
+    </p>
+
+    <p class="narrative">
+      And here is something remarkable: every single one of these nouns is feminine. Die Bildung. Die Erfahrung. Die Hoffnung. Die Entscheidung. There are no exceptions. This is not a quirk. This is a rule as absolute as gravity. The -ung suffix does not create masculine nouns. It does not create neuter nouns. It creates only feminine nouns. Die. Every time.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the first rule of German that is always true. The first pattern that never breaks. Every -ung noun is feminine. One hundred percent reliable.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE POWER OF -UNG ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Think about what this means. You do not need to memorize gender. You do not need to carry a dictionary. If you hear a new word ending in -ung, you know instantly: it is feminine. Die. The entire universe of German nouns that express processes, transformations, actions, and results — the entire universe speaks with one voice about gender. That voice says: feminine.
+    </p>
+
+    <p class="narrative">
+      This power extends into every corner of German speech. <span class="german-word" data-card="ordnung">Ordnung</span> — order. The state of being organized. The arrangement of chaos into pattern. Ordnung comes from the verb <span class="german-word" data-speak="true">ordnen</span> — to order, to arrange, to put in sequence. Die Ordnung. The feminine ordering of the world.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wohnung">Wohnung</span> — apartment. Dwelling. The place where you live. From <span class="german-word" data-speak="true">wohnen</span> — to live, to dwell, to inhabit. The living becomes the lived-in. The action becomes the space. And it is feminine: die Wohnung.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="meinung">Meinung</span> — opinion. The way you think. The judgment you have formed. From <span class="german-word" data-speak="true">meinen</span> — to mean, to think, to believe. Your opinion is your thinking made solid. And it belongs to the feminine: die Meinung.
+    </p>
+
+    <p class="narrative">
+      Even modern words follow this pattern. <span class="german-word" data-card="zeitung">Zeitung</span> — newspaper. Newspaper is "news-ing" — the distribution of news. From the Middle High German <span class="german-word" data-speak="true">zeitung</span>, related to "zeit" (time). The making of timeliness. The creation of the current. Die Zeitung.
+    </p>
+
+    <!-- BILDUNG card -->
+    <div class="ety-card" id="card-bildung">
+      <div class="word-header">
+        <span class="word-main">Bildung</span>
+        <span class="word-pron">/ˈbɪldʊŋ/</span>
+      </div>
+      <div class="word-meaning">education — the process of being formed, shaped, cultivated intellectually and morally</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">bilden</span>
+        <span class="bridge-note">— to form, to shape, to educate; -ung suffix makes it a noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— English has no direct equivalent; "education" comes from Latin educāre</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">教育</span>
+        <span class="bridge-note">— jiàoyù (teach + nourish) — similar concept of forming a person</span>
+      </div>
+      <div class="story">
+        <em>Bildung</em> is one of the most important German words for which no English word exists. It means more than "education." It encompasses the entire process of becoming a cultivated human being — of being shaped, formed, educated, refined. Goethe and the Romantic philosophers made this word central to their vision of human development. <em>Bildung</em> is what happens when a verb (bilden — to form) is transformed into a noun through the -ung suffix. The forming itself becomes the thing being formed.
+      </div>
+    </div>
+
+    <!-- ERFAHRUNG card -->
+    <div class="ety-card" id="card-erfahrung">
+      <div class="word-header">
+        <span class="word-main">Erfahrung</span>
+        <span class="word-pron">/ɛʁˈfaːʁʊŋ/</span>
+      </div>
+      <div class="word-meaning">experience — knowledge or skill acquired through involvement in or exposure to something</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">erfahren</span>
+        <span class="bridge-note">— to experience, to find out, to learn; er- (prefix) + fahren (to travel)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "experience" comes from Latin experientia; no Germanic equivalent</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">经验</span>
+        <span class="bridge-note">— jīngyàn (pass through + test) — the essence of learning by doing</span>
+      </div>
+      <div class="story">
+        <em>Erfahrung</em> comes from <em>fahren</em> — to travel, to move through space. But the prefix er- shifts it: you don't just travel, you travel <em>through</em> something, gaining understanding as you go. <em>Erfahrung</em> is what you accumulate through the journey of life. It is the -ung suffix transforming a verb of movement into a noun of knowledge.
+      </div>
+    </div>
+
+    <!-- HOFFNUNG card -->
+    <div class="ety-card" id="card-hoffnung">
+      <div class="word-header">
+        <span class="word-main">Hoffnung</span>
+        <span class="word-pron">/ˈhɔfnʊŋ/</span>
+      </div>
+      <div class="word-meaning">hope — a feeling of expectation and desire for a certain thing to happen</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">hoffen</span>
+        <span class="bridge-note">— to hope; the -ung makes the emotion into an abstraction</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">hope</span>
+        <span class="bridge-note">— from Proto-Germanic *hopan; the Germanic root survives in both languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">希望</span>
+        <span class="bridge-note">— xīwàng (rare + gaze) — looking toward something distant and desired</span>
+      </div>
+      <div class="story">
+        <em>Hoffnung</em> is what you feel when you hope. The verb <em>hoffen</em> becomes the abstract noun through -ung. The feeling becomes the state. And it is feminine — die Hoffnung. Many of humanity's greatest hopes are feminine words in German: Hoffnung (hope), Freiheit (freedom), Wahrheit (truth), Gnade (grace). The language embeds certain qualities in gender, making them permanent features of thought.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: MORE TRANSFORMATIONS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="ordnung">Ordnung.</span> Order. Organization. The act of putting things in their proper place. From <span class="german-word" data-speak="true">ordnen</span> — to organize, to arrange. And it is always feminine: die Ordnung.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wohnung">Wohnung.</span> Apartment. Dwelling. A place to live. From <span class="german-word" data-speak="true">wohnen</span> — to live, to inhabit, to dwell. Die Wohnung. Your apartment is your dwelling, and it is feminine.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="meinung">Meinung.</span> Opinion. The way you think about something. From <span class="german-word" data-speak="true">meinen</span> — to mean, to think, to believe. Die Meinung is your thinking made concrete.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zeitung">Zeitung.</span> Newspaper. The periodical that brings you the news. From middle German origins related to "time" (Zeit). The making of timeliness. Die Zeitung arrives at your door every morning.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="uebung">Übung.</span> Practice. Drill. The repeated action of learning a skill. From <span class="german-word" data-speak="true">üben</span> — to practice, to train, to exercise. Die Übung makes perfect.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="richtung">Richtung.</span> Direction. The way something is pointing or moving. From <span class="german-word" data-speak="true">richten</span> — to direct, to aim, to point, to straighten. Die Richtung — feminine direction.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="entscheidung">Entscheidung.</span> Decision. The moment of choosing. From <span class="german-word" data-speak="true">entscheiden</span> — to decide, to choose, to resolve. The cutting-away of alternatives. Die Entscheidung. When you make a decision, you are making something feminine.
+    </p>
+
+    <!-- ORDNUNG card -->
+    <div class="ety-card" id="card-ordnung">
+      <div class="word-header">
+        <span class="word-main">Ordnung</span>
+        <span class="word-pron">/ˈɔʁdnʊŋ/</span>
+      </div>
+      <div class="word-meaning">order — the arrangement of things in sequence; organization; tidiness</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ordnen</span>
+        <span class="bridge-note">— to arrange, to organize, to put in order; -ung creates the noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">order</span>
+        <span class="bridge-note">— from Latin ordō, not Germanic; German has no ancestral link to this word</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">秩序</span>
+        <span class="bridge-note">— zhìxù (order + succession) — the arrangement that allows things to follow one another</span>
+      </div>
+      <div class="story">
+        <em>Ordnung</em> became a profoundly important concept in German philosophy and culture — the idea that proper order, proper arrangement, is essential to civilization. "Ordnung muß sein" (there must be order) became almost a cliché of German culture. The -ung suffix transforms the verb ordnen (to arrange) into the abstract noun Ordnung (order itself).
+      </div>
+    </div>
+
+    <!-- WOHNUNG card -->
+    <div class="ety-card" id="card-wohnung">
+      <div class="word-header">
+        <span class="word-main">Wohnung</span>
+        <span class="word-pron">/ˈvoːnʊŋ/</span>
+      </div>
+      <div class="word-meaning">apartment — a residence in a building; a dwelling place</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wohnen</span>
+        <span class="bridge-note">— to live, to dwell, to inhabit; -ung makes the living into a place</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— English uses "apartment" (Latin origin) and "dwelling"; German uses -ung suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">住所</span>
+        <span class="bridge-note">— zhùsuǒ (dwell + place) — similar concept of transforming action into space</span>
+      </div>
+      <div class="story">
+        <em>Wohnung</em> is where you dwell. The verb <em>wohnen</em> (to live) becomes the noun <em>Wohnung</em> (dwelling place) through the -ung suffix. This is a perfect example of how the suffix transforms an action into a concrete thing — the act of living becomes the place where you live.
+      </div>
+    </div>
+
+    <!-- MEINUNG card -->
+    <div class="ety-card" id="card-meinung">
+      <div class="word-header">
+        <span class="word-main">Meinung</span>
+        <span class="word-pron">/ˈmaɪnʊŋ/</span>
+      </div>
+      <div class="word-meaning">opinion — a view or judgment formed about something, not necessarily based on fact</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">meinen</span>
+        <span class="bridge-note">— to think, to mean, to believe; -ung creates the abstract noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "opinion" comes from Latin opīniō; no Germanic equivalent</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">意见</span>
+        <span class="bridge-note">— yìjiàn (idea + view) — thoughts made visible as something that can be seen</span>
+      </div>
+      <div class="story">
+        <em>Meinung</em> is your thinking made concrete. When you have an <em>Meinung</em>, you have formed an opinion — you have taken the verb meinen (to think) and transformed it into a noun. The thought becomes the thing. And in German, it is always feminine.
+      </div>
+    </div>
+
+    <!-- ZEITUNG card -->
+    <div class="ety-card" id="card-zeitung">
+      <div class="word-header">
+        <span class="word-main">Zeitung</span>
+        <span class="word-pron">/ˈtsaɪtʊŋ/</span>
+      </div>
+      <div class="word-meaning">newspaper — a printed periodical containing news and articles</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Zeit</span>
+        <span class="bridge-note">— time; Zeitung is "the making of timeliness," news as it relates to present time</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "newspaper" comes from paper + news; no Germanic root for the concept</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">报纸</span>
+        <span class="bridge-note">— bàozhǐ (report + paper) — similarly describes the object that reports</span>
+      </div>
+      <div class="story">
+        <em>Zeitung</em> is interesting because it shows how -ung can be added to root words. <em>Zeit</em> (time) plus -ung creates Zeitung — something related to the present moment, something that makes timeliness. A newspaper is the manifestation of the current moment in printed form.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE GATEWAY RULE ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="uebung">Übung.</span> Practice. The repetition that builds skill. From <span class="german-word" data-speak="true">üben</span> — to practice, to train. Die Übung macht den Meister — practice makes the master. The feminine is doing the work.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="richtung">Richtung.</span> Direction. The pointing toward something. From <span class="german-word" data-speak="true">richten</span> — to direct, to aim, to straighten, to judge. Die Richtung — the direction you are heading.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="entscheidung">Entscheidung.</span> Decision. The moment when you cut away all but one choice. From <span class="german-word" data-speak="true">entscheiden</span> — to decide, to resolve. Ent- (away) + scheiden (to separate) = to separate away the alternatives, leaving only one. Die Entscheidung.
+    </p>
+
+    <p class="narrative">
+      And here is why this matters. This is not just grammar trivia. This is a gateway. Once you understand that -ung creates feminine nouns, you have unlocked the ability to understand thousands of German words you have never seen before. You can encounter a word you do not know, see that it ends in -ung, and instantly know three things:
+    </p>
+
+    <p class="narrative small">
+      <strong>First:</strong> It is a noun. Not an adjective or verb, but a noun. A thing you can point to.
+    </p>
+
+    <p class="narrative small">
+      <strong>Second:</strong> It comes from a verb. The action is the root. The noun is the transformation.
+    </p>
+
+    <p class="narrative small">
+      <strong>Third:</strong> It is feminine. Die. Not der, not das. Always die. You can use the right article, the right ending, because you know the gender before anyone tells you.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the power of recognizing patterns. One rule. One suffix. One gender. Infinite reliability.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE CHINESE BRIDGE ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Chinese does not have the -ung suffix. Chinese does not have grammatical gender. But Chinese has something similar: the character <span class="char-display"><span class="char">化</span><span class="pinyin">huà</span></span>, which means "to change," "to transform," "to become." When you add this character to a concept, you transform it into an abstract noun.
+    </p>
+
+    <p class="narrative">
+      <span class="char-display"><span class="char">文</span><span class="pinyin">wén</span></span> is "writing" or "culture." Add <span class="char-display"><span class="char">化</span><span class="pinyin">huà</span></span> and you get <span class="char-display"><span class="char">文</span><span class="pinyin">wén</span></span><span class="char-display"><span class="char">化</span><span class="pinyin">huà</span></span> (wénhuà) — "culture," the transformation of writing into civilization.
+    </p>
+
+    <p class="narrative">
+      <span class="char-display"><span class="char">美</span><span class="pinyin">měi</span></span> is "beautiful." Add <span class="char-display"><span class="char">化</span><span class="pinyin">huà</span></span> and you get <span class="char-display"><span class="char">美</span><span class="pinyin">měi</span></span><span class="char-display"><span class="char">化</span><span class="pinyin">huà</span></span> (měihuà) — "beautification," the process of becoming beautiful.
+    </p>
+
+    <p class="narrative">
+      The two languages have never met. German developed -ung in Europe over thousands of years. Chinese developed 化 in Asia. They have no historical connection. And yet they do the same work: they transform verbs and concepts into abstract nouns. They turn actions into states. They are different keys that open the same door.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the great secret of language: the same needs create the same tools. Across oceans, across centuries, across completely separate civilizations, languages invent similar solutions to similar problems.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        You see the word <strong style="color: var(--german);">Bearbeitung</strong> — ending in -ung, so you know it is a noun. The root is <strong style="color: var(--english);">bearbeiten</strong> — to work on, to process.<br><br>
+        What does <strong style="color: var(--german);">Bearbeitung</strong> mean?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: it is the transformation of the verb into a noun.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">a work tool</button>
+        <button class="guess-btn" onclick="guess(this, true)">the processing or working of something</button>
+        <button class="guess-btn" onclick="guess(this, false)">a worker</button>
+        <button class="guess-btn" onclick="guess(this, false)">hard work</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        If you see a word ending in -ung, what can you say about its gender with complete certainty?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(This is the one rule that never fails.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">It is masculine (der)</button>
+        <button class="guess-btn" onclick="guess(this, true)">It is always feminine (die)</button>
+        <button class="guess-btn" onclick="guess(this, false)">It is neuter (das)</button>
+        <button class="guess-btn" onclick="guess(this, false)">It could be any gender</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">332 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(39%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:39%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 332 words across 35 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">73 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(50%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:50%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 73 patterns and grammar rules across 35 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Thirty-Five</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Bildung</span><span class="cw-english">education</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Erfahrung</span><span class="cw-english">experience</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Hoffnung</span><span class="cw-english">hope</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Ordnung</span><span class="cw-english">order</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Wohnung</span><span class="cw-english">apartment</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Meinung</span><span class="cw-english">opinion</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Zeitung</span><span class="cw-english">newspaper</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Übung</span><span class="cw-english">practice</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Richtung</span><span class="cw-english">direction</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Entscheidung</span><span class="cw-english">decision</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">The -ung Suffix Rule</div>
+      <strong style="color: var(--text-bright);">The First Reliable Rule</strong> — Every German noun ending in -ung is feminine. This is 100% consistent. Use die with every -ung word.<br><br>
+      <strong style="color: var(--text-bright);">Verb to Noun Transformation</strong> — Any verb can become a noun by adding -ung to its root. The action becomes the thing.<br><br>
+      <strong style="color: var(--text-bright);">The Chinese Parallel</strong> — The character 化 (huà) in Chinese does similar work, transforming concepts into abstract nouns. Same need, different language, same solution.<br><br>
+      <strong style="color: var(--text-bright);">Gateway to Understanding</strong> — Once you know a word ends in -ung, you know its part of speech, its gender, and its origin. You can understand thousands of words you have never encountered.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Thirty-Five
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words of transformation. One sufffix that never fails.<br>
+        From the action comes the thing. From the verb comes the noun.<br>
+        And in German, when you add -ung, you create something feminine — always, without exception.<br>
+        This is the first rule that is absolute. This is the first pattern that does not break.
+      </p>
+      <div class="next-chapter">
+        Chapter Thirty-Six: Die Freiheit — Freedom and the suffixes of quality
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter34.html" class="nav-btn">← Chapter 34</a>
+    <a href="chapter36.html" class="nav-btn next">Chapter 36 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 35: METAMORPHOSIS CANVAS ---
+const canvas = document.getElementById('metamorph-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let shapes = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createShapes();
+}
+
+function createShapes() {
+  shapes = [];
+  const count = Math.floor((canvas.width * canvas.height) / 8000);
+  for (let i = 0; i < count; i++) {
+    shapes.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 40 + 20,
+      angle: Math.random() * Math.PI * 2,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: (Math.random() - 0.5) * 0.1,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.02,
+      morphPhase: Math.random() * Math.PI * 2,
+      morphSpeed: Math.random() * 0.01 + 0.005
+    });
+  }
+}
+
+function drawShapes(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  shapes.forEach((s, idx) => {
+    s.x += s.vx;
+    s.y += s.vy;
+    s.rotation += s.rotationSpeed;
+    s.morphPhase += s.morphSpeed;
+
+    if (s.x < -50) s.x = canvas.width + 50;
+    if (s.x > canvas.width + 50) s.x = -50;
+    if (s.y < -50) s.y = canvas.height + 50;
+    if (s.y > canvas.height + 50) s.y = -50;
+
+    const morphiness = Math.sin(s.morphPhase) * 0.5 + 0.5;
+    const alpha = 0.15 + scroll * 0.15;
+
+    ctx.save();
+    ctx.translate(s.x, s.y);
+    ctx.rotate(s.rotation);
+
+    if (morphiness < 0.5) {
+      // Square
+      const r = morphiness * 2;
+      ctx.fillStyle = `rgba(212, 165, 116, ${alpha})`;
+      ctx.fillRect(-s.size * r / 2, -s.size * r / 2, s.size * r, s.size * r);
+    } else {
+      // Circle
+      const r = (morphiness - 0.5) * 2;
+      ctx.fillStyle = `rgba(212, 165, 116, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(0, 0, s.size * r / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.strokeStyle = `rgba(232, 164, 74, ${alpha * 0.6})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.restore();
+  });
+
+  requestAnimationFrame(drawShapes);
+}
+
+resizeCanvas();
+createShapes();
+requestAnimationFrame(drawShapes);
+window.addEventListener('resize', () => { resizeCanvas(); createShapes(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Perfect! You are understanding the power of the -ung suffix.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about how the suffix transforms the meaning.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What does the -ung suffix do in German?",
+    options: ["makes plural nouns", "transforms verbs into nouns", "adds emphasis", "marks past tense"],
+    correct: 1,
+    explanation: "The -ung suffix transforms verbs into abstract nouns. Bilden → Bildung (forming → formation)"
+  },
+  {
+    question: "What gender is EVERY German noun ending in -ung?",
+    options: ["masculine (der)", "feminine (die)", "neuter (das)", "it varies"],
+    correct: 1,
+    explanation: "Every -ung noun is feminine. This is 100% consistent and reliable. Die Bildung, die Hoffnung, die Ordnung."
+  },
+  {
+    question: "Which of these words has a root verb?",
+    options: ["Hoffnung (from hoffen)", "Ordnung (from ordnen)", "Wohnung (from wohnen)", "all of the above"],
+    correct: 3,
+    explanation: "All -ung nouns come from verbs. Hoffen → Hoffnung, ordnen → Ordnung, wohnen → Wohnung."
+  },
+  {
+    question: "What does Bildung mean?",
+    options: ["a building", "education/formation", "an image", "a process"],
+    correct: 1,
+    explanation: "Bildung means education or the process of being formed. From bilden (to form/educate)."
+  },
+  {
+    question: "From what verb does Erfahrung come?",
+    options: ["fahren (to travel)", "erfahren (to experience)", "fahrt (journey)", "fahr (drive)"],
+    correct: 1,
+    explanation: "Erfahrung comes from erfahren (to experience), which itself contains fahren (to travel). Experience is a journey."
+  },
+  {
+    question: "What does the Chinese character 化 (huà) do?",
+    options: ["writes down actions", "transforms concepts into abstract nouns", "creates plural meanings", "marks feminine nouns"],
+    correct: 1,
+    explanation: "Just like -ung in German, 化 (huà) transforms concepts into abstract nouns: 文化 (culture), 美化 (beautification)."
+  },
+  {
+    question: "Which word means 'newspaper' and uses the -ung suffix?",
+    options: ["Buch", "Brief", "Zeitung", "Wort"],
+    correct: 2,
+    explanation: "Zeitung (newspaper) is related to Zeit (time) and uses the -ung suffix, meaning 'the making of timeliness.'"
+  },
+  {
+    question: "What is special about the -ung suffix as a learning tool?",
+    options: ["it's the most common suffix", "it reliably predicts gender, part of speech, and verb origin", "it's used in all European languages", "it changes the meaning of a word"],
+    correct: 1,
+    explanation: "Once you know a word ends in -ung, you know it's a noun, it's feminine (die), and it comes from a verb. This makes it a powerful learning tool."
+  },
+  {
+    question: "From what verb does Entscheidung (decision) come?",
+    options: ["sagen (to say)", "entscheiden (to decide)", "scheiden (to separate)", "schreiben (to write)"],
+    correct: 1,
+    explanation: "Entscheidung comes from entscheiden (to decide). Ent- means 'away', scheiden means 'to separate' — cutting away all but one choice."
+  },
+  {
+    question: "How many German nouns ending in -ung are neuter (das)?",
+    options: ["some of them", "all of them", "none of them", "about half"],
+    correct: 2,
+    explanation: "Zero. No German noun ending in -ung is neuter. They are all feminine (die). This is an absolute rule with no exceptions."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>76 words and 10 major patterns</strong> across 35 chapters. The -ung suffix is your first completely reliable gender rule. Every -ung noun is feminine. This is the foundation upon which you can build understanding of thousands of additional German words.</p>
+      <p style="margin-top: 8px;"><strong>Pattern Mastery:</strong> You now understand that verbs can be transformed into nouns, and that this transformation has predictable consequences. The same mechanism appears in completely unrelated languages like Chinese, showing that human language solves the same problems in similar ways.</p>
+      <p style="margin-top: 8px;">The next chapter introduces you to more reliable gender patterns — the suffixes that turn qualities into nouns. Freedom, beauty, truth — how German names the intangible things.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- SPEAK GERMAN WORDS INLINE ---
+document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

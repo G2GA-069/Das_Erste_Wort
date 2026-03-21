@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 68: Er sagte, dass...</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --report-grey: #4a4a5c;
+  --report-white: #f0f0f5;
+  --report-accent: #b8a4d1;
+  --night: #0a0e1a;
+  --text: #d4cabb;
+  --text-bright: #efe8db;
+  --german: #e8a44a;
+  --english: #8a9bae;
+  --report-purple: #8b7ba8;
+}
+html { scroll-behavior: smooth; background: var(--night); }
+body {
+  background: linear-gradient(to bottom, var(--report-grey) 0%, var(--report-white) 20%, var(--report-white) 60%, var(--report-grey) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.85;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  min-height: 100vh;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+header { text-align: center; margin-bottom: 60px; padding: 60px 20px 40px; }
+header h1 { font-size: 3.2rem; font-weight: 300; letter-spacing: 0.06em; color: var(--text-bright); margin-bottom: 12px; opacity: 0; animation: fadeUp 1.5s ease 0.3s forwards; }
+header .chapter-number { color: var(--report-purple); font-size: 1rem; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; opacity: 0; animation: fadeUp 1.5s ease 0.5s forwards; }
+header .subtitle { color: var(--report-accent); font-size: 1.4rem; font-weight: 300; font-style: italic; opacity: 0; animation: fadeUp 1.5s ease 0.7s forwards; }
+.scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3); font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 3em; }
+.scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.canvas-container { width: 100%; max-width: 800px; margin: 60px auto 80px; position: relative; }
+canvas { width: 100%; height: 400px; display: block; border-radius: 8px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+.scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+.scene.visible { opacity: 1; transform: translateY(0); }
+.scene-marker { display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--report-purple), transparent); margin: 0 auto 40px; }
+.narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+.narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center; font-style: italic; margin: 2em 0; }
+.german-word { color: var(--german); font-weight: 600; cursor: pointer; border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; }
+.german-word:hover { color: var(--report-purple); border-bottom-color: var(--report-purple); }
+.vocab-card { background: linear-gradient(135deg, rgba(139, 123, 168, 0.15), rgba(128, 112, 157, 0.1)); border: 1px solid rgba(184, 164, 209, 0.25); border-radius: 12px; padding: 28px 32px; margin: 24px 0 32px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.5s ease; cursor: pointer; }
+.vocab-card.open { max-height: 1200px; opacity: 1; }
+.vocab-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.vocab-card .german { color: var(--german); font-size: 1.6rem; font-weight: 600; letter-spacing: 0.05em; }
+.vocab-card .pronunciation { color: var(--report-purple); font-size: 1rem; font-style: italic; letter-spacing: 0.08em; }
+.vocab-card .english { color: var(--english); font-size: 1.1rem; }
+.vocab-card .part-of-speech { color: rgba(212, 202, 187, 0.6); font-size: 0.95rem; margin-top: 8px; font-style: italic; }
+.vocab-card .examples { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(184, 164, 209, 0.15); }
+.vocab-card .example-line { margin: 12px 0; padding-left: 16px; border-left: 2px solid var(--report-purple); color: var(--text); line-height: 1.7; }
+.vocab-card .example-translation { color: var(--english); font-size: 0.95rem; margin-top: 4px; }
+.speaker-icon { display: inline-block; width: 18px; height: 18px; background: rgba(184, 164, 209, 0.3); border-radius: 3px; margin-left: 8px; cursor: pointer; transition: all 0.3s ease; font-size: 0.75rem; line-height: 18px; text-align: center; color: var(--report-purple); font-weight: bold; }
+.speaker-icon:hover { background: rgba(184, 164, 209, 0.6); transform: scale(1.1); }
+.table-section { background: linear-gradient(135deg, rgba(139, 123, 168, 0.08), rgba(128, 112, 157, 0.05)); border: 1px solid rgba(184, 164, 209, 0.2); border-radius: 12px; padding: 32px; margin: 40px 0; overflow-x: auto; }
+.table-section h3 { color: var(--report-purple); font-size: 1.5rem; margin-bottom: 24px; font-weight: 400; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+table thead { background: rgba(184, 164, 209, 0.1); }
+table th { color: var(--report-purple); padding: 16px; text-align: left; font-weight: 600; border-bottom: 2px solid rgba(184, 164, 209, 0.3); font-size: 1.05rem; }
+table td { color: var(--text); padding: 14px 16px; border-bottom: 1px solid rgba(184, 164, 209, 0.1); }
+table tr:hover { background: rgba(184, 164, 209, 0.05); }
+table tr:last-child td { border-bottom: none; }
+.comparison-box { background: rgba(128, 112, 157, 0.1); border-left: 4px solid var(--report-purple); padding: 24px; margin: 24px 0; border-radius: 6px; }
+.comparison-label { color: var(--report-purple); font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.comparison-text { color: var(--text-bright); font-size: 1.2rem; margin-bottom: 8px; }
+.comparison-meaning { color: var(--english); font-size: 1rem; font-style: italic; }
+.bridge-section { background: linear-gradient(135deg, rgba(139, 123, 168, 0.12), rgba(128, 112, 157, 0.08)); border: 1px solid rgba(184, 164, 209, 0.25); border-radius: 12px; padding: 32px; margin: 40px 0; }
+.bridge-section h3 { color: var(--report-purple); font-size: 1.5rem; margin-bottom: 20px; font-weight: 400; }
+.bridge-section p { color: var(--text); margin-bottom: 16px; line-height: 1.85; }
+.bridge-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+.bridge-col { background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 8px; border: 1px solid rgba(184, 164, 209, 0.15); }
+.bridge-col h4 { color: var(--report-purple); font-size: 1.1rem; margin-bottom: 12px; font-weight: 600; }
+.bridge-col p { color: var(--text); font-size: 1rem; margin-bottom: 12px; }
+@media (max-width: 768px) { .bridge-comparison { grid-template-columns: 1fr; } }
+.quiz-section { background: linear-gradient(135deg, rgba(184, 164, 209, 0.1), rgba(184, 164, 209, 0.05)); border: 1px solid rgba(184, 164, 209, 0.25); border-radius: 12px; padding: 40px 32px; margin: 60px 0 40px; }
+.quiz-section h2 { color: var(--report-purple); font-size: 2rem; margin-bottom: 40px; font-weight: 300; text-align: center; }
+.quiz-question { margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(184, 164, 209, 0.15); }
+.quiz-question:last-child { border-bottom: none; }
+.quiz-number { color: var(--report-purple); font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; }
+.quiz-prompt { color: var(--text-bright); font-size: 1.2rem; margin-bottom: 20px; line-height: 1.7; }
+.quiz-options { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.quiz-option { background: rgba(139, 123, 168, 0.1); border: 2px solid rgba(184, 164, 209, 0.2); border-radius: 6px; padding: 16px 20px; cursor: pointer; transition: all 0.3s ease; color: var(--text); font-size: 1.05rem; }
+.quiz-option:hover { background: rgba(184, 164, 209, 0.15); border-color: var(--report-purple); }
+.quiz-option.selected { background: rgba(184, 164, 209, 0.25); border-color: var(--report-purple); color: var(--text-bright); }
+.quiz-option.correct { background: rgba(100, 200, 100, 0.2); border-color: rgba(100, 200, 100, 0.6); }
+.quiz-option.incorrect { background: rgba(200, 100, 100, 0.2); border-color: rgba(200, 100, 100, 0.6); }
+.quiz-feedback { margin-top: 16px; font-size: 1rem; color: var(--english); max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; }
+.quiz-feedback.show { max-height: 200px; opacity: 1; }
+.nav-buttons { display: flex; justify-content: space-between; gap: 20px; margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(184, 164, 209, 0.15); }
+.nav-button { background: linear-gradient(135deg, rgba(184, 164, 209, 0.2), rgba(184, 164, 209, 0.1)); border: 1px solid rgba(184, 164, 209, 0.3); border-radius: 8px; padding: 16px 32px; color: var(--report-purple); cursor: pointer; font-size: 1rem; font-weight: 500; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+.nav-button:hover { background: linear-gradient(135deg, rgba(184, 164, 209, 0.35), rgba(184, 164, 209, 0.25)); border-color: var(--report-purple); }
+.nav-button.disabled { opacity: 0.5; cursor: not-allowed; }
+.nav-button.disabled:hover { background: linear-gradient(135deg, rgba(184, 164, 209, 0.2), rgba(184, 164, 209, 0.1)); border-color: rgba(184, 164, 209, 0.3); }
+footer { text-align: center; margin-top: 80px; padding: 40px 20px; color: rgba(212, 202, 187, 0.5); font-size: 0.95rem; border-top: 1px solid rgba(184, 164, 209, 0.1); }
+.quotation-box { background: linear-gradient(135deg, rgba(139, 123, 168, 0.12), rgba(128, 112, 157, 0.08)); border: 2px solid rgba(184, 164, 209, 0.3); border-radius: 8px; padding: 24px 28px; margin: 32px 0; font-style: italic; color: var(--text-bright); border-left: 6px solid var(--report-purple); }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<div class="container">
+<header>
+<div class="chapter-number">CHAPTER 68</div>
+<h1>Er sagte, dass...</h1>
+<div class="subtitle">Indirect Speech & the Reporting Mood</div>
+<div class="scroll-hint"><span>↓</span></div>
+</header>
+<div class="canvas-container"><canvas id="speechbubbles"></canvas></div>
+<section class="scene">
+<div class="scene-marker"></div>
+<p class="narrative">Now we turn to something at once simpler and more mysterious: the mood of reporting. <span class="german-word" data-speak="true">Konjunktiv I</span> is not the mood of dreams, as Konjunktiv II is. It is the mood of distance through distance itself. It is the mood that says: "Someone told me this, and I am passing it along, but I am not vouching for its truth." Direct speech becomes indirect speech, and the grammar shifts in a way that creates a subtle, almost imperceptible boundary between the story and the teller.</p>
+<p class="narrative">In newspapers and formal writing, in academic papers and official reports, Konjunktiv I does its quiet work: it signals that these are not the writer's words, but words that have been reported. It is a mood that exists almost nowhere else in the modern world except in German. It survives because German understands something essential about language: that to report is not to assert. To say "he said that he was tired" is fundamentally different from "he is tired." The mood makes this difference audible.</p>
+</section>
+<section class="scene">
+<div class="scene-marker"></div>
+<h2 style="color: var(--report-purple); font-size: 2rem; margin-bottom: 30px; font-weight: 400;">From Direct to Indirect: The Transformation of Speech</h2>
+<p class="narrative">Listen to what happens when speech becomes report. A speaker says: <span class="german-word" data-speak="true">"Ich bin müde."</span> (I am tired.) This is direct speech. The person is speaking for themselves. The mood is indicative. The verb is "bin"—first person singular, present tense.</p>
+<p class="narrative">Now someone reports this: <span class="german-word" data-speak="true">"Er sagte, er sei müde."</span> (He said that he was tired.) The pronoun shifts from "ich" to "er". The verb shifts from "bin" to "sei"—the first person subjunctive becomes the third person subjunctive. This is not arbitrary. This is grammar acknowledging the passage through another voice. The speaker's words have moved through time and the consciousness of another person. The mood marks this passage. It says: this voice is not the speaker's own.</p>
+<p class="narrative">In more formal or journalistic German, you might encounter: <span class="german-word" data-speak="true">"Die Regierung erklärte, die Lage sei stabil."</span> (The government declared that the situation was stable.) Notice that the journalist uses Konjunktiv I. "Sei" is the subjunctive form. The journalist is saying: the government made this claim, but I am not asserting it as fact. The mood creates distance. The mood protects the journalist, and the truth.</p>
+<p class="narrative">This is the genius of Konjunktiv I: it allows you to report without claiming. To relay without representing. To pass along words while maintaining a kind of grammatical honesty about your own involvement in those words.</p>
+</section>
+<section class="scene">
+<div class="scene-marker"></div>
+<h2 style="color: var(--report-purple); font-size: 2rem; margin-bottom: 30px; font-weight: 400;">Formation: The Preservation of Voice</h2>
+<p class="narrative">Konjunktiv I is formed by taking the infinitive stem and adding subjunctive endings. For most verbs, this creates forms that are identical to the indicative. That is why Konjunktiv I is dying in modern German—it is invisible. When a form is identical in both moods, the reader cannot tell if the speaker is reporting or asserting.</p>
+<p class="narrative emphasis">This is where Konjunktiv II steps in as a rescue. When Konjunktiv I would be indistinguishable from the indicative, German allows the speaker to use Konjunktiv II instead. The result is that Konjunktiv I survives primarily in three forms: <span class="german-word" data-speak="true">sei</span> (be), <span class="german-word" data-speak="true">habe</span> (have), and <span class="german-word" data-speak="true">könne</span> (can). These three forms still sound like what they are: subjunctive. Still sound like reporting.</p>
+<p class="narrative">The subjunctive of "sein" is "sei" for all persons except "you formal" (which is "seien"). The subjunctive of "haben" is "habe." The subjunctive of "können" is "könne." These forms have survived because they are necessary. Because they are the only way to mark reported speech in formal German.</p>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">sagte</span> <span class="pronunciation">[ˈzaːktə]</span> <span class="english">said (past tense)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Past tense of sagen (to say)</div>
+<div class="examples">
+<div class="example-line">Er sagte, er sei Künstler.</div>
+<div class="example-translation">He said that he was an artist.</div>
+<div class="example-line">Sie sagte, dass sie morgen kommt.</div>
+<div class="example-translation">She said that she is coming tomorrow.</div>
+<div class="example-line">Er sagte mir, dass ich falsch lag.</div>
+<div class="example-translation">He told me that I was wrong.</div>
+</div>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">erklärte</span> <span class="pronunciation">[ɛɐˈkleːɐtə]</span> <span class="english">declared (past tense)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Past tense of erklären (to declare, to explain)</div>
+<div class="examples">
+<div class="example-line">Die Regierung erklärte, die Lage sei stabil.</div>
+<div class="example-translation">The government declared that the situation was stable.</div>
+<div class="example-line">Der Arzt erklärte, der Patient sei gesund.</div>
+<div class="example-translation">The doctor declared that the patient was healthy.</div>
+</div>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">behauptete</span> <span class="pronunciation">[bəˈhaʊptətə]</span> <span class="english">claimed (past tense)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Past tense of behaupten (to claim, to assert)</div>
+<div class="examples">
+<div class="example-line">Sie behauptete, dass die Geschichte wahr sei.</div>
+<div class="example-translation">She claimed that the story was true.</div>
+<div class="example-line">Er behauptete, er habe das Buch gelesen.</div>
+<div class="example-translation">He claimed that he had read the book.</div>
+</div>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">betonte</span> <span class="pronunciation">[bəˈtoːntə]</span> <span class="english">emphasized (past tense)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Past tense of betonen (to emphasize)</div>
+<div class="examples">
+<div class="example-line">Der Minister betonte, dass die Lage ernst sei.</div>
+<div class="example-translation">The minister emphasized that the situation was serious.</div>
+<div class="example-line">Sie betonte, dass sie recht habe.</div>
+<div class="example-translation">She emphasized that she was right.</div>
+</div>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">sei</span> <span class="pronunciation">[zaɪ]</span> <span class="english">be (subjunctive)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Konjunktiv I of sein (to be) — used in all persons</div>
+<div class="examples">
+<div class="example-line">Er sagte, dass er Arzt sei.</div>
+<div class="example-translation">He said that he was a doctor. (He is claiming to be a doctor.)</div>
+<div class="example-line">Sie berichtete, dass das Wetter schön sei.</div>
+<div class="example-translation">She reported that the weather was beautiful.</div>
+</div>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">habe</span> <span class="pronunciation">[ˈhaːbə]</span> <span class="english">have (subjunctive)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Konjunktiv I of haben (to have) — used in all persons</div>
+<div class="examples">
+<div class="example-line">Er sagte, dass er ein Auto habe.</div>
+<div class="example-translation">He said that he had a car. (According to him.)</div>
+<div class="example-line">Sie erklärte, dass sie Erfahrung habe.</div>
+<div class="example-translation">She explained that she had experience.</div>
+</div>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">könne</span> <span class="pronunciation">[ˈkœnə]</span> <span class="english">can (subjunctive)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Konjunktiv I of können (can) — used in all persons</div>
+<div class="examples">
+<div class="example-line">Der Expert sagte, es könne gefährlich sein.</div>
+<div class="example-translation">The expert said that it could be dangerous.</div>
+<div class="example-line">Sie behauptete, dass ich es könne.</div>
+<div class="example-translation">She claimed that I could do it.</div>
+</div>
+</section>
+<section class="vocab-card" data-card="vocabulary-set">
+<div class="word-header"><span class="german">wolle</span> <span class="pronunciation">[ˈvɔlə]</span> <span class="english">want (subjunctive)</span> <span class="speaker-icon" data-speak="true">♪</span></div>
+<div class="part-of-speech">Konjunktiv I of wollen (to want)</div>
+<div class="examples">
+<div class="example-line">Er sagte, dass er ins Kino wolle.</div>
+<div class="example-translation">He said that he wanted to go to the cinema.</div>
+<div class="example-line">Sie berichtete, dass sie helfen wolle.</div>
+<div class="example-translation">She reported that she wanted to help.</div>
+</div>
+</section>
+<section class="table-section">
+<h3>Konjunktiv I Formation: The Three Survivors</h3>
+<table>
+<thead><tr><th>Person</th><th>sein (be)</th><th>haben (have)</th><th>können (can)</th><th>wollen (want)</th></tr></thead>
+<tbody>
+<tr><td><strong>ich</strong></td><td>sei</td><td>habe</td><td>könne</td><td>wolle</td></tr>
+<tr><td><strong>du</strong></td><td>seist</td><td>habest</td><td>könnest</td><td>wollest</td></tr>
+<tr><td><strong>er/sie/es</strong></td><td>sei</td><td>habe</td><td>könne</td><td>wolle</td></tr>
+<tr><td><strong>wir</strong></td><td>seien</td><td>haben</td><td>können</td><td>wollen</td></tr>
+<tr><td><strong>ihr</strong></td><td>seiet</td><td>habet</td><td>könnet</td><td>wollet</td></tr>
+<tr><td><strong>sie/Sie</strong></td><td>seien</td><td>haben</td><td>können</td><td>wollen</td></tr>
+</tbody>
+</table>
+<p style="margin-top: 20px; color: var(--text); font-size: 1rem;">Note: Many of these forms are identical to indicative, so Konjunktiv II is often used instead. Only the clearly subjunctive forms ("sei," "habe," "könne," "wolle") survive in modern usage.</p>
+</section>
+<section class="scene">
+<div class="scene-marker"></div>
+<h2 style="color: var(--report-purple); font-size: 2rem; margin-bottom: 30px; font-weight: 400;">Direct Speech Becomes Indirect Speech</h2>
+<p class="narrative">The transformation from direct to indirect is not merely grammatical—it is a fundamental change in the nature of language. When you report speech, you are translating the other person's word into your own narrative. You are mediating their voice through your voice. The subjunctive mood marks this mediation.</p>
+<p class="narrative">Look at how this works in practice:</p>
+</section>
+<div class="quotation-box">
+<strong>Direct speech:</strong> "Ich bin müde," sagte er.<br>
+"I am tired," he said.
+</div>
+<div class="comparison-box">
+<div class="comparison-label">Transformation Step 1: Pronoun Shift</div>
+<div class="comparison-text">Ich bin müde → Er sei müde</div>
+<div class="comparison-meaning">The first person ("I") becomes third person ("he"). The perspective shifts to the reporter's view.</div>
+</div>
+<div class="comparison-box">
+<div class="comparison-label">Transformation Step 2: Mood Shift</div>
+<div class="comparison-text">bin (indicative) → sei (subjunctive)</div>
+<div class="comparison-meaning">The indicative "bin" becomes the subjunctive "sei." The grammar now signals: this is reported, not asserted.</div>
+</div>
+<div class="comparison-box">
+<div class="comparison-label">Transformation Step 3: Integration</div>
+<div class="comparison-text">Er sagte, dass er müde sei.</div>
+<div class="comparison-meaning">The entire utterance is now embedded in the reporter's sentence. It is no longer the speaker's direct assertion, but the reporter's account of the speaker's assertion.</div>
+</div>
+<section class="table-section">
+<h3>Five Examples: Direct to Indirect Speech Transformation</h3>
+<table>
+<thead><tr><th>Direct Speech</th><th>Indirect Speech</th><th>Grammatical Change</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>Direct:</strong> "Ich bin glücklich," sagte sie.<br><span style="font-size: 0.9rem; color: var(--english);">"I am happy," she said.</span></td>
+<td><strong>Indirect:</strong> Sie sagte, dass sie glücklich sei.<br><span style="font-size: 0.9rem; color: var(--english);">She said that she was happy.</span></td>
+<td>bin → sei (Konjunktiv I)</td>
+</tr>
+<tr>
+<td><strong>Direct:</strong> "Ich habe das Projekt abgeschlossen," berichtete er.<br><span style="font-size: 0.9rem; color: var(--english);">"I completed the project," he reported.</span></td>
+<td><strong>Indirect:</strong> Er berichtete, dass er das Projekt abgeschlossen habe.<br><span style="font-size: 0.9rem; color: var(--english);">He reported that he had completed the project.</span></td>
+<td>habe abgeschlossen → habe abgeschlossen (Konjunktiv I)</td>
+</tr>
+<tr>
+<td><strong>Direct:</strong> "Das ist möglich," erklärte der Experte.<br><span style="font-size: 0.9rem; color: var(--english);">"That is possible," the expert explained.</span></td>
+<td><strong>Indirect:</strong> Der Experte erklärte, dass das möglich sei.<br><span style="font-size: 0.9rem; color: var(--english);">The expert explained that that was possible.</span></td>
+<td>ist → sei (Konjunktiv I)</td>
+</tr>
+<tr>
+<td><strong>Direct:</strong> "Ich kann dir helfen," sagte sie.<br><span style="font-size: 0.9rem; color: var(--english);">"I can help you," she said.</span></td>
+<td><strong>Indirect:</strong> Sie sagte, dass sie dir helfen könne.<br><span style="font-size: 0.9rem; color: var(--english);">She said that she could help you.</span></td>
+<td>kann → könne (Konjunktiv I)</td>
+</tr>
+<tr>
+<td><strong>Direct:</strong> "Wir werden gewinnen," behauptete er.<br><span style="font-size: 0.9rem; color: var(--english);">"We will win," he claimed.</span></td>
+<td><strong>Indirect:</strong> Er behauptete, dass wir gewinnen würden.<br><span style="font-size: 0.9rem; color: var(--english);">He claimed that we would win.</span></td>
+<td>werden → würden (Konjunktiv II used instead)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="scene">
+<div class="scene-marker"></div>
+<h2 style="color: var(--report-purple); font-size: 2rem; margin-bottom: 30px; font-weight: 400;">When to Use Konjunktiv I vs. Konjunktiv II</h2>
+<p class="narrative">The rule is simple: use Konjunktiv I when it is distinct and recognizable. When the form is identical to the indicative, use Konjunktiv II instead. This is called the "replacement rule." In practice, this means that Konjunktiv I appears primarily in formal German—newspapers, academic writing, official statements. In everyday conversation, Konjunktiv II is far more common, because it is audible and unmistakable.</p>
+<p class="narrative">A journalist writing in a newspaper would write: <span class="german-word" data-speak="true">"Der Sprecher sagte, dass die Lage ernst sei."</span> (The spokesman said that the situation was serious.) The subjunctive "sei" is recognizable. It marks the reported nature of the statement.</p>
+<p class="narrative">But a friend telling you a story might say: <span class="german-word" data-speak="true">"Er sagte, dass die Lage ernst wäre."</span> Using Konjunktiv II instead. The effect is the same—distance, indirectness, lack of personal assertion. But the form is more colloquial, more natural in speech.</p>
+</section>
+<section class="bridge-section">
+<h3>How Chinese and German Differ in Reporting Speech</h3>
+<div class="bridge-comparison">
+<div class="bridge-col">
+<h4>German: Mood Marks the Reported</h4>
+<p><strong>Er sagte, dass er müde sei.</strong></p>
+<p style="font-size: 0.9rem; color: var(--english);">He said that he was tired.</p>
+<p style="margin-top: 12px; line-height: 1.6;">The subjunctive form "sei" marks this as reported speech. The grammar itself signals the presence of another voice. The listener hears the mood shift and understands: this is what someone else said, not what the speaker is asserting.</p>
+</div>
+<div class="bridge-col">
+<h4>Chinese: No Mood, Content Carries Meaning</h4>
+<p><strong>他说他累了。</strong></p>
+<p style="font-size: 0.9rem; color: var(--english);">He said he tired. / He said he was tired.</p>
+<p style="margin-top: 12px; line-height: 1.6;">The verb "说" (shuō, said) already signals that this is reported speech. No mood change is necessary. The grammar remains identical whether reporting or asserting. The context—the word "said"—makes the meaning clear.</p>
+</div>
+</div>
+<p style="margin-top: 24px; color: var(--text); line-height: 1.8;">This is a fundamental difference in how languages approach the problem of reporting. German uses grammar—the subjunctive mood—to mark reported speech. Chinese uses lexical marking—the verb "said" announces that a report is coming, and the grammar stays the same. Neither is "better." They represent different solutions to the same problem: how do you distinguish between what the speaker is asserting and what someone else said? German answers: change the mood. Chinese answers: use the right verb, and the mood doesn't matter. For a learner who speaks Chinese, this difference is crucial. You are accustomed to relying on verbs of saying to signal reports. In German, the verb still matters, but so does the mood. The subjunctive adds an extra layer of distance, an extra grammatical honesty about the passage of the words through another consciousness.</p>
+</section>
+<section class="scene">
+<div class="scene-marker"></div>
+<h2 style="color: var(--report-purple); font-size: 2rem; margin-bottom: 30px; font-weight: 400;">The Journalist's Tool</h2>
+<p class="narrative">Konjunktiv I is, above all, the tool of journalists and official reporters. Look at any German newspaper and you will see it at work. When a politician makes a claim, the journalist reports it in Konjunktiv I. This is not accident. This is craft. By using the subjunctive, the journalist signals: I am not affirming this claim. I am reporting it. The truth of the claim is not guaranteed by my use of these words. The subjunctive creates distance between the reporter and the reported claim.</p>
+<p class="narrative emphasis">This is a profound tool for truthfulness in journalism. The subjunctive allows the journalist to report falsehoods without affirming them. To pass along misinformation without endorsing it. To maintain skepticism while still conveying information. It is grammar in service of honesty.</p>
+</section>
+<section class="quiz-section">
+<h2>Self-Assessment: 80% Mastery Quiz</h2>
+<p style="text-align: center; color: var(--english); margin-bottom: 32px;">Answer 12 questions to test your understanding of Konjunktiv I and indirect speech. Aim for 10 or more correct answers.</p>
+<div class="quiz-question">
+<div class="quiz-number">Question 1 of 12</div>
+<div class="quiz-prompt">Convert to indirect speech: "Ich bin Arzt," sagte er. (Using Konjunktiv I)</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> Er sagte, dass ich bin Arzt.</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> Er sagte, dass er sei Arzt.</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> Er sagte, dass er Arzt sei.</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> Er sagte, dass er ist Arzt.</div>
+</div>
+<div class="quiz-feedback" data-correct="c">Correct! "Er sagte, dass er Arzt sei." The verb "sei" is Konjunktiv I, and the word order is correct for a dass-clause (verb at the end).</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 2 of 12</div>
+<div class="quiz-prompt">What is the Konjunktiv I form of "haben" (to have)?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> habe</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> hatte</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> hast</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> hätte</div>
+</div>
+<div class="quiz-feedback" data-correct="a">Correct! "Habe" is the Konjunktiv I form. "Hatte" is simple past; "hast" is present indicative; "hätte" is Konjunktiv II.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 3 of 12</div>
+<div class="quiz-prompt">Which verb form is Konjunktiv I?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> sei</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> bin</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> wäre</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> war</div>
+</div>
+<div class="quiz-feedback" data-correct="a">Correct! "Sei" is Konjunktiv I of "sein." "Bin" is present indicative; "wäre" is Konjunktiv II; "war" is simple past.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 4 of 12</div>
+<div class="quiz-prompt">What is the primary purpose of Konjunktiv I?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> To express wishes and hypotheticals.</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> To mark indirect (reported) speech and distance the reporter from the claim.</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> To express politeness and respect.</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> To indicate past time in formal writing.</div>
+</div>
+<div class="quiz-feedback" data-correct="b">Correct! Konjunktiv I is used for indirect speech and to create distance between the reporter and what is being reported.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 5 of 12</div>
+<div class="quiz-prompt">Complete: "Die Regierung erklärte, dass die Wirtschaft ___." (The government declared that the economy...)</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> ist stark</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> sei stark</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> wäre stark</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> wird stark</div>
+</div>
+<div class="quiz-feedback" data-correct="b">Correct! "Sei stark" uses Konjunktiv I. This is formal reported speech. "Ist" is indicative; "wäre" is Konjunktiv II; "wird" is future.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 6 of 12</div>
+<div class="quiz-prompt">What is the Konjunktiv I form of "können" (can)?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> kann</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> könnte</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> könne</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> konnte</div>
+</div>
+<div class="quiz-feedback" data-correct="c">Correct! "Könne" is Konjunktiv I of "können." It's one of the three forms that remains distinct from the indicative.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-num number">Question 7 of 12</div>
+<div class="quiz-prompt">Convert to indirect: "Das ist falsch," sagte sie.</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> Sie sagte, dass das ist falsch.</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> Sie sagte, dass das wäre falsch.</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> Sie sagte, dass das falsch sei.</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> Sie sagte, dass das falsch ist.</div>
+</div>
+<div class="quiz-feedback" data-correct="c">Correct! "Dass das falsch sei" uses Konjunktiv I. Word order: "dass" moves the verb to the end.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 8 of 12</div>
+<div class="quiz-prompt">In journalism, why is Konjunktiv I preferred for indirect speech?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> Because it sounds more formal and impressive.</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> Because it creates distance between the reporter and the claim, signaling that the reporter is not asserting its truth.</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> Because it is easier to construct than Konjunktiv II.</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> Because German grammar requires it.</div>
+</div>
+<div class="quiz-feedback" data-correct="b">Correct! The subjunctive mood creates linguistic distance, allowing the journalist to report without endorsing. It is a tool for truthful reporting.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 9 of 12</div>
+<div class="quiz-prompt">What is the "replacement rule" in Konjunktiv I?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> Always use Konjunktiv II instead of Konjunktiv I.</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> When Konjunktiv I is identical to the indicative, use Konjunktiv II instead to keep the subjunctive meaning audible.</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> Replace all subjunctive forms with past tense.</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> Use Konjunktiv I only in formal writing.</div>
+</div>
+<div class="quiz-feedback" data-correct="b">Correct! This rule explains why Konjunktiv I is rare—most forms are indistinguishable from the indicative, so Konjunktiv II is used instead.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 10 of 12</div>
+<div class="quiz-prompt">How does Chinese mark indirect speech differently from German?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> Chinese uses a subjunctive mood like German does.</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> Chinese uses the verb "说" (shuō, said) to signal reported speech, but does not change the verb form or mood.</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> Chinese cannot express indirect speech at all.</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> Chinese uses past tense for all reported speech.</div>
+</div>
+<div class="quiz-feedback" data-correct="b">Correct! Chinese relies on lexical marking (the verb "said") rather than grammatical mood to signal reported speech.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 11 of 12</div>
+<div class="quiz-prompt">Which three Konjunktiv I forms are most recognizable and frequently used?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> werde, würde, wäre</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> sei, habe, könne</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> war, hatte, konnte</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> bin, habe, kann</div>
+</div>
+<div class="quiz-feedback" data-correct="b">Correct! "Sei," "habe," and "könne" are the three Konjunktiv I forms that remain distinct and audibly subjunctive. All others are usually replaced by Konjunktiv II.</div>
+</div>
+<div class="quiz-question">
+<div class="quiz-number">Question 12 of 12</div>
+<div class="quiz-prompt">Convert: "Ich kann das nicht," sagte er. (What is the correct indirect speech?)</div>
+<div class="quiz-options">
+<div class="quiz-option" data-answer="a"><strong>A)</strong> Er sagte, dass er das nicht kann.</div>
+<div class="quiz-option" data-answer="b"><strong>B)</strong> Er sagte, dass er das nicht könne.</div>
+<div class="quiz-option" data-answer="c"><strong>C)</strong> Er sagte, dass er das nicht könnte.</div>
+<div class="quiz-option" data-answer="d"><strong>D)</strong> Er sagte, dass er das nicht konnte.</div>
+</div>
+<div class="quiz-feedback" data-correct="b">Correct! "Könne" is Konjunktiv I. While "könnte" (Konjunktiv II) would also be acceptable in colloquial German, "könne" is the proper subjunctive I form for formal reported speech.</div>
+</div>
+</section>
+<section class="scene" style="margin-top: 60px;">
+<div class="scene-marker"></div>
+<p class="narrative emphasis">You have now entered the world of reported speech. You understand that Konjunktiv I, though it is dying in modern German, still carries with it a profound linguistic honesty. It is the mood that says: I am not asserting this. I am passing it along. The words are not mine, and the truth of them is not my responsibility. And yet, by reporting them at all, I give them a kind of weight, a kind of credibility. The subjunctive holds this paradox: it both distances and conveys. It both doubts and communicates. This is the subtle power of grammar—to do two things at once, to hold opposing forces in balance. When you use Konjunktiv I, you are acknowledging that language is not innocent. Words pass through many mouths before they reach us. The subjunctive mood is the trace of that passage.</p>
+</section>
+<div class="nav-buttons">
+<a href="chapter67.html" class="nav-button">← Previous: Chapter 67</a>
+<a href="chapter69.html" class="nav-button">Next: Chapter 69 →</a>
+</div>
+<footer>
+<p>The First Word — A Grammar of Dreams</p>
+<p>Chapter 68: Er sagte, dass... (Konjunktiv I)</p>
+</footer>
+</div>
+<script>
+function speakGerman(text) {
+if ('speechSynthesis' in window) {
+const utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = 'de-DE';
+utterance.rate = 0.85;
+window.speechSynthesis.cancel();
+window.speechSynthesis.speak(utterance);
+}
+}
+document.addEventListener('DOMContentLoaded', () => {
+document.querySelectorAll('[data-card="vocabulary-set"]').forEach(card => {
+card.addEventListener('click', function() { this.classList.toggle('open'); });
+});
+document.querySelectorAll('.speaker-icon').forEach(icon => {
+icon.addEventListener('click', (e) => {
+e.stopPropagation();
+const card = icon.closest('.vocab-card');
+if (card) {
+const germanText = card.querySelector('.german').textContent;
+speakGerman(germanText);
+}
+});
+});
+document.querySelectorAll('[data-speak="true"]').forEach(word => {
+word.style.cursor = 'pointer';
+word.addEventListener('click', () => speakGerman(word.textContent));
+});
+const observer = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+if (entry.isIntersecting) entry.target.classList.add('visible');
+});
+}, { threshold: 0.1 });
+document.querySelectorAll('.scene').forEach(scene => observer.observe(scene));
+document.querySelectorAll('.quiz-option').forEach(option => {
+option.addEventListener('click', function() {
+const question = this.closest('.quiz-question');
+const feedback = question.querySelector('.quiz-feedback');
+const correctAnswer = feedback.dataset.correct;
+const allOptions = question.querySelectorAll('.quiz-option');
+allOptions.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
+if (this.dataset.answer === correctAnswer) {
+this.classList.add('selected', 'correct');
+feedback.classList.add('show');
+} else {
+this.classList.add('selected', 'incorrect');
+question.querySelector(`[data-answer="${correctAnswer}"]`).classList.add('correct');
+feedback.classList.add('show');
+}
+});
+});
+});
+const canvas = document.getElementById('speechbubbles');
+if (canvas) {
+const ctx = canvas.getContext('2d');
+let animationId;
+let bubbles = [];
+let time = 0;
+function resizeCanvas() {
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+class SpeechBubble {
+constructor() {
+this.x = Math.random() * canvas.width;
+this.y = Math.random() * canvas.height;
+this.vx = (Math.random() - 0.5) * 1.5;
+this.vy = (Math.random() - 0.5) * 1.5;
+this.radius = Math.random() * 20 + 10;
+this.life = Math.random() * 200 + 100;
+this.maxLife = this.life;
+}
+update() {
+this.x += this.vx;
+this.y += this.vy;
+this.life--;
+this.radius *= 0.98;
+}
+draw() {
+const alpha = this.life / this.maxLife;
+ctx.strokeStyle = `rgba(139, 123, 168, ${alpha * 0.7})`;
+ctx.lineWidth = 2;
+ctx.beginPath();
+ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+ctx.stroke();
+ctx.fillStyle = `rgba(139, 123, 168, ${alpha * 0.1})`;
+ctx.fill();
+}
+}
+function animate() {
+time++;
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+gradient.addColorStop(0, '#4a4a5c');
+gradient.addColorStop(0.5, '#f0f0f5');
+gradient.addColorStop(1, '#4a4a5c');
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+for (let i = 0; i < 2; i++) {
+const waveX = Math.sin(time * 0.004 + i) * 40;
+const waveY = Math.cos(time * 0.003 + i) * 40;
+ctx.strokeStyle = `rgba(139, 123, 168, ${0.15 * Math.abs(Math.sin(time * 0.002 + i))})`;
+ctx.lineWidth = 3;
+ctx.beginPath();
+ctx.arc(canvas.width / 2 + waveX, canvas.height / 2 + waveY, 100 + i * 120, 0, Math.PI * 2);
+ctx.stroke();
+}
+if (Math.random() < 0.3) bubbles.push(new SpeechBubble());
+bubbles = bubbles.filter(b => b.life > 0);
+bubbles.forEach(b => { b.update(); b.draw(); });
+animationId = requestAnimationFrame(animate);
+}
+animate();
+}
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">596 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(70%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:70%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 596 words across 68 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">117 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(80%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:80%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 117 patterns across 68 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

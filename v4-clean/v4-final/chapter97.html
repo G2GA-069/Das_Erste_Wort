@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 97: Zeitungsdeutsch</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --newsprint: #8a8a7a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #1a1a1a 70%, #2a2a1a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- NEWSPRINT CANVAS --- */
+  #newsprint-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1s forwards;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    animation: bob 2s ease-in-out infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* --- NARRATIVE PROSE --- */
+  .narrative {
+    font-size: 1.15rem;
+    line-height: 1.95;
+    margin-bottom: 1.8em;
+    color: var(--text);
+  }
+
+  .narrative em {
+    color: var(--text-bright);
+    font-style: italic;
+  }
+
+  .narrative strong {
+    color: var(--fire);
+    font-weight: 600;
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .narrative.small {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--english); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- SCENE STRUCTURE --- */
+  .scene {
+    margin-bottom: 80px;
+  }
+
+  .scene-marker {
+    height: 40px;
+    margin-bottom: 40px;
+    background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.2), transparent);
+  }
+
+  .divider {
+    text-align: center;
+    color: rgba(232, 164, 74, 0.3);
+    margin: 60px 0;
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border-left: 4px solid rgba(232, 164, 74, 0.4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 40px 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-title {
+    color: var(--text-bright);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(200, 100, 100, 0.1);
+    border-color: rgba(200, 100, 100, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .quiz-nav button {
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--fire);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .quiz-nav button:hover:not(:disabled) {
+    background: rgba(232, 164, 74, 0.25);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(50, 50, 50, 0.5);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .post-quiz-summary {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid var(--fire);
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+    .scene { margin-bottom: 60px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="newsprint-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Ninety-Seven</div>
+    <h1>Zeitungsdeutsch</h1>
+    <div class="subtitle">Newspaper German</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE FRONT PAGE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Pick up a newspaper. Any language, any country. The headlines hit you like bullets. Short, punchy, dramatic. And if you're reading German, you'll notice something immediately: the grammar itself is different. Headlines have their own syntax. Their own music.
+    </p>
+
+    <p class="narrative">
+      Below the headlines, the articles themselves have a particular texture. They report. They inform. They state facts, sometimes disputed facts, sometimes carefully hedged facts. The language of journalism is the language of power — it shapes what people know about the world. It determines what matters. What counts as news.
+    </p>
+
+    <p class="narrative">
+      Newspaper German is immediate. It does not have the slowness of academic German or the inwardness of literary German. It is urgent. It is combative. It seeks to persuade as much as to inform. And it has its own vocabulary — political terms, technical language, the specialized jargon of journalism and of contemporary affairs.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the language of the public sphere — urgent, contested, alive.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: HEADLINE GRAMMAR ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Look at a German headline: "Regierung kündigt neue Maßnahmen an" — "Government announces new measures." Or: "Verhandlungen scheitern" — "Negotiations fail." The verbs come early. Often the subject is implicit. The headlines compress information into the minimum possible syntax. Every word works double duty. Every pause is eliminated.
+    </p>
+
+    <p class="narrative">
+      This is headline grammar. It is economical, almost telegraphic. German, with its flexible word order, allows even more compression than English. The reader must be alert, active, ready to parse meaning quickly. There is no time for extended explanation. The headline must impact immediately.
+    </p>
+
+    <p class="narrative">
+      And consider how headlines use tense. Often the present tense is used even for past events: "Anschlag tötet drei Menschen" — "Attack kills three people" — using the simple present to increase immediacy, to make the past event feel like it's happening right now, in the moment of reading.
+    </p>
+
+    <p class="narrative">
+      In this way, headline grammar shapes how people perceive events. The use of present tense makes things feel more dramatic. The omission of subjects creates a sense of inexorability — things are happening, and the reader is simply being told what occurs.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: REPORTING STYLE ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Below the headline, the article itself. Here the style shifts slightly. The sentences are shorter than in literature but longer than headlines. Information is prioritized in a specific way: the lead paragraph summarizes the essential facts (who, what, when, where, why). Then comes detail. Then background. The structure is inverted — the most important information comes first.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="berichterstattung">Berichterstattung</span> — reportage, reporting. This is journalism. This is the act of telling the public what is happening. And German journalism has particular conventions. Quoted sources are introduced formally. Attributions are precise. The reporter maintains a pose of objectivity, even while shaping the story through choice of what to emphasize.
+    </p>
+
+    <p class="narrative">
+      The language of reporting is more neutral than the language of headlines, but not neutral in fact. Word choice matters. <span class="german-word" data-card="stellungnahme">Stellungnahme</span> — a statement, a position — appears constantly in journalism. Officials give <em>Stellungnahmen</em>. They are asked for their <em>Stellungnahme</em> on events. The word appears so often that it becomes almost invisible, but it frames statements as positions, as one voice among many, rather than as objective truth.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: VOCABULARY OF CONFLICT ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Newspaper German has a particular vocabulary. Words that appear again and again, that shape how events are discussed. Consider <span class="german-word" data-card="massnahme">Maßnahme</span> — a measure, a step, an action taken. The government announces Maßnahmen. The European Union proposes Maßnahmen. <em>Maßnahme</em> is the word for intervention, for policy, for action. It is inherently somewhat abstract — it covers everything from military strikes to economic sanctions to public health measures.
+    </p>
+
+    <p class="narrative">
+      Or <span class="german-word" data-card="verhandlung">Verhandlung</span> — a negotiation, a discussion, a formal exchange. Trade <em>Verhandlungen</em>. Peace <em>Verhandlungen</em>. The word is neutral, but it frames what is being discussed as a negotiation, as a process where both sides have positions.
+    </p>
+
+    <p class="narrative">
+      And then there is <span class="german-word" data-card="ankundigung">Ankündigung</span> — an announcement. When a government or corporation makes something public, they make an <em>Ankündigung</em>. The word carries a sense of formality, of something being officially declared. Not a rumor or speculation, but an <em>Ankündigung</em> — something officially declared.
+    </p>
+
+    <p class="narrative">
+      Each of these words — <em>Maßnahme</em>, <em>Verhandlung</em>, <em>Ankündigung</em> — shapes how readers understand events. They are tools of framing. And skilled journalists use them with precision to guide readers toward particular interpretations.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: CONFLICT AND RESTRICTION ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Newspaper German is full of words for conflict and restriction. <span class="german-word" data-card="einschrankung">Einschränkung</span> — a restriction, a limitation. Economic <em>Einschränkungen</em>. Trade <em>Einschränkungen</em>. The word appears constantly in news about policy and regulation.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-card="vorwurf">Vorwurf</span> — an accusation, a charge, a reproach. Someone makes a <em>Vorwurf</em> against someone else. The word is interesting because it is slightly more formal than "accusation." It suggests something that has been thought through, that carries weight. When someone makes a <em>Vorwurf</em>, it matters.
+    </p>
+
+    <p class="narrative">
+      Finally, <span class="german-word" data-card="forderung">Forderung</span> — a demand, a claim, a request with force behind it. The opposition makes <em>Forderungen</em>. Civil society groups make <em>Forderungen</em>. A <em>Forderung</em> is not a polite request — it is something demanded, something that the speaker insists upon.
+    </p>
+
+    <p class="narrative">
+      These three words — <em>Vorwurf</em>, <em>Einschränkung</em>, <em>Forderung</em> — describe a landscape of conflict. Someone restricts something. Someone else makes an accusation. And a third party demands something in response. This is the drama that newspaper German reports.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== VOCABULARY CARDS ==================== -->
+
+  <!-- BERICHTERSTATTUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-berichterstattung">
+      <div class="word-header">
+        <span class="word-main">Berichterstattung</span>
+        <span class="word-pron">/bəˈʁɪçtɐˌʃtatʊŋ/</span>
+      </div>
+      <div class="word-meaning">reportage, reporting — the act of reporting news or events</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Bericht (report) + -stattung (act of)</span>
+        <span class="bridge-note">— the act of giving reports, journalism</span>
+      </div>
+      <div class="story">
+        <em>Berichterstattung</em> is the formal word for journalism. When you read about media <em>Berichterstattung</em> in German, you're reading about how news is reported. The word emphasizes the activity — the constant act of reporting, informing the public about what is happening in the world.
+      </div>
+    </div>
+  </div>
+
+  <!-- MASSNAHME -->
+  <div class="scene">
+    <div class="ety-card" id="card-massnahme">
+      <div class="word-header">
+        <span class="word-main">Maßnahme</span>
+        <span class="word-pron">/ˈmaːsnaːmə/</span>
+      </div>
+      <div class="word-meaning">measure, step, action — a policy action or intervention taken</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Maß (measure) + Nahme (taking)</span>
+        <span class="bridge-note">— the taking of a measure, a measured action</span>
+      </div>
+      <div class="story">
+        <em>Maßnahme</em> is one of the most common words in newspaper German. Governments announce <em>Maßnahmen</em>. Companies take <em>Maßnahmen</em>. The EU proposes <em>Maßnahmen</em>. It is the word for action, for policy, for intervention — but it is abstract enough to cover any kind of action.
+      </div>
+    </div>
+  </div>
+
+  <!-- VERHANDLUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-verhandlung">
+      <div class="word-header">
+        <span class="word-main">Verhandlung</span>
+        <span class="word-pron">/fɛɐ̯ˈhantlʊŋ/</span>
+      </div>
+      <div class="word-meaning">negotiation, discussion — a formal exchange between parties with conflicting interests</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + Handlung (action, dealing)</span>
+        <span class="bridge-note">— mutual action, discussion</span>
+      </div>
+      <div class="story">
+        <em>Verhandlung</em> is the word for negotiation in all contexts. Trade <em>Verhandlungen</em>, peace <em>Verhandlungen</em>, wage <em>Verhandlungen</em>. The word implies a formal process where both sides have positions and seek to reach agreement.
+      </div>
+    </div>
+  </div>
+
+  <!-- ANKÜNDIGUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-ankundigung">
+      <div class="word-header">
+        <span class="word-main">Ankündigung</span>
+        <span class="word-pron">/ˈankʏndɪɡʊŋ/</span>
+      </div>
+      <div class="word-meaning">announcement — an official declaration or notice</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">an- + künden (to announce)</span>
+        <span class="bridge-note">— to announce publicly, to declare</span>
+      </div>
+      <div class="story">
+        <em>Ankündigung</em> appears constantly in news reports. Companies make <em>Ankündigungen</em>. Politicians make <em>Ankündigungen</em>. The word suggests something official, formally declared, not a rumor but an actual announcement.
+      </div>
+    </div>
+  </div>
+
+  <!-- EINSCHRÄNKUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-einschrankung">
+      <div class="word-header">
+        <span class="word-main">Einschränkung</span>
+        <span class="word-pron">/ˈaɪ̯nʃʁɛŋkʊŋ/</span>
+      </div>
+      <div class="word-meaning">restriction, limitation — a constraint on freedom or possibility</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ein- + Schränkung (limiting)</span>
+        <span class="bridge-note">— to limit, to restrict, to confine</span>
+      </div>
+      <div class="story">
+        <em>Einschränkung</em> appears in discussions of policy and regulation. Trade <em>Einschränkungen</em>, economic <em>Einschränkungen</em>, restrictions on movement or speech. The word frames something as a limit on freedom.
+      </div>
+    </div>
+  </div>
+
+  <!-- VORWURF -->
+  <div class="scene">
+    <div class="ety-card" id="card-vorwurf">
+      <div class="word-header">
+        <span class="word-main">Vorwurf</span>
+        <span class="word-pron">/ˈfoːɐ̯vʊʁf/</span>
+      </div>
+      <div class="word-meaning">accusation, charge, reproach — a claim that someone has done something wrong</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">vor (forward) + Wurf (throw)</span>
+        <span class="bridge-note">— to throw forward, to cast a charge at someone</span>
+      </div>
+      <div class="story">
+        <em>Vorwurf</em> is more formal than a simple accusation. It suggests something weighty, something that has been considered. When an official makes a <em>Vorwurf</em>, it carries significance. The word appears constantly in news about political conflict.
+      </div>
+    </div>
+  </div>
+
+  <!-- FORDERUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-forderung">
+      <div class="word-header">
+        <span class="word-main">Forderung</span>
+        <span class="word-pron">/ˈfɔrdərʊŋ/</span>
+      </div>
+      <div class="word-meaning">demand, claim, request — something insisted upon with authority</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">fordern (to demand) + -ung (act)</span>
+        <span class="bridge-note">— the act of demanding, a demand</span>
+      </div>
+      <div class="story">
+        <em>Forderung</em> is not a polite request — it is something demanded. Civil society groups make <em>Forderungen</em>. Labor unions make <em>Forderungen</em>. The word frames whatever is being requested as something insisted upon, something with force behind it.
+      </div>
+    </div>
+  </div>
+
+  <!-- STELLUNGNAHME -->
+  <div class="scene">
+    <div class="ety-card" id="card-stellungnahme">
+      <div class="word-header">
+        <span class="word-main">Stellungnahme</span>
+        <span class="word-pron">/ˈʃtɛlʊŋnaːmə/</span>
+      </div>
+      <div class="word-meaning">position, statement, stance — a formal declaration of opinion or judgment</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stellung (position) + Nahme (taking)</span>
+        <span class="bridge-note">— the taking of a position, a stance</span>
+      </div>
+      <div class="story">
+        <em>Stellungnahme</em> is ubiquitous in journalism. Officials are asked for a <em>Stellungnahme</em>. Companies issue <em>Stellungnahmen</em>. The word frames statements as positions — one voice among many, not objective truth but a particular perspective.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">828 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(97%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:97%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 828 words across 97 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">145 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(100%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 145 patterns and grammar rules across 97 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Ninety-Seven</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Berichterstattung</span><span class="cw-english">reporting</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Stellungnahme</span><span class="cw-english">statement</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Maßnahme</span><span class="cw-english">measure</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Verhandlung</span><span class="cw-english">negotiation</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Ankündigung</span><span class="cw-english">announcement</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Einschränkung</span><span class="cw-english">restriction</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Vorwurf</span><span class="cw-english">accusation</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Forderung</span><span class="cw-english">demand</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Headline Grammar</strong> — Compressed, economical, using present tense to create immediacy. Word order is flexible to maximize impact.<br><br>
+      <strong style="color: var(--text-bright);">Framing Through Language</strong> — Word choice shapes how events are understood. <em>Maßnahme</em>, <em>Verhandlung</em>, <em>Forderung</em> are not neutral but guide interpretation.<br><br>
+      <strong style="color: var(--text-bright);">The Politics of Attribution</strong> — Who is quoted? Whose <em>Stellungnahme</em> is reported first? These choices shape news.<br><br>
+      <strong style="color: var(--text-bright);">Immediacy and Urgency</strong> — Newspaper German creates the sense that events are happening now, demanding response, requiring action.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Ninety-Seven
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Eight words. Eight tools for reporting the world. Newspaper German shows how language is power. It is the language of the public sphere — contested, immediate, shaping what people know and how they understand events.<br>
+        When you read a German newspaper, you are not reading neutral facts. You are reading language designed to frame reality in particular ways. Understanding this language means understanding how information itself is constructed.
+      </p>
+      <div class="next-chapter">
+        Chapter Ninety-Eight: Gesprochenes Deutsch — the language of speech, of filler words, of real conversation
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter96.html" class="nav-btn">← Chapter 96</a>
+    <a href="chapter98.html" class="nav-btn next">Chapter 98 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 97: NEWSPAPER GERMAN - NEWSPRINT CANVAS ---
+const canvas = document.getElementById('newsprint-canvas');
+const ctx = canvas.getContext('2d');
+let articles = [];
+let headlines = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createArticles();
+}
+
+function createArticles() {
+  articles = [];
+  for (let i = 0; i < 4; i++) {
+    articles.push({
+      x: (canvas.width / 4) * i,
+      y: Math.random() * canvas.height * 0.7,
+      width: canvas.width / 4,
+      height: 200 + Math.random() * 100,
+      columns: 2,
+      alpha: 0.08 + Math.random() * 0.07
+    });
+  }
+
+  headlines = [];
+  for (let i = 0; i < 6; i++) {
+    headlines.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.15,
+      width: 100 + Math.random() * 150,
+      alpha: 0.05 + Math.random() * 0.08
+    });
+  }
+}
+
+function drawCanvas(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.12)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw article columns
+  articles.forEach((article, idx) => {
+    ctx.strokeStyle = `rgba(138, 138, 122, ${article.alpha * (0.5 + scroll * 0.3)})`;
+    ctx.lineWidth = 1;
+
+    // Left border
+    ctx.beginPath();
+    ctx.moveTo(article.x, article.y);
+    ctx.lineTo(article.x, article.y + article.height);
+    ctx.stroke();
+
+    // Column divider
+    const colWidth = article.width / article.columns;
+    ctx.beginPath();
+    ctx.moveTo(article.x + colWidth, article.y);
+    ctx.lineTo(article.x + colWidth, article.y + article.height);
+    ctx.stroke();
+
+    // Text lines
+    for (let i = 0; i < 12; i++) {
+      const lineY = article.y + 12 + i * 14;
+      if (lineY < article.y + article.height) {
+        // Alternate columns
+        const col = i % article.columns;
+        const lineX = article.x + col * colWidth + 4;
+        const lineWidth = colWidth - 8;
+
+        ctx.beginPath();
+        ctx.moveTo(lineX, lineY);
+        ctx.lineTo(lineX + lineWidth * (0.7 + Math.random() * 0.3), lineY);
+        ctx.stroke();
+      }
+    }
+  });
+
+  // Draw floating headlines
+  headlines.forEach((headline, idx) => {
+    headline.x += headline.vx;
+    headline.y += headline.vy;
+
+    if (headline.x < -200) headline.x = canvas.width + 200;
+    if (headline.x > canvas.width + 200) headline.x = -200;
+    if (headline.y < -50) headline.y = canvas.height + 50;
+    if (headline.y > canvas.height + 50) headline.y = -50;
+
+    ctx.fillStyle = `rgba(232, 164, 74, ${headline.alpha * (0.3 + scroll * 0.2)})`;
+    ctx.font = 'bold 16px serif';
+    ctx.fillText('HEADLINE', headline.x, headline.y);
+
+    // Underline
+    ctx.strokeStyle = `rgba(232, 164, 74, ${headline.alpha * 0.4})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(headline.x, headline.y + 2);
+    ctx.lineTo(headline.x + headline.width * 0.7, headline.y + 2);
+    ctx.stroke();
+  });
+
+  // Ticker at bottom
+  const tickerY = canvas.height - 20;
+  ctx.fillStyle = `rgba(232, 164, 74, ${0.1 + scroll * 0.1})`;
+  ctx.fillRect(0, tickerY, canvas.width, 20);
+
+  ctx.fillStyle = `rgba(232, 164, 74, ${0.3 + scroll * 0.2})`;
+  ctx.font = '12px monospace';
+  const tickerText = '► BREAKING NEWS • AKTUELLE NACHRICHTEN • LATEST UPDATES •';
+  const tickerX = (time * 0.05) % canvas.width;
+  ctx.fillText(tickerText, tickerX, tickerY + 14);
+  ctx.fillText(tickerText, tickerX - canvas.width, tickerY + 14);
+
+  requestAnimationFrame(drawCanvas);
+}
+
+window.addEventListener('scroll', () => {
+  const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+resizeCanvas();
+requestAnimationFrame(drawCanvas);
+window.addEventListener('resize', () => resizeCanvas());
+
+// --- ETYMOLOGY CARD INTERACTION ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const trigger = card.previousElementSibling;
+  if (trigger && trigger.classList.contains('narrative')) {
+    trigger.addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+  }
+});
+
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', (e) => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      card.classList.toggle('open');
+    }
+    e.stopPropagation();
+  });
+});
+
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+// --- QUIZ FUNCTIONALITY ---
+const quizData = [
+  {
+    question: "How does headline grammar in German differ from standard grammar?",
+    options: ["it's the same", "it is compressed, with early verbs and implicit subjects", "it uses more articles", "it uses passive voice"],
+    correct: 1,
+    explanation: "Headline grammar is economical and telegraphic, compressing information with flexible word order for maximum impact."
+  },
+  {
+    question: "Why do German headlines often use present tense for past events?",
+    options: ["it's a grammatical requirement", "to increase immediacy and make events feel like they're happening now", "to show respect", "it has no particular reason"],
+    correct: 1,
+    explanation: "Present tense in headlines makes events feel urgent and current, heightening the sense of immediacy and impact."
+  },
+  {
+    question: "What does 'Berichterstattung' literally mean?",
+    options: ["an individual report", "the act of reporting, journalism", "a newspaper", "a lie"],
+    correct: 1,
+    explanation: "Berichterstattung refers to the activity of reporting — the constant journalism that informs the public."
+  },
+  {
+    question: "How does 'Maßnahme' function in news reporting?",
+    options: ["it's a measurement", "it refers to a policy action or intervention", "it means a failure", "it's a type of building"],
+    correct: 1,
+    explanation: "'Maßnahme' is a key word in journalism — governments announce them, companies take them, the EU proposes them."
+  },
+  {
+    question: "What does 'Verhandlung' suggest about a process?",
+    options: ["it's finished", "it involves formal exchange between parties with conflicting interests", "it's trivial", "it's one-sided"],
+    correct: 1,
+    explanation: "'Verhandlung' frames something as negotiation — both sides have positions and seek agreement."
+  },
+  {
+    question: "How does journalism use the word 'Stellungnahme'?",
+    options: ["to report objective facts", "to frame statements as positions — one voice among many, not objective truth", "to praise someone", "to criticize"],
+    correct: 1,
+    explanation: "Stellungnahme frames what officials say as positions, not objective truth, subtly indicating multiplicity of viewpoints."
+  },
+  {
+    question: "What is the force behind a 'Forderung' in German news?",
+    options: ["it's a polite request", "it's something demanded with authority and insistence", "it's a question", "it's a suggestion"],
+    correct: 1,
+    explanation: "Forderung is not a polite request — it is something demanded. Civil society groups, unions make Forderungen with force."
+  },
+  {
+    question: "How does 'Ankündigung' differ from informal communication?",
+    options: ["it's less formal", "it suggests something officially declared, not a rumor", "it's a private matter", "there's no difference"],
+    correct: 1,
+    explanation: "Ankündigung frames something as official, formally declared, carrying institutional authority."
+  },
+  {
+    question: "What role does word choice play in newspaper German?",
+    options: ["it has no effect", "it shapes how readers understand events and what matters", "it's purely for style", "it's always neutral"],
+    correct: 1,
+    explanation: "Word choice in journalism is powerful — words like Maßnahme, Vorwurf, Forderung guide interpretation of events."
+  },
+  {
+    question: "How does journalism structure information?",
+    options: ["randomly", "most important information first (the lead), then details, then background", "least important first", "in chronological order always"],
+    correct: 1,
+    explanation: "Journalistic structure is inverted — the essential facts (who, what, when, where, why) appear first in the lead paragraph."
+  },
+  {
+    question: "What is the difference between 'Vorwurf' and a simple accusation?",
+    options: ["there is none", "Vorwurf is more formal and carries more weight", "Vorwurf is less serious", "they're in different languages"],
+    correct: 1,
+    explanation: "Vorwurf is more formal and substantial than a simple accusation — it suggests something weighty that has been considered."
+  },
+  {
+    question: "How does 'Einschränkung' frame policy discussions?",
+    options: ["neutrally", "as a limitation on freedom", "positively", "negatively but in a different way"],
+    correct: 1,
+    explanation: "Einschränkung frames something as a constraint, a limit — the word choice itself carries meaning about freedom."
+  },
+  {
+    question: "What makes newspaper German 'urgent'?",
+    options: ["it uses only short words", "present tense, compressed grammar, compressed headlines create immediacy", "it uses capital letters", "it's not actually urgent"],
+    correct: 1,
+    explanation: "Newspaper German creates urgency through present tense, compressed headlines, and immediate focus on facts."
+  },
+  {
+    question: "Is newspaper German neutral?",
+    options: ["yes, completely", "it maintains a pose of objectivity but word choice shapes interpretation", "no, it's always biased", "it doesn't matter"],
+    correct: 1,
+    explanation: "Journalism uses neutral poses but language choice — Maßnahme vs. Einschränkung, Verhandlung vs. Konflikt — guides interpretation."
+  },
+  {
+    question: "How does the inverted pyramid structure serve journalism?",
+    options: ["it confuses readers", "the most important info comes first, so readers get the essential facts immediately", "it makes stories harder to follow", "it has no purpose"],
+    correct: 1,
+    explanation: "The inverted pyramid puts the most important information (lead) first, ensuring readers get essential facts even if they stop reading."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = currentQuestion === 0;
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) score++;
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.innerHTML = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>946 words</strong> across 97 chapters. You recognize <strong>93 linguistic patterns</strong> spanning six thousand years.</p>
+      <p style="margin-top: 8px;">Newspaper German reveals how language is power. Word choice shapes understanding. Journalism is never neutral — language guides interpretation. You now read news as an informed citizen, understanding how language frames reality.</p>
+    `;
+  }
+}
+
+window.addEventListener('load', () => {
+  const words = document.querySelectorAll('.collected-word');
+  words.forEach((word, idx) => {
+    setTimeout(() => {
+      word.classList.add('show');
+    }, parseInt(word.dataset.delay) || 0);
+  });
+});
+
+initializeQuiz();
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

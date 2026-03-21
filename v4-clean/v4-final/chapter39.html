@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 39: Der Denker</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --thinker: #b8a89e;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #thinker-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+    .german-word { padding: 2px 0; }
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn { padding: 12px 20px; font-size: 1.1rem; min-height: 44px; -webkit-tap-highlight-color: transparent; }
+    .guess-feedback { font-size: 0.95rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="thinker-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Thirty-Nine</div>
+    <h1>Der Denker</h1>
+    <div class="subtitle">The Thinker</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE SILHOUETTE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a figure in stone or bronze, leaning forward with one hand beneath the chin, the other supporting the weight of the body. The face is obscured by the pose, by the inward turn, by the concentration of thought itself. This is Rodin's <em>The Thinker</em> — a sculpture that has become a universal symbol of contemplation, of the human mind wrestling with the biggest questions.
+    </p>
+
+    <p class="narrative">
+      Who is this figure? What is he thinking about? The original model was Dante Alighieri, the poet who imagined himself descending through the circles of Hell, but Rodin's statue has long since escaped its particular origin. It has become generic. Universal. The thinker. The one who thinks.
+    </p>
+
+    <p class="narrative">
+      And this is what we must discuss in this chapter: how German, like all languages, has found ways to mark the people who do things. Not just the action itself, but the actor. The one who performs. The doer. The agent. The creature who stands at the center of existence as something more than a passive recipient of events — as an active participant. A <em>subject</em>, in the deepest sense.
+    </p>
+
+    <p class="narrative emphasis">
+      German does this through a fascinating system of suffixes: <em>-er</em> and <em>-in</em>. The thinker. The teacher. The worker. The one who.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE GRAMMAR OF AGENCY ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      This is the foundation of Germanic grammar: the understanding that <em>people who do things</em> are different from the things themselves. The action "to teach" is <span class="german-word" data-card="lehren">lehren</span>. The person who teaches is a <span class="german-word" data-card="lehrer">Lehrer</span>. Notice the transformation. The infinitive verb is "lehren," but when you add the suffix <em>-er</em>, you get the noun for the agent — the one who does the action.
+    </p>
+
+    <p class="narrative">
+      This is not unique to German. English does exactly the same thing. Teach becomes teacher. Work becomes worker. The <em>-er</em> suffix in English comes directly from the Germanic <em>-er</em>. They are twins separated by the Norman Conquest, each maintaining the same basic principle across a thousand years.
+    </p>
+
+    <p class="narrative">
+      But German adds another layer: gender. In English, we have "teacher" for anyone who teaches. In German, you have <em>Lehrer</em> for a male teacher, and <em>Lehrerin</em> for a female teacher. The suffix <em>-in</em> marks femininity. This is the modern form, the one that has become standard in contemporary German as people have pushed for linguistic recognition of all genders in professional roles. But it is not new. The <em>-in</em> suffix has been used to mark female agents for centuries.
+    </p>
+
+    <p class="narrative">
+      Some languages are gender-neutral. Some languages ignore the gender of the person who does something. But German — like many Indo-European languages — has insisted on recording this distinction linguistically. Whether you approve of this distinction or find it limiting or necessary or both, it is embedded in the structure of the language itself.
+    </p>
+
+    <!-- LEHRER card -->
+    <div class="ety-card" id="card-lehrer">
+      <div class="word-header">
+        <span class="word-main">Lehrer / Lehrerin</span>
+        <span class="word-pron">/ˈleːʁɐ/ / /ˈleːʁəʁɪn/</span>
+      </div>
+      <div class="word-meaning">teacher — a person who teaches or instructs</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*leǵh-</span>
+        <span class="bridge-note">— to lie down, to lay down, hence to lay down knowledge</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">lore</span>
+        <span class="bridge-note">— Old English "lar," meaning teaching or lore</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">lehren / Lehrer</span>
+        <span class="bridge-note">— to teach / teacher (with optional -in for feminine)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">教师</span>
+        <span class="bridge-note">— jiàoshī (teach + teacher/master) — compound, not agent suffix</span>
+      </div>
+      <div class="story">
+        The verb <em>lehren</em> comes from the same ancient root as English "lore" — the knowledge that is passed down. A <em>Lehrer</em> is someone who lays down knowledge, who passes it forward. The <em>-er</em> suffix attached to the verb stem creates the agent noun. German distinguishes gender here: <em>Lehrer</em> (male teacher, or generic teacher in formal contexts) and <em>Lehrerin</em> (female teacher). The -in suffix is the standard German feminine marker. Some modern speakers use both forms to avoid gendering, while others argue that <em>Lehrerin</em> is essential for recognition. Interestingly, Chinese doesn't rely on agent suffixes at all — 教师 is a compound where 教 (teach) and 师 (master) combine to make a new noun. Different approaches to the same problem: how do we mark the actor?
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE WORKERS AND WARRIORS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Consider the <span class="german-word" data-card="arbeiter">Arbeiter</span> — the worker. The verb is <em>arbeiten</em>, to work. Add <em>-er</em>, and you have the person who works. An <em>Arbeiterin</em> is a female worker. The distinction is built into the language itself. The same logic applies to so many professions and roles: <span class="german-word" data-card="fahrer">Fahrer</span> (driver — from fahren, to drive), <span class="german-word" data-card="wissenschaftler">Wissenschaftler</span> (scientist — from Wissenschaft, science), <span class="german-word" data-card="kuenstler">Künstler</span> (artist — from Kunst, art).
+    </p>
+
+    <p class="narrative">
+      But this suffix is not limited to professions. It describes anyone who performs a characteristic action. A <span class="german-word" data-card="schriftsteller">Schriftsteller</span> is someone who writes — literally, "script-setter" or "letter-placer" — a writer. An <span class="german-word" data-card="anfaenger">Anfänger</span> is someone who begins — a beginner. A <span class="german-word" data-card="zuschauer">Zuschauer</span> is someone who watches — literally, "one who looks toward" — a spectator.
+    </p>
+
+    <p class="narrative">
+      What emerges from this system is a profound grammatical insight: human beings are, fundamentally, beings who do things. We are not passive recipients of existence. We are agents. Actors. Participants. And German insists on marking this agency in its very structure. When you say the word <em>Lehrer</em>, you are asserting: this is a person who performs the act of teaching. This is not just a label. It is a recognition of human agency.
+    </p>
+
+    <!-- ARBEITER card -->
+    <div class="ety-card" id="card-arbeiter">
+      <div class="word-header">
+        <span class="word-main">Arbeiter / Arbeiterin</span>
+        <span class="word-pron">/ˈaɐ̯baɪtɐ/ / /ˈaɐ̯baɪtəʁɪn/</span>
+      </div>
+      <div class="word-meaning">worker — a person who labors or works</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*orbh-</span>
+        <span class="bridge-note">— to plow, to work the earth, the origin of "orphan" (one who must work)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">orphan</span>
+        <span class="bridge-note">— originally meaning one who must labor, work to survive</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">arbeiten / Arbeiter</span>
+        <span class="bridge-note">— to work / worker (gender-marked with -in for feminine)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">工人</span>
+        <span class="bridge-note">— gōngrén (work + person) — combines morphemes directly</span>
+      </div>
+      <div class="story">
+        The history of "work" in Indo-European languages is the history of human necessity itself. The root *orbh- originally meant to toil, to plow, to engage in the hard labor necessary for survival. In Germanic languages, this became <em>arbeiten</em>. In English, the same root was preserved in "orphan" — originally, someone cast out, someone forced to labor for survival. The <em>Arbeiter</em> represents the modern democratic understanding: the worker is not a victim of fate but an agent performing labor. Gender marking here became especially important in labor movements and union contexts, where both male and female workers demanded recognition. The Chinese approach, 工人, is gender-neutral — it simply combines "work" and "person" without specifying gender, a different way of thinking about labor.
+      </div>
+    </div>
+
+    <!-- FAHRER card -->
+    <div class="ety-card" id="card-fahrer">
+      <div class="word-header">
+        <span class="word-main">Fahrer / Fahrerin</span>
+        <span class="word-pron">/ˈfaːʁɐ/ / /ˈfaːʁəʁɪn/</span>
+      </div>
+      <div class="word-meaning">driver — a person who operates a vehicle</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*per-</span>
+        <span class="bridge-note">— to go forward, related to "per" (through)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">fare</span>
+        <span class="bridge-note">— Old English "faran," to travel or journey</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">fahren / Fahrer</span>
+        <span class="bridge-note">— to drive, to travel / driver (gender-marked with -in)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">司机</span>
+        <span class="bridge-note">— sījī (office + machine) — describes the role not the action</span>
+      </div>
+      <div class="story">
+        <em>Fahren</em> comes from the same ancient root as English "fare" — the movement forward, the journey. A <em>Fahrer</em> is literally "one who fares," one who goes forward. The word evolved with technology — originally it meant someone who rode a horse, then someone who drove a carriage, then someone who drives an automobile. The <em>-er</em> suffix made it simple to adapt the word to new realities. A <em>Taxifahrer</em> is a taxi driver, a <em>Busfahrer</em> is a bus driver. The gender distinction here is interesting because it marks a profession that has traditionally been male-dominated but is increasingly open to all genders. The Chinese 司机 (sījī) takes a different approach — "office" (司) combined with "machine" (机) — it describes the institutional role rather than the action of driving.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: SCIENTISTS AND ARTISTS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Then we reach the realm of intellect and creativity. The <span class="german-word" data-card="wissenschaftler">Wissenschaftler</span> — the scientist. This is a compound word: <em>Wissenschaft</em> (science, literally "knowledge-state") plus <em>-ler</em>, a variant of the <em>-er</em> agent suffix. A person who engages with science. A <em>Wissenschaftlerin</em> is a female scientist.
+    </p>
+
+    <p class="narrative">
+      The <span class="german-word" data-card="kuenstler">Künstler</span> — the artist. From <em>Kunst</em> (art), plus the agent suffix. One who creates art, who works in the realm of aesthetics and beauty. <em>Künstlerin</em> for a female artist. This distinction in German became especially important during the Romantic period, when women artists began demanding recognition and respect for their work. The linguistic marker became a way of asserting: I am not a woman who paints. I am a <em>Künstlerin</em> — an artist who happens to be female.
+    </p>
+
+    <p class="narrative">
+      And the <span class="german-word" data-card="schriftsteller">Schriftsteller</span> — the writer. Literally "script-setter" or "letter-placer." From <em>Schrift</em> (script, writing) and the verb <em>stellen</em> (to place, to set). One who places letters, who creates written language. The <em>-steller</em> ending is a variant of <em>-ler</em>, which is a variant of <em>-er</em>. All serve the same purpose: to mark the agent.
+    </p>
+
+    <!-- WISSENSCHAFTLER card -->
+    <div class="ety-card" id="card-wissenschaftler">
+      <div class="word-header">
+        <span class="word-main">Wissenschaftler / Wissenschaftlerin</span>
+        <span class="word-pron">/ˈvɪsənʃaftlɐ/ / /ˈvɪsənʃaftləʁɪn/</span>
+      </div>
+      <div class="word-meaning">scientist — a person who studies and practices science</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wid-</span>
+        <span class="bridge-note">— to see, to know, the root of science itself</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wit</span>
+        <span class="bridge-note">— Old English "witan," to know (survives in "wit" = knowledge, used archaically)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wissenschaft / Wissenschaftler</span>
+        <span class="bridge-note">— science (knowledge-state) / scientist (-ler variant of agent suffix)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">科学家</span>
+        <span class="bridge-note">— kēxuéjiā (subject + study + family/expert) — describes the domain and expertise</span>
+      </div>
+      <div class="story">
+        The word <em>Wissenschaft</em> is a German formation that captures something essential: science is not just a collection of facts, but a "state of knowledge" (Wissenschaft literally combines <em>wissen</em>, to know, and <em>-schaft</em>, a suffix meaning "state" or "condition"). A <em>Wissenschaftler</em> is someone who inhabits this state of knowledge. The -ler ending is a more modern variant of -er that became common with compound nouns. What's fascinating is that in the 19th and 20th centuries, as women entered scientific fields, the language had to adjust. <em>Wissenschaftlerin</em> became increasingly common in German-speaking countries, making women scientists linguistically visible. The Chinese 科学家 takes yet another approach: 科 (subject/field), 学 (study), 家 (family/expert/master) — it marks expertise and domain knowledge without relying on agent suffixes.
+      </div>
+    </div>
+
+    <!-- KUENSTLER card -->
+    <div class="ety-card" id="card-kuenstler">
+      <div class="word-header">
+        <span class="word-main">Künstler / Künstlerin</span>
+        <span class="word-pron">/ˈkʏnstlɐ/ / /ˈkʏnstləʁɪn/</span>
+      </div>
+      <div class="word-meaning">artist — a person who creates or practices art</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ar-</span>
+        <span class="bridge-note">— to fit, to join, to arrange — the root of craft and making</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">art</span>
+        <span class="bridge-note">— Old English borrowed from Latin "ars," which comes from the same PIE root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kunst / Künstler</span>
+        <span class="bridge-note">— art / artist (-ler variant of agent suffix, with umlaut in Kunst)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">艺术家</span>
+        <span class="bridge-note">— yìshùjiā (technique + craft + expert) — emphasizes skill and mastery</span>
+      </div>
+      <div class="story">
+        <em>Kunst</em> means "art," but the word is older than the modern concept of "fine art." It comes from the PIE root *ar- meaning "to fit" or "to join" — the idea of making things that fit together, that are well-crafted. A <em>Künstler</em> is one who possesses this skill. In medieval German, a <em>Künstler</em> could be any craftsperson — a mason, a woodworker, a blacksmith. Over time, the word became more associated with what we call "art" in English: painting, sculpture, music, literature. The -ler ending (itself a variant of -er) makes it a person who does this. The <em>-in</em> suffix for women artists became especially important during the Romantic period and the 19th-century women's rights movements, when female painters, sculptors, and musicians demanded recognition. The Chinese 艺术家 combines 艺 (technique/skill) and 术 (craft/method) with 家 (expert/master), emphasizing the technical mastery required to be an artist.
+      </div>
+    </div>
+
+    <!-- SCHRIFTSTELLER card -->
+    <div class="ety-card" id="card-schriftsteller">
+      <div class="word-header">
+        <span class="word-main">Schriftsteller / Schriftstellerin</span>
+        <span class="word-pron">/ˈʃʁɪftstɛlɐ/ / /ˈʃʁɪftstɛləʁɪn/</span>
+      </div>
+      <div class="word-meaning">writer — a person who writes books or other works of literature</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sker-</span>
+        <span class="bridge-note">— to cut, to carve, the root of "scribe" and "script"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">scribe</span>
+        <span class="bridge-note">— from Latin "scribere," from the same PIE root as German Schrift</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schrift / Schriftsteller</span>
+        <span class="bridge-note">— writing (that which is written, carved) / writer (one who sets writing)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">作家</span>
+        <span class="bridge-note">— zuòjiā (make/create + expert) — simple elegant compound for author</span>
+      </div>
+      <div class="story">
+        The word <em>Schrift</em> comes from the PIE root *sker-, "to cut," because writing originally meant carving letters into stone or other surfaces. A <em>Schriftsteller</em> is literally "one who sets/places writing" — <em>Schrift</em> (writing) + <em>steller</em> (one who places, from <em>stellen</em>, to place). The compound captures something true about the writer's work: the writer takes language and arranges it, places it in order, sets it on the page. In German literary culture, the distinction between <em>Schriftsteller</em> and <em>Schriftstellerin</em> became important for recognizing female authors who had long been marginalized by male-dominated publishing. The Chinese 作家 (zuòjiā) is simpler: 作 (to make, to create) + 家 (expert/master). Both approaches mark someone as the agent of literary creation.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE MARGINS AND THE POSSIBILITIES ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Finally, consider two more: the <span class="german-word" data-card="anfaenger">Anfänger</span> — the beginner. From <em>anfangen</em>, to begin, plus the agent suffix. This is interesting because it marks not a profession or permanent identity, but a temporary state. You are an <em>Anfänger</em> in learning a language, but eventually you become something else. A <em>Anfängerin</em> for a female beginner carries the same temporary quality, but with gender marking.
+    </p>
+
+    <p class="narrative">
+      And the <span class="german-word" data-card="zuschauer">Zuschauer</span> — the spectator. From <em>zu</em> (toward) + <em>schauen</em> (to look), literally "one who looks toward." A <em>Zuschauerin</em> is a female spectator. Notice that this word marks an action that is voluntary but passive — you are watching something, but you are not performing it. Yet the grammar still marks you as an agent, as the one doing the looking.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the power of the Germanic agent suffix system: it can mark anyone who performs any action, from the most active (teaching, creating, discovering) to the seemingly passive (watching, beginning). The system says: you are not merely a recipient of experience. You are an actor. A participant. Someone who does.
+    </p>
+
+    <!-- ANFAENGER card -->
+    <div class="ety-card" id="card-anfaenger">
+      <div class="word-header">
+        <span class="word-main">Anfänger / Anfängerin</span>
+        <span class="word-pron">/ˈanfɛŋɐ/ / /ˈanfɛŋəʁɪn/</span>
+      </div>
+      <div class="word-meaning">beginner — a person who is just starting to learn or do something</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₂enǵ-</span>
+        <span class="bridge-note">— to narrow, to constrict, the original meaning of "to begin" (to enter a narrow space)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (no direct equivalent)</span>
+        <span class="bridge-note">— English uses "begin" from Middle English, of obscure origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">anfangen / Anfänger</span>
+        <span class="bridge-note">— to begin / beginner (marks a temporary state, not permanent identity)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">初学者</span>
+        <span class="bridge-note">— chūxuézhě (first + study + person) — marks the early stage of learning</span>
+      </div>
+      <div class="story">
+        The word <em>anfangen</em> combines <em>an</em> (toward) and <em>fangen</em> (to catch/grasp). To begin something is, metaphorically, to catch hold of it, to grasp it toward yourself. An <em>Anfänger</em> is someone who has grasped the beginning, who has started. Importantly, this word marks a temporary state — you don't remain an <em>Anfänger</em> forever. The gender marking here is interesting because it acknowledges that both men and women begin new journeys of learning. The Chinese approach, 初学者, is more literal: 初 (first/early), 学 (study), 者 (person/one who) — it explicitly names the stage of learning without implying gender.
+      </div>
+    </div>
+
+    <!-- ZUSCHAUER card -->
+    <div class="ety-card" id="card-zuschauer">
+      <div class="word-header">
+        <span class="word-main">Zuschauer / Zuschauerin</span>
+        <span class="word-pron">/ˈtsuːʃaʊ̯ɐ/ / /ˈtsuːʃaʊ̯əʁɪn/</span>
+      </div>
+      <div class="word-meaning">spectator — a person who watches a performance or event</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*skew-</span>
+        <span class="bridge-note">— to see, to perceive, the root of "show" and "view"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">show</span>
+        <span class="bridge-note">— Old English "sceowan," to look at, related to German schauen</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zu + schauen / Zuschauer</span>
+        <span class="bridge-note">— toward + to look / spectator (one who looks toward the action)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">观众</span>
+        <span class="bridge-note">— guānzhòng (see/observe + crowd/multitude) — emphasizes the collective nature</span>
+      </div>
+      <div class="story">
+        The word <em>schauen</em> means "to look" or "to view," and when you add <em>zu</em> (toward), it becomes <em>zu-schauen</em> — to look toward something. A <em>Zuschauer</em> is one who looks toward a performance, a sports event, a spectacle. The word applies to anyone who watches, who is present as an observer. Interestingly, this is one of the agent suffix words that applies to a seemingly passive role — watching is not "doing" in the active sense, yet the grammar marks you as an agent. A <em>Zuschauerin</em> is a female spectator, acknowledging that women are not absent from the audience. The Chinese 观众 is interesting because it emphasizes the collective nature: 观 (to observe) + 众 (crowd/multitude). The spectators are not individuals but a unified audience, a "many" that becomes "one."
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE MODERN DEBATE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Today, the <em>-er</em> and <em>-in</em> system is the subject of intense debate in German-speaking countries. Some argue that the binary distinction is outdated and excludes non-binary people. Others argue that language must evolve and that we need new forms — perhaps <em>Lehrer*in</em> or <em>Lehrender</em> or some other construction — to recognize all genders and all ways of being.
+    </p>
+
+    <p class="narrative">
+      But what is not in question is this: the Germanic <em>-er</em> suffix is one of the most productive and fundamental features of the language. It appears in thousands of words. It is easy to use, easy to understand, and endlessly adaptable. When a new profession emerges, German simply adds <em>-er</em> to the relevant verb or noun. A <em>Programmierer</em> is a programmer (from <em>programmieren</em>, to program). A <em>Bloggerin</em> is a female blogger. The system works because it is alive, because it continues to function and adapt.
+    </p>
+
+    <p class="narrative">
+      The question of gender marking in agent nouns is a question about how we represent humans and their work in language. It is a question of visibility and recognition. And the answer — in German — is written into the very structure of the language, in the <em>-er</em> and <em>-in</em> suffixes that mark the doers, the actors, the ones who think and create and teach and work.
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <h3>Test Your Knowledge</h3>
+    <div id="quizContent"></div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">364 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(42%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:42%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 364 words across 39 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">81 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(55%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:55%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 81 patterns and grammar rules across 39 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="word-collection" id="wordCollection">
+    <h3>Words from Chapter 39</h3>
+    <div class="collected-words" id="collectedWords"></div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p class="narrative" style="text-align: center; color: rgba(212, 202, 187, 0.6);">End of Chapter 39</p>
+    <div class="next-chapter">← Chapter 38 | Chapter 40 →</div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter38.html" class="nav-btn">← Chapter 38</a>
+    <a href="chapter40.html" class="nav-btn next">Chapter 40 →</a>
+  </div>
+
+</div>
+
+<script>
+// ========== CANVAS ANIMATION ==========
+const canvas = document.getElementById('thinker-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.vy = (Math.random() - 0.5) * 0.5;
+    this.life = 1;
+    this.size = Math.random() * 3 + 1;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= 0.005;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+  }
+  draw() {
+    ctx.fillStyle = `rgba(184, 168, 158, ${this.life * 0.3})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function animateCanvas() {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (Math.random() < 0.02) particles.push(new Particle());
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+
+// ========== CARD SYSTEM ==========
+const cards = {
+  lehrer: {
+    german: 'Lehrer / Lehrerin',
+    pronunciation: '/ˈleːʁɐ/ / /ˈleːʁəʁɪn/',
+    meaning: 'teacher — a person who teaches',
+    pie: '*leǵh-',
+    eng: 'lore',
+    deu: 'lehren',
+    chinese: '教师'
+  },
+  arbeiter: {
+    german: 'Arbeiter / Arbeiterin',
+    pronunciation: '/ˈaɐ̯baɪtɐ/ / /ˈaɐ̯baɪtəʁɪn/',
+    meaning: 'worker — a person who works',
+    pie: '*orbh-',
+    eng: 'orphan',
+    deu: 'arbeiten',
+    chinese: '工人'
+  },
+  fahrer: {
+    german: 'Fahrer / Fahrerin',
+    pronunciation: '/ˈfaːʁɐ/ / /ˈfaːʁəʁɪn/',
+    meaning: 'driver — a person who operates a vehicle',
+    pie: '*per-',
+    eng: 'fare',
+    deu: 'fahren',
+    chinese: '司机'
+  },
+  wissenschaftler: {
+    german: 'Wissenschaftler / Wissenschaftlerin',
+    pronunciation: '/ˈvɪsənʃaftlɐ/ / /ˈvɪsənʃaftləʁɪn/',
+    meaning: 'scientist — a person who practices science',
+    pie: '*wid-',
+    eng: 'wit',
+    deu: 'Wissenschaft',
+    chinese: '科学家'
+  },
+  kuenstler: {
+    german: 'Künstler / Künstlerin',
+    pronunciation: '/ˈkʏnstlɐ/ / /ˈkʏnstləʁɪn/',
+    meaning: 'artist — a person who creates art',
+    pie: '*ar-',
+    eng: 'art',
+    deu: 'Kunst',
+    chinese: '艺术家'
+  },
+  schriftsteller: {
+    german: 'Schriftsteller / Schriftstellerin',
+    pronunciation: '/ˈʃʁɪftstɛlɐ/ / /ˈʃʁɪftstɛləʁɪn/',
+    meaning: 'writer — a person who writes',
+    pie: '*sker-',
+    eng: 'scribe',
+    deu: 'Schrift',
+    chinese: '作家'
+  },
+  anfaenger: {
+    german: 'Anfänger / Anfängerin',
+    pronunciation: '/ˈanfɛŋɐ/ / /ˈanfɛŋəʁɪn/',
+    meaning: 'beginner — someone starting to learn',
+    pie: '*h₂enǵ-',
+    eng: 'begin',
+    deu: 'anfangen',
+    chinese: '初学者'
+  },
+  zuschauer: {
+    german: 'Zuschauer / Zuschauerin',
+    pronunciation: '/ˈtsuːʃaʊ̯ɐ/ / /ˈtsuːʃaʊ̯əʁɪn/',
+    meaning: 'spectator — a person who watches',
+    pie: '*skew-',
+    eng: 'show',
+    deu: 'schauen',
+    chinese: '观众'
+  }
+};
+
+// Expand/collapse cards on click
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const cardId = this.getAttribute('data-card');
+    const card = document.getElementById(`card-${cardId}`);
+    if (card) {
+      card.classList.toggle('open');
+      if (card.classList.contains('open')) {
+        this.classList.add('revealed');
+        setTimeout(() => card.scrollIntoView({behavior: 'smooth', block: 'nearest'}), 100);
+      }
+    }
+  });
+});
+
+// ========== QUIZ SYSTEM ==========
+const quizData = [
+  {
+    question: 'What German suffix is used to mark someone who performs an action?',
+    options: ['ge-', '-er', '-ung', '-heit'],
+    correct: 1
+  },
+  {
+    question: 'How do you form the feminine version of "Lehrer" (teacher)?',
+    options: ['Leherin', 'Lehrerin', 'Lehrerin-', 'Lehrer-in'],
+    correct: 1
+  },
+  {
+    question: 'What does "Arbeiter" mean?',
+    options: ['artist', 'worker', 'scientist', 'driver'],
+    correct: 1
+  },
+  {
+    question: 'Which word means "scientist"?',
+    options: ['Wissenschaftler', 'Kunstler', 'Schriftsteller', 'Anfänger'],
+    correct: 0
+  },
+  {
+    question: 'What is a "Zuschauer"?',
+    options: ['a teacher', 'a spectator', 'a beginner', 'a worker'],
+    correct: 1
+  },
+  {
+    question: 'How does the word "Anfänger" relate to the verb "anfangen"?',
+    options: ['they are unrelated', 'Anfänger is someone who does anfangen', 'anfangen is derived from Anfänger', 'they are the same word'],
+    correct: 1
+  },
+  {
+    question: 'Which of these is formed with the -ler variant of the agent suffix?',
+    options: ['Lehrer', 'Arbeiter', 'Künstler', 'Zuschauer'],
+    correct: 2
+  },
+  {
+    question: 'What does "Schriftsteller" literally mean?',
+    options: ['story teller', 'script setter', 'script speaker', 'letter writer'],
+    correct: 1
+  },
+  {
+    question: 'In German, what is the primary way to mark the gender of agent nouns?',
+    options: ['using -er for male, -or for female', 'using -in suffix for female forms', 'using adjectives before the word', 'German does not mark gender'],
+    correct: 1
+  },
+  {
+    question: 'Which Chinese word matches "科学家" (scientist)?',
+    options: ['Arbeiter', 'Künstler', 'Wissenschaftler', 'Schriftsteller'],
+    correct: 2
+  },
+  {
+    question: 'What is the PIE root of "lehren" (to teach)?',
+    options: ['*leǵh-', '*kwer-', '*weǵh-', '*ar-'],
+    correct: 0
+  },
+  {
+    question: 'Which word marks a temporary state rather than a permanent profession?',
+    options: ['Lehrer', 'Arbeiter', 'Anfänger', 'Wissenschaftler'],
+    correct: 2
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = new Set();
+
+function renderQuiz() {
+  const quizContent = document.getElementById('quizContent');
+  quizContent.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const questionDiv = document.createElement('div');
+    questionDiv.className = `quiz-question ${idx !== currentQuestion ? 'hidden' : ''}`;
+
+    const questionText = document.createElement('div');
+    questionText.className = 'q-text';
+    questionText.textContent = q.question;
+    questionDiv.appendChild(questionText);
+
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'quiz-options';
+
+    q.options.forEach((opt, optIdx) => {
+      const button = document.createElement('button');
+      button.className = 'quiz-option';
+      button.textContent = opt;
+      button.dataset.questionIdx = idx;
+      button.dataset.optionIdx = optIdx;
+
+      if (answered.has(idx)) {
+        button.disabled = true;
+        if (optIdx === q.correct) button.classList.add('selected');
+        else if (optIdx !== q.correct) button.classList.add('incorrect');
+      }
+
+      button.addEventListener('click', () => selectAnswer(idx, optIdx, button, q.correct));
+      optionsDiv.appendChild(button);
+    });
+
+    questionDiv.appendChild(optionsDiv);
+    quizContent.appendChild(questionDiv);
+  });
+
+  const navDiv = document.createElement('div');
+  navDiv.className = 'quiz-nav';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.textContent = '← Previous';
+  prevBtn.disabled = currentQuestion === 0;
+  prevBtn.addEventListener('click', () => {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      renderQuiz();
+    }
+  });
+  navDiv.appendChild(prevBtn);
+
+  const scoreSpan = document.createElement('span');
+  scoreSpan.className = 'quiz-score';
+  scoreSpan.textContent = `${score} / ${quizData.length}`;
+  navDiv.appendChild(scoreSpan);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.textContent = 'Next →';
+  nextBtn.disabled = currentQuestion === quizData.length - 1;
+  nextBtn.addEventListener('click', () => {
+    if (currentQuestion < quizData.length - 1) {
+      currentQuestion++;
+      renderQuiz();
+    }
+  });
+  navDiv.appendChild(nextBtn);
+
+  const quizContainer = document.querySelector('.quiz-container');
+  const existingNav = quizContainer.querySelector('.quiz-nav');
+  if (existingNav) existingNav.remove();
+  quizContainer.appendChild(navDiv);
+}
+
+function selectAnswer(qIdx, optIdx, button, correctIdx) {
+  answered.add(qIdx);
+
+  if (optIdx === correctIdx) {
+    button.classList.add('selected');
+    if (!answered.has(qIdx) || score === qIdx) score++;
+  } else {
+    button.classList.add('incorrect');
+  }
+
+  document.querySelectorAll(`[data-question-idx="${qIdx}"]`).forEach(btn => btn.disabled = true);
+  renderQuiz();
+}
+
+// Initialize
+renderQuiz();
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+// Lazy scene visibility
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+});
+
+document.querySelectorAll('.scene').forEach(scene => observer.observe(scene));
+
+// Audio pronunciation
+document.querySelectorAll('[data-speak="true"]').forEach(el => {
+  const speakBtn = document.createElement('button');
+  speakBtn.className = 'speak-btn';
+  speakBtn.textContent = '🔊';
+  speakBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const text = el.textContent;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    speechSynthesis.speak(utterance);
+    speakBtn.classList.add('speaking');
+    setTimeout(() => speakBtn.classList.remove('speaking'), 1000);
+  });
+  el.parentNode.insertBefore(speakBtn, el.nextSibling);
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

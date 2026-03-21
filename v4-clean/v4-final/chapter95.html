@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 95: Wissenschaftliches Deutsch</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --library: #c4a888;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #2a1f15 70%, #3a2f25 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- LIBRARY CANVAS --- */
+  #library-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1s forwards;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    animation: bob 2s ease-in-out infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* --- NARRATIVE PROSE --- */
+  .narrative {
+    font-size: 1.15rem;
+    line-height: 1.95;
+    margin-bottom: 1.8em;
+    color: var(--text);
+  }
+
+  .narrative em {
+    color: var(--text-bright);
+    font-style: italic;
+  }
+
+  .narrative strong {
+    color: var(--fire);
+    font-weight: 600;
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .narrative.small {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- SCENE STRUCTURE --- */
+  .scene {
+    margin-bottom: 80px;
+  }
+
+  .scene-marker {
+    height: 40px;
+    margin-bottom: 40px;
+    background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.2), transparent);
+  }
+
+  .divider {
+    text-align: center;
+    color: rgba(232, 164, 74, 0.3);
+    margin: 60px 0;
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border-left: 4px solid rgba(232, 164, 74, 0.4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 40px 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-title {
+    color: var(--text-bright);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(200, 100, 100, 0.1);
+    border-color: rgba(200, 100, 100, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .quiz-nav button {
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--fire);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .quiz-nav button:hover:not(:disabled) {
+    background: rgba(232, 164, 74, 0.25);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(50, 50, 50, 0.5);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .post-quiz-summary {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid var(--fire);
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- AUDIO --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+    .scene { margin-bottom: 60px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="library-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Ninety-Five</div>
+    <h1>Wissenschaftliches Deutsch</h1>
+    <div class="subtitle">Academic German</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE LIBRARY ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Enter a library at dusk. Tall shelves receding into shadow. The air thick with the smell of paper and binding glue, centuries of collected knowledge pressed into pages. Somewhere, a scholar sits with a cup of tea growing cold, bent over a manuscript, annotating the margins with careful handwriting.
+    </p>
+
+    <p class="narrative">
+      Academic German is the voice of this place. It is the language of research papers, scholarly articles, university lectures, scientific monographs. It is the German that <em>reports</em>, <em>analyzes</em>, <em>concludes</em>. And it has its own distinct voice — one that sounds nothing like the casual speech you hear on the street. It is formal, careful, hedged with qualifications and nuances.
+    </p>
+
+    <p class="narrative">
+      This is German at its most intellectual. German thinking through problems in slow, methodical sentences. German building arguments with precision and caution. German that will not overstate, will not oversimplify, will not make claims without evidence.
+    </p>
+
+    <p class="narrative emphasis">
+      Here is where the language becomes an instrument of thought itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: PASSIVE VOICE ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      If you want to understand academic German, you must first understand that it hides the subject. Or rather, it deprioritizes the subject. In English, we say: "The researcher concluded that..." In academic German, you would more likely hear: "It can be concluded that..." The subject vanishes. The action itself becomes what matters.
+    </p>
+
+    <p class="narrative">
+      This is the power of the passive voice. In German: <span class="german-word" data-card="darstellung">Die Darstellung wurde entwickelt</span> — "The presentation was developed." Not "We developed the presentation." The agent disappears. Only the result remains.
+    </p>
+
+    <p class="narrative">
+      Why? Because academic writing values objectivity. It pretends that the subject — whether a scientist, a researcher, a scholar — is irrelevant. What matters is the discovery, the finding, the conclusion. The person doing the work is erased. The work itself stands alone.
+    </p>
+
+    <p class="narrative">
+      In this way, academic German is the language of authority without authority. A claim made in the passive voice sounds more universal, more objective, more true.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: NOMINALISATION ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Another characteristic of academic German: it turns verbs into nouns. This process is called <span class="german-word" data-speak="true">Nominalisierung</span> — nominalization. And it is the signature move of the academic language register.
+    </p>
+
+    <p class="narrative">
+      Take the verb "to research" — <em>forschen</em>. In everyday speech, you might say: "We are researching this question" — "Wir forschen diese Frage." But in academic German, you would say: "Die Forschung zeigt..." — "The research shows..." Or: "Im Laufe der Forschung wurde festgestellt..." — "In the course of the research, it was established..." The verb becomes a noun. The action becomes a thing.
+    </p>
+
+    <p class="narrative">
+      And once it becomes a noun, it can be modified, qualified, examined from all angles. <span class="german-word" data-card="forschungsergebnis">Forschungsergebnis</span> — a research result. <span class="german-word" data-card="forschungsgegenstand">Forschungsgegenstand</span> — the object of research. <span class="german-word" data-card="forschungsmethode">Forschungsmethode</span> — a research methodology. The noun becomes a generator of other nouns, creating a dense forest of abstraction.
+    </p>
+
+    <p class="narrative">
+      This is the German language becoming conscious of itself as an instrument of thought. Verbs are too simple. They imply action, direction, will. Nouns are things. They are stable. They can be studied. Analyzed. Compared.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: HEDGING LANGUAGE ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Watch how an academic speaks. She will rarely say "This is true." Instead: "It appears that..." "It could be argued that..." "The evidence suggests..." "One might maintain that..." Academic German is full of these hedges, these linguistic cushions that soften the certainty of a claim.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="voraussetzung">Voraussetzung</span> — this word means "precondition" or "assumption." And academic German is obsessed with preconditions. Before any conclusion, you must state your assumptions. "Unter der Voraussetzung, dass..." — "Under the assumption that..." You are protecting yourself. You are saying: this is true, but only if you accept these conditions first.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="berucksichtigung">Berücksichtigung</span> — "taking into account" or "consideration." Academic German loves this word. "Bei der Berücksichtigung aller Faktoren..." — "When taking into account all factors..." Again: I am not stating absolute truth. I am stating conditional truth. I am acknowledging complexity.
+    </p>
+
+    <p class="narrative">
+      This is not weakness. This is academic honesty. The scholar who says "I am not certain, but here is what the evidence shows" is more trustworthy than the one who claims certainty. Academic German, in its hedging, its qualifications, its careful construction of conditional claims, is the language of epistemic modesty.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: LONG SENTENCES ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Academic German loves long sentences. Sentences that do not end where you expect them to end. Sentences that spiral inward, adding qualification upon qualification, clause upon clause, until you reach the final verb ten lines later and suddenly everything makes sense.
+    </p>
+
+    <p class="narrative">
+      Example: "Unter der Voraussetzung, dass die Hypothese, welche in der früheren Forschung entwickelt wurde und die das Verhalten der Probanden in kontrollierten Situationen erklärt, unter Berücksichtigung aller bekannten Faktoren und mit entsprechender statistischer Analyse überprüft wird, lässt sich die Schlussfolgerung ziehen, dass das Phänomen möglicherweise mit den theoretischen Erwartungen übereinstimmt."
+    </p>
+
+    <p class="narrative">
+      Translation: "Assuming that the hypothesis, which was developed in earlier research and which explains the behavior of subjects in controlled situations, is tested under consideration of all known factors and with appropriate statistical analysis, the conclusion can be drawn that the phenomenon possibly corresponds with theoretical expectations."
+    </p>
+
+    <p class="narrative">
+      Notice: the main verb <em>lässt sich ziehen</em> — "can be drawn" — does not appear until the very end. Everything before it is context, qualification, condition. This is not poor writing. This is academic German at its most sophisticated. The sentence is built like a cathedral — each clause supporting the others, each piece necessary to the whole.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zusammenfassung">Zusammenfassung</span> — summary. And academic German requires that everything be summarized. Not just at the end. But throughout. Every argument must be reduced to its essence, then expanded again with new evidence, then reduced again. The language spirals inward and outward in constant motion.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: OBSERVATION AND CONCLUSION ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Two words define the scholarly method: <span class="german-word" data-card="beobachtung">Beobachtung</span> — observation — and <span class="german-word" data-card="schlussfolgerung">Schlussfolgerung</span> — conclusion.
+    </p>
+
+    <p class="narrative">
+      <em>Beobachtung</em> is the watching, the noting, the careful recording of what is. The scholar observes phenomena. She writes down what she sees. She collects data. She does not interpret — not yet. First, she must observe. This is the empirical foundation of all knowledge.
+    </p>
+
+    <p class="narrative">
+      Then comes <em>Schlussfolgerung</em> — the drawing of conclusions. But not hasty conclusions. Conclusions drawn carefully, methodically, from the observations made. <em>Schluss</em> means "closure" or "conclusion." <em>Folgerung</em> comes from <em>folgen</em>, "to follow." So <em>Schlussfolgerung</em> literally means "what follows necessarily from the closure" — the inevitable conclusion that emerges from evidence.
+    </p>
+
+    <p class="narrative">
+      Between observation and conclusion lies the entire apparatus of academic German: hypotheses, methodologies, statistical analyses, peer review. All of this is designed to ensure that the conclusion truly follows from the observation, that no leap has been made without evidence.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: FOUNDATION AND IMPACT ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="grundlage">Grundlage</span> — foundation. Every academic argument rests on a foundation. And the scholar must state what that foundation is. "The foundation of this argument is..." "This is the basis upon which all subsequent reasoning rests..."
+    </p>
+
+    <p class="narrative">
+      And from the foundation emerges an <span class="german-word" data-card="auswirkung">Auswirkung</span> — an impact, a consequence, an effect. Every scholarly finding has implications. It changes how we think about something. It opens new questions. It shifts the foundation for future research. <em>Auswirkung</em> is the word for how knowledge ripples outward from the center of discovery.
+    </p>
+
+    <p class="narrative">
+      Finally, there is <span class="german-word" data-card="stellungnahme">Stellungnahme</span> — a position, a statement, a taking of a stand. This is what the scholar must do at the end: declare her position. Where does she stand in relation to the evidence? What is her scholarly judgment? What is her position?
+    </p>
+
+    <p class="narrative">
+      Academic German is the language of position-taking. Not certainty. Not dogma. But a reasoned, evidence-based position. "Here is what I conclude. Here is why. Here is what might follow."
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== VOCABULARY CARDS ==================== -->
+
+  <!-- FORSCHUNGSERGEBNIS -->
+  <div class="scene">
+    <div class="ety-card" id="card-forschungsergebnis">
+      <div class="word-header">
+        <span class="word-main">Forschungsergebnis</span>
+        <span class="word-pron">/ˈfɔʁʃʊŋsɛrˌɡeːpnɪs/</span>
+      </div>
+      <div class="word-meaning">research result — a finding, outcome, or conclusion from scholarly investigation</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Forschung + Ergebnis</span>
+        <span class="bridge-note">— research + result, a compound noun typical of academic German</span>
+      </div>
+      <div class="story">
+        This word exemplifies how academic German creates complex nouns from simpler components. <em>Forschung</em> (research) combines with <em>Ergebnis</em> (result, outcome) to create a single word that encapsulates the entire enterprise of scholarly investigation and its products. German allows nearly unlimited compounding, and academic texts exploit this to create precise, dense terminology.
+      </div>
+    </div>
+  </div>
+
+  <!-- ZUSAMMENFASSUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-zusammenfassung">
+      <div class="word-header">
+        <span class="word-main">Zusammenfassung</span>
+        <span class="word-pron">/tsuˈzamənfasʊŋ/</span>
+      </div>
+      <div class="word-meaning">summary — a concise statement of essential points</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zusammen (together) + fassen (to grasp)</span>
+        <span class="bridge-note">— literally "to grasp together," to compress into a smaller form</span>
+      </div>
+      <div class="story">
+        <em>Zusammenfassung</em> is essential to academic German. Every paper has one. Every lecture includes one. It is the discipline of compression — taking a complex argument and distilling it to its essence. The verb <em>fassen</em> (to grasp, to seize) combined with <em>zusammen</em> (together) creates the image of gathering all the pieces together into a unified understanding.
+      </div>
+    </div>
+  </div>
+
+  <!-- DARSTELLUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-darstellung">
+      <div class="word-header">
+        <span class="word-main">Darstellung</span>
+        <span class="word-pron">/ˈdaːɐ̯ʃtɛlʊŋ/</span>
+      </div>
+      <div class="word-meaning">presentation, representation, exposition — how something is shown or explained</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">dar (there) + stellen (to place)</span>
+        <span class="bridge-note">— to place before, to present, to set forth</span>
+      </div>
+      <div class="story">
+        <em>Darstellung</em> is about representation. How is the argument presented? How is the evidence laid out? What form does the exposition take? In academic contexts, the presentation of material is as important as the material itself. A clear <em>Darstellung</em> ensures that the reader can follow the logic.
+      </div>
+    </div>
+  </div>
+
+  <!-- VORAUSSETZUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-voraussetzung">
+      <div class="word-header">
+        <span class="word-main">Voraussetzung</span>
+        <span class="word-pron">/ˈfoːɐ̯aʊ̯ssɛtsʊŋ/</span>
+      </div>
+      <div class="word-meaning">precondition, prerequisite, assumption — something that must be true for an argument to hold</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">vor (before) + aussetzen (to set forth)</span>
+        <span class="bridge-note">— something set forth before, a premise that precedes the argument</span>
+      </div>
+      <div class="story">
+        <em>Voraussetzung</em> is the foundation of academic honesty. Every argument rests on assumptions. The scholar who clearly states their preconditions shows intellectual integrity. "Unter der Voraussetzung..." — "Under the assumption that..." — is one of the most common phrases in academic German.
+      </div>
+    </div>
+  </div>
+
+  <!-- BERÜCKSICHTIGUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-berucksichtigung">
+      <div class="word-header">
+        <span class="word-main">Berücksichtigung</span>
+        <span class="word-pron">/bəˈʁʏkzɪçtɪɡʊŋ/</span>
+      </div>
+      <div class="word-meaning">consideration, taking into account — acknowledgment of factors or variables</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">be- (prefix) + Rücksicht (regard, consideration)</span>
+        <span class="bridge-note">— to regard, to take into account, to consider</span>
+      </div>
+      <div class="story">
+        This word appears constantly in academic writing: "In consideration of all factors..." "Taking into account the available evidence..." It is the language of nuance and complexity. No argument exists in a vacuum. All must be considered.
+      </div>
+    </div>
+  </div>
+
+  <!-- BEOBACHTUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-beobachtung">
+      <div class="word-header">
+        <span class="word-main">Beobachtung</span>
+        <span class="word-pron">/bəˈʔoːpaxːtʊŋ/</span>
+      </div>
+      <div class="word-meaning">observation — the act of watching, noting, recording empirical phenomena</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">be- (intensive) + Obacht (watch, care)</span>
+        <span class="bridge-note">— attentive watching, careful noting</span>
+      </div>
+      <div class="story">
+        <em>Beobachtung</em> is the foundation of empirical knowledge. The scholar begins by observing. She watches. She notes. She records. This is the first step of all scientific method. The word carries the weight of epistemology — the theory of how we know things.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHLUSSFOLGERUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-schlussfolgerung">
+      <div class="word-header">
+        <span class="word-main">Schlussfolgerung</span>
+        <span class="word-pron">/ˈʃlʊsfolɡərʊŋ/</span>
+      </div>
+      <div class="word-meaning">conclusion — a judgment or decision reached from evidence and reasoning</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schluss (closure) + Folgerung (what follows)</span>
+        <span class="bridge-note">— what follows necessarily from the closure, the inevitable conclusion</span>
+      </div>
+      <div class="story">
+        Every academic paper ends with <em>Schlussfolgerung</em>. This is where everything comes together. The evidence has been presented. The argument has been made. Now, what necessarily follows? What conclusion is unavoidable? The word carries weight because it suggests inevitability — this is not an opinion, but a conclusion that must be drawn.
+      </div>
+    </div>
+  </div>
+
+  <!-- AUSWIRKUNG -->
+  <div class="scene">
+    <div class="ety-card" id="card-auswirkung">
+      <div class="word-header">
+        <span class="word-main">Auswirkung</span>
+        <span class="word-pron">/ˈaʊ̯sɪɐ̯kʊŋ/</span>
+      </div>
+      <div class="word-meaning">impact, consequence, effect — the results that follow from a discovery or action</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">aus (out) + wirken (to work, to have effect)</span>
+        <span class="bridge-note">— the effects that work outward, the ripples of influence</span>
+      </div>
+      <div class="story">
+        <em>Auswirkung</em> is about impact. How does this discovery change how we think? What are its implications? This is the final question of academic research: what difference does this make? Knowledge does not exist in isolation. Every finding has consequences that ripple outward.
+      </div>
+    </div>
+  </div>
+
+  <!-- GRUNDLAGE -->
+  <div class="scene">
+    <div class="ety-card" id="card-grundlage">
+      <div class="word-header">
+        <span class="word-main">Grundlage</span>
+        <span class="word-pron">/ˈɡʁʊntlaːɡə/</span>
+      </div>
+      <div class="word-meaning">foundation, basis, groundwork — the fundamental principles on which something is built</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Grund (ground, reason) + Lage (position, situation)</span>
+        <span class="bridge-note">— the ground upon which everything rests</span>
+      </div>
+      <div class="story">
+        <em>Grundlage</em> is foundational. Every academic argument must state its foundation. What are the basic principles? What assumptions underlie everything that follows? A sound <em>Grundlage</em> ensures that the entire structure of argument remains stable.
+      </div>
+    </div>
+  </div>
+
+  <!-- STELLUNGNAHME -->
+  <div class="scene">
+    <div class="ety-card" id="card-stellungnahme">
+      <div class="word-header">
+        <span class="word-main">Stellungnahme</span>
+        <span class="word-pron">/ˈʃtɛlʊŋnaːmə/</span>
+      </div>
+      <div class="word-meaning">position, statement, stance — a declaration of one's view or judgment on a matter</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stellung (position, stance) + Nahme (taking)</span>
+        <span class="bridge-note">— the taking of a position, a declaration of where one stands</span>
+      </div>
+      <div class="story">
+        <em>Stellungnahme</em> is the scholar's final statement. After all the evidence, all the analysis, all the reasoning — where do you stand? What is your position? This word captures the necessary act of judgment that all scholarship requires. You cannot hide behind passivity forever. Eventually, you must take a position.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">812 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(95%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:95%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 812 words across 95 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">144 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(99%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:99%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 144 patterns and grammar rules across 95 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Ninety-Five</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Forschungsergebnis</span><span class="cw-english">research result</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Zusammenfassung</span><span class="cw-english">summary</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Darstellung</span><span class="cw-english">presentation</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Voraussetzung</span><span class="cw-english">precondition</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Berücksichtigung</span><span class="cw-english">consideration</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Beobachtung</span><span class="cw-english">observation</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Schlussfolgerung</span><span class="cw-english">conclusion</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Auswirkung</span><span class="cw-english">impact</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Grundlage</span><span class="cw-english">foundation</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Stellungnahme</span><span class="cw-english">position</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">The Passive Revolution</strong> — Academic German deprioritizes the subject through passive voice. The discovery matters more than the discoverer.<br><br>
+      <strong style="color: var(--text-bright);">Nominalization</strong> — Verbs become nouns. Actions become things. This creates abstract, precise terminology.<br><br>
+      <strong style="color: var(--text-bright);">Hedging and Qualification</strong> — Academic German is full of "appears," "suggests," "might be." This is not weakness; it is precision.<br><br>
+      <strong style="color: var(--text-bright);">The Complex Sentence</strong> — Academic prose builds long, intricate sentences that mirror the complexity of thought itself. Each clause builds on the others until the final verb arrives with force.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Ninety-Five
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten keys to the library's deepest shelves. Academic German is the language of thinking made visible. When you understand this register, you understand how knowledge is constructed, defended, transmitted across generations of scholars.<br>
+        The passive voice, the nominalization, the hedging — these are not flaws. They are features. They are how a language creates space for complexity, nuance, and truth.
+      </p>
+      <div class="next-chapter">
+        Chapter Ninety-Six: Literarisches Deutsch — where the language becomes art
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter94.html" class="nav-btn">← Chapter 94</a>
+    <a href="chapter96.html" class="nav-btn next">Chapter 96 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 95: SCIENTIFIC/ACADEMIC GERMAN - LIBRARY CANVAS ---
+const canvas = document.getElementById('library-canvas');
+const ctx = canvas.getContext('2d');
+let shelves = [];
+let floatingPages = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createShelves();
+}
+
+function createShelves() {
+  shelves = [];
+  for (let i = 0; i < 5; i++) {
+    shelves.push({
+      y: canvas.height * 0.2 + i * (canvas.height * 0.15),
+      width: canvas.width * 0.8,
+      x: canvas.width * 0.1,
+      books: 15 + Math.floor(Math.random() * 20)
+    });
+  }
+}
+
+function createPages() {
+  floatingPages = [];
+  for (let i = 0; i < 20; i++) {
+    floatingPages.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.3 + 0.05,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.02,
+      width: 30 + Math.random() * 20,
+      height: 50 + Math.random() * 30
+    });
+  }
+}
+
+function drawCanvas(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.15)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw shelves as silhouettes
+  shelves.forEach((shelf, idx) => {
+    ctx.strokeStyle = `rgba(196, 168, 136, ${0.1 + scroll * 0.15})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(shelf.x, shelf.y);
+    ctx.lineTo(shelf.x + shelf.width, shelf.y);
+    ctx.stroke();
+
+    // Draw book spines as tiny rectangles
+    const bookWidth = shelf.width / shelf.books;
+    for (let i = 0; i < shelf.books; i++) {
+      const bx = shelf.x + i * bookWidth;
+      const height = 15 + Math.random() * 25;
+      ctx.fillStyle = `rgba(232, 164, 74, ${0.15 + scroll * 0.1})`;
+      ctx.fillRect(bx, shelf.y - height, bookWidth * 0.9, height);
+    }
+  });
+
+  // Draw floating pages
+  floatingPages.forEach((page, idx) => {
+    page.x += page.vx;
+    page.y += page.vy;
+    page.rotation += page.rotationSpeed;
+
+    // Boundary wrapping
+    if (page.x < -50) page.x = canvas.width + 50;
+    if (page.x > canvas.width + 50) page.x = -50;
+    if (page.y < -50) page.y = canvas.height + 50;
+    if (page.y > canvas.height + 50) page.y = -50;
+
+    ctx.save();
+    ctx.translate(page.x, page.y);
+    ctx.rotate(page.rotation);
+
+    // Draw page as rectangle with lines
+    ctx.strokeStyle = `rgba(232, 164, 74, ${page.alpha})`;
+    ctx.fillStyle = `rgba(232, 164, 74, ${page.alpha * 0.3})`;
+    ctx.lineWidth = 1;
+    ctx.fillRect(-page.width / 2, -page.height / 2, page.width, page.height);
+    ctx.strokeRect(-page.width / 2, -page.height / 2, page.width, page.height);
+
+    // Draw text lines on pages
+    for (let i = 0; i < 4; i++) {
+      const lineY = -page.height / 2 + 8 + i * 8;
+      ctx.beginPath();
+      ctx.moveTo(-page.width / 2 + 4, lineY);
+      ctx.lineTo(-page.width / 2 + page.width - 4, lineY);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  });
+
+  requestAnimationFrame(drawCanvas);
+}
+
+// Update progress bar
+window.addEventListener('scroll', () => {
+  const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+resizeCanvas();
+createPages();
+requestAnimationFrame(drawCanvas);
+window.addEventListener('resize', () => { resizeCanvas(); createPages(); });
+
+// --- ETYMOLOGY CARD INTERACTION ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const trigger = card.previousElementSibling;
+  if (trigger && trigger.classList.contains('narrative')) {
+    trigger.addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+  }
+  const firstPara = card.parentElement.querySelector('.narrative');
+  if (firstPara) {
+    firstPara.style.cursor = 'pointer';
+  }
+});
+
+// Toggle card visibility when German word is clicked
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', (e) => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      card.classList.toggle('open');
+    }
+    e.stopPropagation();
+  });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+// --- QUIZ FUNCTIONALITY ---
+const quizData = [
+  {
+    question: "What is the primary characteristic of passive voice in academic German?",
+    options: ["It emphasizes the subject", "It deprioritizes the agent", "It makes sentences shorter", "It is rarely used"],
+    correct: 1,
+    explanation: "Academic German uses passive voice to shift focus from who did something to what was done, creating an appearance of objectivity."
+  },
+  {
+    question: "Nominalization in academic German means:",
+    options: ["Using only proper nouns", "Turning verbs into nouns", "Creating many adjectives", "Avoiding abstract language"],
+    correct: 1,
+    explanation: "Nominalization converts action words into abstract nouns. 'We research' becomes 'Die Forschung zeigt' (the research shows)."
+  },
+  {
+    question: "What is the purpose of hedging language in academic German?",
+    options: ["To make claims sound uncertain", "To show scholarly caution and precision", "To avoid responsibility", "To confuse readers"],
+    correct: 1,
+    explanation: "Hedging ('it appears,' 'it might be argued') shows intellectual honesty by acknowledging complexity and limiting certainty."
+  },
+  {
+    question: "What does 'Voraussetzung' mean in academic context?",
+    options: ["a conclusion", "a precondition or assumption", "a bibliography", "a hypothesis"],
+    correct: 1,
+    explanation: "Voraussetzung = vor (before) + Setzung (setting). It refers to conditions that must be accepted before an argument holds."
+  },
+  {
+    question: "How does nominalization create density in academic German?",
+    options: ["By using shorter words", "By turning verbs into nouns that can be further modified", "By removing adjectives", "By simplifying sentences"],
+    correct: 1,
+    explanation: "Once a verb becomes a noun, it can be modified and combined with other nouns: Forschungsergebnis (research result), Forschungsmethode (research method)."
+  },
+  {
+    question: "What is the epistemological purpose of 'Beobachtung' in academic work?",
+    options: ["To entertain readers", "To serve as the empirical foundation of knowledge", "To prove the scholar is careful", "To replace theory"],
+    correct: 1,
+    explanation: "Beobachtung (observation) is the foundation. The scientist must first observe and record phenomena before drawing conclusions."
+  },
+  {
+    question: "What does 'Schlussfolgerung' literally mean?",
+    options: ["a question", "what follows necessarily from the closure", "a beginning", "a repeated argument"],
+    correct: 1,
+    explanation: "Schluss (closure) + Folgerung (what follows). It refers to conclusions that logically must follow from evidence."
+  },
+  {
+    question: "In academic German, why are sentences often very long?",
+    options: ["Poor writing", "Laziness", "To mirror the complexity of thought and add qualifications", "Because German grammar requires it"],
+    correct: 2,
+    explanation: "Long sentences in academic German allow for nested qualifications, preconditions, and nuances that require the final verb to tie everything together."
+  },
+  {
+    question: "What role does 'Grundlage' play in academic writing?",
+    options: ["It is the conclusion", "It is the foundation on which all argument rests", "It is a criticism", "It is irrelevant"],
+    correct: 1,
+    explanation: "Grundlage (foundation) must be clearly stated. Every academic argument needs explicit foundational principles."
+  },
+  {
+    question: "What must a scholar do with 'Stellungnahme'?",
+    options: ["Hide their judgment", "Avoid taking a position", "Declare their position based on evidence", "Pretend to be neutral"],
+    correct: 2,
+    explanation: "Stellungnahme (position-taking) is when the scholar finally declares where they stand. After all analysis, judgment is required."
+  },
+  {
+    question: "How does academic German demonstrate epistemic modesty?",
+    options: ["By claiming absolute certainty", "By using hedging language and stating preconditions", "By avoiding evidence", "By refusing to draw conclusions"],
+    correct: 1,
+    explanation: "Academic German constantly qualifies claims with 'appears,' 'suggests,' 'under the assumption that,' showing the limitations of knowledge."
+  },
+  {
+    question: "What is the function of 'Zusammenfassung' in academic texts?",
+    options: ["To add length", "To confuse the reader", "To compress complex arguments into their essence", "To replace the main argument"],
+    correct: 2,
+    explanation: "Zusammenfassung (summary) distills arguments to their core. It appears throughout academic work, not just at the end."
+  },
+  {
+    question: "What does 'Berücksichtigung' acknowledge in scholarly argument?",
+    options: ["That the argument is wrong", "That many factors must be considered", "That simplicity is key", "That complexity doesn't matter"],
+    correct: 1,
+    explanation: "Berücksichtigung (consideration) shows the scholar has acknowledged multiple perspectives and factors: 'when taking all factors into account.'"
+  },
+  {
+    question: "How does 'Auswirkung' differ from 'Schlussfolgerung'?",
+    options: ["They are identical", "Auswirkung is the impact/consequence; Schlussfolgerung is the logical conclusion from evidence", "Auswirkung is German; Schlussfolgerung is English", "There is no difference"],
+    correct: 1,
+    explanation: "Schlussfolgerung is what logically must follow from evidence. Auswirkung is the broader impact that ripples outward from the discovery."
+  },
+  {
+    question: "Why is nominalization particularly suited to academic German?",
+    options: ["It makes writing less clear", "It allows verbs to be examined as stable objects that can be modified and analyzed", "It is easier to pronounce", "German grammar forbids verbs"],
+    correct: 1,
+    explanation: "Nominalizing turns processes into objects. Scholars can then analyze, modify, and relate these objects to other nouns, creating precise discourse."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.innerHTML = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>930 words</strong> across 95 chapters. You recognize <strong>91 linguistic patterns</strong> spanning from Proto-Indo-European to Modern German.</p>
+      <p style="margin-top: 8px;">Academic German shows how language transforms when used for formal thinking. The passive voice, nominalization, hedging, and complex sentences are not flaws — they are sophisticated tools for expressing complex ideas with precision.</p>
+    `;
+  }
+}
+
+// Animate word collection on load
+window.addEventListener('load', () => {
+  const words = document.querySelectorAll('.collected-word');
+  words.forEach((word, idx) => {
+    setTimeout(() => {
+      word.classList.add('show');
+    }, parseInt(word.dataset.delay) || 0);
+  });
+});
+
+initializeQuiz();
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

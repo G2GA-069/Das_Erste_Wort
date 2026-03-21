@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 98: Gesprochenes Deutsch</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --speech: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #2a1a1a 70%, #3a1a2a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- SPEECH CANVAS --- */
+  #speech-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1s forwards;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    animation: bob 2s ease-in-out infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* --- NARRATIVE PROSE --- */
+  .narrative {
+    font-size: 1.15rem;
+    line-height: 1.95;
+    margin-bottom: 1.8em;
+    color: var(--text);
+  }
+
+  .narrative em {
+    color: var(--text-bright);
+    font-style: italic;
+  }
+
+  .narrative strong {
+    color: var(--fire);
+    font-weight: 600;
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .narrative.small {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--english); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- SCENE STRUCTURE --- */
+  .scene {
+    margin-bottom: 80px;
+  }
+
+  .scene-marker {
+    height: 40px;
+    margin-bottom: 40px;
+    background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.2), transparent);
+  }
+
+  .divider {
+    text-align: center;
+    color: rgba(232, 164, 74, 0.3);
+    margin: 60px 0;
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border-left: 4px solid rgba(232, 164, 74, 0.4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 40px 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-title {
+    color: var(--text-bright);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .quiz-question {
+    margin-bottom: 40px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(200, 100, 100, 0.1);
+    border-color: rgba(200, 100, 100, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .quiz-nav button {
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--fire);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .quiz-nav button:hover:not(:disabled) {
+    background: rgba(232, 164, 74, 0.25);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(50, 50, 50, 0.5);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .post-quiz-summary {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid var(--fire);
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+    .scene { margin-bottom: 60px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="speech-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Ninety-Eight</div>
+    <h1>Gesprochenes Deutsch</h1>
+    <div class="subtitle">Spoken German</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE COFFEE HOUSE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Sit in a German coffee house. Listen to real people speaking. The language you hear is not the language of textbooks. It is not the language of literature or journalism or academia. It is the language of real life — immediate, hesitant, full of filler words and false starts and corrections.
+    </p>
+
+    <p class="narrative">
+      When Germans speak, they do not speak in perfect, complete sentences. They pause. They hesitate. They reach for words. They fill the silence with sounds that carry meaning beyond their literal definition. And they contract. Verbs collapse into abbreviations. Words merge. The language becomes fluid, intimate, human.
+    </p>
+
+    <p class="narrative">
+      This is spoken German. It is not less valuable than written German. It is different. It is immediate. It is the language where thought happens in real time, unpolished and unrehearsed. And it reveals things about how the language actually works when people are thinking and feeling and communicating in the moment.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the language of the living, breathing human being.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: FILLER WORDS ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In English, we have "um" and "uh" and "like" — fillers that buy time while thinking. German has its own. <span class="german-word" data-card="genau">Genau</span> — literally "exactly." But in spoken German, it is a filler, a way of stalling while thinking. A person might say: "Also, genau, das Problem ist..." — "So, exactly, the problem is..." And yet <em>genau</em> carries real meaning. It suggests agreeing, acknowledging, confirming. It is more than just a filler — it is a filler that connects.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="eigentlich">Eigentlich</span> — literally "actually" or "truly." But in speech, it becomes a filler too. "Eigentlich, hab ich keine Zeit..." — "Actually, I don't have time..." The word creates a kind of correction or qualification in real time. It is the word of reconsideration, of second thoughts.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="sozusagen">Sozusagen</span> — "so to speak." "Das ist, sozusagen, eine gute Idee..." — "That is, so to speak, a good idea." The phrase admits that you are not speaking precisely, that you are approximating. It is a filler that speaks its own function out loud.
+    </p>
+
+    <p class="narrative">
+      And then <span class="german-word" data-card="quasi">quasi</span> — "as if," "in a manner of speaking." Germans use it constantly in speech to hedge, to approximate, to speak without claiming absolute precision. "Das ist quasi ein Fehler..." — "That's, as if, a mistake..." The qualification is built into the sentence itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: HEDGING AND APPROXIMATION ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Spoken German is full of words that qualify, approximate, hedge. <span class="german-word" data-card="irgendwie">Irgendwie</span> — "somehow," "in some way." "Ich bin irgendwie müde..." — "I'm somehow tired..." The word admits that you can't quite articulate what you mean, but you're trying.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="uberhaupt">Überhaupt</span> — literally "at all" or "in general." But in speech, it becomes a word of emphasis and vagueness at once. "Das ist überhaupt nicht fair..." — "That's, generally speaking, not fair..." It creates distance, generalization, a kind of philosophical remove.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-card="sowieso">Sowieso</span> — "anyway," "in any case," "regardless." It is the word of dismissal and acceptance combined. "Sowieso, wir sollten gehen..." — "Anyway, we should go..." The word suggests that details don't matter, that whatever came before is superseded by what comes next.
+    </p>
+
+    <p class="narrative">
+      These fillers are not flaws in German. They are features. They show how language actually works when people are thinking. They are the textures of real speech, the hesitations that make humans real.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: CONTRACTIONS AND COLLAPSES ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In written German, "Ich habe" — "I have." But in speech, it collapses: "Hab ich..." — "Have I..." The vowel drops. The grammar bends. And something is gained: intimacy. The closer you are to someone, the more your speech contracts. A stranger gets "Ich habe." A friend gets "Hab ich." The grammar indexes the relationship.
+    </p>
+
+    <p class="narrative">
+      More contractions: "du hast" becomes "du hast" → "du has" → "hast du" → "hasst du?" The grammar shifts, inverts, contracts. "Ich bin" becomes "ich bin" → "bin ich" → "bin'ich" → "bin ich?" Written grammar is rigid. Spoken grammar is fluid, following the music of speech rather than the rules of the written page.
+    </p>
+
+    <p class="narrative">
+      And interjections: <span class="german-word" data-card="tatsachlich">Tatsächlich</span> — "actually," "in fact." But used in speech to emphasize, to assert, to make something matter. "Tatsächlich, das ist nicht wahr!" — "Actually, that's not true!" The word gets punch in speech that the written page can never capture.
+    </p>
+
+    <p class="narrative">
+      Finally: <span class="german-word" data-card="jedenfalls">Jedenfalls</span> — "in any case," "at any rate." The word closes down argument, creates consensus, moves forward. "Jedenfalls, wir sollten anfangen..." — "In any case, we should start..." It is the word of decision, of moving past disagreement.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE MUSIC OF SPEECH ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Spoken German has rhythm. Sentences rise and fall. The voice carries meaning that the words alone cannot. A person says "genau?" as a question, seeking confirmation. The same person says "genau." as a statement, asserting agreement. The same word, different music.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-card="immerhin">Immerhin</span> — "after all," "nonetheless." The word carries philosophy. It suggests accepting limitations while still valuing achievement. "Das ist immerhin ein Versuch..." — "That is, after all, an attempt..." The word makes meaning from context and intonation as much as from its dictionary definition.
+    </p>
+
+    <p class="narrative">
+      When you listen to spoken German, you are hearing language at its most alive. Words collide. Grammar bends. Meanings shift with tone and emphasis. The person speaking is thinking in real time, and you are hearing that thought unfold, corrections and all.
+    </p>
+
+    <p class="narrative">
+      This is what it means to speak a language. Not to recite textbook phrases. But to find the right word in the moment. To hesitate. To correct. To reach toward meaning through a forest of fillers and contractions and approximations. This is the living heart of any language.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== VOCABULARY CARDS ==================== -->
+
+  <!-- GENAU -->
+  <div class="scene">
+    <div class="ety-card" id="card-genau">
+      <div class="word-header">
+        <span class="word-main">Genau</span>
+        <span class="word-pron">/ɡəˈnaʊ̯/</span>
+      </div>
+      <div class="word-meaning">exactly, precise — used in speech as a filler meaning "right," "sure," "exactly so"</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">genu (close, near) + -au (narrow)</span>
+        <span class="bridge-note">— etymologically "narrow, precise," now a filler in speech</span>
+      </div>
+      <div class="story">
+        <em>Genau</em> is ubiquitous in spoken German. People say "Genau?" as a question seeking confirmation. They say "Genau!" as agreement. And they use it as a filler while thinking: "Also, genau, das Problem ist..." In speech, <em>genau</em> does more than its dictionary definition — it connects people, builds agreement, buys thinking time.
+      </div>
+    </div>
+  </div>
+
+  <!-- EIGENTLICH -->
+  <div class="scene">
+    <div class="ety-card" id="card-eigentlich">
+      <div class="word-header">
+        <span class="word-main">Eigentlich</span>
+        <span class="word-pron">/ˈaɪ̯ɡntlɪç/</span>
+      </div>
+      <div class="word-meaning">actually, truly — in speech, a filler suggesting reconsideration or qualification</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">eigen (own) + -tlich (like)</span>
+        <span class="bridge-note">— literally "like one's own," thus "true, real," become "actually, on second thought"</span>
+      </div>
+      <div class="story">
+        <em>Eigentlich</em> is the word of second thought. It signals reconsideration, a qualification coming. "Eigentlich, jetzt wo ich es sage..." — "Actually, now that I say it..." The word is not merely a filler but an index of the thinking process itself.
+      </div>
+    </div>
+  </div>
+
+  <!-- SOZUSAGEN -->
+  <div class="scene">
+    <div class="ety-card" id="card-sozusagen">
+      <div class="word-header">
+        <span class="word-main">Sozusagen</span>
+        <span class="word-pron">/ˈzoːtsuːˌzaːɡən/</span>
+      </div>
+      <div class="word-meaning">so to speak, in a manner of speaking — a filler admitting imprecision</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">so (so) + zu (to) + sagen (to say)</span>
+        <span class="bridge-note">— literally "so to say," admitting that you're not speaking precisely</span>
+      </div>
+      <div class="story">
+        <em>Sozusagen</em> is the filler that speaks its own function. "Das ist, sozusagen, eine gute Idee..." — "That is, so to speak, a good idea..." The speaker is admitting imprecision while still communicating. It is honest approximation.
+      </div>
+    </div>
+  </div>
+
+  <!-- QUASI -->
+  <div class="scene">
+    <div class="ety-card" id="card-quasi">
+      <div class="word-header">
+        <span class="word-main">Quasi</span>
+        <span class="word-pron">/ˈkvaːzi/</span>
+      </div>
+      <div class="word-meaning">as if, in a manner of speaking — hedging with grace</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">from Latin quasi (as if)</span>
+        <span class="bridge-note">— a direct borrowing, "as if," "almost," used to hedge claims</span>
+      </div>
+      <div class="story">
+        <em>Quasi</em> is the hedging particle. It allows a speaker to make claims while simultaneously disclaiming absolute certainty. "Das ist quasi ein Fehler..." — "That's, as if, a mistake..." The word is a grace note, allowing both assertion and humility.
+      </div>
+    </div>
+  </div>
+
+  <!-- IRGENDWIE -->
+  <div class="scene">
+    <div class="ety-card" id="card-irgendwie">
+      <div class="word-header">
+        <span class="word-main">Irgendwie</span>
+        <span class="word-pron">/ˈɪɐ̯ɡɛntˌviː/</span>
+      </div>
+      <div class="word-meaning">somehow, in some way — expressing uncertainty or vagueness</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">irgend (any, some) + wie (how)</span>
+        <span class="bridge-note">— literally "in some way," expressing that you can't articulate precisely</span>
+      </div>
+      <div class="story">
+        <em>Irgendwie</em> is the word of vagueness made honest. "Ich bin irgendwie müde..." — "I'm somehow tired..." You can't pinpoint the tiredness, but you feel it. The word admits the limits of language while still communicating.
+      </div>
+    </div>
+  </div>
+
+  <!-- ÜBERHAUPT -->
+  <div class="scene">
+    <div class="ety-card" id="card-uberhaupt">
+      <div class="word-header">
+        <span class="word-main">Überhaupt</span>
+        <span class="word-pron">/ˈʔyːbɐhaʊ̯pt/</span>
+      </div>
+      <div class="word-meaning">at all, in general — creating philosophical distance or emphasis</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">über (over) + haupt (head)</span>
+        <span class="bridge-note">— literally "over the head," creating distance and generalization</span>
+      </div>
+      <div class="story">
+        <em>Überhaupt</em> creates a kind of philosophical remove. "Das ist überhaupt nicht fair..." — "That's, generally speaking, not fair..." The word suggests stepping back, seeing the bigger picture, generalizing beyond the particular moment.
+      </div>
+    </div>
+  </div>
+
+  <!-- SOWIESO -->
+  <div class="scene">
+    <div class="ety-card" id="card-sowieso">
+      <div class="word-header">
+        <span class="word-main">Sowieso</span>
+        <span class="word-pron">/zoˈviːzoː/</span>
+      </div>
+      <div class="word-meaning">anyway, in any case — dismissing what came before, moving forward</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">so (so) + wie (how) + so (so)</span>
+        <span class="bridge-note">— literally "so how so," a colloquial formation meaning "anyway"</span>
+      </div>
+      <div class="story">
+        <em>Sowieso</em> is the word that closes down argument. "Sowieso, wir sollten gehen..." — "Anyway, we should go..." The word suggests that whatever came before doesn't matter, that there is only the next thing to do. It is acceptance and dismissal combined.
+      </div>
+    </div>
+  </div>
+
+  <!-- TATSÄCHLICH -->
+  <div class="scene">
+    <div class="ety-card" id="card-tatsachlich">
+      <div class="word-header">
+        <span class="word-main">Tatsächlich</span>
+        <span class="word-pron">/tatˈzɛçlɪç/</span>
+      </div>
+      <div class="word-meaning">actually, in fact — emphasizing, asserting, making claims matter</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Tat (deed, fact) + -sächlich (like, related to)</span>
+        <span class="bridge-note">— literally "like a fact," meaning "actually, really"</span>
+      </div>
+      <div class="story">
+        <em>Tatsächlich</em> gets punch in speech. "Tatsächlich, das ist nicht wahr!" — "Actually, that's not true!" The word asserts, emphasizes, makes a claim carry weight. It is more forceful than mere statement.
+      </div>
+    </div>
+  </div>
+
+  <!-- JEDENFALLS -->
+  <div class="scene">
+    <div class="ety-card" id="card-jedenfalls">
+      <div class="word-header">
+        <span class="word-main">Jedenfalls</span>
+        <span class="word-pron">/ˈjeːdənfals/</span>
+      </div>
+      <div class="word-meaning">in any case, at any rate — closing down argument, creating consensus</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">jede (each, every) + Fall (case) + -s (adverbial ending)</span>
+        <span class="bridge-note">— literally "in every case," meaning "in any case, regardless"</span>
+      </div>
+      <div class="story">
+        <em>Jedenfalls</em> is the word of decision. It closes down debate and moves forward. "Jedenfalls, wir sollten anfangen..." — "In any case, we should start..." The word asserts that whatever came before is settled, that the time for discussion is over.
+      </div>
+    </div>
+  </div>
+
+  <!-- IMMERHIN -->
+  <div class="scene">
+    <div class="ety-card" id="card-immerhin">
+      <div class="word-header">
+        <span class="word-main">Immerhin</span>
+        <span class="word-pron">/ˈɪməˌhaɪ̯n/</span>
+      </div>
+      <div class="word-meaning">after all, nonetheless — expressing qualification with grace</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">immer (always) + hin (toward)</span>
+        <span class="bridge-note">— literally "always toward," meaning "nonetheless, despite everything"</span>
+      </div>
+      <div class="story">
+        <em>Immerhin</em> carries philosophy. It suggests accepting limitations while still valuing achievement. "Das ist immerhin ein Versuch..." — "That is, after all, an attempt..." The word balances criticism with appreciation, limitation with accomplishment.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">836 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(98%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:98%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 836 words across 98 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">145 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(100%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 145 patterns and grammar rules across 98 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Ninety-Eight</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Genau</span><span class="cw-english">exactly</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Eigentlich</span><span class="cw-english">actually</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Sozusagen</span><span class="cw-english">so to speak</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Quasi</span><span class="cw-english">as if</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Irgendwie</span><span class="cw-english">somehow</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Überhaupt</span><span class="cw-english">at all</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Sowieso</span><span class="cw-english">anyway</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Tatsächlich</span><span class="cw-english">actually</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Jedenfalls</span><span class="cw-english">in any case</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Immerhin</span><span class="cw-english">nonetheless</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Filler Words as Meaning</strong> — Fillers like <em>genau</em>, <em>eigentlich</em>, <em>irgendwie</em> aren't errors but features of speech that carry real meaning.<br><br>
+      <strong style="color: var(--text-bright);">Grammar in Motion</strong> — Spoken German contracts, inverts, bends. Grammar serves the music of speech, not rigid rules.<br><br>
+      <strong style="color: var(--text-bright);">Hedging and Approximation</strong> — Spoken German is full of words that qualify and approximate. This is not vagueness but honesty about the limits of language.<br><br>
+      <strong style="color: var(--text-bright);">Intonation as Meaning</strong> — The same word means different things depending on tone, stress, context. Speech carries meaning that writing cannot.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Ninety-Eight
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten keys to the living language. When you speak German — or any language — you are not reciting textbook phrases. You are thinking in real time, hesitating, correcting, reaching toward meaning.<br>
+        These filler words and contractions are the sound of human thought. They are what makes language alive.
+      </p>
+      <div class="next-chapter">
+        Chapter Ninety-Nine: Hochdeutsch und Dialekt — standard German and the voices of regions
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter97.html" class="nav-btn">← Chapter 97</a>
+    <a href="chapter99.html" class="nav-btn next">Chapter 99 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 98: SPOKEN GERMAN - SPEECH BUBBLES CANVAS ---
+const canvas = document.getElementById('speech-canvas');
+const ctx = canvas.getContext('2d');
+let speechBubbles = [];
+let soundWaves = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createBubbles();
+}
+
+function createBubbles() {
+  speechBubbles = [];
+  for (let i = 0; i < 8; i++) {
+    speechBubbles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.3,
+      radius: 20 + Math.random() * 40,
+      alpha: 0.1 + Math.random() * 0.08
+    });
+  }
+
+  soundWaves = [];
+  for (let i = 0; i < 12; i++) {
+    soundWaves.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+      y: canvas.height / 2 + (Math.random() - 0.5) * 200,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.4,
+      size: 5 + Math.random() * 15,
+      alpha: 0.1 + Math.random() * 0.1
+    });
+  }
+}
+
+function drawCanvas(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw speech bubbles
+  speechBubbles.forEach((bubble, idx) => {
+    bubble.x += bubble.vx;
+    bubble.y += bubble.vy;
+
+    if (bubble.x < -100) bubble.x = canvas.width + 100;
+    if (bubble.x > canvas.width + 100) bubble.x = -100;
+    if (bubble.y < -100) bubble.y = canvas.height + 100;
+    if (bubble.y > canvas.height + 100) bubble.y = -100;
+
+    ctx.fillStyle = `rgba(212, 160, 116, ${bubble.alpha * (0.5 + scroll * 0.3)})`;
+    ctx.beginPath();
+    ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bubble outline
+    ctx.strokeStyle = `rgba(232, 164, 74, ${bubble.alpha * (0.3 + scroll * 0.2)})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Tail
+    ctx.fillStyle = `rgba(212, 160, 116, ${bubble.alpha * (0.4 + scroll * 0.2)})`;
+    ctx.beginPath();
+    ctx.moveTo(bubble.x - bubble.radius * 0.3, bubble.y + bubble.radius * 0.8);
+    ctx.lineTo(bubble.x - bubble.radius * 0.6, bubble.y + bubble.radius * 1.2);
+    ctx.lineTo(bubble.x - bubble.radius * 0.1, bubble.y + bubble.radius * 0.9);
+    ctx.closePath();
+    ctx.fill();
+  });
+
+  // Draw sound waves
+  soundWaves.forEach((wave, idx) => {
+    wave.x += wave.vx;
+    wave.y += wave.vy;
+
+    if (wave.x < -50) wave.x = canvas.width + 50;
+    if (wave.x > canvas.width + 50) wave.x = -50;
+    if (wave.y < -50) wave.y = canvas.height + 50;
+    if (wave.y > canvas.height + 50) wave.y = -50;
+
+    // Concentric circles (sound waves)
+    for (let r = 0; r < 3; r++) {
+      ctx.strokeStyle = `rgba(232, 164, 74, ${wave.alpha * (0.3 - r * 0.1) * (0.5 + scroll * 0.3)})`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(wave.x, wave.y, wave.size + r * 8, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Center dot
+    ctx.fillStyle = `rgba(232, 164, 74, ${wave.alpha * (0.4 + scroll * 0.2)})`;
+    ctx.beginPath();
+    ctx.arc(wave.x, wave.y, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawCanvas);
+}
+
+window.addEventListener('scroll', () => {
+  const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+resizeCanvas();
+requestAnimationFrame(drawCanvas);
+window.addEventListener('resize', () => resizeCanvas());
+
+// --- ETYMOLOGY CARD INTERACTION ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const trigger = card.previousElementSibling;
+  if (trigger && trigger.classList.contains('narrative')) {
+    trigger.addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+  }
+});
+
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', (e) => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      card.classList.toggle('open');
+    }
+    e.stopPropagation();
+  });
+});
+
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+// --- QUIZ FUNCTIONALITY ---
+const quizData = [
+  {
+    question: "How is 'genau' used differently in speech vs. its dictionary meaning?",
+    options: ["it means the same thing", "in speech it's a filler word that connects people and builds agreement", "in speech it means 'no'", "there's no difference"],
+    correct: 1,
+    explanation: "Genau becomes a filler in speech: 'Genau, das Problem ist...' It stalls while thinking but also suggests agreement and connection."
+  },
+  {
+    question: "What does 'eigentlich' signal in spoken German?",
+    options: ["certainty", "reconsideration, second thoughts, qualification coming", "disagreement", "emphasis"],
+    correct: 1,
+    explanation: "Eigentlich is the filler of second thought: 'Eigentlich, jetzt wo ich es sage...' It signals that a qualification is coming."
+  },
+  {
+    question: "How does 'sozusagen' function as a filler?",
+    options: ["it means exactly", "it admits that you're speaking imprecisely while still communicating", "it adds precision", "it has no special function"],
+    correct: 1,
+    explanation: "Sozusagen literally means 'so to speak' — it is a filler that speaks its own function, admitting imprecision."
+  },
+  {
+    question: "What does 'quasi' allow a speaker to do?",
+    options: ["make absolute claims", "hedge claims while maintaining both assertion and humility", "lie", "avoid responsibility"],
+    correct: 1,
+    explanation: "Quasi (as if) allows hedging: 'Das ist quasi ein Fehler...' It permits claims while disclaiming absolute certainty."
+  },
+  {
+    question: "What does 'irgendwie' express?",
+    options: ["certainty", "uncertainty or vagueness when you can't articulate precisely", "anger", "agreement"],
+    correct: 1,
+    explanation: "'Irgendwie' (somehow) expresses that you feel something but can't pinpoint it: 'Ich bin irgendwie müde...'"
+  },
+  {
+    question: "How does 'überhaupt' change the meaning of a sentence?",
+    options: ["it emphasizes exactly as said", "it creates philosophical distance and generalization", "it negates the sentence", "it has no effect"],
+    correct: 1,
+    explanation: "'Überhaupt' creates remove: 'Das ist überhaupt nicht fair...' suggests stepping back and generalizing beyond the moment."
+  },
+  {
+    question: "What function does 'sowieso' serve in conversation?",
+    options: ["it asks a question", "it closes down argument and moves forward, dismissing what came before", "it repeats what was said", "it agrees with everything"],
+    correct: 1,
+    explanation: "'Sowieso' (anyway) closes debate: 'Sowieso, wir sollten gehen...' It suggests details don't matter and time to move on."
+  },
+  {
+    question: "How does 'tatsächlich' get power in speech?",
+    options: ["it's neutral", "through emphasis and intonation that makes claims carry weight", "it weakens arguments", "it's just factual"],
+    correct: 1,
+    explanation: "'Tatsächlich' gets punch in speech. 'Tatsächlich, das ist nicht wahr!' emphasizes and asserts with force."
+  },
+  {
+    question: "What does 'jedenfalls' signal in conversation?",
+    options: ["uncertainty", "that discussion is closed and decision/action comes next", "politeness", "disagreement"],
+    correct: 1,
+    explanation: "'Jedenfalls' (in any case) closes discussion: 'Jedenfalls, wir sollten anfangen...' It signals settled debate and movement forward."
+  },
+  {
+    question: "How does 'immerhin' balance criticism and appreciation?",
+    options: ["it only criticizes", "it accepts limitations while still valuing achievement", "it only praises", "it has no emotional content"],
+    correct: 1,
+    explanation: "'Immerhin' (after all): 'Das ist immerhin ein Versuch...' balances limitation with acknowledgment of effort."
+  },
+  {
+    question: "How does spoken German differ from written German grammatically?",
+    options: ["it's identical", "spoken German contracts, inverts, bends to follow the music of speech", "spoken German is more formal", "spoken German has stricter rules"],
+    correct: 1,
+    explanation: "'Ich habe' becomes 'Hab ich' in speech. Grammar serves speech music rather than rigid written rules."
+  },
+  {
+    question: "What do filler words reveal about language?",
+    options: ["that speakers are careless", "that language is a living process of real-time thinking, with hesitations and corrections", "that written language is better", "nothing important"],
+    correct: 1,
+    explanation: "Fillers show language as thought-in-process. They reveal the human reality of speaking, not textbook perfection."
+  },
+  {
+    question: "Why do contractions appear in spoken German?",
+    options: ["they are errors to be avoided", "they create intimacy and index relationships (closer people get more contracted speech)", "they're ungrammatical mistakes", "there's no reason"],
+    correct: 1,
+    explanation: "Contractions in speech create intimacy. A stranger gets formal 'Ich habe,' a friend gets 'Hab ich.' Grammar indexes relationship."
+  },
+  {
+    question: "What is the role of intonation in spoken German?",
+    options: ["it has no role", "it carries meaning that words alone cannot; the same word means different things with different tone", "it's purely musical", "it just adds emphasis"],
+    correct: 1,
+    explanation: "Intonation is meaning-bearing. 'Genau?' as a question vs. 'Genau.' as statement. Same word, different music, different meaning."
+  },
+  {
+    question: "How does spoken German differ from academic German?",
+    options: ["they're the same", "spoken German is alive with fillers, contractions, and real-time thinking; academic German is formal and polished", "academic is more casual", "there's no significant difference"],
+    correct: 1,
+    explanation: "Spoken German reveals unpolished, real-time thought with hesitations. Academic German is formal, careful, perfected."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = currentQuestion === 0;
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) score++;
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.innerHTML = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>956 words</strong> across 98 chapters. You recognize <strong>94 linguistic patterns</strong> spanning human history.</p>
+      <p style="margin-top: 8px;">Spoken German shows language as it actually lives — hesitant, contracted, full of grace notes. The "errors" of speech are features, not flaws. They reveal how human beings actually think and communicate.</p>
+    `;
+  }
+}
+
+window.addEventListener('load', () => {
+  const words = document.querySelectorAll('.collected-word');
+  words.forEach((word, idx) => {
+    setTimeout(() => {
+      word.classList.add('show');
+    }, parseInt(word.dataset.delay) || 0);
+  });
+});
+
+initializeQuiz();
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

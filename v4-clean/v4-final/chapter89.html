@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 89: Redewendungen II (Idioms II)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --gold: #d4af37;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  #workshop-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+
+  @media (max-width: 640px) {
+    .page-wrapper { padding: 30px 18px 80px; }
+    body { font-size: 1.1rem; }
+  }
+
+  .title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-screen h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.4s forwards;
+    margin-bottom: 0.3em;
+  }
+
+  .title-screen .title-de {
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1.5em;
+    font-style: italic;
+  }
+
+  .title-screen .description {
+    font-size: 1.3rem;
+    max-width: 700px;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible { opacity: 1; transform: translateY(0); }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1.5em;
+    background: rgba(232, 164, 74, 0.08);
+    border-left: 3px solid var(--german);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    padding: 2px 4px;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid var(--german);
+  }
+
+  .idiom-card {
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+    transition: all 0.3s ease;
+  }
+
+  .idiom-card:hover {
+    background: rgba(20, 28, 45, 0.9);
+    border-color: rgba(232, 164, 74, 0.4);
+    box-shadow: 0 8px 32px rgba(232, 164, 74, 0.1);
+  }
+
+  .idiom-german {
+    font-size: 1.4rem;
+    color: var(--german);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .idiom-literal {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 2px solid var(--fire);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  .idiom-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .idiom-section {
+    margin: 16px 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .idiom-section-title {
+    color: var(--fire-glow);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+
+  .example-sentence {
+    background: rgba(26, 35, 55, 0.5);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    font-style: italic;
+    color: rgba(212, 202, 187, 0.9);
+  }
+
+  .chinese-equiv {
+    background: rgba(196, 154, 108, 0.08);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    color: var(--chinese);
+    border-left: 2px solid var(--chinese);
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 32px 0;
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .comparison-table th {
+    background: rgba(232, 164, 74, 0.1);
+    color: var(--fire-glow);
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(232, 164, 74, 0.2);
+    font-size: 0.95rem;
+  }
+
+  .comparison-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+    color: var(--text);
+  }
+
+  .comparison-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 80px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 80px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show { display: block; }
+
+  .progress-bar {
+    background: rgba(232, 164, 74, 0.15);
+    border-radius: 4px;
+    height: 4px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    background: var(--german);
+    height: 100%;
+    transition: width 0.3s;
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<canvas id="workshop-canvas"></canvas>
+
+<div class="page-wrapper">
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 89</div>
+    <h1 data-speak="true">Redewendungen II</h1>
+    <p class="title-de" data-speak="true">Idioms II</p>
+    <p class="description" data-speak="true">Treasures of the German Language — Cultural Expressions That Reveal the German Soul. These idioms are windows into how Germans think, feel, and navigate their world. Each carries centuries of history and cultural wisdom.</p>
+    <p class="scroll-hint" data-speak="true">Scroll to discover ancient expressions<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">Language is not merely a tool for communication—it is a treasury of cultural memory. Every idiom holds a story, a moment in history where a people observed something about life and crystallized it into an unforgettable phrase. German idioms are particularly rich because they are so concrete, so tied to the physical world and human experience. To master them is to think like a German.</p>
+
+    <p class="narrative emphasis" data-speak="true">"Die Sprache trägt die Seele einer Nation in ihren Worten." — Language carries the soul of a nation in its words.</p>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Da steppt der Bär</div>
+      <div class="idiom-literal" data-speak="true">Literally: "The bear is dancing there"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: It's a great party! Things are lively and exciting. People are having a wonderful time.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class idiom-section" data-speak="true">This idiom dates back to medieval times when bear-baiting was a popular form of public entertainment throughout German-speaking lands. A bear would be brought to the town square, often on market days or during festivals, and spectators would gather to watch the animal perform tricks or engage in combat. The phrase "da steppt der Bär" refers to the animated, almost frenzied energy of a bear dancing or moving under duress—but over time, it became a metaphor for the festive, energetic atmosphere of the crowd itself. When people were having such a good time that the atmosphere was almost wild, they would say "da steppt der Bär!"</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Auf dem Oktoberfest da steppt der Bär! Überall Musik, Tanz und Lachen."</div>
+        <div class="example-sentence" data-speak="true">"Auf der Hochzeit meines Bruders da steppt der Bär—es ist fantastisch!"</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">热闹非凡 (rènào fēifán) — extraordinarily lively and bustling</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Die Kirche im Dorf lassen</div>
+      <div class="idiom-literal" data-speak="true">Literally: "Leave the church in the village"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: Don't exaggerate. Keep things in perspective. Be reasonable. Tone it down.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class="idiom-section" data-speak="true">This idiom emerged in rural Germany during the medieval period when villages were the fundamental unit of social organization. The church was always the central, most important building in any village—it was the anchor of community life, the gathering place for all important events. The phrase arose from the observation that people sometimes became carried away with grandiose plans or made excessive claims. When someone was proposing something too ambitious or trying to make a small village matter seem more important than it was, the townspeople would say, "Lass die Kirche im Dorf!"—essentially, "Keep the church in the village," meaning "Keep proportions realistic" and "Don't blow this out of proportion." The church represents what is real, fundamental, and true; leaving it in the village means maintaining a sense of reality and proportion.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Es war nur ein kleiner Fehler, lass die Kirche im Dorf!"</div>
+        <div class="example-sentence" data-speak="true">"Mach keine große Sache daraus—lass die Kirche im Dorf lassen."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">别大题小作 (biè dà tí xiǎo zuò) — don't make a big deal out of small things</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Öl ins Feuer gießen</div>
+      <div class="idiom-literal" data-speak="true">Literally: "Pour oil into the fire"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: Make things worse. Inflame a situation. Add fuel to the conflict. Escalate tensions.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class="idiom-section" data-speak="true">This idiom is based on obvious physical reality—pouring oil on fire makes flames larger and more dangerous. It likely emerged from practical experience with cooking fires and heating fires in households. The image is so powerful and universally understood that it has been used in German for centuries as a metaphor for making conflicts worse. Oil doesn't extinguish fire; it accelerates and amplifies it. So when someone is adding provocative statements, escalating arguments, or introducing inflammatory information, they are figuratively "pouring oil on the fire."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Deine Kommentare gießen nur Öl ins Feuer! Das macht alles schlimmer."</div>
+        <div class="example-sentence" data-speak="true">"Statt zu helfen, gießt du Öl ins Feuer der Debatte."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">火上浇油 (huǒ shàng jiāo yóu) — literally identical! "Pour oil on fire." This demonstrates how across cultures, people use the same physical metaphor to express the concept of making things worse.</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Über den Tisch ziehen</div>
+      <div class="idiom-literal" data-speak="true">Literally: "Pull (someone) over the table"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: Cheat or deceive someone. Take advantage of them. Swindle them. Pull a fast one.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class="idiom-section" data-speak="true">This idiom likely originates from medieval merchant culture or card games where deals and transactions took place across a table. The physical act of "pulling someone over the table" would represent a sudden, aggressive move to gain advantage—perhaps pulling away goods, money, or documents. In the context of card games or negotiations, being "pulled over the table" suggests being outmaneuvered or cheated. The table becomes a metaphor for the space where fair dealings occur; to pull someone over it suggests violating that fairness and engaging in deception.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Der Verkäufer hat mich über den Tisch gezogen—das Auto war völlig kaputt."</div>
+        <div class="example-sentence" data-speak="true">"Pass auf, dass dich niemand über den Tisch zieht!"</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">被骗 (bèi piàn) — to be cheated; 上当受骗 (shàng dàng shòu piàn) — to be fooled and cheated</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Auf dem Holzweg sein</div>
+      <div class="idiom-literal" data-speak="true">Literally: "Be on the timber path" or "Be on the wood path"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: Be on the wrong track. Be mistaken. Bark up the wrong tree. Go in the wrong direction.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class="idiom-section" data-speak="true">This idiom comes from the practical realities of forest work in German-speaking regions. Timber paths (Holzwege) were temporary paths cut through forests to extract wood. Unlike regular roads that led to villages and settlements, these paths were purposeful but temporary—they led only to the logging sites and then ended, leading nowhere. A traveler who mistakenly took a Holzweg thinking it was a proper road would find themselves deep in the forest with no destination in sight. This became a powerful metaphor: if you are "auf dem Holzweg," you are heading in the wrong direction, following a false path that will not lead you anywhere productive.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Deine Theorie ist völlig auf dem Holzweg. Das funktioniert nicht so."</div>
+        <div class="example-sentence" data-speak="true">"Wenn du denkst, dass das die Lösung ist, bist du auf dem Holzweg."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">走错了路 (zǒu cuò le lù) — to take the wrong road; 南辕北辙 (nán yuán běi zhé) — heading south while wanting to go north (going in the opposite direction)</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Nicht alle Tassen im Schrank haben</div>
+      <div class="idiom-literal" data-speak="true">Literally: "Not have all cups in the cupboard"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: Be crazy or mentally unbalanced. Not be quite right in the head. Be eccentric or unstable.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class="idiom-section" data-speak="true">This idiom comes from a domestic household metaphor. A proper household, a well-ordered home, has all its cups and dishware intact and arranged properly in the cupboard. If cups are missing—if the set is incomplete—something is amiss, something is wrong with the order of the house. This becomes a metaphor for mental completeness: if someone is missing cups from their mental cupboard, they are not quite mentally whole or stable. The image suggests that having a complete set of cups represents being complete and sane, whereas missing cups represent missing mental faculties or instability.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Er hat nicht alle Tassen im Schrank—seine Ideen sind verrückt."</div>
+        <div class="example-sentence" data-speak="true">"Manche Menschen haben einfach nicht alle Tassen im Schrank."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">神经不正常 (shénJīng búzhèngcháng) — nerves not normal; 疯了 (fēng le) — is crazy</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Kein Blatt vor den Mund nehmen</div>
+      <div class="idiom-literal" data-speak="true">Literally: "Not take a leaf before the mouth"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: Speak bluntly. Be honest and direct. Not hold back. Speak your mind without filtering.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class="idiom-section" data-speak="true">This idiom's origins are somewhat mysterious but likely involve social courtesy and shame. In various cultures, a leaf or hand held before the mouth can symbolize modesty, shame, or the filtering of one's words. To take no leaf before the mouth means to offer no filter, no barrier between one's thoughts and one's speech. It suggests complete honesty and the absence of social pretense. Some scholars suggest it may relate to ancient practices of covering the mouth when ashamed or when speaking something shameful, so the reverse—taking nothing before the mouth—means speaking without shame or hesitation.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Sie nimmt kein Blatt vor den Mund—sie sagt einfach, was sie denkt."</div>
+        <div class="example-sentence" data-speak="true">"Ich nehme kein Blatt vor den Mund: dein Plan wird nicht funktionieren."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">直言不讳 (zhíyán búhuì) — speak directly without hesitation; 开诚布公 (kāi chéng bù gōng) — be frank and open</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Ins Fettnäpfchen treten</div>
+      <div class="idiom-literal" data-speak="true">Literally: "Step into the grease dish"</div>
+
+      <div class="idiom-meaning" data-speak="true">Meaning: Commit a social faux pas. Make an embarrassing mistake. Offend someone by accident.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Historical Origin</div>
+        <div class="idiom-section" data-speak="true">This charming idiom comes from household kitchens, particularly from the practice of keeping rendered animal fat (Fett) in small dishes or containers. In old kitchens, these small dishes of grease sat on the floor or in accessible places. Someone walking through a kitchen might accidentally step into one of these dishes, getting greasy material on their shoes and making a mess—a social embarrassment if you were a guest or if the kitchen was being kept tidy. The act of stepping into the grease dish became a perfect metaphor for making an embarrassing social mistake: just as stepping in grease is something you do accidentally that causes awkwardness and mess, a social faux pas is an unintended action that creates awkwardness in a social situation.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Example Sentences</div>
+        <div class="example-sentence" data-speak="true">"Oh nein, ich bin ins Fettnäpfchen getreten! Ich wusste nicht, dass sein Vater gerade verstorben ist."</div>
+        <div class="example-sentence" data-speak="true">"Pass auf, dass du nicht ins Fettnäpfchen trittst—das ist ein sensibles Thema für sie."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Chinese Equivalent</div>
+        <div class="chinese-equiv" data-speak="true">犯错误 (fàn cuòwù) — to make a mistake; 失礼 (shī lǐ) — to be impolite or disrespectful; 触犯禁忌 (chù fàn jìnjì) — to violate a taboo</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Beyond the Words: Understanding German Thinking</div>
+        <div class="idiom-section" data-speak="true">These idioms collectively reveal something profound about the German mindset. A German speaker thinks about problems as "paths" that can be wrong (auf dem Holzweg sein). They think about society as needing "proportion" (Kirche im Dorf lassen). They understand that actions have consequences that escalate situations (Öl ins Feuer). They value honesty and directness (kein Blatt vor den Mund) while also being acutely aware of social proprieties (ins Fettnäpfchen treten). They see human nature with a touch of humor and pragmatism (nicht alle Tassen im Schrank). This is not random. German culture, shaped by its geography (surrounded by other cultures and nations), its history (centuries of principalities and city-states before unification), and its philosophical tradition (from Kant to Hegel to Wittgenstein), has produced a language that reflects these characteristics. When you master these idioms, you are not just learning expressions—you are learning how to think in German.</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Recognition vs. Production: Building Confidence</div>
+        <div class="idiom-section" data-speak="true">Your journey with these idioms will have two phases. First comes recognition: when you hear or read "da steppt der Bär," you immediately understand it means a lively party atmosphere. This phase is easier and will come first. Second comes production: being able to use these expressions naturally in your own speech and writing. This is harder and takes longer. The good news is that recognition typically precedes production by only a few months if you are actively studying and engaging with German media. To accelerate your movement into the production phase, try the following: (1) Write example sentences of your own, (2) Listen for these idioms in German films and podcasts, (3) Notice the exact contexts where native speakers use them, (4) Try to use one idiom per week in conversation if possible, (5) Understand that even native speakers don't overuse idioms—they appear naturally in conversation but not constantly. The goal is to expand your emotional and contextual understanding so that when the moment comes to use one, it feels natural rather than forced.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">These eight idioms represent the core vocabulary of German expressivity. They appear constantly in speech, literature, and film. Understanding them means understanding not just the German language, but the German way of seeing the world—concrete, practical, deeply connected to history and tradition. Notice how many of them originate in rural life, household experience, and practical occupations. This reveals a fundamental German characteristic: the tendency to ground abstract concepts in concrete, observable reality.</p>
+
+    <div class="idiom-card">
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">The Culture of German Idioms</div>
+        <div class="idiom-section" data-speak="true">German idioms are remarkable because they reveal a people deeply observant of their physical world. Unlike languages that might use abstract metaphors or poetic imagery, German idioms tend to draw from the ordinary, the practical, and the observable. A bear dancing. A church staying in its village. Oil burning on fire. Cups in a cupboard. Grease on a floor. These are things anyone who lived in the German-speaking lands would have directly observed and understood. This practical grounding made these expressions memorable across generations and cultures. They were not invented by poets in isolation; they were born from shared human experience translated into memorable images. This is why they have survived for centuries and continue to be used naturally in modern German, even in the age of smartphones and digital life.</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">How to Use These Idioms Authentically</div>
+        <div class="idiom-section" data-speak="true">As a learner of German, your goal should be not just to know these idioms but to use them naturally. This requires understanding three things: (1) The core meaning must be crystal clear, (2) You must understand the social context where the idiom is appropriate, (3) You should know variations or related expressions. For example, "Öl ins Feuer gießen" is most appropriate when discussing conflicts, heated debates, or situations getting worse. You would not use it to describe someone making a minor mistake. The intensity of the idiom must match the situation. Similarly, "kein Blatt vor den Mund nehmen" is appropriate when someone is being unusually direct or honest, sometimes to the point of being tactless. It carries a sense of admiration or sometimes gentle criticism, depending on context. Using idioms correctly means reading the situation and matching the idiom's emotional intensity to the moment.</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-section">
+        <div class="idiom-section-title" data-speak="true">Variations and Related Expressions</div>
+        <div class="idiom-section" data-speak="true">German has numerous variations on some of these idioms. For instance, instead of saying someone "hat nicht alle Tassen im Schrank," you might hear similar expressions like "nicht alle Latten im Zaun haben" (not all slats in the fence) or "nicht ganz bei Trost sein" (not quite with one's wits). These variations carry slightly different nuances but express similar ideas. In the same way, "Öl ins Feuer gießen" might be expressed as "Benzin ins Feuer gießen" (pouring gasoline on fire) for extra intensity, or "noch ein Wort und ich gießen Öl ins Feuer" (one more word and I will pour oil on fire). These variations demonstrate how idioms are living language—they evolve, they have related expressions, and native speakers often modify them slightly to fit particular situations while maintaining core meaning.</div>
+      </div>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th data-speak="true">German Idiom</th>
+          <th data-speak="true">Literal Translation</th>
+          <th data-speak="true">Actual Meaning</th>
+          <th data-speak="true">Origin Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-speak="true"><strong>Da steppt der Bär</strong></td>
+          <td data-speak="true">The bear is dancing</td>
+          <td data-speak="true">It's a great party; things are lively</td>
+          <td data-speak="true">Medieval Entertainment</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Die Kirche im Dorf lassen</strong></td>
+          <td data-speak="true">Leave the church in the village</td>
+          <td data-speak="true">Don't exaggerate; keep perspective</td>
+          <td data-speak="true">Rural Community</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Öl ins Feuer gießen</strong></td>
+          <td data-speak="true">Pour oil on the fire</td>
+          <td data-speak="true">Make things worse; escalate conflict</td>
+          <td data-speak="true">Household/Physical Reality</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Über den Tisch ziehen</strong></td>
+          <td data-speak="true">Pull over the table</td>
+          <td data-speak="true">Cheat or deceive someone</td>
+          <td data-speak="true">Commerce/Games</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Auf dem Holzweg sein</strong></td>
+          <td data-speak="true">Be on the timber path</td>
+          <td data-speak="true">Be on the wrong track; be mistaken</td>
+          <td data-speak="true">Forest Work</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Nicht alle Tassen im Schrank</strong></td>
+          <td data-speak="true">Not all cups in the cupboard</td>
+          <td data-speak="true">Be crazy or mentally unbalanced</td>
+          <td data-speak="true">Household Order</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Kein Blatt vor den Mund</strong></td>
+          <td data-speak="true">No leaf before the mouth</td>
+          <td data-speak="true">Speak bluntly and honestly</td>
+          <td data-speak="true">Social Courtesy</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Ins Fettnäpfchen treten</strong></td>
+          <td data-speak="true">Step into the grease dish</td>
+          <td data-speak="true">Commit a social faux pas</td>
+          <td data-speak="true">Kitchen/Household</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <div class="quiz-container">
+      <h3 data-speak="true">Chapter 89 Quiz: Idioms in Context</h3>
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" data-speak="true">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()" data-speak="true">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="quiz-summary"></div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <a href="chapter88.html" class="nav-btn">← Chapter 88</a>
+    <a href="chapter90.html" class="nav-btn next">Chapter 90 →</a>
+  </div>
+
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What does 'da steppt der Bär' mean?",
+    options: ["A bear is escaping", "It's a great party; things are lively", "The bear is dangerous", "Someone is dancing badly"],
+    correct: 1,
+    explanation: "Da steppt der Bär literally means 'the bear is dancing there,' originating from medieval bear-baiting entertainment. It now means the atmosphere is festive and lively."
+  },
+  {
+    question: "Which idiom comes from the observation that temporary timber paths in forests lead nowhere?",
+    options: ["Über den Tisch ziehen", "Auf dem Holzweg sein", "Die Kirche im Dorf lassen", "Öl ins Feuer gießen"],
+    correct: 1,
+    explanation: "Auf dem Holzweg sein (to be on the timber path) originated from forest work. Temporary timber paths led only to logging sites with no actual destination."
+  },
+  {
+    question: "What is the Chinese equivalent of 'Öl ins Feuer gießen'?",
+    options: ["冷水浇油", "火上浇油 (pouring oil on fire)", "水火不容", "火势蔓延"],
+    correct: 1,
+    explanation: "The Chinese idiom 火上浇油 (huǒ shàng jiāo yóu) means literally 'pour oil on fire'—identical metaphor across cultures!"
+  },
+  {
+    question: "If someone 'takes no leaf before the mouth,' what are they doing?",
+    options: ["Eating while talking", "Speaking bluntly and honestly", "Being shy and quiet", "Covering their mouth"],
+    correct: 1,
+    explanation: "Kein Blatt vor den Mund nehmen means to speak bluntly without filters or social pretense."
+  },
+  {
+    question: "The idiom 'nicht alle Tassen im Schrank haben' is based on what household concept?",
+    options: ["Broken dishes", "A complete set of cups being a sign of order", "Kitchen organization", "Proper table manners"],
+    correct: 1,
+    explanation: "A proper household with all cups intact in the cupboard becomes a metaphor for mental completeness and stability."
+  },
+  {
+    question: "What does 'ins Fettnäpfchen treten' literally mean?",
+    options: ["Step on a foot", "Step into a grease dish", "Step on a plate", "Step in a puddle"],
+    correct: 1,
+    explanation: "Fettnäpfchen literally means 'grease dish.' Stepping into one while in someone's kitchen would be embarrassing—now a metaphor for social faux pas."
+  },
+  {
+    question: "Which idiom originates from the concept of a village church being the anchor of community?",
+    options: ["Auf dem Holzweg sein", "Die Kirche im Dorf lassen", "Über den Tisch ziehen", "Da steppt der Bär"],
+    correct: 1,
+    explanation: "Die Kirche im Dorf lassen (leave the church in the village) refers to keeping things in proportion, based on the church being central to village life."
+  },
+  {
+    question: "If you 'pull someone over the table,' what are you doing?",
+    options: ["Helping them stand up", "Cheating or deceiving them", "Inviting them to dinner", "Making them an offer"],
+    correct: 1,
+    explanation: "Über den Tisch ziehen means to cheat or deceive someone, likely originating from merchant dealings or card games."
+  },
+  {
+    question: "Which category does 'Öl ins Feuer gießen' belong to as an origin?",
+    options: ["Animal behavior", "Household/Physical reality", "Commerce", "Nature"],
+    correct: 1,
+    explanation: "This idiom is based on obvious physical reality—pouring oil on fire makes flames larger, a household or cooking experience."
+  },
+  {
+    question: "What context would you use 'da steppt der Bär' in?",
+    options: ["Describing a dangerous situation", "Describing a festive party or celebration", "Warning about wild animals", "Talking about a circus performance"],
+    correct: 1,
+    explanation: "This idiom is used when describing a lively, festive atmosphere where people are having a great time."
+  },
+  {
+    question: "The idiom 'auf dem Holzweg sein' suggests which kind of path?",
+    options: ["A well-marked road", "A temporary path leading nowhere productive", "A hiking trail", "A shortcut"],
+    correct: 1,
+    explanation: "Timber paths (Holzwege) were temporary, purposeful paths used only for logging that didn't lead to any real destination."
+  },
+  {
+    question: "Which idiom would you use if someone is making a bad situation worse?",
+    options: ["Die Kirche im Dorf lassen", "Nicht alle Tassen im Schrank haben", "Öl ins Feuer gießen", "Ins Fettnäpfchen treten"],
+    correct: 2,
+    explanation: "Öl ins Feuer gießen (pouring oil on fire) is used when someone is making a conflict or situation worse through their actions."
+  },
+  {
+    question: "Which category of origin is most common among these eight idioms?",
+    options: ["Military", "Household and rural life", "Religion", "Politics"],
+    correct: 1,
+    explanation: "Most of these idioms originate from household experiences, rural community life, and practical occupations—showing how Germans ground concepts in concrete reality."
+  },
+  {
+    question: "What does 'über den Tisch ziehen' suggest happened in the original context?",
+    options: ["A polite negotiation", "A fair and honest deal", "Deception or being outmaneuvered", "A comfortable meal"],
+    correct: 2,
+    explanation: "This idiom likely originates from merchant or card game contexts where 'pulling someone over the table' meant gaining unfair advantage through deception."
+  },
+  {
+    question: "How does 'kein Blatt vor den Mund nehmen' relate to social courtesy?",
+    options: ["It shows great respect for others", "It means you filter nothing and speak completely honestly", "It shows you are shy", "It means you whisper"],
+    correct: 1,
+    explanation: "Taking no leaf before the mouth means offering no filter between your thoughts and speech—complete honesty without social pretense."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion(){
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+  document.getElementById('progress').style.width = ((currentQuestion + 1) / quizData.length) * 100 + '%';
+  document.getElementById('quiz-questions').innerHTML = `
+    <div class="quiz-question">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : (i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '')) : ''}"
+               onclick="selectAnswer(${i})" data-speak="true">${opt}</div>
+        `).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(232,164,74,0.1);font-size:0.95rem;color:rgba(212,202,187,0.8);" data-speak="true"><strong>Explanation:</strong> ${q.explanation}</div>` : ''}
+    </div>
+  `;
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function selectAnswer(i){
+  if(answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = i;
+  if(i === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion(){
+  if(currentQuestion < quizData.length - 1){
+    currentQuestion++;
+    displayQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function previousQuestion(){
+  if(currentQuestion > 0){
+    currentQuestion--;
+    displayQuestion();
+  }
+}
+
+function showScore(){
+  const pct = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('quiz-summary').classList.add('show');
+  document.getElementById('quiz-summary').innerHTML = `
+    <p data-speak="true"><strong>Chapter 89 Complete!</strong></p>
+    <p style="margin-top:12px" data-speak="true">You have now internalized eight powerful German idioms. These expressions will appear constantly in your reading and listening. Each time you encounter them, you will recognize not just the meaning but the cultural history behind the words.</p>
+    ${pct >= 80 ? '<p style="margin-top:12px; color: var(--fire-glow)" data-speak="true">Outstanding performance! Your mastery of these expressions is excellent.</p>' : '<p style="margin-top:12px; color: var(--fire-glow)" data-speak="true">Strong foundation. Review the origins and you will master these completely.</p>'}
+  `;
+}
+
+function drawScrollingCanvas() {
+  const canvas = document.getElementById('workshop-canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  ctx.fillStyle = 'rgba(232, 164, 74, 0.03)';
+
+  let scroll = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    scroll += 0.5;
+
+    for(let i = 0; i < 5; i++) {
+      let y = (i * 200 + scroll) % (canvas.height + 200) - 200;
+      ctx.strokeStyle = `rgba(232, 164, 74, ${0.05 + Math.sin(scroll/100 + i) * 0.02})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(canvas.width/2, y, 150, 30, 0.2, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = `rgba(244, 198, 122, ${0.02})`;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.ellipse(canvas.width/2, y, 200, 40, 0.1, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(s => observer.observe(s));
+
+window.addEventListener('load', () => {
+  drawScrollingCanvas();
+  displayQuestion();
+  document.querySelectorAll('[data-speak="true"]').forEach(el => {
+    el.addEventListener('click', function(e){
+      if(window.speakGerman) window.speakGerman(this.textContent);
+    });
+  });
+});
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">764 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(89%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:89%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 764 words across 89 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">138 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(95%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:95%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 138 patterns across 89 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

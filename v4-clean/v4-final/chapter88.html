@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 88: Redewendungen I</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --fire: #e8a44a;
+  --fire-glow: #f4c67a;
+  --ember: #c45d2c;
+  --night: #0a0e1a;
+  --text: #d4cabb;
+  --text-bright: #efe8db;
+  --german: #e8a44a;
+  --chinese: #c49a6c;
+  --english: #8a9bae;
+  --pie: #9b8ec4;
+}
+html { scroll-behavior: smooth; background: var(--night); }
+body {
+  background: linear-gradient(to bottom, #1a1520 0%, #0a0e1a 40%, #2a1f1a 70%, #4a3a2a 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.85;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  min-height: 100vh;
+}
+#theatre-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 60px 24px 120px; }
+.title-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+.title-screen h1 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: var(--text-bright);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3em;
+  opacity: 0;
+  animation: fadeUp 2s ease 0.5s forwards;
+}
+.title-screen .subtitle {
+  font-size: 1.3rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--fire);
+  opacity: 0;
+  animation: fadeUp 2s ease 1.2s forwards;
+  margin-bottom: 2em;
+}
+.title-screen .chapter-label {
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(212, 202, 187, 0.4);
+  opacity: 0;
+  animation: fadeUp 2s ease 0.2s forwards;
+  margin-bottom: 0.5em;
+}
+.scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3); font-size: 0.85rem; margin-top: 3em; }
+.scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s, transform 1s; }
+.scene.visible { opacity: 1; transform: translateY(0); }
+.scene-marker { display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--fire), transparent); margin: 0 auto 40px; }
+.narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; }
+.narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center; font-style: italic; margin: 2em 0; }
+.narrative.small { font-size: 1.05rem; color: rgba(212, 202, 187, 0.6); }
+.german-word {
+  color: var(--german);
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+  transition: all 0.3s;
+}
+.german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+.ety-card {
+  background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin: 24px 0 32px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.6s ease, opacity 0.5s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+}
+.ety-card.open { max-height: 2000px; opacity: 1; }
+.ety-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.ety-card .word-main { font-size: 2rem; font-weight: 700; color: var(--german); }
+.ety-card .word-pron { font-size: 1rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+.ety-card .word-meaning { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(232, 164, 74, 0.1); }
+.ety-card .subsection { margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(232, 164, 74, 0.08); }
+.ety-card .subsection-title { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(232, 164, 74, 0.7); margin-bottom: 10px; font-weight: 500; }
+.ety-card .meaning-line { font-size: 1rem; line-height: 1.7; color: rgba(212, 202, 187, 0.8); margin-bottom: 8px; }
+.ety-card .story { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232, 164, 74, 0.1); font-size: 1rem; color: rgba(212, 202, 187, 0.75); line-height: 1.7; }
+.divider { text-align: center; margin: 60px 0; color: rgba(232, 164, 74, 0.3); font-size: 1.5rem; letter-spacing: 0.5em; }
+.aside-box {
+  background: rgba(155, 142, 196, 0.06);
+  border-left: 2px solid rgba(155, 142, 196, 0.3);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(212, 202, 187, 0.8);
+}
+.aside-box .aside-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--pie); margin-bottom: 8px; }
+.quiz-container {
+  background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.12);
+  border-radius: 16px;
+  padding: 40px 32px;
+  margin: 60px 0;
+}
+.quiz-container h3 { font-size: 1.3rem; color: var(--text-bright); text-align: center; margin-bottom: 32px; font-weight: 500; }
+.quiz-question { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.08); border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+.quiz-question.hidden { display: none; }
+.quiz-question .q-text { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 16px; font-weight: 500; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  background: rgba(232, 164, 74, 0.08);
+  border: 1px solid rgba(232, 164, 74, 0.2);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  text-align: left;
+}
+.quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+.quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+.quiz-nav { display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+.quiz-nav button {
+  background: rgba(232, 164, 74, 0.08);
+  border: 1px solid rgba(232, 164, 74, 0.25);
+  color: var(--text-bright);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  padding: 12px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+.quiz-score { text-align: center; font-size: 1.3rem; color: var(--fire-glow); margin: 24px 0; font-weight: 500; }
+.post-quiz-summary {
+  background: rgba(155, 142, 196, 0.06);
+  border-left: 2px solid rgba(232, 164, 74, 0.3);
+  padding: 24px 28px;
+  margin: 24px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(212, 202, 187, 0.8);
+  display: none;
+}
+.post-quiz-summary.show { display: block; }
+.post-quiz-summary p { margin-top: 12px; }
+.word-collection {
+  background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.12);
+  border-radius: 16px;
+  padding: 40px 32px;
+  margin: 60px 0;
+  text-align: center;
+  display: none;
+}
+.word-collection.show { display: block; }
+.word-collection h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(232, 164, 74, 0.5); margin-bottom: 24px; }
+.collected-words { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.collected-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(232, 164, 74, 0.06);
+  border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 10px;
+  padding: 14px 20px;
+  min-width: 90px;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.collected-word.show { opacity: 1; transform: scale(1); }
+.collected-word .cw-german { font-size: 1.3rem; font-weight: 600; color: var(--german); }
+.collected-word .cw-english { font-size: 0.8rem; color: rgba(212, 202, 187, 0.4); margin-top: 2px; }
+.chapter-end { text-align: center; padding: 60px 0; }
+.chapter-end .end-line { width: 60px; height: 1px; background: var(--fire); margin: 0 auto 30px; opacity: 0.4; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow)); z-index: 100; width: 0%; }
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(232, 164, 74, 0.25);
+  border-radius: 50%;
+  background: rgba(232, 164, 74, 0.08);
+  color: var(--fire);
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 8px;
+  vertical-align: middle;
+  transition: all 0.3s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+.speak-btn:active { transform: scale(0.9); }
+.speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 600px) {
+  .content { padding: 40px 16px 100px; }
+  .title-screen h1 { font-size: 2.2rem; }
+  .narrative { font-size: 1.1rem; }
+}
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="theatre-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+<div class="title-screen">
+  <div class="chapter-label">Chapter 88</div>
+  <h1>Redewendungen I</h1>
+  <div class="subtitle">Idioms Part 1 — When Tomatoes Have Eyes and Bears Dance</div>
+  <div class="scroll-hint"><span>↓</span></div>
+</div>
+
+<div class="scene" id="scene1">
+  <div class="scene-marker"></div>
+  <p class="narrative">We have spent eighty-seven chapters learning words one by one, building them block by block, understanding how individual units of meaning combine to create expression. But language is not only about discrete words. It is also about the unexpected moments when words collide with metaphor, when the literal meaning dissolves and something else emerges entirely — something that cannot be predicted, that cannot be learned through grammar, that must simply be absorbed into the bloodstream of a language.</p>
+
+  <p class="narrative">In German, there is a phrase that captures the essence of celebration with perfect absurdity: <span class="german-word" data-card="bear-dance">Da steppt der Bär.</span> Literally, it means "there the bear dances." If you heard this phrase without context, you might imagine a circus, a trained animal, a moment of grotesque comedy. But say it to a German speaker at a party where the music is loud, the dancing wild, the energy electric, and they will understand immediately: this is fantastic. This is incredible. This is a party worth remembering. The bear is dancing. The night is alive.</p>
+
+  <p class="narrative">This is the world of idioms — the hidden language beneath language. The metaphors that have calcified into meaning. The strange, unexpected combinations of words that refuse to follow the rules of grammar and logic, yet somehow communicate something more vivid, more true, than any literal description could. Idioms are where a language shows its age, its history, its character. They are where centuries of living condense into a single phrase.</p>
+
+  <p class="narrative">For the learner of German, idioms present a special challenge. You cannot guess them from their component words. You cannot reason them out from first principles. You cannot use grammar or etymology as a crutch. You must know them the way a native speaker knows them — through absorption, through use, through the magical moment when the strange phrase becomes suddenly clear. And in that moment of clarity lies a deeper understanding of how a culture thinks, what it finds funny, what matters to it, what it fears, what it values.</p>
+
+  <p class="narrative emphasis">This chapter, and the next, will explore the idioms of German — the hidden jewels of the language. The places where the language becomes most itself. Where the precise, logical Germanic tongue suddenly breaks into metaphor. Where a bear can dance and a party becomes transformed. Where a simple vegetable becomes the perfect symbol for willful blindness. Where a pig represents luck, and a grease pot embodies the universal human experience of stepping wrong.</p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<div class="scene" id="scene2">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">Let us begin with the bear. <span class="german-word" data-card="bear-dance">Da steppt der Bär.</span> The bear dances. In modern German, this phrase means that something extraordinary is happening. A party is in full swing. An event is unfolding that will be remembered. The bear represents the wild energy that appears when the usual rules are suspended, when civilization momentarily gives way to primal joy and celebration. The bear is chaos. The bear is authenticity. The bear is the moment when the world becomes more interesting than it was a moment before.</p>
+
+  <p class="narrative">The historical origins of this phrase are contested by scholars, but the bear holds a special place in Germanic culture that runs deeper than any single explanation. In pre-Christian Germanic religion, the bear was a sacred animal, associated with strength, ferocity, and divine power. It was an animal that commanded respect and fear. Later, in medieval times, trained bears were sometimes brought to festivals and markets, often forced to perform dances for entertainment — these were not gentle performances, but rather displays of controlled wildness, moments when the powerful animal performed on command, yet you could still see the danger beneath the spectacle. Whether the idiom refers to these trained bears or to something more mythological, the bear became synonymous with wild spectacle, with the moment when normal life is disrupted by something theatrical and memorable.</p>
+
+  <p class="narrative">To say "da steppt der Bär" at a party is to invoke that image: the bear loose, dancing, impossible to ignore or control. It captures the ecstatic chaos of celebration perfectly. The bear is joy made manifest. The bear is the night as it should be.</p>
+
+  <div class="ety-card" id="card-bear-dance">
+    <div class="word-header">
+      <span class="word-main">Da steppt der Bär</span>
+      <span class="word-pron">/daː ʃtɛpt deːɐ̯ bɛʁ/</span>
+    </div>
+    <div class="word-meaning">literally: "there the bear dances" — figuratively: it's an amazing party, something spectacular is happening, the moment when civilization breaks into joy</div>
+
+    <div class="subsection">
+      <div class="subsection-title">Literal Meaning</div>
+      <div class="meaning-line">A bear is dancing. Picture a wild animal performing on stage or at a market, prancing and leaping in an uncontrolled, dramatic way. The animal is trained to perform, yet the danger is palpable. The performance is both theatrical and terrifying.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Figurative Meaning</div>
+      <div class="meaning-line">An event or party is so wild, so energetic, so full of life that it is unforgettable. The bear represents the untamed energy at the heart of celebration. To say "da steppt der Bär" is to acknowledge that normalcy has been abandoned, and something magical is unfolding. The rules have changed. The night is alive.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Historical Context</div>
+      <div class="meaning-line">In medieval Europe, trained bears were a common form of entertainment. They were brought to fairs and markets by traveling performers, and their dancing — usually induced by heat or music applied in ways now considered cruel — became a symbol of spectacle and entertainment. Germanic peoples would have been familiar with bear-dancers, making the image a natural metaphor for something memorable and extraordinary. Over time, as the practice of trained bears faded from common experience, the phrase remained, its original meaning preserved in the idiom even as its literal referent disappeared.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Chinese Equivalent</div>
+      <div class="meaning-line">狂欢 (kuánhuān) — "wild celebration" or 热闹 (règao) — "lively and boisterous" captures the sense of excitement, but the German idiom is more visual, more tied to a specific image that has been preserved in the language like a butterfly in amber.</div>
+    </div>
+
+    <div class="story">The bear in Germanic tradition is a creature of power and unpredictability. In the god Odin's mythology, berserkers — warriors in a state of divine fury — were thought to become bears in battle, their human identity dissolving into animal rage and strength. The berserker entered a trance where man and beast merged. But the dancing bear of the idiom is something different: it is the bear tamed but still wild, performing but still dangerous, controlled yet electrifying. When you say "da steppt der Bär" at a party, you are invoking all of this energy — the moment when civilization and wildness meet, when the performance and the reality blur, when everyone present is swept up in something larger than themselves. The phrase preserves an ancient understanding that the best moments in life are those when we are a little bit wild, when we let the bear dance within us.</div>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<div class="scene" id="scene3">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">Now imagine the opposite scene. Not a wild party, but a moment of profound blindness — not physical, but perceptual. Someone refuses to see what is obvious. They are willfully ignorant or simply oblivious. Their loved one is clearly unfaithful, yet they see nothing. A friend is clearly taking advantage of them, yet they refuse to acknowledge it. The evidence is overwhelming, yet they persist in blindness. In German, when you describe such a person, you might say they have <span class="german-word" data-card="tomatoes">Tomaten auf den Augen.</span> Tomatoes on their eyes.</p>
+
+  <p class="narrative">This image is so absurd, so vivid, that it becomes impossible to forget. Tomatoes are round, red, and opaque. If you placed them over someone's eyes, they literally could not see. They could only experience the world as a muted, red blur. The phrase captures the essence of someone who cannot — or will not — perceive the obvious. It is not ignorance from lack of information. It is blindness despite overwhelming evidence. It is the stubborn refusal to see, or the tragic inability to see even when seeing would save you.</p>
+
+  <p class="narrative">The origins of this phrase are uncertain. Some suggest it comes from the practice of using round objects — whether tomatoes or other vegetables — in folk medicine or theatrical traditions to symbolize obstruction. Others point to the sheer absurdity as the source: if you could describe someone's lack of perception in the most ridiculous way possible, it would be to say they have vegetables for eyes. The vividness of the image suggests that whoever first spoke the phrase understood something essential about human nature: that our worst blindness is often self-imposed, and that pointing it out with humor is sometimes the kindest approach.</p>
+
+  <div class="ety-card" id="card-tomatoes">
+    <div class="word-header">
+      <span class="word-main">Tomaten auf den Augen haben</span>
+      <span class="word-pron">/tomaːtən aʊf deːn ˈaʊən ˈhaːbən/</span>
+    </div>
+    <div class="word-meaning">literally: "to have tomatoes on one's eyes" — figuratively: to be blind to the obvious, to fail to see what everyone else can see</div>
+
+    <div class="subsection">
+      <div class="subsection-title">Literal Meaning</div>
+      <div class="meaning-line">Two red, round objects (tomatoes) are covering your eyes, preventing you from seeing anything except the red blur of the vegetable in front of you. You are blind. The world is obscured. You can move, you can walk, but you see nothing of what is actually there.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Figurative Meaning</div>
+      <div class="meaning-line">You are unable or unwilling to perceive something obvious. Your loved one is cheating on you, but you don't see it. Your boss is stealing from the company, but you remain loyal. Your friend is using you, but you don't acknowledge it. The evidence is overwhelming, yet you persist in blindness. This phrase captures that peculiar human condition: the ability to be surrounded by truth yet refuse to acknowledge it. It is not stupidity. It is a choice, however unconscious.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Historical Context</div>
+      <div class="meaning-line">The phrase likely originates from folk traditions or theatrical practices. Medieval mystery plays sometimes used masks or objects to represent spiritual blindness — the blindness that prevents salvation, the inability to see truth even when it is presented clearly. The tomato became the perfect symbol of obstruction — round like an eye, but opaque and impenetrable. Vegetables also had associations with peasant life and common things, making the phrase inherently humorous and accessible to ordinary speakers.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Chinese Equivalent</div>
+      <div class="meaning-line">睁眼瞎 (zhēngyǎnxiā) — literally "blind while awake" — captures the paradox of being able to see yet blind. The German idiom is more concrete and vivid in its use of the specific vegetable.</div>
+    </div>
+
+    <div class="story">What makes this idiom so powerful is its visual absurdity. You cannot imagine "tomatoes on the eyes" without smiling at the image. Yet that absurdity makes it memorable, makes it the perfect way to describe a very real human phenomenon: the willful blindness we sometimes practice toward people and situations we should see clearly. German culture values clarity and precision in perception — Sachlichkeit, a kind of objective matter-of-factness — and yet this idiom acknowledges that perception is not always about having functional eyes. Sometimes it is about will. Sometimes it is about readiness to see. Sometimes it is about the terrible human capacity to not-know what we most deeply already know. The tomatoes are not a medical condition. They are a choice, made over and over, day after day, until you forget you are choosing.</div>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<div class="scene" id="scene4">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">We now move from perception to fortune. In English, we speak of "dumb luck" or "a lucky break" — luck that arrives despite our not deserving it. In German, there is something more peculiar and more rooted in economic reality: <span class="german-word" data-card="luck">Schwein haben.</span> To have a pig. To have pork. To own a pig. The phrase means to be lucky, to enjoy unexpected good fortune. It is a phrase that reveals something essential about Germanic culture — the grounding of abstract concepts in material reality.</p>
+
+  <p class="narrative">In medieval European culture, a pig was valuable. Pigs provided meat for the winter, fat for cooking and preservation, leather for goods, bristles for brushes. A pig was a form of wealth, a basis for survival through the harsh months when crops would not grow. To own a pig meant security. To own a pig meant you could feed your family. To have a pig was to have something that mattered. So when luck arrived in the form of a windfall, when fortune smiled on you, it was natural to describe it as having acquired something valuable — and what could be more valuable than a pig? The connection to luck seems to originate in this practical meaning: if a pig suddenly appeared at your door, if a pig strayed into your yard and no one came to claim it, it would be an astonishing stroke of fortune.</p>
+
+  <p class="narrative">Over time, as the agricultural basis of life faded for many people, as pigs became less central to survival, the phrase became generalized to mean any kind of good luck, any unexpected blessing. Yet the phrase preserves the original sense: luck is material, practical, and indiscriminate. A pig does not care about your moral worth. A pig does not arrive because you deserve it. A pig is simply there, and you are fortunate.</p>
+
+  <div class="ety-card" id="card-luck">
+    <div class="word-header">
+      <span class="word-main">Schwein haben</span>
+      <span class="word-pron">/ʃvaɪn ˈhaːbən/</span>
+    </div>
+    <div class="word-meaning">literally: "to have a pig" — figuratively: to be lucky, to experience good fortune, to have unexpected blessings arrive</div>
+
+    <div class="subsection">
+      <div class="subsection-title">Literal Meaning</div>
+      <div class="meaning-line">You possess a pig. A real, living animal that you can care for, breed, or eventually slaughter for meat and fat. The pig is yours. You own it. You have acquired it.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Figurative Meaning</div>
+      <div class="meaning-line">You have experienced good luck. An unexpected blessing has come to you. You won the lottery, avoided an accident by chance, or met someone important by pure coincidence. The luck is unearned — you did not work for it, yet you benefit from it. You have stumbled into fortune.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Historical Context</div>
+      <div class="meaning-line">In medieval and early modern Germany, pigs were crucial to survival. They could convert scraps and kitchen waste into protein and fat for the winter months. A peasant with a pig had security. A pig represented wealth in its most practical form. To have a pig appear unexpectedly — perhaps as a gift, or strayed from a neighbor's farm, or found as an orphaned piglet — would have been a stroke of extraordinary good fortune. This practical meaning gave rise to the idiom, which was then extended to all forms of luck.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Chinese Equivalent</div>
+      <div class="meaning-line">时来运转 (shílái yùnzhuǎn) — "when the time comes, fortune turns" — or 走运 (zǒuyùn) — "to be lucky." Chinese idioms often treat luck as a cosmic force, a turn of fate, while the German idiom grounds it in the practical image of livestock and material resource.</div>
+    </div>
+
+    <div class="story">The phrase "Schwein haben" reveals something essential about Germanic culture: the grounding of abstract concepts in material reality. Luck is not a mystical force or a turn of cosmic fate. Luck is having a pig. Luck is material. Luck is real. It is the difference between subsistence and survival, between hunger and security, between a winter of want and a winter of adequacy. When you have "Schwein," you have been blessed with something concrete, something that changes your life in measurable, practical ways. Over time, the phrase became so generalized that any good fortune can be described as "Schwein haben," but the original meaning lingers in the shadows: luck is about acquiring something valuable, something that sustains you, something that matters.</div>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<div class="scene" id="scene5">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">We shift now from luck to precision. From the unpredictable to the exact. When someone expresses a truth perfectly, when they say exactly the right thing at exactly the right moment, when they penetrate to the heart of a matter with surgical accuracy, when they identify the crucial point and express it with perfect clarity, Germans say they have <span class="german-word" data-card="nail">den Nagel auf den Kopf treffen.</span> They have hit the nail on the head. They have struck true.</p>
+
+  <p class="narrative">This phrase appears in English as well, suggesting a shared cultural understanding across Germanic languages. When you drive a nail into wood, there is one precise moment, one exact strike, where the hammer meets the nail and the nail enters the wood smoothly and completely. Any deviation — a glancing blow, an angle slightly off, too much force or too little — results in the nail bending, bouncing, or refusing to go in cleanly. The nail is ruined. The wood is damaged. The task fails. But when the strike is perfect, when the hammer head connects exactly with the nail's head and the blow lands squarely, the nail sinks in with a satisfying directness. This is the metaphor: precision. Exactness. The moment when everything aligns and the task is accomplished perfectly.</p>
+
+  <p class="narrative">In language and thought, this becomes the metaphor for insight. When someone "hits the nail on the head," they have understood a situation completely. They have seen through the confusion and articulated the truth. They have said the one thing that clarifies everything. The phrase appears in German texts going back centuries, always with this meaning: exact, perfect understanding.</p>
+
+  <div class="ety-card" id="card-nail">
+    <div class="word-header">
+      <span class="word-main">Den Nagel auf den Kopf treffen</span>
+      <span class="word-pron">/deːn ˈnaːɡəl aʊf deːn kɔpf ˈtʁɛfən/</span>
+    </div>
+    <div class="word-meaning">literally: "to hit the nail on the head" — figuratively: to express something perfectly, to hit upon the exact truth, to say the one thing that clarifies everything</div>
+
+    <div class="subsection">
+      <div class="subsection-title">Literal Meaning</div>
+      <div class="meaning-line">You are holding a nail against a surface and swinging a hammer. At the moment of impact, the hammer head connects perfectly with the nail's head, driving it straight and cleanly into the wood. The nail goes in true. There is no bending. No waste. No failure. Precision.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Figurative Meaning</div>
+      <div class="meaning-line">You have understood a situation perfectly and expressed that understanding with complete accuracy. You have seen to the heart of a matter. You have articulated a truth that others have been dancing around, hinting at, struggling to express. Your insight is undeniable and precise. Everyone in the room knows that you have said the thing that needed to be said.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Historical Context</div>
+      <div class="meaning-line">This idiom arises from the practical craft of carpentry and construction. For centuries, before mechanical fasteners and power tools, the hammer and nail were the foundation of building. Skilled carpenters were those who could strike a nail cleanly, in one motion, without wasting effort or missing the mark. The precision required became a metaphor for any kind of exact understanding or expression. The phrase appears in German literature from the medieval period onward, always with the sense of hitting the mark, of understanding something completely.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Chinese Equivalent</div>
+      <div class="meaning-line">一针见血 (yī zhēn jiàn xiě) — literally "one needle sees blood," meaning to hit the mark, to penetrate directly to the truth. The Chinese idiom also uses the image of a precise tool, but needle instead of hammer — smaller, more delicate, but equally precise.</div>
+    </div>
+
+    <div class="story">The beauty of this idiom is that it connects the physical and the intellectual. A well-struck nail requires understanding — understanding of angle, force, the nature of the materials, the technique developed through years of practice. When you hit a nail perfectly on the head, you have demonstrated not just physical skill but knowledge, judgment, and precision. By extension, when you "hit the nail on the head" with words or ideas, you are demonstrating the same qualities: you understand the situation, you have judged the moment correctly, you have expressed yourself with perfect accuracy. It is an idiom that honors both manual skill and intellectual clarity, treating them as intimately connected rather than opposed.</div>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<div class="scene" id="scene6">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">But not every moment results in hitting the nail on the head. Sometimes you step wrong. Sometimes you make a social error. Sometimes you offend where you meant to delight. Sometimes you say the thing that, in retrospect, was inappropriate or rude. Sometimes you commit the terrible mistake of not-knowing what you should have known. In German, when you commit such a misstep, when you say something that, in retrospect, was an error of judgment or taste, when you reveal yourself to be clueless or insensitive, you have <span class="german-word" data-card="grease">ins Fettnäpfchen treten.</span> You have stepped in the grease pot. You have made a faux pas.</p>
+
+  <p class="narrative">Picture a medieval kitchen, or a peasant's home. Grease, rendered from cooking, would be stored in small containers or pots, often kept on floors or in places where people moved about. Stepping in such a pot would be not only unpleasant — you would cover your foot in sticky, slippery grease — but also wasteful. The grease, essential for cooking and preserving food, precious in a time before refrigeration, would be ruined by your careless step. It would be a faux pas of remarkable proportions. You would be remembered for your mistake. Everyone would know that you had stepped in the grease pot.</p>
+
+  <p class="narrative">Over time, the phrase became a metaphor for any social blunder, any moment when you step where you should not have stepped, when you commit an error of taste or judgment. The original meaning lingers in the phrase's structure: you have not made a moral error. You have not committed a crime. You have simply been thoughtless, awkward, or unfortunate in a way that was immediately noticeable and slightly ridiculous.</p>
+
+  <div class="ety-card" id="card-grease">
+    <div class="word-header">
+      <span class="word-main">Ins Fettnäpfchen treten</span>
+      <span class="word-pron">/ɪns ˈfɛtnɛpfçən ˈtʁeːtən/</span>
+    </div>
+    <div class="word-meaning">literally: "to step in the grease pot" — figuratively: to commit a social blunder, to say something inappropriate or rude, to make a mistake of judgment</div>
+
+    <div class="subsection">
+      <div class="subsection-title">Literal Meaning</div>
+      <div class="meaning-line">You are walking through a kitchen or home and your foot comes down directly in a small pot filled with rendered grease. Your shoe is now coated in sticky, unpleasant fat. The grease, which was valuable, is now ruined. You have made a mess.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Figurative Meaning</div>
+      <div class="meaning-line">You have made a social error. You have said something inappropriate, rude, or tactless. You have offended someone when you meant no offense. You have revealed yourself to be clueless about the norms of the situation. The error is not a moral failure — it is a stumble, a moment of thoughtlessness. Everyone notices, and the situation becomes awkward.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Historical Context</div>
+      <div class="meaning-line">In pre-modern Germanic households, grease (lard or tallow) was precious. It was rendered from butchered animals and stored carefully for cooking, for use in lamps, and for medicinal purposes. To step in such a pot was not only unpleasant but genuinely wasteful. It was the kind of accident that would be remembered and perhaps joked about for years. The phrase captures this blend of social awkwardness and mild disaster.</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Chinese Equivalent</div>
+      <div class="meaning-line">说错话 (shuōcuòhuà) — literally "say the wrong words" — or 得罪人 (déziuìrén) — "to offend someone." Chinese idioms tend to be more direct, while German preserves the vivid, specific image of the grease pot.</div>
+    </div>
+
+    <div class="story">This idiom is remarkable for its humanity. It acknowledges that we all make social mistakes. It is not a phrase about moral failure, but about the human tendency to be awkward, to step wrong, to say the thing we should not have said. The grease pot is waiting for everyone. You will step in it at some point in your life, and when you do, everyone will notice. The phrase is comedic in its acceptance of human fallibility. It treats the social blunder as inevitable and universal, not as a sign of fundamental unworthiness. We are all clumsy. We all say the wrong thing sometimes. The grease pot is always there, waiting for us to step carelessly into it.</div>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<div class="scene" id="scene7">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">We have now encountered five German idioms, and in their variety, we see the texture of German culture reflected like light through a prism. There is the wild bear dancing at a party — the acknowledgment that civilization sometimes needs to break down into celebration, that joy is not something to be rationed or controlled. There are tomatoes on the eyes — the recognition that we are often blind to the obvious, that our worst blindness is often self-imposed. There is the pig of luck — the understanding that fortune is material, practical, and indiscriminate, that luck is not about moral worth but about the accidents of existence. There is the nail hit perfectly on the head — the valorization of precision, of saying exactly the right thing, of understanding something completely. And there is the grease pot — the acknowledgment that we all misstep, that social awkwardness is universal and human, that we need not be ashamed of the inevitable blunder.</p>
+
+  <p class="narrative">These idioms are not decoration. They are not optional extras. They are the way German speakers make sense of their world. They encode values, observations, and wisdom that have been refined over centuries. To learn these idioms is not to learn new vocabulary — it is to begin thinking like a German speaker, to begin seeing the world through Germanic eyes. It is to understand that language is not just a tool for conveying information, but a repository of culture, a treasure house of ways of understanding what it means to be human.</p>
+
+  <p class="aside-box">
+    <div class="aside-title">A Note on Learning Idioms</div>
+    Idioms cannot be learned through logic. They must be encountered repeatedly, in context, until they become automatic. The best way to learn these phrases is to use them — awkwardly and incorrectly at first, but with practice, they will become second nature. A German speaker will smile when you use an idiom correctly. They will recognize that you are not just learning their language, but learning to think in their language, that you have begun the deep work of cultural acquisition. They will welcome you into their world of bears and tomatoes and grease pots.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<div class="scene" id="scene-quiz">
+  <div class="quiz-container">
+    <h3>Knowledge Check — Redewendungen I</h3>
+
+    <div class="quiz-question">
+      <div class="q-text">1. What does "Da steppt der Bär" literally mean?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">A wild bear is attacking</div>
+        <div class="quiz-option" data-answer="1">There the bear dances (metaphor for a great party)</div>
+        <div class="quiz-option" data-answer="0">A bear is sleeping peacefully</div>
+        <div class="quiz-option" data-answer="0">The bear has left the forest</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">2. If someone has "Tomaten auf den Augen," they are...</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">Allergic to vegetables</div>
+        <div class="quiz-option" data-answer="0">Cooking a meal</div>
+        <div class="quiz-option" data-answer="1">Blind to the obvious</div>
+        <div class="quiz-option" data-answer="0">Eating fresh tomatoes</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">3. "Schwein haben" means...</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">To own a farm</div>
+        <div class="quiz-option" data-answer="1">To be lucky, to have good fortune</div>
+        <div class="quiz-option" data-answer="0">To eat pork</div>
+        <div class="quiz-option" data-answer="0">To be dirty or messy</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">4. What is the significance of "den Nagel auf den Kopf treffen"?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">Violence and injury</div>
+        <div class="quiz-option" data-answer="1">Precision, hitting the exact truth perfectly</div>
+        <div class="quiz-option" data-answer="0">A carpentry mistake</div>
+        <div class="quiz-option" data-answer="0">A medical condition</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">5. Why is stepping in a grease pot a social metaphor?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">Because grease was poisonous</div>
+        <div class="quiz-option" data-answer="1">Because it was wasteful and awkward, like social blunders</div>
+        <div class="quiz-option" data-answer="0">Because kitchens were forbidden</div>
+        <div class="quiz-option" data-answer="0">Because pots were dangerous</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">6. Which idiom celebrates precision and exact expression?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">Tomaten auf den Augen</div>
+        <div class="quiz-option" data-answer="0">Ins Fettnäpfchen treten</div>
+        <div class="quiz-option" data-answer="1">Den Nagel auf den Kopf treffen</div>
+        <div class="quiz-option" data-answer="0">Da steppt der Bär</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">7. What does "Schwein haben" suggest about luck?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">That it is mystical and cosmic</div>
+        <div class="quiz-option" data-answer="1">That it is material and practical, like having a valuable pig</div>
+        <div class="quiz-option" data-answer="0">That it comes from hard work</div>
+        <div class="quiz-option" data-answer="0">That it is a moral reward</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">8. Which idiom acknowledges universal human awkwardness?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">Da steppt der Bär</div>
+        <div class="quiz-option" data-answer="0">Schwein haben</div>
+        <div class="quiz-option" data-answer="1">Ins Fettnäpfchen treten</div>
+        <div class="quiz-option" data-answer="0">Den Nagel auf den Kopf treffen</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">9. What historical practice might have inspired "Da steppt der Bär"?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">Bear hunting in the forests</div>
+        <div class="quiz-option" data-answer="1">Trained bears performing at medieval fairs and markets</div>
+        <div class="quiz-option" data-answer="0">Religious ceremonies with bears</div>
+        <div class="quiz-option" data-answer="0">Bear migrations across Europe</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">10. How do idioms differ from regular vocabulary?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">They are newer and more modern</div>
+        <div class="quiz-option" data-answer="1">They cannot be understood through literal translation; they must be learned as units</div>
+        <div class="quiz-option" data-answer="0">They are used only by uneducated speakers</div>
+        <div class="quiz-option" data-answer="0">They follow standard grammatical rules</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">11. What does the word "Fettnäpfchen" suggest about German diminutives?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">That diminutives always make things cute</div>
+        <div class="quiz-option" data-answer="1">That diminutives can be used in idioms to add humor and humanity</div>
+        <div class="quiz-option" data-answer="0">That diminutives are uncommon in German</div>
+        <div class="quiz-option" data-answer="0">That diminutives only apply to animals</div>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <div class="q-text">12. Which of these idioms reflects a medieval economic reality?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-answer="0">Tomaten auf den Augen</div>
+        <div class="quiz-option" data-answer="1">Schwein haben (pigs as valuable resources)</div>
+        <div class="quiz-option" data-answer="0">Da steppt der Bär</div>
+        <div class="quiz-option" data-answer="0">Den Nagel auf den Kopf treffen</div>
+      </div>
+    </div>
+
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div id="quiz-score"></div>
+    <div id="post-quiz-summary" class="post-quiz-summary"></div>
+    <div id="quiz-reset" class="quiz-reset"></div>
+  </div>
+
+  <div id="word-collection-box" class="word-collection">
+    <h3>IDIOMS LEARNED</h3>
+    <div class="collected-words" id="collected-words"></div>
+  </div>
+</div>
+
+<div class="scene" id="scene-end">
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p class="narrative emphasis" style="margin-bottom: 0.5em">End of Chapter 88 — Redewendungen I</p>
+    <p class="narrative small" style="text-align: center">You have learned five idioms — five ways that German speakers encode culture, humor, and wisdom into their language. You have begun to see the world not as an individual word-learner, but as a speaker capable of understanding metaphor, of recognizing when language breaks its own rules and becomes something more vivid, more true. You have learned that the bear dances, that we all have tomatoes on our eyes sometimes, that luck is material, that precision matters, and that we all step in the grease pot. In the next chapter, five more idioms await, even stranger and more revealing than these.</p>
+    <div style="margin-top: 2em; font-size: 1rem; color: rgba(232, 164, 74, 0.6);">Next: Chapter 89 — Redewendungen II</div>
+  </div>
+</div>
+
+
+  <div class="nav-section">
+    <a href="chapter87.html" class="nav-btn">← Chapter 87</a>
+    <a href="chapter89.html" class="nav-btn next">Chapter 89 →</a>
+  </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById('theatre-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let stars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600
+    ? Math.floor((canvas.width * canvas.height) / 8000)
+    : Math.floor((canvas.width * canvas.height) / 6000);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random() * 0.3 + 0.1,
+      speed: Math.random() * 0.1 + 0.03,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.008
+    });
+  }
+}
+
+function createStars() {
+  stars = [];
+  const count = Math.floor((canvas.width * canvas.height) / 3000);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 0.8 + 0.2,
+      alpha: Math.random() * 0.4 + 0.1,
+      twinkle: Math.random() * Math.PI * 2,
+      twinkleSpeed: Math.random() * 0.02 + 0.01
+    });
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  stars.forEach((s) => {
+    s.twinkle += s.twinkleSpeed;
+    const brightness = 0.5 + 0.5 * Math.sin(s.twinkle);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 212, 200, ${s.alpha * brightness})`;
+    ctx.fill();
+  });
+
+  particles.forEach((p) => {
+    p.x -= p.speed;
+    p.wobble += p.wobbleSpeed;
+    p.y += Math.sin(p.wobble) * 0.2;
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(150, 150, 150, ${p.alpha})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+createStars();
+requestAnimationFrame(drawParticles);
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  createParticles();
+  createStars();
+});
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  },
+  { threshold: 0.15 }
+);
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+const cardMap = {
+  'bear-dance': 'card-bear-dance',
+  'tomatoes': 'card-tomatoes',
+  'luck': 'card-luck',
+  'nail': 'card-nail',
+  'grease': 'card-grease'
+};
+
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = cardMap[word.getAttribute('data-card')];
+    const card = document.getElementById(cardId);
+    if (card) {
+      card.classList.toggle('open');
+    }
+  });
+});
+
+const quizData = [
+  { question: "1. What does \"Da steppt der Bär\" literally mean?", options: [
+    { text: "A wild bear is attacking", correct: false },
+    { text: "There the bear dances (metaphor for a great party)", correct: true },
+    { text: "A bear is sleeping peacefully", correct: false },
+    { text: "The bear has left the forest", correct: false }
+  ]},
+  { question: "2. If someone has \"Tomaten auf den Augen,\" they are...", options: [
+    { text: "Allergic to vegetables", correct: false },
+    { text: "Cooking a meal", correct: false },
+    { text: "Blind to the obvious", correct: true },
+    { text: "Eating fresh tomatoes", correct: false }
+  ]},
+  { question: "3. \"Schwein haben\" means...", options: [
+    { text: "To own a farm", correct: false },
+    { text: "To be lucky, to have good fortune", correct: true },
+    { text: "To eat pork", correct: false },
+    { text: "To be dirty or messy", correct: false }
+  ]},
+  { question: "4. What is the significance of \"den Nagel auf den Kopf treffen\"?", options: [
+    { text: "Violence and injury", correct: false },
+    { text: "Precision, hitting the exact truth perfectly", correct: true },
+    { text: "A carpentry mistake", correct: false },
+    { text: "A medical condition", correct: false }
+  ]},
+  { question: "5. Why is stepping in a grease pot a social metaphor?", options: [
+    { text: "Because grease was poisonous", correct: false },
+    { text: "Because it was wasteful and awkward, like social blunders", correct: true },
+    { text: "Because kitchens were forbidden", correct: false },
+    { text: "Because pots were dangerous", correct: false }
+  ]},
+  { question: "6. Which idiom celebrates precision and exact expression?", options: [
+    { text: "Tomaten auf den Augen", correct: false },
+    { text: "Ins Fettnäpfchen treten", correct: false },
+    { text: "Den Nagel auf den Kopf treffen", correct: true },
+    { text: "Da steppt der Bär", correct: false }
+  ]},
+  { question: "7. What does \"Schwein haben\" suggest about luck?", options: [
+    { text: "That it is mystical and cosmic", correct: false },
+    { text: "That it is material and practical, like having a valuable pig", correct: true },
+    { text: "That it comes from hard work", correct: false },
+    { text: "That it is a moral reward", correct: false }
+  ]},
+  { question: "8. Which idiom acknowledges universal human awkwardness?", options: [
+    { text: "Da steppt der Bär", correct: false },
+    { text: "Schwein haben", correct: false },
+    { text: "Ins Fettnäpfchen treten", correct: true },
+    { text: "Den Nagel auf den Kopf treffen", correct: false }
+  ]},
+  { question: "9. What historical practice might have inspired \"Da steppt der Bär\"?", options: [
+    { text: "Bear hunting in the forests", correct: false },
+    { text: "Trained bears performing at medieval fairs and markets", correct: true },
+    { text: "Religious ceremonies with bears", correct: false },
+    { text: "Bear migrations across Europe", correct: false }
+  ]},
+  { question: "10. How do idioms differ from regular vocabulary?", options: [
+    { text: "They are newer and more modern", correct: false },
+    { text: "They cannot be understood through literal translation; they must be learned as units", correct: true },
+    { text: "They are used only by uneducated speakers", correct: false },
+    { text: "They follow standard grammatical rules", correct: false }
+  ]},
+  { question: "11. What does the word \"Fettnäpfchen\" suggest about German diminutives?", options: [
+    { text: "That diminutives always make things cute", correct: false },
+    { text: "That diminutives can be used in idioms to add humor and humanity", correct: true },
+    { text: "That diminutives are uncommon in German", correct: false },
+    { text: "That diminutives only apply to animals", correct: false }
+  ]},
+  { question: "12. Which of these idioms reflects a medieval economic reality?", options: [
+    { text: "Tomaten auf den Augen", correct: false },
+    { text: "Schwein haben (pigs as valuable resources)", correct: true },
+    { text: "Da steppt der Bär", correct: false },
+    { text: "Den Nagel auf den Kopf treffen", correct: false }
+  ]}
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() { updateQuizNav(); }
+function updateQuizNav() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Submit' : 'Next →';
+}
+function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; renderQuestion(); } }
+function nextQuestion() {
+  const selected = document.querySelector('.quiz-option.selected');
+  if (!selected && !quizComplete) { alert('Please select an answer.'); return; }
+  if (currentQuestion === quizData.length - 1 && !quizComplete) { submitQuiz(); }
+  else if (currentQuestion < quizData.length - 1) { currentQuestion++; renderQuestion(); }
+}
+function renderQuestion() {
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => { q.classList.toggle('hidden', idx !== currentQuestion); });
+  document.querySelectorAll('.quiz-option').forEach((opt, idx) => {
+    opt.classList.remove('selected', 'incorrect');
+    opt.onclick = function() { selectOption(idx); };
+    if (answers[currentQuestion] === idx) opt.classList.add('selected');
+  });
+  updateQuizNav();
+}
+function selectOption(idx) {
+  document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected', 'incorrect'));
+  document.querySelectorAll('.quiz-option')[idx].classList.add('selected');
+  answers[currentQuestion] = idx;
+}
+function submitQuiz() {
+  quizComplete = true;
+  let score = 0;
+  quizData.forEach((q, idx) => { if (answers[idx] !== null && q.options[answers[idx]].correct) score++; });
+  const percentage = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').innerHTML = `<strong>Your Score: ${score}/${quizData.length} (${percentage}%)</strong>`;
+  if (percentage >= 80) {
+    document.getElementById('word-collection-box').classList.add('show');
+    const idiomsLearned = [
+      { german: 'Da steppt der Bär', english: 'Great party' },
+      { german: 'Tomaten auf den Augen', english: 'Blind to obvious' },
+      { german: 'Schwein haben', english: 'To be lucky' },
+      { german: 'Den Nagel auf den Kopf treffen', english: 'Hit nail on head' },
+      { german: 'Ins Fettnäpfchen treten', english: 'Social blunder' }
+    ];
+    const wordsDiv = document.getElementById('collected-words');
+    wordsDiv.innerHTML = '';
+    idiomsLearned.forEach((word, idx) => {
+      setTimeout(() => {
+        const wordEl = document.createElement('div');
+        wordEl.className = 'collected-word show';
+        wordEl.innerHTML = `<div class="cw-german">${word.german}</div><div class="cw-english">${word.english}</div>`;
+        wordsDiv.appendChild(wordEl);
+      }, idx * 100);
+    });
+    document.getElementById('post-quiz-summary').innerHTML = `<strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong><p style="margin-top: 8px;">You have now learned five German idioms — five ways that the German language encodes culture, humor, and worldview into memorable phrases. Idioms are the poetry of everyday speech. They are how a culture expresses what matters to it, what it observes about human nature, what it finds funny.</p><p style="margin-top: 8px;"><strong>Pattern Recognition Unlocked:</strong> Idioms show you that German is not just a collection of words following rules. It is a living tradition of metaphor and meaning-making.</p><p style="margin-top: 8px;">In the next chapter, five more idioms await — even stranger and more revealing than these.</p>`;
+    document.getElementById('post-quiz-summary').classList.add('show');
+  } else {
+    document.getElementById('quiz-score').innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% to unlock the idiom collection.</p>';
+    document.getElementById('quiz-reset').innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => { q.classList.toggle('hidden', idx !== 0); });
+  document.querySelectorAll('.quiz-option').forEach(opt => { opt.classList.remove('selected', 'incorrect'); });
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+  updateQuizNav();
+}
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    card.querySelector('.word-header').appendChild(btn);
+  }
+});
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">756 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(88%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:88%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 756 words across 88 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">137 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(94%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:94%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 137 patterns and grammar rules across 88 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+>

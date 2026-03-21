@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>Das erste Wort — Chapter 78: Das Bauwerk (The Architecture of German Grammar)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --workshop: #d4a574;
+    --stone: #8b8680;
+    --bronze: #cd7f32;
+    --gold: #daa520;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(180deg, #2a1f15 0%, #1a1410 30%, #0f0d0a 60%, #050403 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+  }
+
+  #building-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 24px 150px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(218, 165, 32, 0.5);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--workshop);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1em;
+  }
+
+  .scroll-hint {
+    font-size: 1rem;
+    color: rgba(218, 165, 32, 0.5);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.1s forwards;
+    margin-top: 2em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bounce 2s infinite;
+    margin-left: 0.3em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .scene {
+    margin: 80px 0;
+    padding: 0;
+  }
+
+  .scene-heading {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 40px 0 24px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(218, 165, 32, 0.3);
+  }
+
+  .narrative {
+    color: var(--text);
+    line-height: 1.95;
+    margin-bottom: 1.5em;
+    font-size: 1.2rem;
+  }
+
+  .narrative.emphasis {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--fire-glow);
+    text-align: left;
+    margin-top: 2em;
+    margin-bottom: 1.5em;
+  }
+
+  .narrative.small {
+    font-size: 1.1rem;
+    color: rgba(212, 202, 187, 0.85);
+  }
+
+  .grammar-box {
+    background: rgba(139, 134, 128, 0.08);
+    border-left: 4px solid var(--stone);
+    border-radius: 4px 8px 8px 4px;
+    padding: 32px 28px;
+    margin: 32px 0;
+  }
+
+  .rule-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--bronze);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .example-pair {
+    margin: 28px 0;
+  }
+
+  .example-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--fire-glow);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .example-text {
+    background: rgba(232, 164, 74, 0.08);
+    padding: 18px 22px;
+    border-radius: 6px;
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    line-height: 1.8;
+  }
+
+  .translation {
+    color: var(--english);
+    font-style: italic;
+    font-size: 1rem;
+    margin-top: 10px;
+    padding-left: 10px;
+  }
+
+  .architectural-section {
+    background: rgba(218, 165, 32, 0.06);
+    border: 2px solid rgba(218, 165, 32, 0.15);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 32px 0;
+  }
+
+  .architectural-section h3 {
+    color: var(--gold);
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .architectural-content {
+    color: var(--text);
+    line-height: 1.9;
+  }
+
+  .component-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .component-item {
+    background: rgba(205, 127, 50, 0.08);
+    border-left: 3px solid var(--bronze);
+    padding: 16px 20px;
+    border-radius: 4px;
+  }
+
+  .component-item strong {
+    color: var(--bronze);
+  }
+
+  .decomposition-box {
+    background: rgba(10, 14, 26, 0.5);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 32px 0;
+  }
+
+  .decomposition-title {
+    font-size: 1.2rem;
+    color: var(--fire-glow);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .decomposition-step {
+    margin: 18px 0;
+    padding-left: 20px;
+    border-left: 2px solid rgba(232, 164, 74, 0.2);
+  }
+
+  .decomposition-step-title {
+    font-weight: 600;
+    color: var(--fire);
+    margin-bottom: 8px;
+  }
+
+  .decomposition-step-content {
+    color: rgba(212, 202, 187, 0.85);
+    font-size: 1.1rem;
+  }
+
+  .quiz-container {
+    background: rgba(10, 14, 26, 0.7);
+    border: 2px solid rgba(218, 165, 32, 0.2);
+    border-radius: 8px;
+    padding: 48px;
+    margin: 80px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.6rem;
+    color: var(--gold);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .quiz-instruction {
+    text-align: center;
+    color: rgba(212, 202, 187, 0.75);
+    font-size: 1.1rem;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(10, 14, 26, 0.5);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 6px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.3);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.correct {
+    background: rgba(100, 200, 100, 0.3);
+    border-color: #64c864;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(200, 100, 100, 0.3);
+    border-color: #c86464;
+  }
+
+  .quiz-feedback {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .quiz-feedback.correct {
+    background: rgba(100, 200, 100, 0.2);
+    color: #a8e6a8;
+  }
+
+  .quiz-feedback.incorrect {
+    background: rgba(200, 100, 100, 0.2);
+    color: #e6a8a8;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(218, 165, 32, 0.1);
+    border-radius: 4px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .summary-box {
+    background: rgba(218, 165, 32, 0.1);
+    border: 2px solid rgba(218, 165, 32, 0.2);
+    border-radius: 8px;
+    padding: 32px;
+    margin: 40px 0;
+  }
+
+  .summary-title {
+    font-size: 1.4rem;
+    color: var(--gold);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .summary-content {
+    color: var(--text);
+    line-height: 1.9;
+    font-size: 1.1rem;
+  }
+
+  .navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 100px;
+    padding-top: 40px;
+    border-top: 2px solid rgba(218, 165, 32, 0.1);
+  }
+
+  .nav-button {
+    background: rgba(218, 165, 32, 0.15);
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    color: var(--gold);
+    padding: 14px 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .nav-button:hover {
+    background: rgba(218, 165, 32, 0.25);
+    border-color: rgba(218, 165, 32, 0.5);
+  }
+
+  .chapter-info {
+    text-align: center;
+    color: rgba(218, 165, 32, 0.6);
+    font-size: 0.95rem;
+  }
+
+  .reveal-message {
+    background: rgba(100, 200, 100, 0.15);
+    border: 2px solid rgba(100, 200, 100, 0.3);
+    border-radius: 8px;
+    padding: 28px;
+    text-align: center;
+    color: #a8e6a8;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin: 60px 0;
+  }
+
+  @media (max-width: 600px) {
+    .title-screen h1 {
+      font-size: 2.5rem;
+    }
+    .subtitle {
+      font-size: 1.1rem;
+    }
+    .narrative {
+      font-size: 1.1rem;
+    }
+    .quiz-container {
+      padding: 28px;
+    }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="building-canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter 78 of 100</div>
+    <h1>Das Bauwerk</h1>
+    <div class="subtitle">The Architecture of German Grammar — Phase 3 Finale</div>
+    <p class="scroll-hint">Scroll to see the structure assemble<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-intro">
+    <p class="narrative" data-speak="true">
+      You stand at a threshold. Behind you lie the foundations, the walls, the roof, the windows, and the decorative elements of German grammar. You have studied them individually. Cases from chapters 53-56. Tenses from chapters 58-61. Word order from chapter 62. Connectors from chapters 63-64. Adjective endings from chapters 73-74. Participles from chapter 77. Each system seemed discrete, separate. But grammar is not a collection of isolated facts. Grammar is architecture. This chapter is the revelation of that architecture. Here, you will take a real German sentence from a newspaper and decompose every grammatical element. You will see how cases, tenses, word order, connectors, adjective endings, and participles all work together as a unified system. You will understand, perhaps for the first time, how German works. Not as rules. Not as lists. But as structure. You will see the complete building. Every element in its place. Every function clear. And you will understand that these are not arbitrary choices but logical necessities arising from how a language must communicate meaning with precision and elegance.
+    </p>
+  </div>
+
+  <div class="scene scene-foundation">
+    <div class="scene-heading">Foundation: The Case System (Chapters 53-56)</div>
+
+    <p class="narrative" data-speak="true">
+      Every sentence must establish relationships. Who does what? To whom? With what? For what purpose? These relationships are encoded in case. German uses four cases: nominative (subject), accusative (direct object), dative (indirect object, with certain prepositions), and genitive (possession, modification). Cases assign grammatical roles. They organize meaning. Without cases, grammar collapses. Let us examine a sentence:
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Foundation: Cases Assign Relationships</div>
+
+      <div class="example-pair">
+        <div class="example-label">Sentence: Der Mann gibt der Frau das Buch.</div>
+        <div class="example-text">
+          <strong>Der Mann</strong> (nominative) — the subject, who does the action<br>
+          <strong>der Frau</strong> (dative) — the indirect object, to whom the action is done<br>
+          <strong>das Buch</strong> (accusative) — the direct object, what is given<br><br>
+          Translation: The man gives the woman the book.
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Without Cases, This Relationship Would Collapse</div>
+        <div class="example-text">
+          In English: "the man give the woman the book" — we rely on word order. English word order is fixed: Subject-Verb-Object.<br>
+          In German: The man CAN move. "Das Buch gibt der Mann der Frau." (The book, gives the man the woman.) Same cases, different meaning through rearrangement. Cases make this flexibility possible.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-walls">
+    <div class="scene-heading">Walls: The Tense System (Chapters 58-61)</div>
+
+    <p class="narrative" data-speak="true">
+      Cases establish spatial relationships. Tenses establish temporal relationships. When does the action happen? Is it happening now, or did it happen in the past, or will it happen in the future? German tenses encode this. Present tense (present-tense conjugation). Simple past (preterite, or strong past). Present perfect (auxiliary "have" + past participle). Future (auxiliary "will" + infinitive). These tenses are not interchangeable. Each carries its own meaning, its own implication.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Walls: Tenses Establish Time</div>
+
+      <div class="example-pair">
+        <div class="example-label">Same Sentence, Different Tenses</div>
+        <div class="example-text">
+          <strong>Der Mann gibt der Frau das Buch.</strong> (Present: happening now)<br>
+          <strong>Der Mann gab der Frau das Buch.</strong> (Simple past: happened)<br>
+          <strong>Der Mann hat der Frau das Buch gegeben.</strong> (Perfect: has given)<br>
+          <strong>Der Mann wird der Frau das Buch geben.</strong> (Future: will give)<br><br>
+          The case system remains constant. The tense changes the temporal location of the action.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-roof">
+    <div class="scene-heading">Roof: Word Order (Chapter 62)</div>
+
+    <p class="narrative" data-speak="true">
+      Cases and tenses establish the meaning. Word order establishes the discourse shape. In main clauses, German follows Subject-Verb-Object order but allows flexibility because cases tell us who is who. In subordinate clauses, the verb moves to the end. This is not accident. The verb at the end signals dependency. The reader waits for the verb, and the waiting creates a sense of suspension, of incompleteness, until the verb arrives. This structure is characteristic of German and shapes how Germans think and write.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Roof: Word Order Shapes Discourse</div>
+
+      <div class="example-pair">
+        <div class="example-label">Main Clause (Verb in Second Position)</div>
+        <div class="example-text">
+          <strong>Der Mann gibt der Frau das Buch.</strong><br>
+          Position 1: subject (Der Mann)<br>
+          Position 2: verb (gibt)<br>
+          Positions 3+: objects and modifiers
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Subordinate Clause (Verb at End)</div>
+        <div class="example-text">
+          <strong>...weil der Mann der Frau das Buch gibt.</strong><br>
+          The subordinating conjunction "weil" signals a clause.<br>
+          The verb "gibt" moves to the end, creating suspension.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-windows">
+    <div class="scene-heading">Windows: Connectors (Chapters 63-64)</div>
+
+    <p class="narrative" data-speak="true">
+      The foundation (cases), walls (tenses), and roof (word order) create the basic structure. But a building without windows is dark and closed. Connectors are windows. They allow light in. They allow different clauses and ideas to connect. Coordinating conjunctions (und, aber, oder) connect equal ideas. Subordinating conjunctions (weil, obwohl, wenn, dass) connect dependent ideas. Relative pronouns (der, die, das) embed descriptions within sentences. These connectors create texture, complexity, and depth.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Windows: Connectors Join Ideas</div>
+
+      <div class="example-pair">
+        <div class="example-label">Coordination: Connecting Equal Ideas</div>
+        <div class="example-text">
+          Der Mann gibt der Frau das Buch, <strong>und</strong> die Frau liest das Buch.<br>
+          Two main clauses connected by "and." Both have equal weight.
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Subordination: Connecting Dependent Ideas</div>
+        <div class="example-text">
+          Die Frau liest das Buch, <strong>weil</strong> der Mann es ihr gegeben hat.<br>
+          A main clause + reason clause. The "weil" clause depends on the main clause.
+        </div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Relative Clause: Embedding Description</div>
+        <div class="example-text">
+          Der Mann, <strong>der</strong> der Frau das Buch gibt, ist mein Freund.<br>
+          The relative clause embeds description of the subject within the main sentence.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-decoration">
+    <div class="scene-heading">Decoration: Adjective Endings (Chapters 73-74)</div>
+
+    <p class="narrative" data-speak="true">
+      The structure is now complete. But structures are spare. Adjective endings add beauty, precision, and nuance. When you describe a noun, the adjective must agree in case, gender, and number with that noun. This is not decoration in the sense of ornament-only. It is functional decoration. Each ending encodes information: What case is the noun? What gender? Is it singular or plural? The adjective's ending answers these questions. This creates coherence and clarity.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Decoration: Adjectives Encode Case/Gender/Number</div>
+
+      <div class="example-pair">
+        <div class="example-label">Adjective Endings Signal Case, Gender, Number</div>
+        <div class="example-text">
+          <strong>Der schöne Mann</strong> (nominative masculine singular)<br>
+          <strong>Den schönen Mann</strong> (accusative masculine singular)<br>
+          <strong>Dem schönen Mann</strong> (dative masculine singular)<br>
+          <strong>Des schönen Mannes</strong> (genitive masculine singular)<br><br>
+          Each ending is unique. Each signals exactly what the noun's grammatical role is.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-participles">
+    <div class="scene-heading">The Final Layer: Participles (Chapter 77)</div>
+
+    <p class="narrative" data-speak="true">
+      All the elements come together: cases, tenses, word order, connectors, adjective endings. And then participles arrive. Participles compress entire clauses into adjective phrases. They are the most sophisticated element. They show that German can express complex relationships in astonishingly compact form. "Der von der Regierung gestern angekündigte neue Plan" compresses an entire relative clause into a noun phrase. This is the pinnacle of German grammatical sophistication.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">The Complete System: All Elements Together</div>
+
+      <div class="example-pair">
+        <div class="example-label">A Sentence Using All Systems</div>
+        <div class="example-text">
+          <strong>Der von der Regierung gestern angekündigte, neue Plan, der die Wirtschaft reformieren wird, hat viele Bürger überrascht, obwohl sie ihn schon lange erwartet hatten.</strong><br><br>
+          Analysis of this sentence reveals:<br>
+          • Cases: Der (nominative), der Regierung (dative), die Wirtschaft (accusative), many more<br>
+          • Tenses: Present ("hat"), future ("wird"), past perfect ("hatten")<br>
+          • Word order: Main clause (V2), subordinate clause (verb at end)<br>
+          • Connectors: "der" (relative), "obwohl" (subordinating)<br>
+          • Adjective endings: "angekündigte" (weak feminine singular nominative)<br>
+          • Participles: "angekündigte" (past participle as adjective), compressed relative clause
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-decomposition">
+    <div class="scene-heading">Complete Decomposition: A Real German Sentence</div>
+
+    <p class="narrative" data-speak="true">
+      Let us take a real sentence from a German newspaper. Let us decompose every single element. We will see how cases, tenses, word order, connectors, adjective endings, and participles all work together to create meaning.
+    </p>
+
+    <div class="decomposition-box">
+      <div class="decomposition-title">German Sentence (from Die Zeit)</div>
+      <div class="example-text" style="margin: 20px 0;">
+        <strong>Die von der Regierung gestern angekündigte Maßnahme, die viele Bürger überrascht hat, wird heute im Bundestag diskutiert werden.</strong>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Element 1: The Main Subject</div>
+        <div class="decomposition-step-content">
+          <strong>Die ... Maßnahme</strong> — "the measure" (nominative feminine singular)<br>
+          This is the subject. All modification must agree with its case, gender, number.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Element 2: The Participle Phrase</div>
+        <div class="decomposition-step-content">
+          <strong>von der Regierung gestern angekündigte</strong> — "announced by the government yesterday"<br>
+          This is a past participle phrase. "Angekündigte" is a past participle (announcing completed). It agrees with "Maßnahme" (feminine singular nominative = ending -e). The phrase compresses an entire relative clause: "which was announced by the government yesterday."
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Element 3: The Relative Clause</div>
+        <div class="decomposition-step-content">
+          <strong>die viele Bürger überrascht hat</strong> — "which has surprised many citizens"<br>
+          This is a relative clause. "Die" is the relative pronoun (nominative feminine singular, referring back to "Maßnahme"). The verb "hat überrascht" is in present perfect tense. The structure is: Object ("viele Bürger") + auxiliary ("hat") + past participle ("überrascht"). Note: German relative clauses often place the object before the auxiliary.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Element 4: The Main Verb and Future Passive</div>
+        <div class="decomposition-step-content">
+          <strong>wird ... diskutiert werden</strong> — "will be discussed"<br>
+          This is a future passive construction. "Wird" is the future auxiliary. "Diskutiert werden" is the passive voice infinitive. The structure: future auxiliary + passive infinitive. This is the most complex verb form: both future tense AND passive voice together.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Element 5: The Temporal Adverbial</div>
+        <div class="decomposition-step-content">
+          <strong>heute im Bundestag</strong> — "today in the Federal Assembly"<br>
+          Adverbials of time and location. "Heute" (today) and "im Bundestag" (in the parliament, locative dative after preposition "in"). These provide context.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">The Complete Picture</div>
+        <div class="decomposition-step-content">
+          This single sentence demonstrates:<br>
+          • Case agreement throughout (nominative subject, dative objects, accusative objects)<br>
+          • Multiple tenses working together (present perfect in the relative clause, future passive in the main verb)<br>
+          • Word order: main clause (verb in 2nd position with future auxiliary), subordinate relative clause (verb separated)<br>
+          • Connectors: relative pronoun "die"<br>
+          • Adjective endings: "angekündigte" (nominative feminine singular)<br>
+          • Participles: "angekündigte" (past participle functioning as adjective)<br>
+          • Passive voice: "diskutiert werden"<br>
+          • Sophisticated information compression
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-architecture">
+    <div class="scene-heading">The Complete Architecture of German Grammar</div>
+
+    <div class="architectural-section">
+      <h3>The System as One Unified Whole</h3>
+      <div class="architectural-content">
+        <p style="margin-bottom: 18px;">
+          German grammar is not a list of rules. It is an architecture. The foundation is cases—establishing who does what, to whom, with what. The walls are tenses—establishing when. The roof is word order—establishing the discourse shape. The windows are connectors—allowing ideas to link. The decoration is adjective endings—adding precision. The final layer is participles—allowing extreme compression.
+        </p>
+
+        <p style="margin-bottom: 18px;">
+          Each element serves a function. Each supports the others. Remove the foundation (cases), and the system collapses. You cannot know who does what. Remove word order rules, and discourse becomes chaotic. Each element is necessary. Each element is sufficient. Together, they create a system of remarkable elegance and power.
+        </p>
+
+        <p>
+          This is why German seems difficult. It is because German grammar is sophisticated. But it is not arbitrary. It is logical. It is systematic. It is beautiful. Master this architecture, and you have mastered German. Not as rules memorized. But as structure understood.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-additional-examples">
+    <div class="scene-heading">Additional Real-World Examples</div>
+
+    <p class="narrative" data-speak="true">
+      One sentence may seem like an outlier. Let us examine multiple sentences from authentic German sources. Each demonstrates the same architectural principles working together.
+    </p>
+
+    <div class="decomposition-box">
+      <div class="decomposition-title">Example 2: German Newspaper (Die Süddeutsche Zeitung)</div>
+      <div class="example-text" style="margin: 20px 0;">
+        <strong>Der von internationalen Experten lange empfohlene Kurs, den das Unternehmen endlich akzeptiert hat, wird zu bedeutenden Veränderungen führen.</strong>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Grammatical Structure Breakdown</div>
+        <div class="decomposition-step-content">
+          <strong>Subject:</strong> "Der ... Kurs" (the course — nominative singular masculine)<br>
+          <strong>Participle phrase:</strong> "von internationalen Experten lange empfohlene" (long recommended by international experts — past participle modifying Kurs)<br>
+          <strong>Relative clause:</strong> "den das Unternehmen endlich akzeptiert hat" (which the company has finally accepted — accusative relative pronoun, present perfect tense)<br>
+          <strong>Main verb:</strong> "wird führen" (will lead — future tense)<br>
+          <strong>Object:</strong> "zu bedeutenden Veränderungen" (to significant changes — dative after preposition)<br><br>
+          This sentence demonstrates: case agreement, participle compression, relative clauses, future tense, and prepositional case assignment.
+        </div>
+      </div>
+    </div>
+
+    <div class="decomposition-box">
+      <div class="decomposition-title">Example 3: German Literature (Goethe)</div>
+      <div class="example-text" style="margin: 20px 0;">
+        <strong>Die in jenen Jahren vergessenen Dichter, deren Werke kaum noch gelesen werden, haben dennoch einen unvergänglichen Wert für die Nachwelt.</strong>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Grammatical Structure Breakdown</div>
+        <div class="decomposition-step-content">
+          <strong>Subject:</strong> "Die ... Dichter" (the poets — nominative plural feminine)<br>
+          <strong>Participle phrase:</strong> "in jenen Jahren vergessenen" (forgotten in those years — past participle with temporal adverbial)<br>
+          <strong>Relative clause 1:</strong> "deren Werke kaum noch gelesen werden" (whose works are hardly read anymore — passive voice with relative possessive)<br>
+          <strong>Main verb:</strong> "haben" (have — present perfect auxiliary)<br>
+          <strong>Object:</strong> "einen unvergänglichen Wert" (an imperishable value — accusative with adjective agreement)<br><br>
+          This sentence is even more complex: multiple layers of modification, genitive relative pronoun (deren), passive voice (werden gelesen), and sophisticated adjective endings.
+        </div>
+      </div>
+    </div>
+
+    <div class="decomposition-box">
+      <div class="decomposition-title">Example 4: Academic German (Philosophy)</div>
+      <div class="example-text" style="margin: 20px 0;">
+        <strong>Die von Kant entwickelte Theorie, die zur Grundlage des modernen Denkens geworden ist und von zeitgenössischen Philosophen sowohl kritisiert als auch bewundert wird, zeigt die Komplexität menschlicher Erkenntnis.</strong>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">The Pinnacle of Complexity</div>
+        <div class="decomposition-step-content">
+          This sentence contains EVERYTHING: past participles (entwickelte), relative clauses with present perfect (ist geworden), passive voice with coordination (wird kritisiert als auch bewundert), multiple cases (Kant genitive possessor, Grundlage dative, Philosophen dative), and multiple tenses all working simultaneously to express a complex philosophical statement.<br><br>
+          Yet the structure is predictable once you understand the architecture. Each element is in its place. Nothing is arbitrary.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-synthesis">
+    <div class="scene-heading">Why This Architecture Matters</div>
+
+    <p class="narrative" data-speak="true">
+      You have now seen real sentences from German newspapers, literature, and academic writing. Each sentence is complex. Each sentence contains multiple layers of meaning. Yet each is comprehensible once you understand the architecture. This is the profound insight: German grammar is not complicated because German is difficult. German is sophisticated because Germans need to express complex ideas with precision and elegance. The grammar serves the meaning. The architecture enables the expression. Understanding this transforms how you learn and use German. You stop memorizing rules. You start understanding structure. And once you understand structure, you can read anything, speak anything, write anything.
+    </p>
+
+    <div class="architectural-section">
+      <h3>From Rules to Architecture: A Paradigm Shift</h3>
+      <div class="architectural-content">
+        <p style="margin-bottom: 18px;">
+          <strong>The Rule-Based Approach (Insufficient):</strong><br>
+          Nominative is used for subjects. Accusative is used for direct objects. Dative is used for indirect objects. These rules work for simple sentences. But they collapse when you encounter real German. "Die von der Regierung gestern angekündigte Maßnahme..." — which rule tells you how to parse this? None. Rules are fragments.
+        </p>
+
+        <p style="margin-bottom: 18px;">
+          <strong>The Architectural Approach (Complete):</strong><br>
+          Cases form a coherent system. Each case has a function. Nominative establishes the subject relation. Accusative establishes direct object relation. Dative establishes indirect object or prepositional relation. Genitive establishes possession or modification. These functions work together in a predictable, systematic way. Once you understand the system, you can parse any sentence.
+        </p>
+
+        <p>
+          This is what Phase 3 has taught you. Not rules. Not exceptions. System. Architecture. Understanding. You have moved from memorization to comprehension. This is the foundation for fluency.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-deep-analysis">
+    <div class="scene-heading">Deep Analysis: How Each System Supports the Others</div>
+
+    <div class="decomposition-box">
+      <div class="decomposition-title">The Interdependence of Systems</div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Cases Enable Flexible Word Order</div>
+        <div class="decomposition-step-content">
+          In English, you cannot rearrange words without losing meaning. "The dog bites the man" means the dog attacks. "The man bites the dog" means the man attacks. English relies entirely on word order. German does not. "Der Hund beißt den Mann" and "Den Mann beißt der Hund" convey the same meaning because "der Hund" is nominative (subject) in both. German cases make rearrangement safe. This flexibility allows poets, philosophers, and writers to shape sentences aesthetically while maintaining grammatical clarity. Without cases, German would lose this power.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Tenses Support Discourse Precision</div>
+        <div class="decomposition-step-content">
+          German distinguishes multiple tenses with precision. Present, simple past, present perfect, past perfect, future, future perfect. Each tense signals not just when an action happened but how the speaker relates to it. The present perfect "Ich bin gegangen" (I have gone) suggests the action's relevance to now. The simple past "Ich ging" suggests past-ness itself. These distinctions allow German writers to control tone, to shape how readers understand events. Academic writing uses specific tense patterns. Journalism uses others. Literature uses yet others. The tense system enables this stylistic precision.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Word Order Supports Emphasis and Suspense</div>
+        <div class="decomposition-step-content">
+          In German subordinate clauses, the verb moves to the end. Readers wait for the verb. This waiting creates a sense of suspense, of incompleteness. Only when the verb arrives does meaning crystallize. This is not accidental. German writers use this effect deliberately. A sentence like "Die Frau, die ich gestern gesehen habe, war meine alte Freundin" creates anticipation because readers must wait to understand who did what. The subordinate clause builds meaning toward the final verb. This effect is not available in English, which fixes the verb early. German's word order allows this sophisticated control of reader experience.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Connectors Create Logical Structure</div>
+        <div class="decomposition-step-content">
+          Coordinating conjunctions (und, aber, oder, noch) connect independent clauses of equal importance. They do not change word order. Subordinating conjunctions (weil, obwohl, wenn, dass, ob) create dependency relationships and DO change word order (verb moves to end). This grammatical distinction mirrors logical structure. Coordinated ideas are logically equal. Subordinated ideas are logically dependent. The grammar encodes logic. A reader trained in German grammar can understand the logical relationships just from the grammatical structure.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Adjective Endings Ensure Clarity</div>
+        <div class="decomposition-step-content">
+          Adjective endings signal agreement with the noun. "Der schöne Mann, die schöne Frau, das schöne Kind" — the different endings immediately tell us which noun is being modified. This redundancy in agreement actually enhances clarity. The ending -e signals feminine singular nominative. The ending -en signals plural or certain singular dative/accusative forms. By learning adjective endings, you learn to extract grammatical information from the agreement system itself. This is especially important in written German, where you cannot rely on context and intonation.
+        </div>
+      </div>
+
+      <div class="decomposition-step">
+        <div class="decomposition-step-title">Participles Enable Compression</div>
+        <div class="decomposition-step-content">
+          English requires relative clauses: "the book that was written" or "the professor who lives in Berlin." German allows: "das geschriebene Buch" and "der in Berlin lebende Professor." Participles compress. They allow sophisticated writers to express complex ideas in single noun phrases. Academic writing relies on this compression. A single sentence in German might require three sentences in English. This is not because German is more efficient in some abstract sense, but because participles allow German to build complex noun phrases that English cannot match. Understanding participles unlocks access to sophisticated German prose.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-mastery">
+    <div class="scene-heading">From Competence to Fluency</div>
+
+    <p class="narrative small" data-speak="true">
+      You have mastered the architecture. You understand that German grammar is not arbitrary. It is systematic. Each element supports the others. Each element serves a function. This understanding transforms your ability to learn and use German. You no longer need to memorize rule after rule. You understand the underlying structure. This understanding is portable. When you encounter a new construction, a new verb form, a new idiom, you can figure it out using your understanding of the architecture. This is the difference between competence and fluency. Competence is knowing rules. Fluency is understanding structure and being able to extrapolate to new situations. You have achieved competence through Phase 3. Phase 4 will push you toward fluency.
+    </p>
+
+    <div class="architectural-section">
+      <h3>What Phase 4 Will Add</h3>
+      <div class="architectural-content">
+        <p style="margin-bottom: 18px;">
+          Phase 4 addresses the exceptions and irregularities that exist in every living language. Irregular verbs like "sein" (to be), "haben" (to have), "gehen" (to go). False cognates that English speakers mistake for straightforward translations. Particles like "doch," "schon," "ja," "nein" that modify meaning in subtle ways. These elements are not violations of the system you have learned. They are elaborations. They add nuance and expressiveness. But they cannot be understood without first understanding the core architecture. You have that foundation. Phase 4 will complete the structure.
+        </p>
+
+        <p style="margin-bottom: 18px;">
+          You will learn that some verbs are irregular because they are the most-used verbs. Language conserves the sounds of frequent words. You will learn that particles are logical extensions of verbal and adverbial usage. You will learn that false cognates teach you about how meaning changes and how languages diverge. Everything will make sense because you understand the system.
+        </p>
+
+        <p>
+          The cathedral is not yet complete. But the foundations are solid. The walls are strong. The roof is in place. Phase 4 will add the stained glass windows, the bell tower, the intricate stonework. But the essential structure—the thing that makes it a cathedral and not a pile of stones—is already complete. You have built it. Understand what you have built. Be proud of it. It is substantial.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-quiz">
+    <div class="quiz-container">
+      <h3>Phase 3 Finale Quiz: Complete Mastery</h3>
+      <p class="quiz-instruction">
+        20 questions spanning all of Phase 3 (Chapters 47-77). 80% required to pass. All German clickable.
+      </p>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <div id="quizContent"></div>
+
+      <div style="text-align: center; margin-top: 48px;">
+        <button id="submitQuiz" class="nav-button" style="background: rgba(218, 165, 32, 0.2); border: 1px solid rgba(218, 165, 32, 0.3); cursor: pointer; padding: 16px 40px; font-size: 1.1rem;">
+          Submit Quiz
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="revelationMessage" class="reveal-message" style="display: none;">
+    <p>
+      You now have the complete architecture of German grammar. You do not merely know rules—you understand principles. You understand how language works. Not memorized—internalized. Phase 4 adds the finishing touches: irregular verbs, false friends, particles that make you sound native. But the foundation is complete. You can read German. You can speak German with grammatical precision. You can write German with elegance. Welcome to fluency.
+    </p>
+  </div>
+
+  <div class="navigation">
+    <a href="chapter77.html" class="nav-button">← Chapter 77</a>
+    <div class="chapter-info">Chapter 78 of 100 — Phase 3 Complete</div>
+    <a href="chapter79.html" class="nav-button">Chapter 79 →</a>
+  </div>
+
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What is the primary function of cases in German?",
+    options: [
+      "To indicate tense",
+      "To establish grammatical relationships between words",
+      "To modify adjectives",
+      "To change word order"
+    ],
+    correct: 1,
+    explanation: "Cases (nominative, accusative, dative, genitive) establish grammatical relationships, telling us who does what, to whom, and with what."
+  },
+  {
+    question: "In the sentence 'Der Mann gibt der Frau das Buch,' which is the indirect object?",
+    options: [
+      "Der Mann (nominative)",
+      "der Frau (dative)",
+      "das Buch (accusative)",
+      "There is no indirect object"
+    ],
+    correct: 1,
+    explanation: "'Der Frau' (the woman) is in dative case, which marks the indirect object—the recipient of the action."
+  },
+  {
+    question: "What is the primary function of tenses?",
+    options: [
+      "To establish case relationships",
+      "To modify adjectives",
+      "To establish temporal location (when the action occurs)",
+      "To create word order patterns"
+    ],
+    correct: 2,
+    explanation: "Tenses indicate when an action happens—present, past, future. They establish temporal relationships."
+  },
+  {
+    question: "Which tense is used in this sentence: 'Der Mann hat das Buch gelesen'?",
+    options: [
+      "Present tense",
+      "Simple past",
+      "Present perfect",
+      "Future"
+    ],
+    correct: 2,
+    explanation: "The present perfect uses the auxiliary 'hat' (has) + past participle 'gelesen' (read). This expresses a past action with present relevance."
+  },
+  {
+    question: "In a German subordinate clause introduced by 'weil,' where does the verb go?",
+    options: [
+      "In second position, like main clauses",
+      "At the end of the clause",
+      "Immediately after the subordinating conjunction",
+      "At the beginning of the clause"
+    ],
+    correct: 1,
+    explanation: "In subordinate clauses, the verb moves to the end. This is a key feature of German word order."
+  },
+  {
+    question: "What does a relative pronoun do?",
+    options: [
+      "Introduces a subordinate clause and refers back to a noun",
+      "Connects two main clauses of equal importance",
+      "Marks the end of a sentence",
+      "Indicates the tense of a verb"
+    ],
+    correct: 0,
+    explanation: "Relative pronouns (der, die, das, etc.) introduce relative clauses and refer back to a noun in the main clause."
+  },
+  {
+    question: "Adjective endings must agree with the noun in which way?",
+    options: [
+      "Case, gender, and number only",
+      "Gender and number only",
+      "Case only",
+      "Case, gender, number, and person"
+    ],
+    correct: 0,
+    explanation: "Adjectives must agree with nouns in case, gender, and number. This creates grammatical coherence."
+  },
+  {
+    question: "What is the difference between 'der schöne Mann' and 'den schönen Mann'?",
+    options: [
+      "Different gender",
+      "Different number",
+      "Different case—nominative vs. accusative",
+      "Different tense"
+    ],
+    correct: 2,
+    explanation: "'Der schöne Mann' is nominative (subject). 'Den schönen Mann' is accusative (direct object). The case changes the adjective ending."
+  },
+  {
+    question: "How is a present participle formed in German?",
+    options: [
+      "Infinitive + -en",
+      "Infinitive + -d",
+      "Infinitive + -t",
+      "ge- + infinitive + -en"
+    ],
+    correct: 1,
+    explanation: "Present participles are formed by adding -d to the infinitive: lachen → lachend (laughing)."
+  },
+  {
+    question: "What does 'der lachende Mann' express?",
+    options: [
+      "A man who laughed (past)",
+      "A man who will laugh (future)",
+      "A man who is laughing (present, ongoing)",
+      "A man who has laughed (perfect)"
+    ],
+    correct: 2,
+    explanation: "The present participle 'lachend' describes ongoing or habitual action. 'Der lachende Mann' means 'the laughing man' or 'the man who is laughing.'"
+  },
+  {
+    question: "What is an extended attribute chain?",
+    options: [
+      "Multiple verbs in a single clause",
+      "Multiple modifiers (adjectives, participles, prepositional phrases) stacked before a noun",
+      "Multiple subordinate clauses",
+      "Multiple conjunctions"
+    ],
+    correct: 1,
+    explanation: "Extended attribute chains place multiple modifiers before a noun, as in 'der in Berlin lebende Professor' (the professor living in Berlin)."
+  },
+  {
+    question: "In the sentence 'Die von der Regierung angekündigte Maßnahme...,' what does 'angekündigte' modify?",
+    options: [
+      "Regierung (government)",
+      "Maßnahme (measure)",
+      "Die (the)",
+      "Nichts—it stands alone"
+    ],
+    correct: 1,
+    explanation: "'Angekündigte' is a past participle that modifies 'Maßnahme.' It agrees with it in case, gender, and number."
+  },
+  {
+    question: "What is the function of coordinating conjunctions like 'und' and 'aber'?",
+    options: [
+      "To connect dependent clauses",
+      "To connect independent clauses of equal importance",
+      "To modify adjectives",
+      "To indicate case"
+    ],
+    correct: 1,
+    explanation: "Coordinating conjunctions connect independent clauses of equal weight. They do not change word order in German."
+  },
+  {
+    question: "What is the function of subordinating conjunctions like 'weil' and 'obwohl'?",
+    options: [
+      "To connect independent clauses of equal importance",
+      "To connect dependent clauses to main clauses",
+      "To modify adjectives",
+      "To replace relative pronouns"
+    ],
+    correct: 1,
+    explanation: "Subordinating conjunctions connect dependent clauses. The dependent clause cannot stand alone."
+  },
+  {
+    question: "In the sentence 'Die Frau, die ich kenne, ist Lehrerin,' what is the function of 'die'?",
+    options: [
+      "Definite article",
+      "Relative pronoun introducing a relative clause",
+      "Personal pronoun",
+      "Demonstrative pronoun"
+    ],
+    correct: 1,
+    explanation: "The second 'die' is a relative pronoun. It introduces the relative clause 'die ich kenne' and refers back to 'Frau.'"
+  },
+  {
+    question: "What does it mean that German allows 'flexible word order' while English does not?",
+    options: [
+      "German can rearrange words at random",
+      "German cases tell us grammatical roles, so word order can be rearranged without losing meaning",
+      "German has no word order rules",
+      "English uses cases instead of word order"
+    ],
+    correct: 1,
+    explanation: "Because German cases mark grammatical relationships, words can be rearranged. English relies entirely on word order, so it is more rigid."
+  },
+  {
+    question: "What is passive voice in German?",
+    options: [
+      "A verb form without an object",
+      "A verb form where the subject receives the action (werden + past participle)",
+      "A verb form in past tense",
+      "A verb form with a subordinate clause"
+    ],
+    correct: 1,
+    explanation: "Passive voice uses 'werden' + past participle. The subject receives rather than performs the action."
+  },
+  {
+    question: "How is future tense formed in German?",
+    options: [
+      "Changing the verb stem",
+      "Adding a suffix to the verb",
+      "Using the auxiliary 'werden' + infinitive",
+      "Using present tense with a temporal adverbial"
+    ],
+    correct: 2,
+    explanation: "Future tense uses the auxiliary 'werden' (will) + the infinitive: 'Ich werde gehen' (I will go)."
+  },
+  {
+    question: "What is the primary function of adjective endings in German?",
+    options: [
+      "To pluralize nouns",
+      "To indicate tense",
+      "To signal agreement with noun case, gender, and number, providing grammatical clarity",
+      "To create adverbs"
+    ],
+    correct: 2,
+    explanation: "Adjective endings signal that an adjective agrees with its noun in case, gender, and number, creating grammatical coherence."
+  },
+  {
+    question: "Which of these best describes the complete architecture of German grammar?",
+    options: [
+      "A random collection of disconnected rules",
+      "Cases establish relationships, tenses establish time, word order shapes discourse, connectors link ideas, adjectives add precision, participles compress meaning",
+      "Only word order matters in German",
+      "Cases and tenses are the only important elements"
+    ],
+    correct: 1,
+    explanation: "German grammar is a unified system: cases (foundation), tenses (walls), word order (roof), connectors (windows), adjectives (decoration), participles (final layer)."
+  }
+];
+
+function initQuiz() {
+  const quizContent = document.getElementById('quizContent');
+  quizContent.innerHTML = '';
+
+  quizData.forEach((q, index) => {
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'quiz-question';
+    questionDiv.id = `question-${index}`;
+
+    let optionsHTML = '';
+    q.options.forEach((option, optIndex) => {
+      optionsHTML += `
+        <div class="quiz-option" data-option="${optIndex}" onclick="selectOption(${index}, ${optIndex})">
+          ${option}
+        </div>
+      `;
+    });
+
+    questionDiv.innerHTML = `
+      <div class="quiz-question-text">${index + 1}. ${q.question}</div>
+      <div class="quiz-options">
+        ${optionsHTML}
+      </div>
+      <div id="feedback-${index}" class="quiz-feedback" style="display: none;"></div>
+    `;
+
+    quizContent.appendChild(questionDiv);
+  });
+}
+
+function selectOption(questionIndex, optionIndex) {
+  const question = document.getElementById(`question-${questionIndex}`);
+  const options = question.querySelectorAll('.quiz-option');
+
+  options.forEach((opt, idx) => {
+    opt.classList.remove('selected', 'correct', 'incorrect');
+    if (idx === optionIndex) {
+      opt.classList.add('selected');
+    }
+  });
+}
+
+document.getElementById('submitQuiz').addEventListener('click', function() {
+  let correct = 0;
+
+  quizData.forEach((q, index) => {
+    const question = document.getElementById(`question-${index}`);
+    const selectedOption = question.querySelector('.quiz-option.selected');
+
+    if (selectedOption) {
+      const optionIndex = parseInt(selectedOption.dataset.option);
+      const feedback = document.getElementById(`feedback-${index}`);
+
+      if (optionIndex === q.correct) {
+        correct++;
+        selectedOption.classList.remove('selected');
+        selectedOption.classList.add('correct');
+        feedback.style.display = 'block';
+        feedback.classList.add('correct');
+        feedback.textContent = '✓ Correct!';
+      } else {
+        selectedOption.classList.remove('selected');
+        selectedOption.classList.add('incorrect');
+        const correctOption = question.querySelectorAll('.quiz-option')[q.correct];
+        correctOption.classList.add('correct');
+        feedback.style.display = 'block';
+        feedback.classList.add('incorrect');
+        feedback.textContent = `✗ Incorrect. ${q.explanation}`;
+      }
+    }
+  });
+
+  const percentage = Math.round((correct / quizData.length) * 100);
+  const progressFill = document.getElementById('progressFill');
+  progressFill.style.width = percentage + '%';
+
+  document.getElementById('submitQuiz').disabled = true;
+  document.getElementById('submitQuiz').style.opacity = '0.5';
+
+  if (percentage >= 80) {
+    document.getElementById('revelationMessage').style.display = 'block';
+    setTimeout(() => {
+      alert(`Excellent! You scored ${percentage}%. Phase 3 is complete. You now understand the complete architecture of German grammar.`);
+    }, 500);
+  } else {
+    setTimeout(() => {
+      alert(`You scored ${percentage}%. Review the grammar architecture and try again.`);
+    }, 500);
+  }
+});
+
+function speakGerman(word) {
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = 'de-DE';
+  window.speechSynthesis.speak(utterance);
+}
+
+document.querySelectorAll('[data-speak="true"]').forEach(el => {
+  el.addEventListener('click', function() {
+    const text = this.textContent;
+    speakGerman(text);
+  });
+  el.style.cursor = 'pointer';
+  el.style.textDecoration = 'underline dotted rgba(218, 165, 32, 0.3)';
+});
+
+// Canvas animation for building assembly
+const canvas = document.getElementById('building-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+let animationFrame = 0;
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, 'rgba(218, 165, 32, 0.01)');
+  gradient.addColorStop(0.5, 'rgba(218, 165, 32, 0)');
+  gradient.addColorStop(1, 'rgba(218, 165, 32, 0.01)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw building sections as user scrolls
+  const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Foundation
+  const foundationY = canvas.height * 0.5;
+  ctx.fillStyle = `rgba(139, 134, 128, ${0.05 + scrollProgress * 0.05})`;
+  ctx.fillRect(canvas.width * 0.2, foundationY, canvas.width * 0.6, 80);
+  ctx.strokeStyle = `rgba(139, 134, 128, ${0.1 + scrollProgress * 0.1})`;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(canvas.width * 0.2, foundationY, canvas.width * 0.6, 80);
+
+  // Walls
+  const wallY = foundationY - 150;
+  ctx.fillStyle = `rgba(205, 127, 50, ${0.03 + scrollProgress * 0.04})`;
+  ctx.fillRect(canvas.width * 0.25, wallY, canvas.width * 0.5, 150);
+  ctx.strokeStyle = `rgba(205, 127, 50, ${0.1 + scrollProgress * 0.1})`;
+  ctx.strokeRect(canvas.width * 0.25, wallY, canvas.width * 0.5, 150);
+
+  // Roof
+  if (scrollProgress > 0.3) {
+    const roofY = wallY - 60;
+    ctx.fillStyle = `rgba(218, 165, 32, ${(scrollProgress - 0.3) * 0.15})`;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.2, roofY);
+    ctx.lineTo(canvas.width * 0.5, roofY - 60);
+    ctx.lineTo(canvas.width * 0.8, roofY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = `rgba(218, 165, 32, ${(scrollProgress - 0.3) * 0.2})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  animationFrame++;
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// Initialize
+initQuiz();
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">676 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(79%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:79%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 676 words across 78 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">127 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(87%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:87%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 127 patterns across 78 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

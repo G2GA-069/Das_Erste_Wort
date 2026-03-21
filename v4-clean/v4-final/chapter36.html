@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 36: Die Freiheit</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --freedom: #d9c474;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- FREEDOM CANVAS --- */
+  #freedom-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="freedom-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Thirty-Six</div>
+    <h1>Die Freiheit</h1>
+    <div class="subtitle">Freedom</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE SUFFIXES OF QUALITY ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      We have learned one rule: the -ung suffix creates feminine nouns from verbs. But there are other pathways through which German creates nouns. There are other doors. Some of them lead to the qualities of things — to the abstract concepts that describe what something is like rather than what it does.
+    </p>
+
+    <p class="narrative">
+      When you take an adjective — a word describing a quality — you can transform it into a noun using special suffixes. And just as -ung creates only feminine nouns, these suffixes also have a pattern. They are the keys that unlock the deepest human concepts: freedom, beauty, truth, health, possibility, reality.
+    </p>
+
+    <p class="narrative">
+      There are two suffixes that do this work: <strong>-heit</strong> and <strong>-keit</strong>. They compete for the same territory, the same transformations. But they have rules. -heit comes after most adjectives. -keit comes after adjectives ending in -lich or -ig. And they follow the same law as -ung: they always create feminine nouns. Die.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="freiheit">Freiheit.</span> Freedom. The quality of being free. From <span class="german-word" data-speak="true">frei</span> — free, unbound, liberated. Add -heit and the quality becomes a thing you can hold. Die Freiheit is one of the most powerful words in German — representing not just the absence of constraint, but the fundamental human right to self-determination.
+    </p>
+
+    <p class="narrative emphasis">
+      From an adjective comes the abstract noun. From a quality comes the principle. This is the second reliable pattern of German gender. Like -ung, the suffixes -heit and -keit create only feminine nouns. Die.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE QUALITIES OF BEING ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="schoenheit">Schönheit.</span> Beauty. The quality of being beautiful. From <span class="german-word" data-speak="true">schön</span> — beautiful, lovely, fine. Die Schönheit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wahrheit">Wahrheit.</span> Truth. The quality of being true, of corresponding to reality. From <span class="german-word" data-speak="true">wahr</span> — true, genuine, real. Die Wahrheit. Truth is feminine in German. Lies may come from anywhere, but truth is always die Wahrheit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gesundheit">Gesundheit.</span> Health. The quality of being sound, whole, well. From <span class="german-word" data-speak="true">gesund</span> — healthy, sound, whole. Die Gesundheit. When someone sneezes, Germans say "Gesundheit!" — wishing them health, wishing them wholeness.
+    </p>
+
+    <p class="narrative">
+      These all use -heit because they come from simple adjectives. But there are adjectives that end in -lich or -ig, and these take -keit instead of -heit:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="moeglichkeit">Möglichkeit.</span> Possibility. The quality of being possible, capable of happening. From <span class="german-word" data-speak="true">möglich</span> — possible, feasible. Die Möglichkeit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wirklichkeit">Wirklichkeit.</span> Reality. The quality of being real, actual, genuine. From <span class="german-word" data-speak="true">wirklich</span> — real, actual, genuine. Die Wirklichkeit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="einsamkeit">Einsamkeit.</span> Loneliness. The quality of being alone. From <span class="german-word" data-speak="true">einsam</span> — lonely, solitary. Die Einsamkeit.
+    </p>
+
+    <!-- FREIHEIT card -->
+    <div class="ety-card" id="card-freiheit">
+      <div class="word-header">
+        <span class="word-main">Freiheit</span>
+        <span class="word-pron">/ˈfʁaɪhaɪt/</span>
+      </div>
+      <div class="word-meaning">freedom — the state of being free, able to act without restriction or constraint</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">frei</span>
+        <span class="bridge-note">— free; -heit suffix makes it an abstract noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">free</span>
+        <span class="bridge-note">— from the same root as German frei; also can become "freedom" with -dom suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">自由</span>
+        <span class="bridge-note">— zìyóu (self + possess) — the ability to possess oneself</span>
+      </div>
+      <div class="story">
+        <em>Freiheit</em> is one of the most important words in German political and philosophical thought. It represents not just the absence of constraint, but the positive quality of self-determination. The suffix -heit transforms the adjective <em>frei</em> (free) into the abstract noun <em>Freiheit</em> (freedom). The quality becomes the principle.
+      </div>
+    </div>
+
+    <!-- SCHÖNHEIT card -->
+    <div class="ety-card" id="card-schoenheit">
+      <div class="word-header">
+        <span class="word-main">Schönheit</span>
+        <span class="word-pron">/ˈʃøːnhaɪt/</span>
+      </div>
+      <div class="word-meaning">beauty — the quality of being aesthetically pleasing or attractive</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">schön</span>
+        <span class="bridge-note">— beautiful, lovely; -heit creates the abstract noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— English "beauty" comes from Latin bellus, no Germanic equivalent</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">美</span>
+        <span class="bridge-note">— měi — represents beauty as an actual character/concept</span>
+      </div>
+      <div class="story">
+        <em>Schönheit</em> is the philosophical beauty — not just the visual, but the deeper aesthetic principle. German makes this abstract quality concrete as a noun. What is beautiful becomes beauty itself — a thing you can contemplate.
+      </div>
+    </div>
+
+    <!-- WAHRHEIT card -->
+    <div class="ety-card" id="card-wahrheit">
+      <div class="word-header">
+        <span class="word-main">Wahrheit</span>
+        <span class="word-pron">/ˈvaːɐ̯haɪt/</span>
+      </div>
+      <div class="word-meaning">truth — the quality of being true, accurate, or corresponding to reality</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wahr</span>
+        <span class="bridge-note">— true, genuine; -heit makes it into an abstract concept</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "truth" comes from Proto-Germanic *trewwiz; German and English diverged in naming</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">真理</span>
+        <span class="bridge-note">— zhēnlǐ (true + principle) — truth as the principle of reality</span>
+      </div>
+      <div class="story">
+        <em>Wahrheit</em> is not just accuracy — it is truth as a fundamental principle. In German philosophy, <em>Wahrheit</em> carries weight. It is not merely true statements; it is the essence of truth itself. This quality is represented as something feminine, something to be sought and honored.
+      </div>
+    </div>
+
+    <!-- GESUNDHEIT card -->
+    <div class="ety-card" id="card-gesundheit">
+      <div class="word-header">
+        <span class="word-main">Gesundheit</span>
+        <span class="word-pron">/ɡəˈzʊnthaɪt/</span>
+      </div>
+      <div class="word-meaning">health — the state of being physically and mentally well</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">gesund</span>
+        <span class="bridge-note">— healthy, sound, whole; -heit creates the abstract noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "health" comes from Old English and Old Saxon; parallel evolution to German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">健康</span>
+        <span class="bridge-note">— jiànkāng (strong + well) — health as strength and wellness combined</span>
+      </div>
+      <div class="story">
+        <em>Gesundheit</em> means health, but also wholeness. The root <em>gesund</em> originally meant "whole." When Germans say "Gesundheit!" after a sneeze, they are wishing you wholeness, health, the integrity of your being. It is a blessing disguised as a simple word.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE -KEIT ADJECTIVES ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="moeglichkeit">Möglichkeit.</span> Possibility. From <span class="german-word" data-speak="true">möglich</span> — possible. This adjective ends in -lich, so it takes the -keit suffix instead of -heit. Die Möglichkeit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wirklichkeit">Wirklichkeit.</span> Reality. From <span class="german-word" data-speak="true">wirklich</span> — real, actual. Another -lich adjective, another -keit noun. Die Wirklichkeit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="einsamkeit">Einsamkeit.</span> Loneliness. From <span class="german-word" data-speak="true">einsam</span> — lonely. This adjective ends in -am, which is treated as -lich-like for -keit purposes. Die Einsamkeit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="faehigkeit">Fähigkeit.</span> Ability. Capability. The power to do something. From <span class="german-word" data-speak="true">fähig</span> — capable, able. This ends in -ig, so it takes -keit. Die Fähigkeit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="sicherheit">Sicherheit.</span> Safety. Security. The quality of being secure, protected, certain. From <span class="german-word" data-speak="true">sicher</span> — safe, secure, certain. This is an adjective not ending in -lich or -ig, so it traditionally takes -heit. Die Sicherheit.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gelegenheit">Gelegenheit.</span> Opportunity. Occasion. The chance for something to happen. From <span class="german-word" data-speak="true">gelegen</span> — convenient, suitable, occasioned by circumstance. This historical adjective form takes -heit. Die Gelegenheit.
+    </p>
+
+    <!-- MÖGLICHKEIT card -->
+    <div class="ety-card" id="card-moeglichkeit">
+      <div class="word-header">
+        <span class="word-main">Möglichkeit</span>
+        <span class="word-pron">/ˈmœklɪçkaɪt/</span>
+      </div>
+      <div class="word-meaning">possibility — the quality of being capable of happening or existing</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">möglich</span>
+        <span class="bridge-note">— possible, feasible; ends in -lich, so uses -keit suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "possibility" comes from Latin possibilitas, not Germanic</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">可能性</span>
+        <span class="bridge-note">— kěnéngxìng (can + ability + -ness) — descriptive of potential</span>
+      </div>
+      <div class="story">
+        <em>Möglichkeit</em> is the possibility that exists in the future. It is not just probability but pure potential. The quality of being possible becomes a thing you can contemplate. And it is feminine: die Möglichkeit — the infinite possibilities that await.
+      </div>
+    </div>
+
+    <!-- WIRKLICHKEIT card -->
+    <div class="ety-card" id="card-wirklichkeit">
+      <div class="word-header">
+        <span class="word-main">Wirklichkeit</span>
+        <span class="word-pron">/ˈvɪrkçkaɪt/</span>
+      </div>
+      <div class="word-meaning">reality — the state of being real, actual, or true; the world as it actually is</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wirklich</span>
+        <span class="bridge-note">— real, actual; ends in -lich, so uses -keit</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "reality" comes from Latin realitas; Germanic languages use different approaches</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">现实</span>
+        <span class="bridge-note">— xiànshí (present + reality) — the reality of the present moment</span>
+      </div>
+      <div class="story">
+        <em>Wirklichkeit</em> is not just the facts. It is the deeper reality underneath. In German philosophy, <em>Wirklichkeit</em> refers to the actual essence of things, as opposed to mere appearance. It is one of the most important philosophical terms in German thought.
+      </div>
+    </div>
+
+    <!-- EINSAMKEIT card -->
+    <div class="ety-card" id="card-einsamkeit">
+      <div class="word-header">
+        <span class="word-main">Einsamkeit</span>
+        <span class="word-pron">/ˈaɪnzaːmkaɪt/</span>
+      </div>
+      <div class="word-meaning">loneliness — the quality of being alone, often with sadness or melancholy</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">einsam</span>
+        <span class="bridge-note">— lonely, solitary; uses -keit suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "loneliness" is related to "lone," but expresses it differently</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">孤独</span>
+        <span class="bridge-note">— gūdú (orphan + alone) — emphasizes the painful isolation</span>
+      </div>
+      <div class="story">
+        <em>Einsamkeit</em> is a deeply emotional German word. It is not just the state of being alone, but the melancholy that can accompany solitude. German Romantic poetry is full of <em>Einsamkeit</em> — the beautiful sadness of isolation in nature. It is a feminine concept, something inward and contemplative.
+      </div>
+    </div>
+
+    <!-- FÄHIGKEIT card -->
+    <div class="ety-card" id="card-faehigkeit">
+      <div class="word-header">
+        <span class="word-main">Fähigkeit</span>
+        <span class="word-pron">/ˈfɛːɪçkaɪt/</span>
+      </div>
+      <div class="word-meaning">ability — the power or capacity to do something</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">fähig</span>
+        <span class="bridge-note">— capable, able; ends in -ig, so uses -keit</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "ability" comes from Latin habilis (easy to handle); different root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">能力</span>
+        <span class="bridge-note">— néngly (able + strength) — the strength to do something</span>
+      </div>
+      <div class="story">
+        <em>Fähigkeit</em> is your capacity to do something. Not whether you do it, but whether you are able. It is the potential within you. And in German, it is feminine: die Fähigkeit — the ability you possess.
+      </div>
+    </div>
+
+    <!-- SICHERHEIT card -->
+    <div class="ety-card" id="card-sicherheit">
+      <div class="word-header">
+        <span class="word-main">Sicherheit</span>
+        <span class="word-pron">/ˈzɪçɐhaɪt/</span>
+      </div>
+      <div class="word-meaning">safety — the condition of being secure or protected from danger</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">sicher</span>
+        <span class="bridge-note">— safe, secure, certain; uses -heit</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "safety" comes from Old French "sauf" and Latin, not Germanic origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">安全</span>
+        <span class="bridge-note">— ānquán (peaceful + complete) — safety as peace and wholeness</span>
+      </div>
+      <div class="story">
+        <em>Sicherheit</em> is safety and security both — the assurance that you are protected, that nothing will harm you. But it also means certainty: the <em>Sicherheit</em> of knowing something is true. One word carries both the physical and the epistemological sense of being secure.
+      </div>
+    </div>
+
+    <!-- GELEGENHEIT card -->
+    <div class="ety-card" id="card-gelegenheit">
+      <div class="word-header">
+        <span class="word-main">Gelegenheit</span>
+        <span class="word-pron">/ɡəˈleːɡənhaɪt/</span>
+      </div>
+      <div class="word-meaning">opportunity — a favorable occasion or circumstance for doing something</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">gelegen</span>
+        <span class="bridge-note">— convenient, suitable, occasioned; an historical adjective form using -heit</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "opportunity" comes from Latin opportunus; no Germanic equivalent</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">机会</span>
+        <span class="bridge-note">— jīhuì (machine + meeting) — opportunity as a fortunate meeting point</span>
+      </div>
+      <div class="story">
+        <em>Gelegenheit</em> is the moment when things align. It is opportunity — the circumstance that lies favorable for your action. The word emphasizes that opportunity is something that comes to you, something that presents itself from outside. You must recognize it and seize it. Die Gelegenheit.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE PATTERN REVEALED ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now you see the second pattern. Like -ung, the suffixes -heit and -keit are tools that transform adjectives into nouns. They turn qualities into things. And just as with -ung, there is a gender rule that never fails: all -heit nouns are feminine. All -keit nouns are feminine.
+    </p>
+
+    <p class="narrative small">
+      <strong>Pattern One:</strong> -heit uses an almost arbitrary rule: add it to most adjectives. Schön → Schönheit. Wahr → Wahrheit.
+    </p>
+
+    <p class="narrative small">
+      <strong>Pattern Two:</strong> -keit uses a specific rule: add it to adjectives ending in -lich or -ig. Möglich → Möglichkeit. Fähig → Fähigkeit.
+    </p>
+
+    <p class="narrative small">
+      <strong>Gender Rule:</strong> Every single noun with -heit or -keit is feminine. Die Schönheit. Die Freiheit. Die Möglichkeit. Die Wirklichkeit. No exceptions.
+    </p>
+
+    <p class="narrative emphasis">
+      Two more reliable patterns. Three rules that never break. And they all point to the same truth: German grammar is not chaotic. It is systematic. Once you learn the patterns, you can understand thousands of words you have never seen before.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        You see the word <strong style="color: var(--german);">Grausamkeit</strong> — ending in -keit. It comes from <strong style="color: var(--english);">grausam</strong> — cruel.<br><br>
+        What does <strong style="color: var(--german);">Grausamkeit</strong> mean?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: the suffix transforms the adjective into a noun describing the quality.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">a cruel person</button>
+        <button class="guess-btn" onclick="guess(this, true)">cruelty (the quality of being cruel)</button>
+        <button class="guess-btn" onclick="guess(this, false)">a cruel act</button>
+        <button class="guess-btn" onclick="guess(this, false)">to be cruel</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        What gender are all nouns ending in -heit or -keit?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(This follows the same pattern as -ung.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">it varies by word</button>
+        <button class="guess-btn" onclick="guess(this, true)">always feminine (die)</button>
+        <button class="guess-btn" onclick="guess(this, false)">always masculine (der)</button>
+        <button class="guess-btn" onclick="guess(this, false)">always neuter (das)</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">340 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(40%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:40%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 340 words across 36 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">75 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(51%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:51%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 75 patterns and grammar rules across 36 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Thirty-Six</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Freiheit</span><span class="cw-english">freedom</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Schönheit</span><span class="cw-english">beauty</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Wahrheit</span><span class="cw-english">truth</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Gesundheit</span><span class="cw-english">health</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Möglichkeit</span><span class="cw-english">possibility</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Wirklichkeit</span><span class="cw-english">reality</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Einsamkeit</span><span class="cw-english">loneliness</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Fähigkeit</span><span class="cw-english">ability</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Sicherheit</span><span class="cw-english">safety</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Gelegenheit</span><span class="cw-english">opportunity</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Quality Suffixes: -heit and -keit</div>
+      <strong style="color: var(--text-bright);">Adjective to Noun Transformation</strong> — The suffixes -heit and -keit turn adjectives into abstract nouns that represent qualities or states of being.<br><br>
+      <strong style="color: var(--text-bright);">The Distribution Rule</strong> — Use -heit for most adjectives. Use -keit for adjectives ending in -lich or -ig. This rule has occasional exceptions, but it is highly reliable.<br><br>
+      <strong style="color: var(--text-bright);">Gender Rule</strong> — All -heit nouns are feminine (die). All -keit nouns are feminine (die). No exceptions. This makes them as reliable as the -ung rule.<br><br>
+      <strong style="color: var(--text-bright);">Three Reliable Patterns</strong> — You now know that -ung, -heit, and -keit all create feminine nouns. You have unlocked the ability to recognize the gender of thousands of German words instantly.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Thirty-Six
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten more words. Ten more pathways from adjectives to nouns.<br>
+        Freedom, beauty, truth, health, possibility, reality, loneliness, ability, safety, opportunity.<br>
+        All feminine. All expressing the qualities that matter most to human beings.<br>
+        And all following the same gender rule: die. Always die.
+      </p>
+      <div class="next-chapter">
+        Chapter Thirty-Seven: Die Freundschaft — Friendship and collective nouns
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter35.html" class="nav-btn">← Chapter 35</a>
+    <a href="chapter37.html" class="nav-btn next">Chapter 37 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 36: FREEDOM CANVAS ---
+const canvas = document.getElementById('freedom-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createParticles();
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 6000) :
+    Math.floor((canvas.width * canvas.height) / 4000);
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3 - 0.1,
+      r: Math.random() * 3 + 1,
+      alpha: Math.random() * 0.6 + 0.1,
+      life: Math.random() * 300 + 200
+    });
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.12)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  particles.forEach((p, idx) => {
+    p.x += p.vx;
+    p.y += p.vy - scroll * 0.5;
+    p.life--;
+
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) {
+      p.y = canvas.height + 10;
+      p.life = 300 + Math.random() * 200;
+    }
+
+    const opacity = (p.life / 300) * p.alpha;
+
+    ctx.fillStyle = `rgba(217, 196, 116, ${opacity})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = `rgba(232, 164, 74, ${opacity * 0.5})`;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Excellent! You see how the suffix creates the abstraction.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about what quality the adjective describes.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What do the suffixes -heit and -keit do in German?",
+    options: ["add emphasis", "transform adjectives into abstract nouns", "mark plurals", "indicate past tense"],
+    correct: 1,
+    explanation: "Both -heit and -keit transform adjectives into abstract nouns that represent qualities or states."
+  },
+  {
+    question: "Which adjectives use -keit instead of -heit?",
+    options: ["adjectives ending in -lich or -ig", "short adjectives", "borrowed adjectives", "adjectives with prefixes"],
+    correct: 0,
+    explanation: "-keit is used with adjectives ending in -lich or -ig. Möglich → Möglichkeit. Fähig → Fähigkeit."
+  },
+  {
+    question: "What gender are all German nouns ending in -heit or -keit?",
+    options: ["masculine (der)", "neuter (das)", "feminine (die)", "it varies"],
+    correct: 2,
+    explanation: "All -heit and -keit nouns are feminine. Die Freiheit, die Schönheit, die Möglichkeit, die Wirklichkeit."
+  },
+  {
+    question: "What does Wahrheit mean?",
+    options: ["a truth statement", "the quality of being true; truth itself", "a real person", "honesty in action"],
+    correct: 1,
+    explanation: "Wahrheit is truth as a principle or quality, not just individual true statements."
+  },
+  {
+    question: "From what adjective does Möglichkeit come?",
+    options: ["mögen (to like)", "möglich (possible)", "macht (power)", "manchmal (sometimes)"],
+    correct: 1,
+    explanation: "Möglichkeit comes from möglich (possible). Since möglich ends in -lich, it uses the -keit suffix."
+  },
+  {
+    question: "What does Einsamkeit emotionally represent?",
+    options: ["being alone physically", "loneliness with melancholy", "solitude in nature", "isolation from society"],
+    correct: 1,
+    explanation: "Einsamkeit carries emotional weight — it is the melancholic quality of loneliness, often found in German Romantic poetry."
+  },
+  {
+    question: "Which of these is NOT a -keit noun?",
+    options: ["Wirklichkeit (reality)", "Fähigkeit (ability)", "Wahrheit (truth)", "Möglichkeit (possibility)"],
+    correct: 2,
+    explanation: "Wahrheit uses -heit, not -keit, because wahr (true) is a regular adjective not ending in -lich or -ig."
+  },
+  {
+    question: "What does Gelegenheit mean?",
+    options: ["a location", "an opportunity or favorable occasion", "a legal rule", "a meeting place"],
+    correct: 1,
+    explanation: "Gelegenheit is opportunity — the favorable circumstance that presents itself for action."
+  },
+  {
+    question: "What does 'Gesundheit' mean when Germans say it after a sneeze?",
+    options: ["good morning", "cheers/health (wishing you wholeness)", "be blessed", "thank you"],
+    correct: 1,
+    explanation: "Gesundheit literally means 'health,' so Germans say it to wish someone health and wholeness after a sneeze."
+  },
+  {
+    question: "How many reliable gender rules have you now learned?",
+    options: ["one (-ung is feminine)", "two (-ung and -heit/-keit are feminine)", "three (ung, -heit/-keit, and one more)", "four or more"],
+    correct: 2,
+    explanation: "You now have two reliable gender rules: 1) All -ung nouns are feminine. 2) All -heit and -keit nouns are feminine."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>86 words and 12 major patterns</strong> across 36 chapters. With three reliable gender rules (-ung, -heit, -keit all feminine), you can instantly recognize thousands of German words. The abstract qualities — freedom, beauty, truth — are all feminine in German, reflecting perhaps a cultural understanding that the highest principles are intrinsically valued.</p>
+      <p style="margin-top: 8px;"><strong>Gender Pattern Mastery:</strong> You can now confidently assign gender to any noun ending in -ung, -heit, or -keit. You understand how adjectives transform into abstract nouns. You see the systematic nature of German grammar.</p>
+      <p style="margin-top: 8px;">Next, we explore collective nouns — how German brings people together with the -schaft suffix. From friendship to science to society.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- SPEAK GERMAN WORDS INLINE ---
+document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

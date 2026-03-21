@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 27: Der Schlüssel (The Key)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --workshop: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- WORKSHOP PARTICLES CANVAS --- */
+  #workshop-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--workshop);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--workshop), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--workshop), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="workshop-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twenty-Seven</div>
+    <h1>Der Schlüssel</h1>
+    <div class="subtitle">The Key</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE WORKSHOP ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a workshop. Not the workshop of modern times — not the gleaming factory with robots and computers — but the medieval workshop, the one that existed for a thousand years in the heart of every European town. Stone walls. A heavy wooden door. The smell of oil and leather and metal.
+    </p>
+
+    <p class="narrative">
+      Inside, a master craftsman works by candlelight. The tools hang on the wall like a musician's instruments. Each one has a purpose, a weight, a shape perfected through centuries of use. And among all these tools, there is one that opens the doors to the others: the key.
+    </p>
+
+    <p class="narrative">
+      A key is the most essential tool. Not because it does the most work, but because it opens the doors where work can happen at all. A key turns the lock. A key grants access. A key is the beginning.
+    </p>
+
+    <p class="narrative emphasis">
+      This chapter is about the key to understanding German word formation. And that key is a prefix that has generated more verbs than any other in the history of the language: <span class="german-word" data-speak="true">ver-</span>
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE PREFIX THAT TRANSFORMS ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The German prefix <span class="german-word" data-card="ver">ver-</span> is nearly invisible. When you see it, your eye skips over it, drawn instead to the core of the word. But this invisibility is misleading. The <span class="german-word" data-speak="true">ver-</span> prefix is one of the most productive tools in the entire German language — it has generated approximately 600 verbs, maybe more. Six hundred different ways to transform an action.
+    </p>
+
+    <p class="narrative">
+      The etymology is uncertain, lost in the mists of Proto-Germanic. But its function is clear: it transforms a simple root verb into something more complex, more nuanced, more complete. It adds meanings like "fully," "completely," "wrongly," "away," "entirely." When you <span class="german-word" data-speak="true">stehen</span> (stand), you exist in a place. But when you <span class="german-word" data-card="verstehen">verstehen</span> (understand), you stand fully — you grasp, you comprehend, you take something into your being.
+    </p>
+
+    <p class="narrative">
+      This is the grammar that English speakers often find maddening. We have the word "stand" but when we want to say "understand," we change the word entirely. German keeps the root, adds a prefix, and builds a new meaning from the combination. It is more transparent, more logical, more like a workshop where each tool is named by what it does.
+    </p>
+
+    <!-- VER card -->
+    <div class="ety-card" id="card-ver">
+      <div class="word-header">
+        <span class="word-main">ver-</span>
+        <span class="word-pron">/fɛr/</span>
+      </div>
+      <div class="word-meaning">prefix — completing, perfecting, or changing a root verb; often implies "fully" or "completely"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— uncertain origin, possibly Germanic-specific</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— no direct English equivalent prefix; German is unique in this productivity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver-</span>
+        <span class="bridge-note">— inseparable prefix — never separates from the root verb in conjugation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">把 / 被</span>
+        <span class="bridge-note">— bǎ / bèi — objects and passive constructions, but not one-to-one equivalent</span>
+      </div>
+      <div class="story">
+        The <em>ver-</em> prefix is the engine of German verb creation. It is <em>inseparable</em>, which means it never splits from the root verb even in conjugation: "Ich verstehe" (I understand) never becomes "Ich stehe ver." The prefix stays attached, locked into place like a door permanently fixed to its hinges. This makes German verbs more stable than English phrasal verbs (like "stand up," "stand back," "stand out"), where the words can separate and recombine. The <em>ver-</em> prefix has generated approximately 600 verbs through systematic modification of roots. It is a key that opens six hundred doors.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And here is the remarkable thing: the Chinese language has no single prefix equivalent, because Chinese is largely non-inflectional. Chinese builds complex meanings through context and word order, not through morphological attachment. But the concept is not foreign to any language: the idea of refining, completing, transforming a basic action through grammatical modification.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE TEN DOORS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let me open ten doors for you. Ten words, each built on the <span class="german-word" data-speak="true">ver-</span> prefix, each showing a different kind of transformation. These are not the only doors — there are hundreds more — but these ten show the system at work.
+    </p>
+
+    <p class="narrative small">
+      The first: <span class="german-word" data-card="verstehen">verstehen</span> — to understand. A standing made full, complete, total. From <em>stehen</em> (to stand) comes the understanding that comes only when you have fully grasped something.
+    </p>
+
+    <p class="narrative small">
+      The second: <span class="german-word" data-card="vergessen">vergessen</span> — to forget. From <em>gessen</em>, which originally meant "to grasp." When you forget, you have let go of the grasp. The meaning has transformed from acquisition to loss.
+    </p>
+
+    <p class="narrative small">
+      The third: <span class="german-word" data-card="verlieren">verlieren</span> — to lose. From <em>lieren</em>, which has roots in "to liberate." When you lose something, you have liberated it from your control, though not in the way you wished.
+    </p>
+
+    <p class="narrative small">
+      The fourth: <span class="german-word" data-card="versprechen">versprechen</span> — to promise. From <em>sprechen</em> (to speak). A promise is speech that binds you fully, completely, for the future.
+    </p>
+
+    <p class="narrative small">
+      The fifth: <span class="german-word" data-card="veraendern">verändern</span> — to change. From <em>ändern</em> (to alter). But when you change something completely, you <em>transform</em> it, not merely adjust it. The prefix adds the sense of complete alteration.
+    </p>
+
+    <p class="narrative small">
+      The sixth: <span class="german-word" data-card="versuchen">versuchen</span> — to try, to attempt. From <em>suchen</em> (to seek). An attempt is seeking fully, completely, until you find what you are looking for — or determine that you cannot.
+    </p>
+
+    <p class="narrative small">
+      The seventh: <span class="german-word" data-card="verbieten">verbieten</span> — to forbid. From <em>bieten</em> (to offer, to bid). A forbidding is an anti-offering, a complete rejection of the possibility.
+    </p>
+
+    <p class="narrative small">
+      The eighth: <span class="german-word" data-card="verkaufen">verkaufen</span> — to sell. From <em>kaufen</em> (to buy). When you sell, you transform the relationship — the object moves from your ownership to someone else's. The <span class="german-word" data-speak="true">ver-</span> marks the transformation of property and possession.
+    </p>
+
+    <p class="narrative small">
+      The ninth: <span class="german-word" data-card="vertrauen">vertrauen</span> — to trust. From <em>trauen</em> (to trust, to dare). But when you truly trust someone, you give yourself over completely. You <span class="german-word" data-speak="true">vertrauen</span> — you trust fully.
+    </p>
+
+    <p class="narrative small">
+      The tenth: <span class="german-word" data-card="verbinden">verbinden</span> — to connect. From <em>binden</em> (to bind). When you connect two things, you bind them together completely, making them one thing.
+    </p>
+
+    <!-- VERSTEHEN card -->
+    <div class="ety-card" id="card-verstehen">
+      <div class="word-header">
+        <span class="word-main">verstehen</span>
+        <span class="word-pron">/fɛɐ̯ˈʃteːən/</span>
+      </div>
+      <div class="word-meaning">to understand — to grasp meaning fully, to comprehend</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + stehen</span>
+        <span class="bridge-note">— fully + to stand = to stand in full comprehension</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">understand</span>
+        <span class="bridge-note">— from under + stand, utterly different etymology but same result</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">理解</span>
+        <span class="bridge-note">— lǐjiě (reason + untangle) — a more analytical concept than the physical "standing"</span>
+      </div>
+      <div class="story">
+        <em>Verstehen</em> is one of the most fundamental words in German. It appears in philosophy as a concept: Verstehen (understanding) vs. Erklären (explanation). The word contains its own logic — when you fully stand somewhere, you understand it. When you are positioned within it, you grasp it. The prefix <em>ver-</em> takes the simple idea of "standing" and transforms it into the complex act of comprehension. Compare the Chinese approach: 理 (reason) + 解 (untangle) builds the same meaning through analysis rather than physical position.
+      </div>
+    </div>
+
+    <!-- VERGESSEN card -->
+    <div class="ety-card" id="card-vergessen">
+      <div class="word-header">
+        <span class="word-main">vergessen</span>
+        <span class="word-pron">/fɛɐ̯ˈɡɛsn̩/</span>
+      </div>
+      <div class="word-meaning">to forget — to lose memory of, to cease to remember</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + gessen</span>
+        <span class="bridge-note">— completely + to grasp = to lose one's grasp entirely</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">forget</span>
+        <span class="bridge-note">— from "for-" + "get," also expressing loss of possession</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">忘记</span>
+        <span class="bridge-note">— wàngjì (lose + memory) — also emphasizing the loss of what was held</span>
+      </div>
+      <div class="story">
+        <em>Vergessen</em> is fascinating because it takes the idea of grasping — holding something in your mind — and reverses it completely. The <em>ver-</em> prefix here means "un-" or "loss of." When you forget, you have let slip the thing you were holding. In English, we use "for-" (lose, abandon) plus "get" (grasp), which is conceptually identical. The metaphor is universal: memory is possession. Loss of memory is loss of possession. The object you were holding is no longer in your hand.
+      </div>
+    </div>
+
+    <!-- VERLIEREN card -->
+    <div class="ety-card" id="card-verlieren">
+      <div class="word-header">
+        <span class="word-main">verlieren</span>
+        <span class="word-pron">/fɛɐ̯ˈliːʁən/</span>
+      </div>
+      <div class="word-meaning">to lose — to be deprived of, to mislay, to suffer defeat</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + lieren</span>
+        <span class="bridge-note">— away from + to let go = to lose completely</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">lose</span>
+        <span class="bridge-note">— from Old Norse "los" (breaking up, dissolution)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">失去</span>
+        <span class="bridge-note">— shīqù (lose + go away) — also emphasizing separation and distance</span>
+      </div>
+      <div class="story">
+        <em>Verlieren</em> is the natural opposite of finding or keeping. The root <em>lieren</em> originally meant something close to "to set free" or "to liberate." When you lose something, it has been liberated from your control — though certainly not in a way you intended. The <em>ver-</em> intensifies this: not merely to let go, but to let go utterly, completely, irretrievably. Once lost, something is gone.
+      </div>
+    </div>
+
+    <!-- VERSPRECHEN card -->
+    <div class="ety-card" id="card-versprechen">
+      <div class="word-header">
+        <span class="word-main">versprechen</span>
+        <span class="word-pron">/fɛɐ̯ˈʃpʁɛçən/</span>
+      </div>
+      <div class="word-meaning">to promise — to commit oneself to a future action, to pledge</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + sprechen</span>
+        <span class="bridge-note">— fully + to speak = to bind oneself through speech</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">promise</span>
+        <span class="bridge-note">— from Latin "promittere" (pro- + mittere = to send forth)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">承诺</span>
+        <span class="bridge-note">— chéngnuò (bear/uphold + promise) — emphasizing responsibility and obligation</span>
+      </div>
+      <div class="story">
+        A promise is speech that binds you. When you <em>versprechen</em>, you have committed yourself fully and completely through your words. You cannot take it back — the words have been spoken, the commitment has been made. The <em>ver-</em> prefix adds the sense of complete, binding commitment. In English, we borrow the Latin "promise" (literally "send forth"), but German's approach is more transparent: you speak yourself fully into an obligation.
+      </div>
+    </div>
+
+    <!-- VERÄNDERN card -->
+    <div class="ety-card" id="card-veraendern">
+      <div class="word-header">
+        <span class="word-main">verändern</span>
+        <span class="word-pron">/fɛɐ̯ˈɛndɐn/</span>
+      </div>
+      <div class="word-meaning">to change — to alter completely, to transform, to make different</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + ändern</span>
+        <span class="bridge-note">— completely + to alter = to transform utterly</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">change</span>
+        <span class="bridge-note">— from Old French "changier" (to barter, to alter)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">改变</span>
+        <span class="bridge-note">— gǎibiàn (correct + change) — also emphasizing complete transformation</span>
+      </div>
+      <div class="story">
+        <em>Verändern</em> is deeper than simple alteration. <em>Ändern</em> (to change, to alter) might be a small adjustment. But <em>verändern</em> (to change completely, to transform) involves the <em>ver-</em> prefix, which amplifies the action into something total, comprehensive, thorough. A light change is <em>ändern</em>. A fundamental, world-altering change is <em>verändern</em>. The difference is one prefix, one morpheme, one small addition that entirely changes the scale of the transformation.
+      </div>
+    </div>
+
+    <!-- VERSUCHEN card -->
+    <div class="ety-card" id="card-versuchen">
+      <div class="word-header">
+        <span class="word-main">versuchen</span>
+        <span class="word-pron">/fɛɐ̯ˈzuːxən/</span>
+      </div>
+      <div class="word-meaning">to try, to attempt — to make an effort to do something, to test</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + suchen</span>
+        <span class="bridge-note">— fully + to seek = to seek thoroughly until you find</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">try</span>
+        <span class="bridge-note">— from Old French "trier" (to pick out, to sort), ultimately uncertain origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">尝试</span>
+        <span class="bridge-note">— chángshì (taste + try) — emphasizing experiential learning through attempt</span>
+      </div>
+      <div class="story">
+        <em>Versuchen</em> captures the idea of trying as a complete seeking. When you attempt something, you do not half-heartedly wish for it — you seek it fully, completely, until you either achieve it or determine that you cannot. The <em>ver-</em> gives the word the sense of thoroughness, of commitment to the attempt. You do not merely try; you fully commit yourself to the seeking.
+      </div>
+    </div>
+
+    <!-- VERBIETEN card -->
+    <div class="ety-card" id="card-verbieten">
+      <div class="word-header">
+        <span class="word-main">verbieten</span>
+        <span class="word-pron">/fɛɐ̯ˈbiːtən/</span>
+      </div>
+      <div class="word-meaning">to forbid, to ban — to command someone not to do something, to prohibit</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + bieten</span>
+        <span class="bridge-note">— completely opposite + to offer = to reject utterly</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">forbid</span>
+        <span class="bridge-note">— from "for-" (against) + "bid" (command), conceptually parallel</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">禁止</span>
+        <span class="bridge-note">— jìnzhǐ (prohibit + stop) — double emphasis on the completeness of the ban</span>
+      </div>
+      <div class="story">
+        <em>Verbieten</em> is a fascinating case where <em>ver-</em> reverses the entire meaning of the root. <em>Bieten</em> (to offer, to present) becomes its opposite when prefixed with <em>ver-</em>. To forbid is to completely withhold the offer, to reject the possibility entirely. It is a negative transformation: not merely declining to offer something, but commanding that it shall not be offered at all. The ban is total.
+      </div>
+    </div>
+
+    <!-- VERKAUFEN card -->
+    <div class="ety-card" id="card-verkaufen">
+      <div class="word-header">
+        <span class="word-main">verkaufen</span>
+        <span class="word-pron">/fɛɐ̯ˈkaʊ̯fən/</span>
+      </div>
+      <div class="word-meaning">to sell — to transfer ownership of something in exchange for payment</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + kaufen</span>
+        <span class="bridge-note">— away from + to buy = to transfer through purchasing</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">sell</span>
+        <span class="bridge-note">— from Old English "sellan" (to transfer, to give up), distinct from buying</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">出售</span>
+        <span class="bridge-note">— chūshòu (out + sell) — emphasizing the departure and transfer</span>
+      </div>
+      <div class="story">
+        <em>Verkaufen</em> is the complementary action to buying. When you <em>kaufen</em> (buy), you acquire. When you <em>verkaufen</em> (sell), you transfer away. The <em>ver-</em> marks the movement: the object goes away from you, to someone else. The prefix transforms the acquisition into a disbursement, the receiving into a giving.
+      </div>
+    </div>
+
+    <!-- VERTRAUEN card -->
+    <div class="ety-card" id="card-vertrauen">
+      <div class="word-header">
+        <span class="word-main">vertrauen</span>
+        <span class="word-pron">/fɛɐ̯ˈtʁaʊ̯ən/</span>
+      </div>
+      <div class="word-meaning">to trust, to confide — to have faith in someone or something, to rely on</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + trauen</span>
+        <span class="bridge-note">— fully + to dare = to dare to fully commit yourself to trust</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">trust</span>
+        <span class="bridge-note">— from Old Norse "traust" (security, confidence), cognate with German Trauer (sadness, the loss of what was trusted)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">信任</span>
+        <span class="bridge-note">— xìnrèn (believe + assign/entrust) — also emphasizing the giving of responsibility</span>
+      </div>
+      <div class="story">
+        <em>Vertrauen</em> is profound. The root <em>trauen</em> means to dare, to have courage. But when you <em>vertrauen</em> someone, you are not merely daring — you are giving yourself over completely to their trustworthiness. You commit your faith entirely, unreservedly. The <em>ver-</em> transforms a simple act of courage into complete, binding trust. To trust is to dare absolutely.
+      </div>
+    </div>
+
+    <!-- VERBINDEN card -->
+    <div class="ety-card" id="card-verbinden">
+      <div class="word-header">
+        <span class="word-main">verbinden</span>
+        <span class="word-pron">/fɛɐ̯ˈbɪndən/</span>
+      </div>
+      <div class="word-meaning">to connect, to link — to join together, to bind, to unite</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver- + binden</span>
+        <span class="bridge-note">— completely + to bind = to bind together utterly</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">bind</span>
+        <span class="bridge-note">— same root as German binden, expressing constraint and unity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">联系</span>
+        <span class="bridge-note">— liánxì (connect + tie) — also expressing the double nature of binding and linking</span>
+      </div>
+      <div class="story">
+        <em>Verbinden</em> takes binding — the tying together of two things — and makes it complete and total. When you bind things together, they become one. The connection is not tentative or partial; it is complete. The <em>ver-</em> emphasizes the totality of the union. To connect is to bind two separate things into an integrated whole.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE INSEPARABLE PREFIX ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And here is the crucial grammatical point: the <span class="german-word" data-speak="true">ver-</span> prefix is <em>inseparable</em>. This means that unlike some German prefixes, it never detaches from the root verb, even in conjugation.
+    </p>
+
+    <p class="narrative">
+      In English, we can say "stand up" or "up stand" or "stand me up" — the words separate and recombine. But in German, <span class="german-word" data-speak="true">verstehen</span> never becomes <span class="german-word" data-speak="true">stehe ver</span>. The prefix is locked in place. When you conjugate: <span class="german-word" data-speak="true">ich verstehe</span> (I understand), <span class="german-word" data-speak="true">du verstehst</span> (you understand), <span class="german-word" data-speak="true">er versteht</span> (he understands) — the <span class="german-word" data-speak="true">ver-</span> stays right where it is, fused to the verb.
+    </p>
+
+    <p class="narrative">
+      This is the difference between transparency and stability. English is transparent — you can see the parts moving around — but German is stable — the parts stay where they are. German sacrifices some flexibility to gain some certainty.
+    </p>
+
+    <p class="narrative">
+      This stability is a strength. Because the prefix is locked in place, there is no confusion about meaning. <span class="german-word" data-speak="true">Verstehen</span> is always "understand." The parts cannot separate and create ambiguity.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE BRIDGE TO CHINESE ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now, you might be wondering: if Chinese does not use prefixes, how does it build complex verbs? The answer is that Chinese uses a different strategy entirely. Rather than attaching particles to the beginning of a root, Chinese builds complexity through compounding.
+    </p>
+
+    <p class="narrative">
+      When you want to express the idea of <span class="german-word" data-speak="true">verlieren</span> (to lose), Chinese uses <span class="char-display"><span class="char">失</span><span class="pinyin">shī</span></span> (to lose) or more commonly <span class="char-display"><span class="char">丢</span><span class="pinyin">diū</span></span> (to cast away) or <span class="char-display"><span class="char">遗</span><span class="pinyin">yí</span></span> (to leave behind). These are not prefixes but independent roots, and they are used in combination to create compound meanings. <span class="char-display"><span class="char">失</span><span class="pinyin">shī</span></span> + <span class="char-display"><span class="char">去</span><span class="pinyin">qù</span></span> (to go away) = to lose completely.
+    </p>
+
+    <p class="narrative">
+      The logic is different but the end result is similar: both languages take simple ideas and combine them into more complex meanings. German does it through morphology — prefixes and suffixes attached to roots. Chinese does it through compounding — putting words together in new combinations.
+    </p>
+
+    <p class="narrative">
+      And here is the bridge between them: both languages are <em>productive</em>. German can create hundreds of new verbs by applying the <span class="german-word" data-speak="true">ver-</span> prefix to roots. Chinese can create thousands of new words by combining characters in novel ways. Both languages have tools for infinite creative expansion.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE WORKSHOP OF LANGUAGE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      The workshop is the perfect metaphor for the <span class="german-word" data-speak="true">ver-</span> prefix. A workshop is a space where simple tools are combined to create complex works. Where a hammer and chisel, working together, can shape stone. Where one tool amplifies the power of another.
+    </p>
+
+    <p class="narrative">
+      The German language is a workshop. And the <span class="german-word" data-speak="true">ver-</span> prefix is a key tool in that workshop — one of the most essential, even if it is nearly invisible. It opens six hundred doors. Behind each door is a new possibility, a new nuance, a new way to express the infinite complexity of human experience.
+    </p>
+
+    <p class="narrative">
+      The key is small. The key is simple. The key is easily overlooked. But without the key, the door remains closed. And without the door, the workshop cannot be entered.
+    </p>
+
+    <p class="narrative">
+      Now you know the key. You have learned <span class="german-word" data-speak="true">ver-</span>. And with this one small prefix, you have unlocked access to hundreds of German verbs, hundreds of doors, hundreds of ways to express transformation, completion, and change.
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <h3>The Key: Quiz</h3>
+    <div id="quiz-questions"></div>
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Back</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score" style="display: none;"></div>
+    <div class="quiz-reset" id="quiz-reset" style="display: none;">
+      <button onclick="resetQuiz()">Reset Quiz</button>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">268 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(31%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:31%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 268 words across 27 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">57 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(39%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:39%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 57 patterns and grammar rules across 27 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="word-collection" id="word-collection">
+    <h3>Words Unlocked</h3>
+    <div class="collected-words" id="collected-words"></div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p class="next-chapter">← Chapter 26 · Chapter 28 →</p>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter26.html" class="nav-btn">← Chapter 26</a>
+    <a href="chapter28.html" class="nav-btn next">Chapter 28 →</a>
+  </div>
+
+</div>
+
+<script>
+
+/* --- WORKSHOP CANVAS ANIMATION --- */
+const canvas = document.getElementById('workshop-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.vy = (Math.random() - 0.5) * 0.5;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.opacity = Math.random() * 0.4 + 0.1;
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x < -10) this.x = canvas.width + 10;
+    if (this.x > canvas.width + 10) this.x = -10;
+    if (this.y < -10) this.y = canvas.height + 10;
+    if (this.y > canvas.height + 10) this.y = -10;
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = `rgba(212, 165, 116, ${this.opacity})`;
+    ctx.fillRect(this.x, this.y, this.size, this.size);
+  }
+}
+
+// Initialize particles
+const particleCount = window.innerWidth < 768 ?
+  Math.floor((canvas.width * canvas.height) / 8000) :
+  Math.floor((canvas.width * canvas.height) / 5000);
+
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle());
+}
+
+// Draw rotating gears/tools
+function drawTools() {
+  const time = Date.now() * 0.0002;
+  const tools = 3;
+
+  for (let i = 0; i < tools; i++) {
+    const x = (i + 1) * (canvas.width / (tools + 1));
+    const y = canvas.height * (0.3 + Math.sin(time + i) * 0.1);
+    const size = 30 + Math.sin(time * 2 + i) * 5;
+
+    ctx.strokeStyle = `rgba(212, 165, 116, 0.15)`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Rotating inner circle
+    ctx.strokeStyle = `rgba(232, 164, 74, 0.2)`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(x, y, size * 0.6, time + i, time + i + Math.PI * 0.5);
+    ctx.stroke();
+  }
+}
+
+function animate() {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.update();
+    p.draw(ctx);
+  });
+
+  drawTools();
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* --- PROGRESS BAR --- */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+/* --- SCENE OBSERVER --- */
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+/* --- ETYMOLOGY CARDS --- */
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+/* --- AUDIO PRONUNCIATION --- */
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// All german-word spans that don't have cards are speak-only
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+// Add speak buttons to etymology cards
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+/* --- QUIZ SYSTEM --- */
+const quizData = [
+  {
+    question: "What does the prefix ver- primarily express in German verbs?",
+    options: ["negation or opposite meaning", "completion, fullness, or transformation", "repetition or doing again", "location or position"],
+    correct: 1,
+    explanation: "The ver- prefix adds meanings of completion, fullness, complete transformation, or wrongness — it intensifies the root verb."
+  },
+  {
+    question: "Why is ver- called an 'inseparable' prefix?",
+    options: ["it cannot be written separately from the root", "it never detaches from the root verb in conjugation", "it forms an unbreakable grammatical unit", "it cannot be removed from a word"],
+    correct: 1,
+    explanation: "Unlike some German prefixes, ver- is inseparable, meaning it stays attached to the root verb in all forms: ich verstehe, du verstehst, etc."
+  },
+  {
+    question: "From the chapter: What does verstehen literally mean when broken into parts?",
+    options: ["to not stand", "to stand back", "to stand fully/completely", "to stand together"],
+    correct: 2,
+    explanation: "Ver- (fully) + stehen (stand) = to stand in full comprehension or complete understanding."
+  },
+  {
+    question: "How many verbs has the ver- prefix generated in German?",
+    options: ["approximately 100", "approximately 300", "approximately 600", "approximately 1000"],
+    correct: 2,
+    explanation: "The ver- prefix is one of the most productive prefixes in German, having generated approximately 600 verbs."
+  },
+  {
+    question: "What is the relationship between vergessen (to forget) and gessen (root)?",
+    options: ["gessen means to give, forgetting is giving away", "gessen means to hold/grasp, forgetting is losing that grasp", "gessen means to speak, forgetting is not speaking", "they are not related"],
+    correct: 1,
+    explanation: "The root gessen originally meant 'to grasp' or 'to hold.' Vergessen means to lose one's grasp — to forget."
+  },
+  {
+    question: "Which of these word pairs shows ver- creating an opposite meaning?",
+    options: ["verstehen/stehen", "versuchen/suchen", "verbieten/bieten", "verlieren/lieren"],
+    correct: 2,
+    explanation: "Bieten means 'to offer.' Verbieten means 'to forbid' — ver- here reverses the entire meaning, making it the complete opposite."
+  },
+  {
+    question: "How does Chinese build complex meanings where German uses the ver- prefix?",
+    options: ["Chinese uses prefixes similar to German", "Chinese uses compounding — combining independent roots", "Chinese uses suffixes instead", "Chinese does not have complex verbs"],
+    correct: 1,
+    explanation: "Chinese is non-inflectional and builds complexity through compounding: combining independent roots (like 失 + 去 for 'to lose') rather than using prefixes."
+  },
+  {
+    question: "From Chapter 6: What does Völkerwanderung mean?",
+    options: ["war of peoples", "folk-wandering or migration of peoples", "great empire", "tribal conquest"],
+    correct: 1,
+    explanation: "Völkerwanderung = Völker (peoples) + Wanderung (wandering) — the great migration of Germanic tribes across Europe."
+  },
+  {
+    question: "From Chapter 1: Which character depicts flames in Chinese?",
+    options: ["火 (fire)", "星 (star)", "水 (water)", "夜 (night)"],
+    correct: 0,
+    explanation: "火 (huǒ) is the character for fire. In ancient forms, it looked like flames rising from a base."
+  },
+  {
+    question: "Which of these is NOT a ver- verb from this chapter?",
+    options: ["verstehen", "verändern", "verspricht", "vergessen"],
+    correct: 2,
+    explanation: "Verspricht is the third person form of versprechen (to promise). All the others are ver- verbs: verstehen, verändern, vergessen, verlieren, versprechen, versuchen, verbieten, verkaufen, vertrauen, verbinden."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.style.display = 'block';
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    setTimeout(() => {
+      document.getElementById('word-collection').classList.add('show');
+      document.getElementById('quiz-reset').style.display = 'block';
+      populateWordCollection();
+    }, 500);
+  } else {
+    document.getElementById('quiz-reset').style.display = 'block';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+  document.getElementById('quiz-summary').classList.remove('show');
+  document.getElementById('word-collection').classList.remove('show');
+  document.getElementById('quiz-reset').style.display = 'none';
+  document.getElementById('quiz-score').style.display = 'none';
+  initializeQuiz();
+}
+
+const collectedWordsList = [
+  { de: 'verstehen', en: 'understand' },
+  { de: 'vergessen', en: 'forget' },
+  { de: 'verlieren', en: 'lose' },
+  { de: 'versprechen', en: 'promise' },
+  { de: 'verändern', en: 'change' },
+  { de: 'versuchen', en: 'try' },
+  { de: 'verbieten', en: 'forbid' },
+  { de: 'verkaufen', en: 'sell' },
+  { de: 'vertrauen', en: 'trust' },
+  { de: 'verbinden', en: 'connect' }
+];
+
+function populateWordCollection() {
+  const container = document.getElementById('collected-words');
+  container.innerHTML = '';
+
+  collectedWordsList.forEach((word, idx) => {
+    const div = document.createElement('div');
+    div.className = 'collected-word';
+    div.style.animationDelay = `${idx * 0.1}s`;
+    div.innerHTML = `<div class="cw-german">${word.de}</div><div class="cw-english">${word.en}</div>`;
+    container.appendChild(div);
+
+    setTimeout(() => div.classList.add('show'), idx * 100);
+  });
+}
+
+initializeQuiz();
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 9: Das Hildebrandslied</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0a2e 0%, #1a1a3e 30%, #4a2a2a 60%, #5a3a2a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- STARFIELD CANVAS WITH FALLING SPARKS --- */
+  #starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- SPEAK BUTTON --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- MANUSCRIPT BOX --- */
+  .manuscript-display {
+    background: linear-gradient(135deg, rgba(42, 31, 20, 0.5), rgba(26, 20, 14, 0.5));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 32px 0;
+    font-family: 'Noto Serif', monospace;
+    line-height: 2;
+    color: rgba(232, 164, 74, 0.7);
+    font-size: 1rem;
+  }
+
+  .manuscript-display .line {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    align-items: baseline;
+  }
+
+  .manuscript-display .old-high-german {
+    color: var(--fire);
+    font-weight: 600;
+    flex: 0 0 40%;
+  }
+
+  .manuscript-display .breakdown {
+    flex: 1;
+    color: rgba(212, 202, 187, 0.6);
+    font-size: 0.95rem;
+  }
+
+  /* --- QUIZ SYSTEM --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    margin: 0 auto 30px;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 30px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px; font-size: 1.125rem; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; }
+    .ety-card { padding: 20px 24px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 20px; }
+    .word-collection { padding: 28px 20px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+  }
+
+  @media (max-width: 380px) {
+    body { font-size: 16px; }
+    .title-screen h1 { font-size: 1.8rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="starfield"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE SCREEN ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">CHAPTER NINE</div>
+    <h1>Das Hildebrandslied</h1>
+    <div class="subtitle">The Song of Hildebrand (~820 CE)</div>
+    <p class="narrative small" style="opacity: 0; animation: fadeUp 2s ease 1.8s forwards; max-width: 500px; margin: 2em auto;">
+      Two warriors meet on a battlefield beneath the ancient stars. Father and son, separated by thirty years. They do not recognize each other. They must fight. The poem breaks off before the ending. We never learn who dies.
+    </p>
+    <div class="scroll-hint">
+      <span>↓</span>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 1: CONTEXT & SIGNIFICANCE ==================== -->
+  <div class="scene" id="scene-intro">
+    <div class="scene-marker"></div>
+    <div class="narrative">
+      The Hildebrandslied is not a theoretical text. It is not a grammar book or a translation exercise. It is the only surviving <em>heroic epic in Old High German</em> — the only remaining poem that shows us what the language actually sounded like when warriors recited it around campfires, when fathers taught it to sons, when it was a <em>living, breathing, sung thing</em>.
+    </div>
+    <div class="narrative">
+      The manuscript itself survives by accident. Two monks in the monastery at Fulda (in what is now Germany) had finished copying a theological text around 820 CE. They had blank pages left at the back of the book. Instead of leaving them empty, they wrote down this poem—this old song about two warriors that had been circulating orally for centuries. They wrote it in Old High German, the language of the people they lived among, using Latin letters and Latin spelling conventions.
+    </div>
+    <div class="narrative">
+      Why does this matter? Because once you write something down, it stops <em>changing</em>. Oral tradition is alive. It mutates with every telling. But the moment two monks put quill to parchment in Fulda around 820 CE, the Hildebrandslied froze. This is what Old High German actually <em>looked</em> like. This is what it <em>sounded</em> like. And every other word we can recognize in it is a bridge to English, to modern German, to the languages that grew from the same root.
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Manuscript: Accident Preserved by Monks</div>
+      The Hildebrandslied was written on the back pages of a theological codex at the Monastery of Fulda. Fulda was one of the greatest centers of learning in early medieval Europe—founded by Saint Boniface in 744 CE. The monks there didn't set out to preserve a heroic epic. They just had blank pages. One of them—probably an Irish or Anglo-Saxon monk—recognized the poem as something worth recording. That casual decision gave us the only surviving Old High German epic. The manuscript is now kept at the Kassel State Library, damaged by time and fire, but still legible.
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 2: THE STORY ==================== -->
+  <div class="scene" id="scene-story">
+    <div class="scene-marker"></div>
+    <h2 style="font-size: 1.6rem; color: var(--text-bright); margin: 2em 0 1.5em; text-align: center;">The Story: Father and Son</h2>
+
+    <div class="narrative">
+      Two armies meet on a battlefield. As the warriors prepare for battle, a single warrior rides forward from one side. An older man, grey-haired, experienced. Hildebrand. He calls out a challenge. His opponent rides forward—a young warrior, confident, unafraid. Hadubrand.
+    </div>
+    <div class="narrative">
+      Hildebrand speaks first. He does not recognize the young man, but something troubles him. He asks the young warrior's lineage. Hadubrand tells him—his father was named Hildebrand, who fled this land thirty years ago to follow an exiled lord. His mother married again after his father left.
+    </div>
+    <div class="narrative">
+      Hildebrand's heart breaks. <em>He is the father.</em> He left when Hadubrand was a baby. Thirty years of wandering, thirty years of exile with his lord, and now—by the cruelest chance—his own son stands before him as an enemy.
+    </div>
+    <div class="narrative">
+      Hildebrand reveals himself. He describes himself as his son's father. He offers gold rings—treasures—to make peace. He does not want to fight. He wants to know his son.
+    </div>
+    <div class="narrative">
+      But Hadubrand does not believe him. He sees an old warrior offering treasure and calls him a liar. He thinks this is a trick—a deception to lower his guard. "No one would believe such a story," he says. "You must think I am a fool."
+    </div>
+    <div class="narrative">
+      And there, the manuscript breaks off. The poem ends mid-battle, unfinished. We never know which warrior dies. We never know if they recognize each other in time. We never know if the father's love matters. The poem simply stops.
+    </div>
+
+    <div class="narrative emphasis">
+      This is the tragedy of the Hildebrandslied: not the death that happens, but the death that might not be prevented. Father and son, separated by time and chance, cannot recognize each other through the fog of war. The poem asks: what if the most important moment of your life happens, and you don't know it?
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 3: OLD HIGH GERMAN TEXT & RECOGNITION ==================== -->
+  <div class="scene" id="scene-text">
+    <div class="scene-marker"></div>
+    <h2 style="font-size: 1.6rem; color: var(--text-bright); margin: 2em 0 1.5em; text-align: center;">Old High German: You Can Recognize It</h2>
+
+    <div class="narrative">
+      Here is the challenge: the Hildebrandslied is written in Old High German. It will look completely foreign to you. And yet—if you look carefully, if you sound out the words—you can hear English in it. You can see patterns you already know. Old High German is strange, but it is not distant. The bones are there.
+    </div>
+
+    <div class="manuscript-display">
+      <div class="line">
+        <div class="old-high-german">sunufatarungo</div>
+        <div class="breakdown">= son-father-relationship (literally: Sohn + Vater + -ung [noun suffix] = "the relationship between son and father")</div>
+      </div>
+      <div class="line">
+        <div class="old-high-german">hwat du mir wedare</div>
+        <div class="breakdown">"what do you me in return [offer]" = compare to English "wedder" (whether), Old English "wed" (to pledge)</div>
+      </div>
+      <div class="line">
+        <div class="old-high-german">giwigit ih dih ar demo wagan</div>
+        <div class="breakdown">= "I fought you before [at] the wall" — "wagan" = wall (Old English "weall", modern German "Wagen" [vehicle], from the shared root meaning "enclosure")</div>
+      </div>
+      <div class="line">
+        <div class="old-high-german">sunnemun min lioba</div>
+        <div class="breakdown">"my son [is] dear to me" — "lioba" appears in modern German "lieb" (dear, love), English "love"</div>
+      </div>
+    </div>
+
+    <div class="narrative">
+      These are not translations. These are the actual words from the Hildebrandslied, written down around 820 CE. You can <em>see</em> modern German in them. You can <em>hear</em> English phonemes. The spellings are Latin-based (medieval scribes didn't have an alphabet designed for Germanic languages), but the underlying words—the DNA of language—are unmistakable.
+    </div>
+
+    <div class="narrative">
+      A compound like <span class="german-word" data-card="1">sunufatarungo</span> (son-father-relationship) reveals the logic of Old High German: you can <em>build</em> words by stacking roots together. Sohn (son) + Vater (father) + -ung (the suffix that makes abstract nouns) = the concept of the father-son bond. Modern German still does this. English used to. This is the remnant of Proto-Germanic structure, frozen in this single, miraculous manuscript.
+    </div>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Oral → Written</strong> — The Hildebrandslied was sung for centuries before monks wrote it down around 820 CE. This marks the boundary between oral tradition (living, changing, performed) and written culture (fixed, preserved, archived). Writing kills performance but saves it from extinction.<br><br>
+    <strong style="color: var(--text-bright);">Compound Words</strong> — Old High German builds complex meanings by stacking roots. <em>Sunufatarungo</em> (son-father-ness) = Sohn + Vater + -ung. This is the power of Germanic morphology: take simple roots, combine them, create new concepts. Modern German still does this. English did, but gradually lost it.<br><br>
+    <strong style="color: var(--text-bright);">Warrior Vocabulary</strong> — Schwert (sword), Schild (shield), Kampf (battle), Held (hero), Tod (death), Ehre (honor). These words reveal what mattered to Old High German culture: combat, loyalty, kinship, honor. The language preserves the values of the warriors who spoke it.<br><br>
+    <strong style="color: var(--text-bright);">Language Preserves</strong> — The poem is the only surviving Old High German epic. But it shows us that old languages don't disappear—they transform. Every word in the Hildebrandslied is a bridge to modern German, to English, to the languages that inherit its structure. The poem outlived the culture that created it.
+  </div>
+
+  <!-- ==================== WORD CARDS ==================== -->
+  <div class="scene" id="scene-words">
+    <div id="card-1" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">sunufatarungo</div>
+        <div class="word-pron">/"su:.nuː.va.tar.un.ŋo:/</div>
+      </div>
+      <div class="word-meaning">the relationship between son and father; the bond of kinship</div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">sunufatarungo</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">COMPONENTS</span>
+        <span class="bridge-word">Sohn (son) + Vater (father) + -ung (quality/state)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Sohnvater = son-father (poetic)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH COGNATES</span>
+        <span class="bridge-word">son, father, -ing (Old English suffix for abstract nouns)</span>
+      </div>
+      <div class="story">
+        This word appears nowhere else in surviving Old High German. It is unique to the Hildebrandslied. The poet created it to express the specific tragedy of the moment—the bond between father and son that should protect them, but cannot, because they do not recognize each other. A single compound word that carries the entire emotional weight of the poem.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 4: NINE WORD CARDS ==================== -->
+  <div class="scene" id="scene-words">
+    <div class="scene-marker"></div>
+    <h2 style="font-size: 1.6rem; color: var(--text-bright); margin: 2em 0 1.5em; text-align: center;">Words from the Poem</h2>
+
+    <div class="narrative" style="text-align: center; font-size: 1.1rem; margin-bottom: 2em;">
+      These words appear in the Hildebrandslied itself. Click each to see its history.
+    </div>
+
+    <!-- SCHWERT (sword) -->
+    <div class="narrative">
+      <span class="german-word" data-card="2">Schwert</span> — the warriors carry them. Every line of battle action involves swords. The word comes from Proto-Germanic *swerdą, the same root as English "sword."
+    </div>
+    <div id="card-2" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Schwert</div>
+        <div class="word-pron">/'ʃvɛrt/</div>
+      </div>
+      <div class="word-meaning">sword; a warrior's blade</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*swerd-</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Schwert</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">sword</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Schwert</span>
+      </div>
+      <div class="story">
+        This is one of the most stable words in Germanic languages. From Proto-Germanic *swerdą, the word barely changes across 2,000 years. Old High German Schwert → Modern German Schwert. Old English sweord → Modern English sword. The object remains. The word preserves it.
+      </div>
+    </div>
+
+    <!-- SCHILD (shield) -->
+    <div class="narrative">
+      <span class="german-word" data-card="3">Schild</span> — the companion to the sword. No warrior fights without a shield. The word comes from Proto-Germanic *skelduz, same root as English "shield."
+    </div>
+    <div id="card-3" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Schild</div>
+        <div class="word-pron">/'ʃɪlt/</div>
+      </div>
+      <div class="word-meaning">shield; defensive armor carried into battle</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*skel- (to cover, protect)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Schild</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">shield</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Schild</span>
+      </div>
+      <div class="story">
+        The shield and sword are the two most essential tools of Germanic warfare. Both words survive from Proto-Germanic almost unchanged. When the poem describes combat between Hildebrand and Hadubrand, every blow involves these two objects. The words are as ancient as the weapons.
+      </div>
+    </div>
+
+    <!-- SOHN (son) -->
+    <div class="narrative">
+      <span class="german-word" data-card="4">Sohn</span> — this is the tragedy's core. Hildebrand's son, unrecognized. The word comes from Proto-Germanic *sunuz, same root as English "son."
+    </div>
+    <div id="card-4" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Sohn</div>
+        <div class="word-pron">/'zoːn/</div>
+      </div>
+      <div class="word-meaning">son; male child; heir</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*suH-nu-s (to give birth, beget)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Sohn</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">son</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Sohn</span>
+      </div>
+      <div class="story">
+        The most ancient family word. In the Hildebrandslied, Hadubrand tells his lineage: his father was Hildebrand. He is the "Sohn" (son) of that man. But he does not know it. The word that should define the relationship between them becomes the very barrier that separates them.
+      </div>
+    </div>
+
+    <!-- KAMPF (battle/combat) -->
+    <div class="narrative">
+      <span class="german-word" data-card="5">Kampf</span> — from Latin <em>campus</em> (field), a borrowed word that shows how medieval German acquired vocabulary through contact with the Roman world. Warriors fight on fields.
+    </div>
+    <div id="card-5" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Kampf</div>
+        <div class="word-pron">/'kamf/</div>
+      </div>
+      <div class="word-meaning">battle; combat; struggle; conflict</div>
+      <div class="bridge">
+        <span class="bridge-label eng">LATIN</span>
+        <span class="bridge-word">campus (field)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Kampf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Kampf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">camp (from the same Latin root)</span>
+      </div>
+      <div class="story">
+        A loan word from Latin, showing that by the time the Hildebrandslied was composed, Germanic languages were adopting vocabulary from contact with the Roman world. Fighting happens on fields. The whole semantic structure is based on space and geography.
+      </div>
+    </div>
+
+    <!-- EHRE (honor) -->
+    <div class="narrative">
+      <span class="german-word" data-card="6">Ehre</span> — honor is what drives both Hildebrand and Hadubrand. A warrior's honor is his identity. The word comes from Proto-Germanic *aizō, related to archaic English "ere" (honor, dignity).
+    </div>
+    <div id="card-6" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Ehre</div>
+        <div class="word-pron">/'eːrə/</div>
+      </div>
+      <div class="word-meaning">honor; dignity; esteem; glory</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*erə- (to raise, elevate)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Ehre</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH (archaic)</span>
+        <span class="bridge-word">ere (honor, archaic)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Ehre</span>
+      </div>
+      <div class="story">
+        Honor is the concept that drives the entire Hildebrandslied. A warrior cannot refuse combat without losing honor. A son cannot back down. The honor system is what prevents the poem from ending in recognition and peace. It is what forces tragedy.
+      </div>
+    </div>
+
+    <!-- TOD (death) -->
+    <div class="narrative">
+      <span class="german-word" data-card="7">Tod</span> — what awaits one of the two warriors. Death. The word comes from Proto-Germanic *dauþuz, same root as English "death."
+    </div>
+    <div id="card-7" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Tod</div>
+        <div class="word-pron">/'toːt/</div>
+      </div>
+      <div class="word-meaning">death; the end of life</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*dheu- (to die, fade)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Tod</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">death</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Tod</span>
+      </div>
+      <div class="story">
+        One of the oldest words in Germanic languages. From the moment humans began speaking, they had to speak about death. The word is nearly identical in Old High German and modern English. Death is constant. Language remembers it.
+      </div>
+    </div>
+
+    <!-- HELD (hero) -->
+    <div class="narrative">
+      <span class="german-word" data-card="8">Held</span> — what Hildebrand and Hadubrand both are. Heroes. Warriors. The word comes from Proto-Germanic *haliþaz (the noble one).
+    </div>
+    <div id="card-8" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Held</div>
+        <div class="word-pron">/'hɛlt/</div>
+      </div>
+      <div class="word-meaning">hero; warrior; valiant fighter; noble one</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*hal- (to call, invoke) → *haliþ- (the called/noble one)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Held</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Held</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">RELATED</span>
+        <span class="bridge-word">Old Norse "herr" (leader); Gothic "halis" (the great one)</span>
+      </div>
+      <div class="story">
+        A word that appears in all the oldest Germanic epics and sagas. The "Held" is the central figure of legend. In the Hildebrandslied, both warriors are Helden—heroes. But the poem suggests that being a hero and being a father are incompatible. You cannot be both.
+      </div>
+    </div>
+
+    <!-- LIED (song/poem) -->
+    <div class="narrative">
+      <span class="german-word" data-card="9">Lied</span> — the poem itself. A song. The word comes from Proto-Germanic *leuþą. The root is literally "melody" — the music is in the language itself.
+    </div>
+    <div id="card-9" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Lied</div>
+        <div class="word-pron">/'liːt/</div>
+      </div>
+      <div class="word-meaning">song; poem; verse; ballad; lyric composition</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*leuþ- (to sound, sing)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Lied</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Lied</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">RELATED</span>
+        <span class="bridge-word">Old Norse "lióð" (poem); Proto-Germanic *leuðą → English "lute" (the instrument)</span>
+      </div>
+      <div class="story">
+        The Hildebrandslied itself is called "das Hildebrandslied" — the Hildebrand-song. It was composed orally, sung for centuries, passed from mouth to ear, before monks finally wrote it down. The root *leuþ- means "to sound" — the very essence of poetry is sound, music, performance. Writing it froze that music in time.
+      </div>
+    </div>
+
+    <!-- TREUE (loyalty/fidelity) -->
+    <div class="narrative">
+      <span class="german-word" data-card="10">Treue</span> — the bond between Hildebrand and his lord, which kept him in exile for thirty years instead of returning to his family. Loyalty. Fidelity. The word comes from Proto-Germanic *trewwō, same root as English "true."
+    </div>
+    <div id="card-10" class="ety-card">
+      <div class="word-header">
+        <div class="word-main">Treue</div>
+        <div class="word-pron">/'trɔɪ̯ə/</div>
+      </div>
+      <div class="word-meaning">loyalty; fidelity; faithfulness; devotion; truth</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*dreuw- (firm, faithful, to trust)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">OLD HIGH GER</span>
+        <span class="bridge-word">Treue (loyalty, faith)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">true; troth (archaic for loyalty/faith)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">MODERN GERMAN</span>
+        <span class="bridge-word">Treue (loyalty); treu (true, faithful)</span>
+      </div>
+      <div class="story">
+        The central conflict of the Hildebrandslied is between two loyalties: Treue to one's lord (which Hildebrand keeps, staying in exile 30 years) and duty to one's blood family (which he never fulfills). Treue to the wrong person costs him everything. The word captures an entire ethical system.
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ==================== WORDS & CONCEPTS GATHERED ==================== -->
+  <div style="margin:48px 0;">
+    <!-- WORDS CARDS SECTION -->
+    <div style="margin-bottom:40px;">
+      <h3 style="font-size:1.2rem;color:var(--text-bright);margin-bottom:20px;text-align:center;text-transform:uppercase;letter-spacing:0.1em;">Words in This Chapter</h3>
+      <div class="word-collection" id="word-collection-box">
+        <div class="collected-words">
+          <div class="collected-word" data-delay="0"><span class="cw-german">Schwert</span><span class="cw-english">sword</span></div>
+          <div class="collected-word" data-delay="100"><span class="cw-german">Schild</span><span class="cw-english">shield</span></div>
+          <div class="collected-word" data-delay="200"><span class="cw-german">Sohn</span><span class="cw-english">son</span></div>
+          <div class="collected-word" data-delay="300"><span class="cw-german">Kampf</span><span class="cw-english">battle</span></div>
+          <div class="collected-word" data-delay="400"><span class="cw-german">Ehre</span><span class="cw-english">honour</span></div>
+          <div class="collected-word" data-delay="500"><span class="cw-german">Tod</span><span class="cw-english">death</span></div>
+          <div class="collected-word" data-delay="600"><span class="cw-german">Held</span><span class="cw-english">hero</span></div>
+          <div class="collected-word" data-delay="700"><span class="cw-german">Lied</span><span class="cw-english">song</span></div>
+          <div class="collected-word" data-delay="800"><span class="cw-german">Treue</span><span class="cw-english">loyalty</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPTS CARDS SECTION -->
+    <div>
+      <h3 style="font-size:1.2rem;color:var(--text-bright);margin-bottom:20px;text-align:center;text-transform:uppercase;letter-spacing:0.1em;">Concepts from This Chapter</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:20px;">
+        <div style="padding:20px;background:rgba(232,164,74,0.06);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="font-weight:600;color:#e8a44a;font-size:1rem;margin-bottom:8px;">Oral → Written</div>
+          <div style="color:rgba(212,202,187,0.7);font-size:0.95rem;">Centuries of singing before monks wrote it down around 820 CE. Writing froze the living tradition, but preserved it forever.</div>
+        </div>
+        <div style="padding:20px;background:rgba(232,164,74,0.06);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="font-weight:600;color:#e8a44a;font-size:1rem;margin-bottom:8px;">Compound Words</div>
+          <div style="color:rgba(212,202,187,0.7);font-size:0.95rem;">Sunufatarungo — Germanic word-building power. Stack roots together: Sohn + Vater + -ung = the father-son bond.</div>
+        </div>
+        <div style="padding:20px;background:rgba(232,164,74,0.06);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="font-weight:600;color:#e8a44a;font-size:1rem;margin-bottom:8px;">Heroic Vocabulary</div>
+          <div style="color:rgba(212,202,187,0.7);font-size:0.95rem;">Schwert, Schild, Ehre — the warrior lexicon. The poem's vocabulary reveals Old High German cultural values: honor, loyalty, kinship.</div>
+        </div>
+        <div style="padding:20px;background:rgba(232,164,74,0.06);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="font-weight:600;color:#e8a44a;font-size:1rem;margin-bottom:8px;">Language Preserves</div>
+          <div style="color:rgba(212,202,187,0.7);font-size:0.95rem;">The poem outlived the culture that created it. Every word is a bridge to modern German and English, proving language survives extinction.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 5: ORAL TO WRITTEN ==================== -->
+  <div class="scene" id="scene-oral">
+    <div class="scene-marker"></div>
+    <h2 style="font-size: 1.6rem; color: var(--text-bright); margin: 2em 0 1.5em; text-align: center;">From Oral to Written: A Threshold Crossed</h2>
+
+    <div class="narrative">
+      Before the Hildebrandslied was written down around 820 CE, it was <em>oral poetry</em>. Warriors recited it. Bards sang it. Fathers taught it to sons, who taught it to their sons. For centuries—maybe longer—the poem lived in human memory, in the rhythm of speech, in the music of performance.
+    </div>
+
+    <div class="narrative">
+      Every performance was slightly different. A bard might change a line to suit his audience. He might emphasize different parts. The story remained, but the exact words would shift. The poem was alive. It evolved. It was part of the living conversation of Old High German communities.
+    </div>
+
+    <div class="narrative">
+      And then, around 820 CE, two monks in Fulda sat down with quill and parchment. They wrote it in Latin letters. They froze it. From that moment forward, the Hildebrandslied could not change. Writing killed the living tradition of performance. But it also <em>preserved</em> it. Without those monks, we would have nothing.
+    </div>
+
+    <div class="narrative emphasis">
+      This is the great paradox of writing: it kills the living word, but it saves it from death. Once you write something, you can never hear it the same way again—but you know exactly what it was, at least at the moment you wrote it.
+    </div>
+
+    <div class="narrative">
+      Every chapter of this book has shown you words that traveled from Proto-Indo-European, across the steppe, into Germanic languages, down to Old High German, and into modern German and English. But the Hildebrandslied shows you something more: it shows you the moment when that living tradition of speech became a <em>recorded artifact</em>. It shows you the boundary between oral and written culture.
+    </div>
+
+    <div class="narrative">
+      The monks of Fulda didn't know they were making history. They had blank pages. They knew a good poem. They picked up their quills. And in doing so, they preserved the only surviving heroic epic in Old High German—and gave us a window into what the language actually sounded like at the threshold of the medieval world.
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Death of Performance, The Birth of Text</div>
+      Before writing, a poem like the Hildebrandslied existed as <em>performance</em>. A bard would stand before an audience and recite it. The rhythm, the tone, the pauses, the way the poet responded to the crowd's reaction—all of this was part of the poem. The poem was an <em>event</em>, not a text. Once you write it down, you capture the words but lose the performance. Future generations can read the poem, but they can never hear it the way it was meant to be heard. They can never be in the same room as the bard. They can never see his face, hear his voice rise and fall with emotion. The act of writing is an act of loss. But it is also an act of resurrection—the poem lives beyond the bard's lifetime. It reaches people centuries later. The price of preservation is the death of performance.
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 6: CHINESE BRIDGE ==================== -->
+  <div class="scene" id="scene-chinese">
+    <div class="scene-marker"></div>
+    <h2 style="font-size: 1.6rem; color: var(--text-bright); margin: 2em 0 1.5em; text-align: center;">A Chinese Bridge</h2>
+
+    <div class="narrative">
+      Two key concepts from the Hildebrandslied find echoes in Chinese:
+    </div>
+
+    <div style="text-align: center; margin: 2em 0;">
+      <div style="display: inline-block; text-align: left; padding: 24px; background: rgba(196, 154, 108, 0.08); border-radius: 8px; border-left: 2px solid var(--chinese);">
+        <div style="margin-bottom: 24px;">
+          <div class="char-display">
+            <div class="char">英</div>
+            <div class="pinyin">yīng</div>
+          </div>
+          <div class="char-display">
+            <div class="char">雄</div>
+            <div class="pinyin">xióng</div>
+          </div>
+          <div style="font-size: 1.1rem; color: var(--text-bright); margin-top: 12px;">
+            <strong>英雄 (yīngxióng)</strong> = <em>hero</em><br>
+            <span style="font-size: 1rem; color: rgba(212, 202, 187, 0.6);">literally "outstanding person" (outstanding + male/vigorous)</span>
+          </div>
+        </div>
+        <div style="border-top: 1px solid rgba(196, 154, 108, 0.2); padding-top: 16px;">
+          <div style="margin-bottom: 20px;">
+            <div class="char-display">
+              <div class="char">忠</div>
+              <div class="pinyin">zhōng</div>
+            </div>
+            <div style="font-size: 1.1rem; color: var(--text-bright); margin-top: 12px;">
+              <strong>忠 (zhōng)</strong> = <em>loyalty; devotion</em><br>
+              <span style="font-size: 1rem; color: rgba(212, 202, 187, 0.6);">literally a heart (心) beneath center (中) — loyalty is having your heart centered, undivided</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrative">
+      Both Hildebrand and Hadubrand are 英雄 (yīngxióng) — heroes. Both are warriors of outstanding courage. But Hildebrand is bound by 忠 (zhōng) — loyalty — to his lord, not to his family. His heart is divided between duty and blood. The Chinese character for loyalty shows exactly this: a heart (心) beneath center (中). But in the Hildebrandslied, Hildebrand's heart is not centered. It is torn. Thirty years of exile. The moment of recognition that never comes.
+    </div>
+
+    <div class="narrative">
+      In Chinese philosophy, 忠 (zhōng) is one of the highest virtues. Loyalty is a centered, undivided commitment. But the Hildebrandslied asks a darker question: what if your loyalty is to the wrong person? What if your devotion costs you the people you love most?
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 7: QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge: Chapter Nine</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <!-- WORDS BAR (clickable) -->
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">98 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(12%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:12%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words ▾</div>
+    </div>
+
+    <!-- WORDS DETAIL TABLE (hidden, expands on click) -->
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schwert</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sword</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schild</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">shield</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sohn</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">son</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Kampf</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">battle</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ehre</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">honour</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Tod</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">death</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Held</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">hero</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Lied</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">song</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Treue</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">loyalty</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–8: ~89 more words · Scroll for full list</td></tr>
+      </table>
+    </div>
+
+    <!-- PATTERNS BAR (clickable) -->
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">21 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(14%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:14%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns ▾</div>
+    </div>
+
+    <!-- PATTERNS DETAIL TABLE (hidden, expands on click) -->
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Oral → Written</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Hildebrandslied sung for centuries, written ~820 CE</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Compound Words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sunufatarungo = Sohn + Vater + -ung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Warrior Vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Schwert, Schild, Kampf, Ehre, Held, Tod</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Language Preserves</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Only surviving Old High German epic</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">9</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Nine
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Nine words. The only surviving Old High German epic. A poem frozen in time by two monks in Fulda.<br>
+        The Hildebrandslied was sung for centuries. Then it was written. Then it was nearly lost to history. Only by accident—by chance blank pages in a book—did it survive.<br>
+        You have now journeyed from the Proto-Indo-European steppe (6,000 years ago) through the Germanic migrations to the threshold of the medieval world. From mouth to parchment. From living tradition to written record.<br>
+        The languages have diverged. The peoples have scattered. But the deepest words still remember each other.
+      </p>
+      <div class="next-chapter">
+        Chapter Ten: The Threshold — where history becomes writing
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter8.html" class="nav-btn">← Chapter 8</a>
+    <a href="chapter10.html" class="nav-btn next">Chapter 10 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 9: HILDEBRANDSLIED - BATTLE NIGHT SCENE ---
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+let embers = [];
+let swordSilhouettes = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createSwordSilhouettes();
+}
+
+function createSwordSilhouettes() {
+  swordSilhouettes = [
+    { x: canvas.width * 0.25, rotation: -0.3 },
+    { x: canvas.width * 0.75, rotation: 0.3 },
+    { x: canvas.width * 0.4, rotation: 0.15 },
+    { x: canvas.width * 0.6, rotation: -0.15 }
+  ];
+}
+
+function createStars() {
+  stars = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 12000) :
+    Math.floor((canvas.width * canvas.height) / 8000);
+
+  for (let i = 0; i < count; i++) {
+    const y = Math.random() * (canvas.height * 0.4);
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: y,
+      r: Math.random() * 1.2 + 0.2,
+      alpha: Math.random() * 0.5 + 0.1,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2,
+      reddish: Math.random() * 0.5 + 0.5
+    });
+  }
+}
+
+function createEmbers() {
+  embers = [];
+  const count = window.innerWidth < 600 ? 30 : 60;
+
+  for (let i = 0; i < count; i++) {
+    embers.push({
+      x: canvas.width * 0.4 + Math.random() * canvas.width * 0.2,
+      y: canvas.height * 0.65 + Math.random() * canvas.height * 0.15,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.5 - 0.6,
+      r: Math.random() * 1.8 + 0.6,
+      alpha: Math.random() * 0.6 + 0.3,
+      lifespan: Math.random() * 200 + 150,
+      age: 0
+    });
+  }
+}
+
+function drawSwords() {
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  const swordOpacity = 0.12 + scroll * 0.15;
+
+  swordSilhouettes.forEach(sword => {
+    ctx.save();
+    ctx.translate(sword.x, canvas.height * 0.5);
+    ctx.rotate(sword.rotation);
+
+    // Blade
+    ctx.strokeStyle = `rgba(100, 120, 140, ${swordOpacity})`;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, -100);
+    ctx.lineTo(0, 100);
+    ctx.stroke();
+
+    // Cross-guard
+    ctx.fillStyle = `rgba(80, 80, 60, ${swordOpacity})`;
+    ctx.fillRect(-25, -8, 50, 16);
+
+    // Pommel
+    ctx.beginPath();
+    ctx.arc(0, 120, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  });
+}
+
+function drawBattleHorizon() {
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  const horizonOpacity = 0.08 + scroll * 0.12;
+
+  // Jagged mountain/forest silhouette
+  ctx.fillStyle = `rgba(30, 20, 20, ${horizonOpacity})`;
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height * 0.6);
+  for (let i = 0; i < canvas.width; i += 40) {
+    const height = 30 + Math.sin(i * 0.01) * 20;
+    ctx.lineTo(i, canvas.height * 0.6 - height);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(0, canvas.height);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(10, 10, 30, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Smoke from battle
+  const smokeGradient = ctx.createRadialGradient(
+    canvas.width * 0.5, canvas.height * 0.5, 0,
+    canvas.width * 0.5, canvas.height * 0.5, 500
+  );
+  smokeGradient.addColorStop(0, `rgba(180, 80, 60, ${0.12 + scroll * 0.15})`);
+  smokeGradient.addColorStop(0.5, `rgba(100, 40, 30, ${0.05 + scroll * 0.08})`);
+  smokeGradient.addColorStop(1, 'rgba(10, 10, 30, 0)');
+  ctx.fillStyle = smokeGradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Stars through smoke
+  stars.forEach(s => {
+    const heatWave = Math.sin(time * 0.002 + s.twinkleOffset) * 0.15 + 0.85;
+    const twinkle = s.alpha + Math.sin(time * s.twinkleSpeed + s.twinkleOffset) * 0.15;
+    const finalAlpha = twinkle * heatWave;
+
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    const reddishAmount = s.reddish;
+    ctx.fillStyle = `rgba(${Math.round(200 * reddishAmount + 150 * (1 - reddishAmount))}, ${Math.round(120 * reddishAmount + 80 * (1 - reddishAmount))}, 80, ${Math.max(0, finalAlpha)})`;
+    ctx.fill();
+  });
+
+  drawBattleHorizon();
+  drawSwords();
+
+  // Campfire between swords
+  embers = embers.filter(e => e.age < e.lifespan);
+  embers.forEach(e => {
+    e.x += e.vx;
+    e.y += e.vy;
+    e.vy -= 0.04;
+    e.age++;
+
+    const fadeOut = 1 - (e.age / e.lifespan);
+    const flicker = Math.sin(time * 0.02 + e.age) * 0.35 + 0.65;
+    const alpha = e.alpha * fadeOut * flicker;
+
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 140, 60, ${Math.max(0, alpha)})`;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.r * 2.8, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(244, 180, 100, ${Math.max(0, alpha * 0.35)})`;
+    ctx.fill();
+  });
+
+  if (Math.random() < 0.2) {
+    embers.push({
+      x: canvas.width * 0.4 + Math.random() * canvas.width * 0.2,
+      y: canvas.height * 0.65,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.4 - 0.7,
+      r: Math.random() * 1.5 + 0.7,
+      alpha: Math.random() * 0.6 + 0.4,
+      lifespan: Math.random() * 180 + 120,
+      age: 0
+    });
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createStars();
+createEmbers();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createStars(); createEmbers(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- QUIZ DATA & LOGIC ---
+const quizData = [
+  {
+    question: "What does the Hildebrandslied mean in English?",
+    options: ["The Song of Hildebrand", "The Death of Hildebrand", "The Legend of Hildebrands (plural)", "The Shield of Hildebrand"],
+    correct: 0,
+    explanation: "Hildebrandslied = Hildebrand's song/lay. It is the heroic epic about the warrior Hildebrand."
+  },
+  {
+    question: "When was the Hildebrandslied written down?",
+    options: ["350 CE", "around 600 CE", "around 820 CE", "1100 CE"],
+    correct: 2,
+    explanation: "The monks of Fulda wrote it down around 820 CE on blank pages at the back of a theological manuscript."
+  },
+  {
+    question: "What is the central tragedy of the Hildebrandslied?",
+    options: ["A hero loses his sword in battle", "Father and son meet in battle but do not recognize each other", "A warrior forgets his family's name", "Two brothers fight for a kingdom"],
+    correct: 1,
+    explanation: "Hildebrand left his infant son Hadubrand 30 years ago. They meet as enemies on a battlefield. Hadubrand does not believe his father's identity and insists on fighting."
+  },
+  {
+    question: "Where was the Hildebrandslied manuscript preserved?",
+    options: ["The monastery of Fulda", "Rome", "Constantinople", "Alexandria"],
+    correct: 0,
+    explanation: "Two monks at the Monastery of Fulda in what is now Germany wrote it on blank pages. It is now kept at the Kassel State Library."
+  },
+  {
+    question: "What does the compound word 'sunufatarungo' mean?",
+    options: ["sword and shield", "father and mother", "the relationship between son and father", "warrior's oath"],
+    correct: 2,
+    explanation: "Sunufatarungo = Sohn (son) + Vater (father) + -ung (quality/state) = the bond between father and son. It appears nowhere else in surviving Old High German."
+  },
+  {
+    question: "How does the Hildebrandslied end?",
+    options: ["Hildebrand defeats Hadubrand", "Hadubrand defeats Hildebrand", "They recognize each other and make peace", "The manuscript breaks off before the ending—we never know"],
+    correct: 3,
+    explanation: "The poem ends mid-battle, unfinished. We never learn which warrior dies, or if they recognize each other in time."
+  },
+  {
+    question: "From Chapter 6: What does 'Heimat' mean?",
+    options: ["a trading post", "the homeland; home you have left behind", "a military fortress", "a merchant's guild"],
+    correct: 1,
+    explanation: "Heimat captures the emotional sense of homeland and belonging—the place you come from, even when far away."
+  },
+  {
+    question: "What does the Chinese character 忠 (zhōng = loyalty) show?",
+    options: ["a sword beneath a shield", "a hand giving something away", "a heart (心) beneath center (中)", "an eye looking forward"],
+    correct: 2,
+    explanation: "忠 depicts a heart beneath center—loyalty is having your heart undivided and centered. Hildebrand's heart is torn between loyalty to his lord and love for his son."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  quizData.forEach((q, idx) => {
+    const qDiv = document.createElement('div');
+    qDiv.id = 'q-' + idx;
+    qDiv.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    qDiv.innerHTML = `
+      <div class="q-text">${idx + 1}. ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, optIdx) => `
+          <button class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</button>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(qDiv);
+  });
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  quizStarted = true;
+  answers[qIdx] = optIdx;
+
+  const q = quizData[qIdx];
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+
+  options.forEach(opt => opt.classList.remove('selected', 'incorrect'));
+
+  if (optIdx === q.correct) {
+    options[optIdx].classList.add('selected');
+  } else {
+    options[optIdx].classList.add('incorrect');
+    options[q.correct].classList.add('selected');
+  }
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = currentQuestion === 0;
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) score++;
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>98 words</strong> across nine chapters. These words span from the Proto-Indo-European steppe (6,000 years ago) to the written word in medieval monasteries (820 CE). Each word carries the weight of centuries.</p>
+      <p style="margin-top: 8px;"><strong>The Power of Writing:</strong> The Hildebrandslied shows the moment when oral tradition became recorded text. Before writing, poems lived and changed with every performance. After writing, they were frozen in time. You have watched this transformation from the steppe to the page.</p>
+      <p style="margin-top: 8px;">You stand at the threshold of the medieval world. The Germanic peoples have scattered across Europe. Their languages have diverged into separate tongues. But in a monastery in Fulda, monks are beginning the sacred work of writing down the languages of the people. The next chapter will take you into their world.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+  updateQuizNav();
+}
+
+// Initialize quiz
+initializeQuiz();
+
+// Mobile optimizations
+if (window.innerWidth < 600) {
+  particles = particles.slice(0, Math.floor(particles.length / 2));
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

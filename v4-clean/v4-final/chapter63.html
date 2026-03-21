@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 63: Weil, dass, obwohl</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --conjunction: #d9a77a;
+  }
+
+  html { scroll-behavior: smooth; background: #0a0e1a; }
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #chain-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 1200px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(217, 167, 122, 0.06);
+    border-left: 2px solid rgba(217, 167, 122, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--conjunction);
+    margin-bottom: 8px;
+  }
+
+  .grammar-box {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 28px 0;
+    font-size: 1rem;
+    color: var(--text-bright);
+    line-height: 1.8;
+  }
+
+  .grammar-box .rule-title {
+    font-size: 1.2rem;
+    color: var(--fire-glow);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .example-pair {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 2px solid var(--conjunction);
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-family: 'Noto Serif', monospace;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .example-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--conjunction);
+    margin-bottom: 4px;
+  }
+
+  .example-text {
+    color: var(--text-bright);
+  }
+
+  .conjunction-visual {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .conjunction-item {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .conjunction-word {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--fire);
+    margin-bottom: 12px;
+  }
+
+  .conjunction-meaning {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .conjunction-effect {
+    font-size: 0.85rem;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    background: rgba(10, 14, 26, 0.5);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+  }
+
+  .comparison-table th {
+    background: rgba(232, 164, 74, 0.12);
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--fire-glow);
+    font-weight: 600;
+  }
+
+  .comparison-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+    color: rgba(212, 202, 187, 0.9);
+  }
+
+  .comparison-table tr:hover {
+    background: rgba(232, 164, 74, 0.04);
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden { display: none; }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(217, 167, 122, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show { display: block; }
+
+  @media (max-width: 600px) {
+    .title-screen h1 { font-size: 2.5rem; }
+    .conjunction-visual { grid-template-columns: 1fr; }
+    .content { padding: 40px 16px 100px; }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="chain-canvas"></canvas>
+
+<div class="content">
+
+  <!-- TITLE SCREEN -->
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 63</div>
+    <h1 data-speak="true">Weil, dass, obwohl</h1>
+    <p class="subtitle" data-speak="true">Subordinating Conjunctions</p>
+    <p class="scroll-hint" data-speak="true">The Grammar of Reason, Explanation, and Concession<span>↓</span></p>
+  </div>
+
+  <!-- SCENE 1: INTRODUCTION -->
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">
+      When you begin learning German, you encounter two distinct families of conjunctions. The first family—coordinating conjunctions—sits quietly between equal clauses, never disturbing the verb order. They are the connectors of equals, creating sentences with symmetrical structure. But the second family—the subordinating conjunctions—transforms everything it touches. They pull the verb to the end of the clause, creating a structural shift so dramatic that it fundamentally changes how the sentence breathes. These are the words that allow you to explain, to report, to contrast, to express the full complexity of thought.
+    </p>
+    <p class="narrative" data-speak="true">
+      Today we meet three of the most important subordinating conjunctions: <span class="german-word" data-card="weil">weil</span> (because), <span class="german-word" data-card="dass">dass</span> (that), and <span class="german-word" data-card="obwohl">obwohl</span> (although). These three words open entire dimensions of complex thought in German. With them, you can explain reasons, report what others have said, express contrasts that deepen your meaning, and reveal the logical relationships between ideas. They are the architecture upon which sophisticated German expression is built.
+    </p>
+  </div>
+
+  <!-- SCENE 2: THE STRUCTURAL REVOLUTION -->
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      The Verb Moves to the End: The Defining Feature of Subordination
+    </p>
+    <p class="narrative" data-speak="true">
+      This is the defining, immutable feature of subordinating conjunctions. When you use <span class="german-word" data-card="weil">weil</span>, <span class="german-word" data-card="dass">dass</span>, or <span class="german-word" data-card="obwohl">obwohl</span>, the conjugated verb in that clause—the finite verb, the one that carries tense and mood—must go to the very end of the subordinate clause. Not nearly at the end. Not usually at the end. Always at the end. This is not optional. It is not stylistic variation. It is grammar.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">The Subordinating Conjunction Rule: An Absolute Requirement</div>
+      <p style="margin-bottom: 16px;">When a subordinating conjunction introduces a dependent clause, the finite verb moves to the end. This rule applies without exception.</p>
+
+      <div class="example-pair">
+        <div class="example-label">Main Clause (Normal Word Order)</div>
+        <div class="example-text" data-speak="true">Ich bin glücklich.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">I am happy. (Verb: position 2 — standard German main clause order)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Dependent Clause with Subordinating Conjunction</div>
+        <div class="example-text" data-speak="true">Ich bin glücklich, weil ich Zeit mit Freunden verbringe.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">I am happy because I spend time with friends. (Verb: end of clause)</div>
+      </div>
+
+      <p style="margin-top: 20px; font-size: 0.95rem; color: rgba(212,202,187,0.7);">Notice: <em>verbringe</em> moves from position 2 (where it would be in a main clause) to the very end, following the object of the preposition. This structural shift is the signature of subordination.</p>
+    </div>
+
+    <p class="narrative small" style="margin-top: 24px;" data-speak="true">
+      Think of the subordinating conjunction as a signal that says: "Everything you hear from now on until the clause ends is dependent on what came before. And to mark this dependence, the verb retreats to the end, making space for the complement to come forward." This visual rearrangement is not cosmetic—it reflects a real grammatical relationship, a nesting of ideas.
+    </p>
+  </div>
+
+  <!-- SCENE 3: WEIL (BECAUSE) -->
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Weil: The Conjunction of Cause and Reason
+    </p>
+
+    <div class="ety-card">
+      <div class="word-header">
+        <div class="word-main" data-speak="true">weil</div>
+        <div class="word-pron" data-speak="true">/ vīl /</div>
+      </div>
+      <div class="word-meaning" data-speak="true">because; for the reason that; on account of</div>
+
+      <div class="bridge">
+        <span class="bridge-label deu">German</span>
+        <span class="bridge-word" data-speak="true">weil</span>
+        <span class="bridge-note">↳ causal conjunction</span>
+      </div>
+
+      <div class="story" data-speak="true">
+        <strong>The Path of Weil:</strong> The word <em>weil</em> comes from Old High German, formed from <em>wé</em> (how, in what manner) and <em>līh</em> (body, appearance, physical form). It originally meant "in what manner" or "after what fashion," but evolved through Middle High German to mean "on account of" and finally "because." This shift reflects how human language abstracts concrete physical notions into invisible causal relationships. The manner of something's existence became the reason for something's occurrence. This linguistic evolution mirrors the evolution of human thought itself—from observing how things are to understanding why they are that way.
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Using Weil: The Logic of Cause</div>
+      <p style="margin-bottom: 20px;">Weil always introduces a reason, cause, or explanation. It answers the question "why?" When you use weil, you are providing a causal relationship between the main clause and the dependent clause. The structure is invariable:</p>
+      <p style="text-align: center; font-size: 1.1rem; margin: 20px 0; color: var(--fire-glow); font-family: 'Noto Serif', monospace;">
+        Main Clause + <strong>weil</strong> + Subject + ... + Verb (at end)
+      </p>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Simple Cause</div>
+        <div class="example-text" data-speak="true">Sie bleibt zu Hause, weil es draußen regnet.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">She stays at home because it is raining outside. (Verb: <em>regnet</em> at end)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Motivation</div>
+        <div class="example-text" data-speak="true">Wir gehen ins Kino, weil der Film interessant ist.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">We are going to the cinema because the film is interesting. (Verb: <em>ist</em> at end)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Constraint</div>
+        <div class="example-text" data-speak="true">Ich kann nicht kommen, weil ich viel Arbeit habe.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">I cannot come because I have a lot of work. (Verb: <em>habe</em> at end, after the object)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 4: Complex Cause</div>
+        <div class="example-text" data-speak="true">Das Projekt wurde verzögert, weil die Ressourcen nicht verfügbar waren.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The project was delayed because the resources were not available. (Verb: <em>waren</em> at end)</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Weil Principle in German Thought</div>
+      <p data-speak="true">
+        German language has always valued the explicit causal chain. By placing the verb at the end of the weil clause, German forces the listener to hold all the elements of the reason in mind before reaching the verb. This structure creates a suspension of meaning—you must wait for the verb to arrive to understand the complete thought. This is not inefficiency; it is precision. It allows every element of the reason to be perceived as equally important, in their proper sequence.
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 4: DASS (THAT) -->
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Dass: The Conjunction of Content and Reported Speech
+    </p>
+
+    <div class="ety-card">
+      <div class="word-header">
+        <div class="word-main" data-speak="true">dass</div>
+        <div class="word-pron" data-speak="true">/ dahs /</div>
+      </div>
+      <div class="word-meaning" data-speak="true">that; used for indirect speech and reported content</div>
+
+      <div class="bridge">
+        <span class="bridge-label deu">German</span>
+        <span class="bridge-word" data-speak="true">dass</span>
+        <span class="bridge-note">↳ demonstrative origin</span>
+      </div>
+
+      <div class="bridge">
+        <span class="bridge-label eng">English</span>
+        <span class="bridge-word" data-speak="true">that</span>
+        <span class="bridge-note">↳ cognate word, shared root</span>
+      </div>
+
+      <div class="story" data-speak="true">
+        <strong>The History of Dass:</strong> Like English "that," German <em>dass</em> descends from Old Germanic demonstrative pronouns—words that literally pointed to things. In Old High German and Old Saxon, this was <em>daþ</em>, a simple pointer meaning "that one over there." Over centuries, it underwent a remarkable semantic shift. From pointing to concrete objects ("that man," "that house"), it evolved into pointing to ideas, facts, and propositions ("that idea," "that concept," "that assertion"). This demonstrates how language abstracts concrete actions into invisible intellectual content. The physical gesture of pointing evolved into the logical gesture of indicating reported speech. Today, <em>dass</em> is one of the most frequently used conjunctions in German, the gateway to indirect speech and complex thought.
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Using Dass: The Window into Indirect Speech</div>
+      <p style="margin-bottom: 20px;">Dass introduces indirect speech, reported content, or an entire proposition that acts as an object or subject in the sentence. It is the most common way to report what someone said or what one believes to be true:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Reporting What Someone Said</div>
+        <div class="example-text" data-speak="true">Er sagt, dass er morgen kommt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">He says that he is coming tomorrow. (Verb: <em>kommt</em> at end)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Dass as Subject</div>
+        <div class="example-text" data-speak="true">Dass du hier bist, macht mich glücklich.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">That you are here makes me happy. (The entire dass clause is the subject of <em>macht</em>)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Dass as Direct Object</div>
+        <div class="example-text" data-speak="true">Ich weiß, dass das möglich ist.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">I know that that is possible. (The dass clause is the object of <em>weiß</em>)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Embedded Dass Clause</div>
+        <div class="example-text" data-speak="true">Sie behauptet, dass sie weiß, dass er kommt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">She claims that she knows that he is coming. (Nested dass clauses, each with verb at end)</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">A Note on Orthography and History</div>
+      <p data-speak="true">
+        In older German texts and some regional variants, you may see <strong>daß</strong> with a sharp S (ß). The German orthographic reform of 1996 (Rechtschreibreform) changed this to <strong>dass</strong> with a double s. Both forms refer to the same word and have the same function; you will encounter both in literature and historical documents, but modern German, since 1996, uses <em>dass</em> exclusively. This is not a minor detail—it marks a linguistic modernization that affects millions of speakers.
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 5: OBWOHL (ALTHOUGH) -->
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Obwohl: The Conjunction of Concession and Contrast
+    </p>
+
+    <div class="ety-card">
+      <div class="word-header">
+        <div class="word-main" data-speak="true">obwohl</div>
+        <div class="word-pron" data-speak="true">/ ōp-vōl /</div>
+      </div>
+      <div class="word-meaning" data-speak="true">although; even though; despite the fact that</div>
+
+      <div class="bridge">
+        <span class="bridge-label deu">German</span>
+        <span class="bridge-word" data-speak="true">obwohl</span>
+        <span class="bridge-note">↳ compound structure</span>
+      </div>
+
+      <div class="story" data-speak="true">
+        <strong>The Composition of Obwohl:</strong> <em>Obwohl</em> is a transparent compound of two elements: <em>ob</em> (whether, whether or not, if) and <em>wohl</em> (well, truly, indeed). Literally translated, it means "whether or not [something is true]" or "even if [it is true]." The etymological structure reflects the concessive meaning perfectly. You are admitting something is true—acknowledging it fully—while simultaneously setting it aside as irrelevant to your main point. This is the rhetorical gesture of concession: "I grant that X is true, yet I maintain that Y follows anyway." The word itself encodes this logical operation.
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Using Obwohl: The Logic of Concession</div>
+      <p style="margin-bottom: 20px;">Obwohl introduces a clause that concedes a fact, admits a reality, yet then contrasts with the main clause's assertion. It creates a tension between what would normally follow and what actually does:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Example 1: Weather and Action</div>
+        <div class="example-text" data-speak="true">Obwohl es kalt ist, gehen wir ins Freie.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">Although it is cold, we go outside. (Verb: <em>ist</em> at end of concessive clause)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 2: Illness and Work</div>
+        <div class="example-text" data-speak="true">Er arbeitet fleißig, obwohl er krank ist.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">He works diligently, although he is ill. (The concessive clause acknowledges the obstacle)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 3: Difficulty and Attempt</div>
+        <div class="example-text" data-speak="true">Obwohl das schwierig sein kann, versuchen wir es.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">Although that can be difficult, we are trying. (Note: <em>sein</em> at end, modal verb)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Example 4: Time and Quality</div>
+        <div class="example-text" data-speak="true">Obwohl wenig Zeit verfügbar war, erreichten wir hohe Qualität.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">Although little time was available, we achieved high quality. (Verb: <em>war</em> at end)</div>
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Psychology of Obwohl</div>
+      <p data-speak="true">
+        Obwohl is the conjunction of determination, resilience, and paradox. It appears whenever human will opposes circumstances. When you use obwohl, you are making a statement about the relationship between what is given and what is chosen. This makes it particularly important in German literature and philosophy, where the tension between external constraint and internal freedom is a constant theme.
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 6: OTHER SUBORDINATING CONJUNCTIONS -->
+  <div class="scene scene-6">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      The Extended Family: Other Important Subordinating Conjunctions
+    </p>
+
+    <p class="narrative" data-speak="true">
+      While weil, dass, and obwohl are the most frequently used, they are not alone. German has a rich family of subordinating conjunctions, each opening different logical relationships. All of them obey the same structural rule: the verb goes to the end.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Other Subordinating Conjunctions: A Survey</div>
+
+      <table class="comparison-table">
+        <tr>
+          <th>Conjunction</th>
+          <th>Meaning</th>
+          <th>Function</th>
+          <th>Example</th>
+        </tr>
+        <tr>
+          <td><strong>wenn</strong></td>
+          <td>if; when (present)</td>
+          <td>Introduces conditions or repeated actions</td>
+          <td><em>Wenn du kommst, freue ich mich.</em></td>
+        </tr>
+        <tr>
+          <td><strong>als</strong></td>
+          <td>when (past); as</td>
+          <td>Marks past moment or specific time</td>
+          <td><em>Als ich klein war, spielte ich gern.</em></td>
+        </tr>
+        <tr>
+          <td><strong>ob</strong></td>
+          <td>whether; if</td>
+          <td>Introduces indirect questions</td>
+          <td><em>Ich frage mich, ob er kommt.</em></td>
+        </tr>
+        <tr>
+          <td><strong>damit</strong></td>
+          <td>so that; in order that</td>
+          <td>Introduces purpose or intention</td>
+          <td><em>Ich arbeite hart, damit ich erfolg bin.</em></td>
+        </tr>
+        <tr>
+          <td><strong>nachdem</strong></td>
+          <td>after</td>
+          <td>Introduces temporal sequence</td>
+          <td><em>Nachdem er angerufen hatte, kam er vorbei.</em></td>
+        </tr>
+        <tr>
+          <td><strong>bevor</strong></td>
+          <td>before</td>
+          <td>Introduces temporal priority</td>
+          <td><em>Bevor du gehst, sag mir Bescheid.</em></td>
+        </tr>
+        <tr>
+          <td><strong>während</strong></td>
+          <td>while; during</td>
+          <td>Marks simultaneity or contrast</td>
+          <td><em>Während er arbeitete, spielte sie.</em></td>
+        </tr>
+      </table>
+
+      <p style="margin-top: 20px; font-size: 0.95rem; color: rgba(212,202,187,0.7);">Each of these conjunctions carries a specific logical meaning and determines what kind of relationship you are describing. Yet all follow the same syntactic principle: verb at the end.</p>
+    </div>
+  </div>
+
+  <!-- SCENE 7: THE THREE TOGETHER -->
+  <div class="scene scene-7">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Three Subordinating Conjunctions: A Comprehensive Summary
+    </p>
+
+    <p class="narrative" data-speak="true">
+      Let us return to our three primary conjunctions and see them clearly in their distinct roles and shared structure.
+    </p>
+
+    <div class="conjunction-visual">
+      <div class="conjunction-item">
+        <div class="conjunction-word" data-speak="true">weil</div>
+        <div class="conjunction-meaning" data-speak="true">because</div>
+        <div class="conjunction-effect" data-speak="true">Introduces reason or cause—answers "why?"</div>
+      </div>
+
+      <div class="conjunction-item">
+        <div class="conjunction-word" data-speak="true">dass</div>
+        <div class="conjunction-meaning" data-speak="true">that</div>
+        <div class="conjunction-effect" data-speak="true">Introduces reported content or propositions</div>
+      </div>
+
+      <div class="conjunction-item">
+        <div class="conjunction-word" data-speak="true">obwohl</div>
+        <div class="conjunction-meaning" data-speak="true">although</div>
+        <div class="conjunction-effect" data-speak="true">Introduces concession or contrast—admits yet opposes</div>
+      </div>
+    </div>
+
+    <div class="grammar-box" style="margin-top: 40px;">
+      <div class="rule-title">The Shared Rule: Verb Movement</div>
+      <p style="margin-bottom: 20px;">All three subordinating conjunctions follow the same structural rule: when introducing a dependent clause, the conjugated verb moves to the end of that clause. This is not optional or stylistic—it is mandatory in German. When you see <em>weil</em>, <em>dass</em>, or <em>obwohl</em>, expect the verb to be at the end. Expect the listener to hold the entire complement in mind before the verb arrives to complete the thought.</p>
+
+      <div style="background: rgba(232, 164, 74, 0.08); padding: 16px; border-radius: 8px; margin-top: 16px;">
+        <p style="font-size: 0.95rem; color: rgba(212,202,187,0.9);">
+          <strong>The Key Principle:</strong> A dependent clause (subordinate clause) always has its finite verb at the end. This is the defining characteristic that distinguishes it from a main clause, where the verb occupies position 2. The verb's position tells you whether you are hearing a main clause or a subordinate clause.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 8: COMPLEX EXAMPLES -->
+  <div class="scene scene-8">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Putting It All Together: Complex Sentences with Nested Subordination
+    </p>
+
+    <p class="narrative" data-speak="true">
+      German allows for intricate nested structures. You can build sentences where multiple subordinating conjunctions layer together, each pulling its verb to the end of its own clause. The result is a kind of linguistic architecture where meaning is suspended through multiple levels until the final verb arrives. Here are examples that show the power of these three conjunctions in combination, demonstrating how sophisticated German expression can become:
+    </p>
+
+    <div class="grammar-box" style="margin-top: 24px;">
+      <div class="example-pair">
+        <div class="example-label">Complex Sentence 1: Weil + Dass (Cause Containing Report)</div>
+        <div class="example-text" data-speak="true">
+          Ich bin traurig, weil ich höre, dass mein Freund krank ist.
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">
+          I am sad because I hear that my friend is ill.
+        </div>
+        <div style="font-size: 0.85rem; color: rgba(232,164,74,0.7); margin-top: 8px;">
+          Analysis: <em>bin</em> (main verb, position 2), <em>höre</em> (verb of weil clause, at its end), <em>ist</em> (verb of dass clause, at its end). Notice the nesting: the report (dass clause) sits inside the reason (weil clause), which sits inside the main clause.
+        </div>
+      </div>
+
+      <div class="example-pair" style="margin-top: 16px;">
+        <div class="example-label">Complex Sentence 2: Obwohl + Dass (Concession Containing Report)</div>
+        <div class="example-text" data-speak="true">
+          Obwohl ich weiß, dass es schwer ist, versuche ich es.
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">
+          Although I know that it is difficult, I try. (Main clause at the end)
+        </div>
+        <div style="font-size: 0.85rem; color: rgba(232,164,74,0.7); margin-top: 8px;">
+          Analysis: The sentence begins with obwohl (fronted concessive clause). Inside it sits <em>weiß</em> (at the end of obwohl's domain), and inside that sits <em>ist</em> (at the end of dass's domain). Then the main clause arrives with <em>versuche</em> in position 2.
+        </div>
+      </div>
+
+      <div class="example-pair" style="margin-top: 16px;">
+        <div class="example-label">Complex Sentence 3: All Three Interacting</div>
+        <div class="example-text" data-speak="true">
+          Ich sage, dass ich gehe, weil ich denke, obwohl ich bleiben möchte.
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">
+          I say that I go because I think, although I want to stay. (Layered reasons and objections)
+        </div>
+        <div style="font-size: 0.85rem; color: rgba(232,164,74,0.7); margin-top: 8px;">
+          Analysis: Multiple layers of dependent clauses, each with its verb at the end. The structure nests like Russian dolls: a dass clause containing a weil clause containing an obwohl clause, with each verb at the end of its domain.
+        </div>
+      </div>
+
+      <div class="example-pair" style="margin-top: 16px;">
+        <div class="example-label">Complex Sentence 4: Extended Cause</div>
+        <div class="example-text" data-speak="true">
+          Das Projekt scheiterte, weil die Team-Mitglieder, die erfahren waren, nicht genug Zeit hatten, und weil die neuen Mitarbeiter unzureichend geschult worden waren.
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">
+          The project failed because the team members who were experienced did not have enough time, and because the new employees had been insufficiently trained. (Multiple weil clauses in coordination)
+        </div>
+        <div style="font-size: 0.85rem; color: rgba(232,164,74,0.7); margin-top: 8px;">
+          Analysis: Two coordinate reasons, each introduced by weil, each with its verb at the end. The first has a relative clause embedded within it.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 9: COMMON MISTAKES -->
+  <div class="scene scene-9">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Avoiding Common Pitfalls: The Most Frequent Errors
+    </p>
+
+    <p class="narrative" data-speak="true">
+      Even advanced learners sometimes stumble with subordinating conjunctions. Here are the most common mistakes, the ones that even native speakers occasionally make in speech (though they would never make them in writing):
+    </p>
+
+    <div class="aside-box">
+      <div class="aside-title">Mistake 1: Verb in Position 2 Instead of at the End</div>
+      <p data-speak="true">
+        <strong>Incorrect:</strong> Ich bin glücklich, weil ich verbringe Zeit mit Freunden.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.95rem; color: rgba(212,202,187,0.6);" data-speak="true">
+        (The verb <em>verbringe</em> is in position 2, as if in a main clause. This violates the subordinating conjunction rule.)
+      </p>
+      <p style="margin-top: 12px;" data-speak="true">
+        <strong>Correct:</strong> Ich bin glücklich, weil ich Zeit mit Freunden verbringe.
+      </p>
+      <p style="margin-top: 4px; font-size: 0.95rem; color: rgba(232,164,74,0.7);" data-speak="true">
+        (The verb <em>verbringe</em> is at the end of the weil clause, following the object.)
+      </p>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Mistake 2: Using Dass for Causation Instead of Weil</div>
+      <p data-speak="true">
+        <strong>Incorrect:</strong> Ich bin glücklich, dass ich Zeit mit Freunden verbringe.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.95rem; color: rgba(212,202,187,0.6);" data-speak="true">
+        (Dass implies passive reporting or content—"I am happy that [it is reported/true that] I spend time..." This is grammatically correct but semantically wrong. It suggests the happiness comes from learning or understanding this fact, not from the action itself.)
+      </p>
+      <p style="margin-top: 12px;" data-speak="true">
+        <strong>Correct:</strong> Ich bin glücklich, weil ich Zeit mit Freunden verbringe.
+      </p>
+      <p style="margin-top: 4px; font-size: 0.95rem; color: rgba(232,164,74,0.7);" data-speak="true">
+        (Weil correctly indicates that the action (spending time) causes the state (happiness).)
+      </p>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Mistake 3: Missing Verb Entirely in Subordinate Clause</div>
+      <p data-speak="true">
+        <strong>Incorrect:</strong> Ich bleibe zu Hause, weil das Wetter schlecht.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.95rem; color: rgba(212,202,187,0.6);" data-speak="true">
+        (In German, "the weather bad" is not a complete predicate. The copula verb must be present.)
+      </p>
+      <p style="margin-top: 12px;" data-speak="true">
+        <strong>Correct:</strong> Ich bleibe zu Hause, weil das Wetter schlecht ist.
+      </p>
+      <p style="margin-top: 4px; font-size: 0.95rem; color: rgba(232,164,74,0.7);" data-speak="true">
+        (The copula <em>ist</em> must appear, at the end of the clause.)
+      </p>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Mistake 4: Word Order Collapse in Obwohl Clause</div>
+      <p data-speak="true">
+        <strong>Incorrect:</strong> Obwohl ich versuche es, schaffe ich das nicht.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.95rem; color: rgba(212,202,187,0.6);" data-speak="true">
+        (The direct object <em>es</em> comes after the verb. This violates the end-position rule.)
+      </p>
+      <p style="margin-top: 12px;" data-speak="true">
+        <strong>Correct:</strong> Obwohl ich es versuche, schaffe ich das nicht.
+      </p>
+      <p style="margin-top: 4px; font-size: 0.95rem; color: rgba(232,164,74,0.7);" data-speak="true">
+        (The object <em>es</em> moves before the verb, which then moves to the end.)
+      </p>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Mistake 5: Confusing Subordinating with Coordinating Conjunctions</div>
+      <p data-speak="true">
+        <strong>Incorrect (confusing denn with weil):</strong> Ich bin müde, weil ich habe lange gearbeitet.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.95rem; color: rgba(212,202,187,0.6);" data-speak="true">
+        (This mixes the verb order of a subordinating conjunction with the form of a coordinating one. The auxiliary <em>habe</em> should appear at the end.)
+      </p>
+      <p style="margin-top: 12px;" data-speak="true">
+        <strong>Correct:</strong> Ich bin müde, weil ich lange gearbeitet habe.
+      </p>
+      <p style="margin-top: 4px; font-size: 0.95rem; color: rgba(232,164,74,0.7);" data-speak="true">
+        (With a perfect tense, both the auxiliary and participle appear at the end of the subordinate clause.)
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 10: SUBORDINATE CLAUSE INDEPENDENCE -->
+  <div class="scene scene-10">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Subordinate Clauses as Functional Units: Flexibility and Position
+    </p>
+
+    <p class="narrative" data-speak="true">
+      A subordinate clause introduced by a subordinating conjunction always remains dependent—it cannot stand alone as a sentence. But while it is dependent in meaning, it has flexibility in position. Unlike English, where subordinate clauses often follow the main clause, German allows subordinate clauses to appear at the beginning, middle, or end of the sentence. Each position creates a subtle difference in emphasis.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Position Variations: Where the Subordinate Clause Can Go</div>
+
+      <div class="example-pair">
+        <div class="example-label">Clause at the End (Most Common)</div>
+        <div class="example-text" data-speak="true">Wir gehen ins Freie, obwohl es kalt ist.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">We go outside, although it is cold. (The main clause comes first, establishing context)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Clause at the Beginning (Emphasis)</div>
+        <div class="example-text" data-speak="true">Obwohl es kalt ist, gehen wir ins Freie.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">Although it is cold, we go outside. (The condition is put first; emphasis on the obstacle overcome)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Multiple Clauses: Complex Arrangement</div>
+        <div class="example-text" data-speak="true">Weil er weiß, dass der Plan fehlbar ist, obwohl er glaubt, dass er funktioniert, handelt er vorsichtig.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">Because he knows that the plan is fallible, although he believes that it works, he acts cautiously. (Clauses interweave in a complex chain)</div>
+      </div>
+
+      <div style="background: rgba(232, 164, 74, 0.08); padding: 16px; border-radius: 8px; margin-top: 16px;">
+        <p style="font-size: 0.95rem; color: rgba(212,202,187,0.9);">
+          <strong>A Note on Emphasis:</strong> Placing a subordinate clause at the beginning creates rhetorical emphasis. You are starting with the condition, the reason, or the concession before revealing what actually happens. This technique is common in German literature and formal speech. It creates suspense—the reader or listener must hold the entire subordinate clause in mind before the main clause arrives to complete the thought.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ SECTION -->
+  <div class="quiz-container">
+    <h3 data-speak="true">Chapter 63 Quiz: Subordinating Conjunctions</h3>
+
+    <div id="quiz-questions">
+      <!-- Questions will be inserted here by JavaScript -->
+    </div>
+
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+
+    <div class="quiz-score" id="quiz-score"></div>
+
+    <div class="quiz-reset">
+      <button onclick="resetQuiz()">Start Over</button>
+    </div>
+
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(232, 164, 74, 0.1); display: flex; justify-content: space-between; align-items: center;">
+    <a href="chapter62.html" style="color: var(--fire); text-decoration: none; font-size: 1rem;">← Chapter 62</a>
+    <span style="color: rgba(212, 202, 187, 0.5); font-size: 0.9rem;">Chapter 63 of 100</span>
+    <a href="chapter64.html" style="color: var(--fire); text-decoration: none; font-size: 1rem;">Chapter 64 →</a>
+  </div>
+
+</div>
+
+<script data-speak="true">
+const quizData = [
+  {
+    question: "Which subordinating conjunction means 'because'?",
+    options: ["weil", "dass", "obwohl", "aber"],
+    correct: 0,
+    explanation: "Weil means 'because' and introduces a reason or cause clause. It answers the question 'why?'"
+  },
+  {
+    question: "What happens to the verb when a subordinating conjunction is used?",
+    options: [
+      "It stays in position 2",
+      "It moves to the end of the dependent clause",
+      "It disappears",
+      "It moves to position 1"
+    ],
+    correct: 1,
+    explanation: "The conjugated verb moves to the end of the dependent clause after subordinating conjunctions. This is the defining characteristic of subordination."
+  },
+  {
+    question: "Complete the sentence: 'Ich bin müde, weil ich...'",
+    options: [
+      "arbeite die ganze Nacht",
+      "die ganze Nacht arbeite",
+      "habe arbeitet ganz die Nacht",
+      "arbeite ganz die Nacht"
+    ],
+    correct: 1,
+    explanation: "After 'weil', the verb must go to the end: 'ich die ganze Nacht arbeite.' The verb position is mandatory."
+  },
+  {
+    question: "Which conjunction introduces indirect speech?",
+    options: ["weil", "dass", "obwohl", "aber"],
+    correct: 1,
+    explanation: "Dass introduces reported content, indirect speech, and propositions. It is the most common way to report what someone said."
+  },
+  {
+    question: "What does 'obwohl' mean?",
+    options: ["because", "that", "although", "and"],
+    correct: 2,
+    explanation: "Obwohl means 'although' or 'even though' and introduces a concessive clause that admits a fact while contrasting with the main clause."
+  },
+  {
+    question: "Which sentence is grammatically correct?",
+    options: [
+      "Obwohl es kalt ist, ich gehe raus.",
+      "Obwohl es kalt, ich gehe raus.",
+      "Obwohl es kalt ist, gehe ich raus.",
+      "Obwohl es kalt ist gehe ich raus."
+    ],
+    correct: 2,
+    explanation: "The main clause maintains normal word order (verb in position 2), but the dependent clause (after obwohl) ends with the verb."
+  },
+  {
+    question: "Translate: 'Er sagt, dass er kommt.'",
+    options: [
+      "He comes, that he says.",
+      "He says that he comes.",
+      "He says he comes because.",
+      "That he says he comes."
+    ],
+    correct: 1,
+    explanation: "Dass introduces what he is saying: 'that he comes.' The verb 'kommt' is at the end of the dass clause."
+  },
+  {
+    question: "Which subordinating conjunction expresses contrast or concession?",
+    options: ["weil", "dass", "obwohl", "denn"],
+    correct: 2,
+    explanation: "Obwohl expresses concession—admitting something is true while contrasting it with the main clause's assertion."
+  },
+  {
+    question: "In the sentence 'Ich weiß, dass das schwierig ist,' where does 'ist' appear?",
+    options: [
+      "After 'dass'",
+      "At the end of the dependent clause",
+      "In the middle of the dependent clause",
+      "In the main clause"
+    ],
+    correct: 1,
+    explanation: "The verb 'ist' appears at the end of the dependent clause introduced by 'dass', following the subject and adjective."
+  },
+  {
+    question: "What is the original meaning of 'ob' in 'obwohl'?",
+    options: [
+      "over",
+      "whether, whether or not",
+      "above",
+      "between"
+    ],
+    correct: 1,
+    explanation: "Obwohl comes from 'ob' (whether) + 'wohl' (well), literally 'whether or not [it is true]', reflecting the concessive meaning."
+  },
+  {
+    question: "Which sentence correctly uses 'weil'?",
+    options: [
+      "Ich gehe, weil du kommst morgen.",
+      "Ich gehe, weil du morgen kommst.",
+      "Ich gehe weil kommst du morgen.",
+      "Ich gehe, weil morgen du kommst."
+    ],
+    correct: 1,
+    explanation: "After 'weil', the subject, time adverb, and verb follow the correct order: 'du morgen kommst' (object/adverb then verb)."
+  },
+  {
+    question: "In modern German, is 'dass' or 'daß' the correct spelling?",
+    options: [
+      "Only 'daß' with sharp S",
+      "Only 'dass' with double S",
+      "Both are equally correct today",
+      "Neither; use 'das' instead"
+    ],
+    correct: 1,
+    explanation: "Modern German orthography (since 1996) uses 'dass' with double s. 'Daß' is older but still seen in older texts and historical documents."
+  },
+  {
+    question: "Which of these sentences uses 'dass' correctly?",
+    options: [
+      "Ich dass weiß, dass es möglich ist.",
+      "Ich weiß, dass es möglich ist.",
+      "Ich weiß dass es ist möglich.",
+      "Dass ich weiß es ist möglich."
+    ],
+    correct: 1,
+    explanation: "The correct structure is: main clause (Ich weiß) + 'dass' + dependent clause with verb at end (es möglich ist)."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion() {
+  const quiz = document.getElementById('quiz-questions');
+  quiz.innerHTML = '';
+
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+
+  const html = `
+    <div class="quiz-question ${isAnswered ? 'answered' : ''}">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '') : ''}"
+               onclick="selectAnswer(${i})" data-speak="true">
+            ${opt}
+          </div>
+        `).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232,164,74,0.1); font-size: 0.95rem; color: rgba(212,202,187,0.8);" data-speak="true">${q.explanation}</div>` : ''}
+    </div>
+  `;
+
+  quiz.innerHTML = html;
+  updateNavButtons();
+}
+
+function selectAnswer(index) {
+  if (answered[currentQuestion] !== undefined) return;
+
+  answered[currentQuestion] = index;
+  if (index === quizData[currentQuestion].correct) {
+    score++;
+  }
+
+  displayQuestion();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    currentQuestion++;
+    displayQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    displayQuestion();
+  }
+}
+
+function updateNavButtons() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function showScore() {
+  const scoreDiv = document.getElementById('quiz-score');
+  const percentage = Math.round((score / quizData.length) * 100);
+  scoreDiv.textContent = `Your score: ${score} / ${quizData.length} (${percentage}%)`;
+
+  const summary = document.getElementById('quiz-summary');
+  summary.classList.add('show');
+  summary.innerHTML = `
+    <p data-speak="true"><strong>Quiz Complete!</strong></p>
+    <p style="margin-top: 12px;" data-speak="true">You mastered ${percentage}% of subordinating conjunctions. ${percentage >= 80 ? 'Excellent understanding of verb placement and conjunction usage!' : 'Keep practicing the verb movement rule!'}</p>
+  `;
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  answered = {};
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-summary').classList.remove('show');
+  displayQuestion();
+}
+
+// Canvas animation for interlocking chain links
+const canvas = document.getElementById('chain-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawChainLinks() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.1)';
+  ctx.lineWidth = 2;
+
+  const time = Date.now() / 3000;
+  const linkSize = 40;
+
+  for (let y = 0; y < canvas.height; y += linkSize * 2) {
+    for (let x = 0; x < canvas.width; x += linkSize * 2) {
+      const offsetX = Math.sin(time + x / 100) * 5;
+      const offsetY = Math.cos(time + y / 100) * 5;
+
+      ctx.beginPath();
+      ctx.ellipse(x + offsetX, y + offsetY, linkSize / 2, linkSize, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+
+  requestAnimationFrame(drawChainLinks);
+}
+
+drawChainLinks();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// Intersection Observer for scene animations
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(scene => observer.observe(scene));
+
+// Initialize quiz
+displayQuestion();
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">556 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(65%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:65%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 556 words across 63 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">112 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(77%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:77%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 112 patterns across 63 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

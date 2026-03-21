@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>The First Word — Chapter 85: Doch, mal, ja (Modal Particles I)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --fire: #e8a44a;
+      --fire-glow: #f4c67a;
+      --ember: #c45d2c;
+      --night: #0a0e1a;
+      --night-mid: #131a2e;
+      --night-light: #1c2640;
+      --star: #e8dcc8;
+      --text: #d4cabb;
+      --text-bright: #efe8db;
+      --german: #e8a44a;
+      --english: #8a9bae;
+      --pie: #9b8ec4;
+      --particle-accent: #d4a5ff;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--night);
+    }
+
+    body {
+      background: linear-gradient(to bottom, #1a1520 0%, #0a0e1a 40%, #1a1a2e 70%, #0a0505 100%);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.25rem;
+      line-height: 1.85;
+      overflow-x: hidden;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 60px 24px 140px;
+    }
+
+    .title-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .title-screen h1 {
+      font-size: 3.8rem;
+      font-weight: 300;
+      color: var(--text-bright);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3em;
+      opacity: 0;
+      animation: fadeUp 2s ease 0.5s forwards;
+    }
+
+    .title-screen .subtitle {
+      font-size: 1.4rem;
+      font-weight: 300;
+      font-style: italic;
+      color: #e8a44a;
+      opacity: 0;
+      animation: fadeUp 2s ease 1.2s forwards;
+      margin-bottom: 2em;
+    }
+
+    .title-screen .chapter-label {
+      font-size: 0.95rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(212, 202, 187, 0.4);
+      opacity: 0;
+      animation: fadeUp 2s ease 0.2s forwards;
+      margin-bottom: 0.5em;
+    }
+
+    .scroll-hint {
+      opacity: 0;
+      animation: fadeUp 2s ease 2s forwards;
+      color: rgba(212, 202, 187, 0.3);
+      font-size: 0.95rem;
+      margin-top: 3em;
+    }
+
+    .scene {
+      margin-bottom: 90px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s, transform 1s;
+    }
+
+    .scene.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scene-marker {
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+      margin: 0 auto 40px;
+    }
+
+    .narrative {
+      font-size: 1.25rem;
+      line-height: 1.95;
+      margin-bottom: 1.8em;
+      letter-spacing: 0.01em;
+    }
+
+    .narrative.emphasis {
+      font-size: 1.4rem;
+      color: var(--text-bright);
+      text-align: center;
+      font-style: italic;
+      margin: 2.2em 0;
+      line-height: 1.8;
+    }
+
+    .narrative.small {
+      font-size: 1.05rem;
+      color: rgba(212, 202, 187, 0.7);
+      line-height: 1.75;
+    }
+
+    .german-word {
+      color: var(--german);
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+      transition: all 0.3s;
+    }
+
+    .german-word:hover {
+      color: var(--fire-glow);
+      border-bottom-color: var(--fire-glow);
+    }
+
+    .ety-card {
+      background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+      border: 1px solid rgba(232, 164, 74, 0.18);
+      border-radius: 14px;
+      padding: 36px 40px;
+      margin: 28px 0 40px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.7s ease, opacity 0.6s ease;
+    }
+
+    .ety-card.open {
+      max-height: 1600px;
+      opacity: 1;
+    }
+
+    .ety-card .word-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ety-card .word-main {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--german);
+      letter-spacing: 0.05em;
+    }
+
+    .ety-card .word-meaning {
+      font-size: 1.15rem;
+      color: var(--text-bright);
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(232, 164, 74, 0.15);
+      font-style: italic;
+    }
+
+    .ety-card .story {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(232, 164, 74, 0.15);
+      font-size: 1.05rem;
+      color: rgba(212, 202, 187, 0.85);
+      line-height: 1.88;
+      letter-spacing: 0.005em;
+    }
+
+    .ety-card .example {
+      background: rgba(232, 164, 74, 0.04);
+      border-left: 2px solid rgba(232, 164, 74, 0.3);
+      padding: 14px 18px;
+      margin: 18px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 1rem;
+    }
+
+    .ety-card .example-german {
+      color: var(--german);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .ety-card .example-english {
+      color: rgba(212, 202, 187, 0.75);
+      font-size: 0.98rem;
+      font-style: italic;
+    }
+
+    .guess-section {
+      background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+      border: 1px solid rgba(232, 164, 74, 0.15);
+      border-radius: 14px;
+      padding: 40px 36px;
+      margin: 48px 0;
+      text-align: center;
+    }
+
+    .guess-section .prompt {
+      font-size: 1.2rem;
+      color: var(--text-bright);
+      margin-bottom: 26px;
+      line-height: 1.6;
+    }
+
+    .guess-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .guess-btn {
+      background: rgba(232, 164, 74, 0.08);
+      border: 1px solid rgba(232, 164, 74, 0.25);
+      color: var(--text-bright);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      padding: 14px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .guess-btn:hover {
+      background: rgba(232, 164, 74, 0.15);
+      border-color: var(--fire);
+      transform: translateY(-2px);
+    }
+
+    .guess-btn.correct {
+      background: rgba(74, 180, 100, 0.15);
+      border-color: #4ab464;
+      color: #8ed69e;
+      pointer-events: none;
+    }
+
+    .guess-btn.incorrect {
+      background: rgba(180, 74, 74, 0.1);
+      border-color: rgba(180, 74, 74, 0.3);
+      color: rgba(212, 202, 187, 0.3);
+      pointer-events: none;
+    }
+
+    .guess-feedback {
+      font-size: 1.05rem;
+      margin-top: 16px;
+      color: var(--fire-glow);
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .guess-feedback.show {
+      opacity: 1;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 70px 0;
+      color: rgba(232, 164, 74, 0.25);
+      font-size: 1.5rem;
+      letter-spacing: 0.15em;
+    }
+
+    .aside-box {
+      background: linear-gradient(135deg, rgba(155, 142, 196, 0.08), rgba(155, 142, 196, 0.04));
+      border-left: 3px solid rgba(155, 142, 196, 0.35);
+      padding: 28px 32px;
+      margin: 36px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.08rem;
+      color: rgba(212, 202, 187, 0.9);
+      line-height: 1.9;
+    }
+
+    .contextual-note {
+      background: linear-gradient(135deg, rgba(232, 164, 74, 0.06), rgba(232, 164, 74, 0.02));
+      border-left: 3px solid rgba(232, 164, 74, 0.3);
+      padding: 24px 28px;
+      margin: 32px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 1.05rem;
+      color: rgba(212, 202, 187, 0.85);
+    }
+
+    .particle-comparison {
+      background: rgba(20, 28, 45, 0.7);
+      border: 1px solid rgba(232, 164, 74, 0.1);
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin: 28px 0;
+      font-size: 1.05rem;
+    }
+
+    .particle-comparison .comparison-title {
+      color: var(--particle-accent);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .particle-comparison .comparison-item {
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+    }
+
+    .particle-comparison .comparison-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .comparison-label {
+      color: rgba(212, 202, 187, 0.6);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .quiz-container {
+      background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+      border: 1px solid rgba(232, 164, 74, 0.12);
+      border-radius: 16px;
+      padding: 48px 40px;
+      margin: 70px 0;
+    }
+
+    .quiz-container h3 {
+      font-size: 1.6rem;
+      color: var(--text-bright);
+      margin-bottom: 40px;
+      text-align: center;
+      font-weight: 400;
+    }
+
+    .quiz-question {
+      background: rgba(26, 35, 55, 0.6);
+      border: 1px solid rgba(232, 164, 74, 0.08);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .quiz-question.hidden {
+      display: none;
+    }
+
+    .quiz-question-text {
+      font-size: 1.15rem;
+      color: var(--text-bright);
+      margin-bottom: 22px;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-option {
+      background: rgba(232, 164, 74, 0.08);
+      border: 1px solid rgba(232, 164, 74, 0.2);
+      color: var(--text);
+      padding: 14px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1.05rem;
+      text-align: left;
+    }
+
+    .quiz-option:hover {
+      background: rgba(232, 164, 74, 0.15);
+      border-color: var(--fire);
+    }
+
+    .quiz-option.selected {
+      background: rgba(74, 180, 100, 0.15);
+      border-color: #4ab464;
+      color: #8ed69e;
+    }
+
+    .quiz-option.incorrect {
+      background: rgba(180, 74, 74, 0.1);
+      border-color: rgba(180, 74, 74, 0.3);
+      color: rgba(212, 202, 187, 0.3);
+    }
+
+    .quiz-nav {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .quiz-nav button {
+      background: rgba(232, 164, 74, 0.08);
+      border: 1px solid rgba(232, 164, 74, 0.25);
+      color: var(--text-bright);
+      font-family: 'Cormorant Garamond', serif;
+      padding: 14px 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1.05rem;
+    }
+
+    .quiz-nav button:hover:not(:disabled) {
+      background: rgba(232, 164, 74, 0.15);
+      border-color: var(--fire);
+    }
+
+    .quiz-nav button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .quiz-score {
+      text-align: center;
+      font-size: 1.5rem;
+      color: var(--fire-glow);
+      margin: 32px 0;
+      font-weight: 500;
+    }
+
+    .post-quiz-summary {
+      background: linear-gradient(135deg, rgba(155, 142, 196, 0.08), rgba(155, 142, 196, 0.04));
+      border-left: 2px solid rgba(232, 164, 74, 0.35);
+      padding: 28px 32px;
+      margin: 28px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.08rem;
+      color: rgba(212, 202, 187, 0.9);
+      display: none;
+      line-height: 1.8;
+    }
+
+    .post-quiz-summary.show {
+      display: block;
+    }
+
+    .post-quiz-summary strong {
+      color: var(--text-bright);
+      font-size: 1.15rem;
+    }
+
+    .word-collection {
+      background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+      border: 1px solid rgba(232, 164, 74, 0.12);
+      border-radius: 16px;
+      padding: 48px 40px;
+      margin: 70px 0;
+      text-align: center;
+      display: none;
+    }
+
+    .word-collection h3 {
+      font-size: 1.5rem;
+      color: var(--text-bright);
+      margin-bottom: 36px;
+      font-weight: 400;
+    }
+
+    .word-collection.show {
+      display: block;
+    }
+
+    .collected-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .collected-word {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(232, 164, 74, 0.06);
+      border: 1px solid rgba(232, 164, 74, 0.15);
+      border-radius: 12px;
+      padding: 18px 28px;
+      min-width: 100px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+
+    .collected-word.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .collected-word .cw-german {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--german);
+      letter-spacing: 0.02em;
+    }
+
+    .collected-word .cw-english {
+      font-size: 0.85rem;
+      color: rgba(212, 202, 187, 0.5);
+      margin-top: 6px;
+      font-weight: 400;
+    }
+
+    .chapter-end {
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .chapter-end .end-line {
+      width: 60px;
+      height: 1px;
+      background: var(--fire);
+      margin: 0 auto 40px;
+      opacity: 0.4;
+    }
+
+    .chapter-end .end-text {
+      font-size: 1.35rem;
+      color: var(--text-bright);
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    .chapter-end .end-subtext {
+      font-size: 1.08rem;
+      color: rgba(212, 202, 187, 0.75);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .next-chapter {
+      font-size: 1.15rem;
+      color: var(--fire);
+      margin-top: 40px;
+      letter-spacing: 0.04em;
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+      z-index: 100;
+      width: 0%;
+    }
+
+    .speak-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(232, 164, 74, 0.3);
+      border-radius: 50%;
+      background: rgba(232, 164, 74, 0.1);
+      color: var(--fire);
+      cursor: pointer;
+      font-size: 1rem;
+      vertical-align: middle;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .speak-btn:hover {
+      background: rgba(232, 164, 74, 0.2);
+      border-color: rgba(232, 164, 74, 0.6);
+    }
+
+    .speak-btn:active {
+      transform: scale(0.9);
+    }
+
+    .speak-btn.speaking {
+      background: rgba(232, 164, 74, 0.3);
+      border-color: #e8a44a;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        padding: 40px 16px 120px;
+      }
+
+      .title-screen h1 {
+        font-size: 2.4rem;
+      }
+
+      .narrative {
+        font-size: 1.15rem;
+      }
+
+      .ety-card {
+        padding: 28px 24px;
+      }
+
+      .quiz-container {
+        padding: 32px 24px;
+      }
+    }
+  
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+  <canvas id="canvas"></canvas>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <div class="content">
+    <div class="title-screen">
+      <div class="chapter-label">Chapter Eighty-Five</div>
+      <h1>Doch, mal, ja</h1>
+      <div class="subtitle">Modal Particles: The Untranslatable Season</div>
+      <div class="scroll-hint"><span>↓</span></div>
+    </div>
+
+    <div class="scene" id="scene1">
+      <div class="scene-marker"></div>
+      <p class="narrative">We now enter a territory that English has nearly abandoned. Modal particles are small words—often just a single syllable—that cannot be translated literally, but which are essential to understanding how German speakers truly express themselves. They are the invisible seasoning in speech, impossible to identify when removed, yet they flavor every conversation. They mark intention, emotion, assumption, and tone without changing the grammatical structure of a sentence.</p>
+
+      <p class="narrative emphasis">These three particles—doch, mal, ja—are untranslatable. They can only be understood through experience, intuition, and hearing native speakers use them. Remove them, and German speech becomes harsh and unnatural. Keep them, and you begin to sound like a native.</p>
+
+      <p class="narrative">Modal particles are sometimes called "flavour particles" or "attitude particles" because they add flavor and reveal the speaker's attitude toward what they are saying. A sentence with and without a modal particle can be grammatically identical, yet emotionally and communicatively very different.</p>
+
+      <div class="aside-box">
+        <strong style="color: var(--text-bright); font-size: 1.15rem;">Why Learn Modal Particles?</strong>
+        <p style="margin-top: 12px;">Native German speakers use modal particles constantly. They are not decorative—they are essential to natural speech. A learner who masters these particles immediately sounds more authentic, more confident, and more attuned to German communication styles. Modal particles separate the textbook German from real German.</p>
+      </div>
+    </div>
+
+    <div class="divider">· · ·</div>
+
+    <div class="scene" id="scene2">
+      <div class="scene-marker"></div>
+
+      <p class="narrative">Understanding modal particles requires thinking differently about how language works. In English, we might add tone of voice, emphasis, or a pause to convey emotion. In German, these nuances are often encoded into small particles that sit inside the sentence itself, subtly shifting its meaning.</p>
+
+      <p class="narrative"><span class="german-word" data-card="doch">Doch</span> is perhaps the most important modal particle in German. It appears frequently, yet has no single English equivalent. At its core, doch contradicts or counters a negative assumption.</p>
+
+      <div class="ety-card" id="card-doch">
+        <div class="word-header">
+          <span class="word-main">doch</span>
+          <button class="speak-btn" data-speak="doch" title="Speak doch">🔊</button>
+        </div>
+        <div class="word-meaning">however, yes (contradicting negation), insistence, encouragement</div>
+        <div class="story">
+          <p>Doch is the particle of contradiction. If someone says "Du kommst nicht zur Party" (You're not coming to the party), you might respond "Doch!" to contradict them—"Yes, I am!" It's a response to a negative assumption or statement.</p>
+
+          <p style="margin-top: 14px;">In declarative sentences, doch adds emotional emphasis and insistence. "Ich glaube es doch!" means "I do believe it!" or "But I believe it!"—the doch gives the sentence a feeling of pushing back against doubt. "Das ist doch Unsinn!" = "That IS nonsense!" The doch emphasizes the speaker's conviction.</p>
+
+          <p style="margin-top: 14px;">When doch appears in imperatives (commands and requests), it softens them into something more friendly and encouraging. "Gib mir doch einen Rat" (Just give me some advice) sounds like a gentle request, almost pleading. Without doch, "Gib mir einen Rat" sounds harsh and demanding. "Komm doch!" (Do come! / Just come!) is warm and encouraging, while "Komm!" alone sounds abrupt.</p>
+
+          <p style="margin-top: 14px;">Doch also works in rhetorical sentences and expressions of surprise. "Du wusstest doch, dass er kommen würde!" (You did know he would come!) The doch here expresses reproach—the speaker assumes you should have known, and is surprised that you didn't act on that knowledge.</p>
+
+          <div class="example">
+            <div class="example-german">Doch Beispiele / Doch Examples:</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">"Du kommst nicht." — "Doch!"</div>
+            <div class="example-english">You're not coming. — Yes, I am! (contradicting negation)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Ich glaube es doch. (cf. Ich glaube es.)</div>
+            <div class="example-english">I do believe it. (emphasis and conviction, vs. simple belief)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Gib mir doch einen Rat. (cf. Gib mir einen Rat.)</div>
+            <div class="example-english">Just give me some advice. (softened, friendly request vs. harsh demand)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Komm doch! (cf. Komm!)</div>
+            <div class="example-english">Do come! / Just come! (encouraging and warm vs. abrupt)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das ist doch Unsinn!</div>
+            <div class="example-english">That IS nonsense! (emphatic contradiction)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Du wusstest doch, dass er kommen würde!</div>
+            <div class="example-english">You did know he would come! (reproaching, expressing surprise at apparent forgetfulness)</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="narrative" style="margin-top: 32px;"><span class="german-word" data-card="mal">Mal</span> has two lives in German. As a standalone word, it means "time" or "times" (einmal = once, zweimal = twice). But as a modal particle, mal becomes a softener—it reduces intensity and makes speech sound less demanding.</p>
+
+      <div class="ety-card" id="card-mal">
+        <div class="word-header">
+          <span class="word-main">mal</span>
+          <button class="speak-btn" data-speak="mal" title="Speak mal">🔊</button>
+        </div>
+        <div class="word-meaning">just, for a moment, softly, a bit (reducing urgency and harshness)</div>
+        <div class="story">
+          <p>Mal as a modal particle is the great softener of German speech. It makes imperatives sound less like commands and more like friendly requests. It strips urgency from a sentence and replaces it with casualness.</p>
+
+          <p style="margin-top: 14px;">"Gib mir einen Rat" is an order: "Give me advice." But "Gib mir mal einen Rat" is a friendly request: "Just give me some advice" or "How about giving me some advice?" The mal suggests this is not urgent, it's just a small favor, a brief moment of your time. It conveys gentleness and politeness.</p>
+
+          <p style="margin-top: 14px;">"Hör zu!" (Listen!) is a command. "Hör mal zu!" (Just listen! / Listen for a moment) is much friendlier. In questions, mal adds a sense of curiosity and gentleness: "Was ist das mal?" or "Wie heißt das mal?" (What's that, I wonder?) The mal softens what could be a demanding question into something more conversational.</p>
+
+          <p style="margin-top: 14px;">In professional settings, mal is used in polite requests: "Können Sie mal..." (Could you just...) = "Could you possibly...?" "Sag mal..." = "Tell me..." or "Say, did you...?" It's a conversation starter that softens what might otherwise be seen as an intrusive question.</p>
+
+          <div class="example">
+            <div class="example-german">Gib mir mal einen Rat. (cf. Gib mir einen Rat.)</div>
+            <div class="example-english">Just give me some advice. (softened, friendly vs. demanding)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Hör mal zu! (cf. Höre zu!)</div>
+            <div class="example-english">Just listen! (friendly vs. harsh command)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Können Sie mal...?</div>
+            <div class="example-english">Could you just...? (polite softening in formal situations)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Sag mal, wann kommt der Bus?</div>
+            <div class="example-english">Tell me, when does the bus come? (conversation starter, friendly curiosity)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Guck mal! (cf. Schau!)</div>
+            <div class="example-english">Look! (gentle, not demanding)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Warte mal, ich komme gleich!</div>
+            <div class="example-english">Wait a sec, I'm coming right away! (casual, friendly timing)</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="narrative" style="margin-top: 32px;"><span class="german-word" data-card="ja">Ja</span> has many lives. Most commonly, it means "yes"—the affirmative response. But as a modal particle, ja takes on a different role entirely. It marks something as assumed knowledge.</p>
+
+      <div class="ety-card" id="card-ja">
+        <div class="word-header">
+          <span class="word-main">ja</span>
+          <button class="speak-btn" data-speak="ja" title="Speak ja">🔊</button>
+        </div>
+        <div class="word-meaning">indeed, after all, as you know, as expected (assumption of shared knowledge)</div>
+        <div class="story">
+          <p>As a modal particle, ja appears in statements where the speaker assumes something is already known or obvious to the listener. "Das ist ja interessant!" (Why, that's interesting! / How interesting!) The ja assumes the listener will either agree with or understand the truth of the statement. It's the particle of assumption.</p>
+
+          <p style="margin-top: 14px;">When ja appears in exclamations like "Du bist ja da!" (Oh, you're here!), it expresses surprise at something the speaker presumably knew or expected. The ja carries a sense of "as I expected" or "there you are, as I thought." It marks something as belonging to the realm of understood facts.</p>
+
+          <p style="margin-top: 14px;">In warnings and imperatives, ja takes on a slightly different flavor. "Mach ja keine Dummheiten!" (Don't go doing anything stupid now!) The ja here implies "as you should know" or "as I assume you understand." It's a warning based on assumed understanding. "Vergiss ja nicht!" (Don't forget!) The ja assumes the listener knows what's important.</p>
+
+          <p style="margin-top: 14px;">In statements, ja marks something as established fact or shared knowledge. "Das ist ja bekannt." (That's well-known, as we both know.) "Es ist ja schon spät." (It's already late, as you can see.) The ja links the statement to something both speaker and listener understand.</p>
+
+          <div class="example">
+            <div class="example-german">Das ist ja interessant!</div>
+            <div class="example-english">Why, that's interesting! (the listener should find this interesting)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Du bist ja da!</div>
+            <div class="example-english">Oh, you're here! (surprise at something expected or known)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Mach ja keine Dummheiten!</div>
+            <div class="example-english">Don't go doing anything stupid now! (warning based on assumed understanding)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Das ist ja bekannt.</div>
+            <div class="example-english">That's well-known. (established fact)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Es ist ja schon spät.</div>
+            <div class="example-english">It's already late. (as we both can see)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-german">Vergiss ja nicht!</div>
+            <div class="example-english">Don't forget! (as you know you should remember)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">· · ·</div>
+
+    <div class="scene">
+      <div class="contextual-note">
+        <strong style="color: var(--text-bright);">The Parallel in Chinese</strong>
+        <p style="margin-top: 12px;">Modal particles exist in other languages too. In Mandarin Chinese, particles like 吧 (ba), 嘛 (ma), and 呢 (ne) serve similar mood-shifting functions. Just as German doch, mal, and ja cannot be directly translated, these Chinese particles resist English equivalents. They are language-specific tools for encoding emotion, attitude, and assumption into speech. Learning modal particles in any language reveals how different cultures encode meaning not in words but in the texture of speech itself.</p>
+      </div>
+
+      <div class="aside-box">
+        <strong style="color: var(--text-bright); font-size: 1.15rem;">Practical Insight: Native vs. Textbook German</strong>
+        <p style="margin-top: 12px;">Beginners often speak perfectly correct but emotionally flat German. They construct sentences correctly but omit the particles that make German speakers sound like Germans. Modal particles are the difference between textbook correctness and native authenticity. The same sentence with and without a modal particle might be equally correct, but one will sound like a native, and one will sound like a robot learning from a grammar book.</p>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-guess1">
+      <div class="guess-section">
+        <div class="prompt">
+          <span class="german-word">Doch</span> primarily functions to:
+          <div style="font-size: 0.9rem; opacity: 0.5; margin-top: 8px;">(What does it do to negatives?)</div>
+        </div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="guess(this, false)">emphasize agreement</button>
+          <button class="guess-btn" onclick="guess(this, true)">contradict negative assumptions</button>
+          <button class="guess-btn" onclick="guess(this, false)">soften requests</button>
+          <button class="guess-btn" onclick="guess(this, false)">express doubt</button>
+        </div>
+        <div class="guess-feedback" id="feedback1"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-guess2">
+      <div class="guess-section">
+        <div class="prompt">
+          <span class="german-word">Mal</span> as a modal particle:
+          <div style="font-size: 0.9rem; opacity: 0.5; margin-top: 8px;">(How does it change speech?)</div>
+        </div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="guess(this, true)">softens requests and commands</button>
+          <button class="guess-btn" onclick="guess(this, false)">emphasizes urgency</button>
+          <button class="guess-btn" onclick="guess(this, false)">marks time passing</button>
+          <button class="guess-btn" onclick="guess(this, false)">expresses frequency</button>
+        </div>
+        <div class="guess-feedback" id="feedback2"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-guess3">
+      <div class="guess-section">
+        <div class="prompt">
+          <span class="german-word">Ja</span> as a modal particle marks:
+          <div style="font-size: 0.9rem; opacity: 0.5; margin-top: 8px;">(What does it signal?)</div>
+        </div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="guess(this, false)">disagreement</button>
+          <button class="guess-btn" onclick="guess(this, true)">assumption of shared knowledge</button>
+          <button class="guess-btn" onclick="guess(this, false)">future tense</button>
+          <button class="guess-btn" onclick="guess(this, false)">past events</button>
+        </div>
+        <div class="guess-feedback" id="feedback3"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-quiz">
+      <div class="quiz-container">
+        <h3>Test Your Knowledge: Modal Particles I</h3>
+        <div id="quiz-questions"></div>
+        <div class="quiz-nav">
+          <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+          <button id="next-btn" onclick="nextQuestion()">Next →</button>
+        </div>
+        <div class="quiz-score" id="quiz-score"></div>
+        <div class="quiz-reset" id="quiz-reset"></div>
+        <div class="post-quiz-summary" id="post-quiz-summary"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-collection">
+      <div class="word-collection" id="word-collection-box">
+        <h3>Modal Particles Gathered in Chapter 85</h3>
+        <div class="collected-words">
+          <div class="collected-word" data-delay="0">
+            <span class="cw-german">doch</span>
+            <span class="cw-english">contradiction</span>
+          </div>
+          <div class="collected-word" data-delay="150">
+            <span class="cw-german">mal</span>
+            <span class="cw-english">softener</span>
+          </div>
+          <div class="collected-word" data-delay="300">
+            <span class="cw-german">ja</span>
+            <span class="cw-english">assumption</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-end">
+      <div class="chapter-end">
+        <div class="end-line"></div>
+        <p class="end-text">End of Chapter Eighty-Five</p>
+        <p class="end-subtext">Three untranslatable particles learned. The seasoning has been added to your German. Though invisible, the difference will be felt when you listen to native speech. These particles are the texture of German.</p>
+        <div class="next-chapter">Chapter Eighty-Six: Halt, eben, schon — Modal Particles II</div>
+      </div>
+    </div>
+  
+  <div class="nav-section">
+    <a href="chapter84.html" class="nav-btn">← Chapter 84</a>
+    <a href="chapter86.html" class="nav-btn next">Chapter 86 →</a>
+  </div>
+
+</div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const count = window.innerWidth < 600
+        ? Math.floor((canvas.width * canvas.height) / 8000)
+        : Math.floor((canvas.width * canvas.height) / 6000);
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random() * 0.3 + 0.1,
+          speed: Math.random() * 0.1 + 0.03,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: Math.random() * 0.008
+        });
+      }
+    }
+
+    function drawParticles(time) {
+      ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+      particles.forEach((p, idx) => {
+        p.x -= p.speed;
+        p.wobble += p.wobbleSpeed;
+        p.y += Math.sin(p.wobble) * 0.2;
+
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.y < -10) p.y = canvas.height + 10;
+        if (p.y > canvas.height + 10) p.y = -10;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(150, 150, 150, ${p.alpha})`;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(drawParticles);
+    }
+
+    resizeCanvas();
+    createParticles();
+    requestAnimationFrame(drawParticles);
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createParticles();
+    });
+
+    const scenes = document.querySelectorAll('.scene');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          if (entry.target.id === 'scene-collection') {
+            const words = entry.target.querySelectorAll('.collected-word');
+            words.forEach(w => {
+              const delay = parseInt(w.dataset.delay) || 0;
+              setTimeout(() => w.classList.add('show'), delay);
+            });
+          }
+        }
+      });
+    }, { threshold: 0.15 });
+
+    scenes.forEach(s => observer.observe(s));
+
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = (window.scrollY / h) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    });
+
+    document.querySelectorAll('.german-word').forEach(word => {
+      word.addEventListener('click', () => {
+        const cardId = 'card-' + word.dataset.card;
+        const card = document.getElementById(cardId);
+        if (card) {
+          const isOpen = card.classList.contains('open');
+          document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+          if (!isOpen) {
+            card.classList.add('open');
+            word.classList.add('revealed');
+            setTimeout(() => {
+              card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+          }
+        }
+      });
+    });
+
+    const synth = window.speechSynthesis;
+
+    function speakGerman(text) {
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'de-DE';
+      utterance.rate = 0.9;
+      synth.speak(utterance);
+    }
+
+    document.querySelectorAll('.speak-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const text = this.dataset.speak;
+        speakGerman(text);
+      });
+    });
+
+    function guess(btn, correct) {
+      const section = btn.closest('.guess-section');
+      const feedback = section.querySelector('.guess-feedback');
+      const allBtns = section.querySelectorAll('.guess-btn');
+
+      if (correct) {
+        btn.classList.add('correct');
+        allBtns.forEach(b => {
+          if (b !== btn) b.classList.add('incorrect');
+        });
+        feedback.textContent = 'You sense the particle\'s function.';
+        feedback.classList.add('show');
+      } else {
+        btn.classList.add('incorrect');
+        btn.style.pointerEvents = 'none';
+        feedback.textContent = 'Modal particles are subtle.';
+        feedback.classList.add('show');
+      }
+    }
+
+    const quizData = [
+      {
+        question: "What is the primary function of 'doch'?",
+        options: ["agreement", "contradiction of negative assumptions", "future tense", "uncertainty"],
+        correct: 1,
+        explanation: "Doch contradicts negative assumptions and can be used as a response to negatives."
+      },
+      {
+        question: "'Doch' used in an imperative like 'Gib mir doch einen Rat' makes it:",
+        options: ["harsher", "friendlier and less demanding", "past tense", "a question"],
+        correct: 1,
+        explanation: "Doch softens imperatives, making them sound friendlier and less like orders."
+      },
+      {
+        question: "As a modal particle, 'mal' functions to:",
+        options: ["indicate past time", "soften and reduce urgency of requests", "show repetition", "express location"],
+        correct: 1,
+        explanation: "Mal as a modal particle softens requests and commands."
+      },
+      {
+        question: "'Hör mal zu!' compared to 'Höre zu!' is:",
+        options: ["more urgent", "less urgent and friendlier", "the same meaning", "past vs. present"],
+        correct: 1,
+        explanation: "Adding mal makes the command sound friendly and less demanding."
+      },
+      {
+        question: "'Ja' as a modal particle marks:",
+        options: ["agreement", "assumption of shared knowledge", "questions", "negation"],
+        correct: 1,
+        explanation: "Ja assumes something is already known or obvious to the listener."
+      },
+      {
+        question: "'Das ist ja interessant!' with 'ja' implies:",
+        options: ["it's obvious to both of us", "it's a question", "it's false", "it's happened before"],
+        correct: 0,
+        explanation: "Ja assumes the listener will recognize or understand the truth of the statement."
+      },
+      {
+        question: "Which of these is a modal particle?",
+        options: ["alle", "doch", "nicht", "der"],
+        correct: 1,
+        explanation: "Doch is a modal particle; the others are regular words."
+      },
+      {
+        question: "Modal particles in German:",
+        options: ["change sentence structure", "add emotional and communicative meaning", "create past tense", "form questions"],
+        correct: 1,
+        explanation: "Modal particles are essential for expressing tone, emotion, and intent."
+      },
+      {
+        question: "If you say 'Du kommst nicht' and someone responds 'Doch!', they are:",
+        options: ["agreeing with you", "disagreeing and saying they are coming", "asking a question", "expressing doubt"],
+        correct: 1,
+        explanation: "Doch contradicts the negative assumption—'Yes, I am coming!'"
+      },
+      {
+        question: "Why is 'mal' called a softener?",
+        options: ["it makes speech quiet", "it reduces the harshness or urgency of commands", "it changes grammar", "it adds politeness particles"],
+        correct: 1,
+        explanation: "Mal makes requests sound less demanding and more friendly."
+      },
+      {
+        question: "The particles doch, mal, ja are characteristic of:",
+        options: ["German written language", "German spoken language and naturalness", "translation only", "formal register only"],
+        correct: 1,
+        explanation: "These particles are essential to natural German speech."
+      },
+      {
+        question: "What does 'Gib mir mal einen Rat' mean?",
+        options: ["Give me advice once", "Give me advice—just a small favor", "Give me advice in the past", "Give me advice loudly"],
+        correct: 1,
+        explanation: "Mal softens the command, making it sound like a small, friendly request."
+      }
+    ];
+
+    let currentQuestion = 0;
+    let answers = new Array(quizData.length).fill(null);
+    let quizComplete = false;
+
+    function initializeQuiz() {
+      const container = document.getElementById('quiz-questions');
+      container.innerHTML = '';
+
+      quizData.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+        div.id = 'q-' + idx;
+
+        let html = `<div class="quiz-question-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+        q.options.forEach((opt, optIdx) => {
+          html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+        });
+        html += '</div>';
+        div.innerHTML = html;
+        container.appendChild(div);
+      });
+
+      updateQuizNav();
+    }
+
+    function selectAnswer(qIdx, optIdx) {
+      if (quizComplete) return;
+      answers[qIdx] = optIdx;
+      updateQuizNav();
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < quizData.length - 1) {
+        document.getElementById('q-' + currentQuestion).classList.add('hidden');
+        currentQuestion++;
+        document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+        updateQuizNav();
+      } else if (!quizComplete) {
+        completeQuiz();
+      }
+    }
+
+    function previousQuestion() {
+      if (currentQuestion > 0) {
+        document.getElementById('q-' + currentQuestion).classList.add('hidden');
+        currentQuestion--;
+        document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+        updateQuizNav();
+      }
+    }
+
+    function updateQuizNav() {
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      prevBtn.disabled = currentQuestion === 0;
+
+      if (currentQuestion === quizData.length - 1) {
+        nextBtn.textContent = 'Submit Quiz';
+      } else {
+        nextBtn.textContent = 'Next →';
+      }
+    }
+
+    function completeQuiz() {
+      quizComplete = true;
+      let score = 0;
+      answers.forEach((ans, idx) => {
+        if (ans === quizData[idx].correct) {
+          score++;
+        }
+      });
+
+      const percentage = Math.round((score / quizData.length) * 100);
+      const scoreDiv = document.getElementById('quiz-score');
+      scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+      document.getElementById('prev-btn').disabled = true;
+      document.getElementById('next-btn').disabled = true;
+
+      if (percentage >= 80) {
+        scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">Unlocked word collection! ✓</p>';
+        document.getElementById('word-collection-box').classList.add('show');
+
+        const summary = document.getElementById('post-quiz-summary');
+        summary.innerHTML = `<strong style="color: var(--text-bright); font-size: 1.1rem;">First Set of Modal Particles Learned</strong><p style="margin-top: 8px;">Doch, mal, ja—the untranslatable flavors of German speech. These three particles are the foundation of sounding natural. More particles await in the next chapter.</p>`;
+        summary.classList.add('show');
+      } else {
+        scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80%.</p>';
+        const resetDiv = document.getElementById('quiz-reset');
+        resetDiv.innerHTML = '<button onclick="resetQuiz()" style="background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); padding: 12px 32px; border-radius: 8px; cursor: pointer; margin-top: 16px; font-family: \'Cormorant Garamond\', serif;">Reset Quiz</button>';
+      }
+    }
+
+    function resetQuiz() {
+      currentQuestion = 0;
+      answers = new Array(quizData.length).fill(null);
+      quizComplete = false;
+
+      document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+        q.classList.toggle('hidden', idx !== 0);
+      });
+
+      document.getElementById('quiz-score').textContent = '';
+      document.getElementById('post-quiz-summary').classList.remove('show');
+      document.getElementById('word-collection-box').classList.remove('show');
+      document.getElementById('quiz-reset').innerHTML = '';
+      document.getElementById('prev-btn').disabled = false;
+      document.getElementById('next-btn').disabled = false;
+      document.getElementById('next-btn').textContent = 'Next →';
+
+      updateQuizNav();
+    }
+
+    initializeQuiz();
+  </script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">732 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(86%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:86%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 732 words across 85 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">134 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(92%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:92%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 134 patterns and grammar rules across 85 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

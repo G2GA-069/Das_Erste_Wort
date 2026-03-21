@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 37: Die Freundschaft</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --network: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- NETWORK CANVAS --- */
+  #network-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="network-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Thirty-Seven</div>
+    <h1>Die Freundschaft</h1>
+    <div class="subtitle">Friendship</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE COLLECTIVE SUFFIX ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      We have learned three gender rules. Verbs become nouns with -ung, always feminine. Adjectives become abstract nouns with -heit or -keit, always feminine. But there is a third pathway, another door, another way to create nouns. This one creates not abstract qualities but collective things — groups, bodies, states of being that arise from multiple people or things coming together.
+    </p>
+
+    <p class="narrative">
+      The suffix is <strong>-schaft.</strong> It is related to the English word "-ship," as in "friendship," "leadership," "kingship." And like its English cousin, -schaft creates feminine nouns. Always die.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="freundschaft">Freundschaft.</span> Friendship. The bond between friends. The state of being friends. From <span class="german-word" data-speak="true">Freund</span> — friend. Add -schaft and you create the whole relationship, the entire phenomenon of friendship. Die Freundschaft.
+    </p>
+
+    <p class="narrative emphasis">
+      From the individual comes the collective. From the person comes the state of relationship. This is the fourth reliable pattern. Every -schaft noun is feminine. Die. Always.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: COLLECTIVES AND RELATIONSHIPS ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wissenschaft">Wissenschaft.</span> Science. The body of knowledge. From <span class="german-word" data-speak="true">wissen</span> — to know. Wissenschaft is "knowing together" — the collective process of gaining and sharing knowledge. Die Wissenschaft.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gesellschaft">Gesellschaft.</span> Society. The body of people living together. From <span class="german-word" data-speak="true">Gesell</span> — a companion, a member of a group. The word originally referred to members of a guild or fraternity. Die Gesellschaft is the whole society.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="mannschaft">Mannschaft.</span> Team. A body of men (or people) working together. From <span class="german-word" data-speak="true">Mann</span> — man. Though the root suggests male gender, the word now refers to any team. A sports team is eine Mannschaft. Die Mannschaft.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="landschaft">Landschaft.</span> Landscape. A body of land considered as a unified region. From <span class="german-word" data-speak="true">Land</span> — land. The landscape is the land together as a whole, a unified aesthetic and geographical entity. Die Landschaft.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wirtschaft">Wirtschaft.</span> Economy. The system of production and exchange. From <span class="german-word" data-speak="true">Wirt</span> — host, landlord, innkeeper. The economy is the whole complex of people doing business together. Die Wirtschaft.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="eigenschaft">Eigenschaft.</span> Quality. Property. Characteristic. From <span class="german-word" data-speak="true">eigen</span> — own, proper. An Eigenschaft is something that properly belongs to something, that is part of its nature. Die Eigenschaft.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="leidenschaft">Leidenschaft.</span> Passion. The intensity of feeling. From <span class="german-word" data-speak="true">leiden</span> — to suffer, to endure. Leidenschaft originally meant "suffering" but evolved to mean the deep suffering of passion, the pain of caring deeply. Die Leidenschaft.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="bereitschaft">Bereitschaft.</span> Readiness. Preparedness. The state of being ready. From <span class="german-word" data-speak="true">bereit</span> — ready, prepared. Bereitschaft is the condition of readiness, the state in which you are prepared to act. Die Bereitschaft.
+    </p>
+
+    <!-- FREUNDSCHAFT card -->
+    <div class="ety-card" id="card-freundschaft">
+      <div class="word-header">
+        <span class="word-main">Freundschaft</span>
+        <span class="word-pron">/ˈfʁɔɪntʃaft/</span>
+      </div>
+      <div class="word-meaning">friendship — the state of being friends; a relationship based on mutual affection and support</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Freund</span>
+        <span class="bridge-note">— friend; -schaft creates the collective noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">friend + -ship</span>
+        <span class="bridge-note">— English uses the same suffix with identical meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">友谊</span>
+        <span class="bridge-note">— yǒuyì (friend + righteousness) — friendship as an ethical bond</span>
+      </div>
+      <div class="story">
+        <em>Freundschaft</em> is one of the most fundamental German words. It represents not just the fact of being friends, but the whole phenomenon of friendship itself — the deep ethical bond that German culture values. The -schaft suffix transforms the individual (Freund) into the collective relationship (Freundschaft).
+      </div>
+    </div>
+
+    <!-- WISSENSCHAFT card -->
+    <div class="ety-card" id="card-wissenschaft">
+      <div class="word-header">
+        <span class="word-main">Wissenschaft</span>
+        <span class="word-pron">/ˈvɪsənʃaft/</span>
+      </div>
+      <div class="word-meaning">science — the systematic study of nature; the body of knowledge and methods</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wissen</span>
+        <span class="bridge-note">— to know; -schaft creates the collective body of knowledge</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "science" comes from Latin scientia; German preserves the Germanic root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">科学</span>
+        <span class="bridge-note">— kēxué (category + study) — organized systematic study</span>
+      </div>
+      <div class="story">
+        <em>Wissenschaft</em> literally means "knowing together" or "the state of knowing." It emphasizes that science is not individual knowledge but collective knowledge — the shared understanding built by many minds over centuries. German culture has always placed high value on Wissenschaft.
+      </div>
+    </div>
+
+    <!-- GESELLSCHAFT card -->
+    <div class="ety-card" id="card-gesellschaft">
+      <div class="word-header">
+        <span class="word-main">Gesellschaft</span>
+        <span class="word-pron">/ɡəˈzɛlʃaft/</span>
+      </div>
+      <div class="word-meaning">society — an organized group of people with common institutions and shared culture</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gesell</span>
+        <span class="bridge-note">— companion, a member of a guild; -schaft creates the collective body</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "society" comes from Latin societas; no Germanic equivalent</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">社会</span>
+        <span class="bridge-note">— shèhuì (congregation + gathering) — people gathered together</span>
+      </div>
+      <div class="story">
+        <em>Gesellschaft</em> emphasizes the voluntary association of people — people who gather together, like members of a guild. It is different from the more organic <em>Gemeinschaft</em> (community), which emphasizes kinship and tradition. This distinction became famous in German sociology through Ferdinand Tönnies.
+      </div>
+    </div>
+
+    <!-- MANNSCHAFT card -->
+    <div class="ety-card" id="card-mannschaft">
+      <div class="word-header">
+        <span class="word-main">Mannschaft</span>
+        <span class="word-pron">/ˈmanʃaft/</span>
+      </div>
+      <div class="word-meaning">team — a group of people organized to work together</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Mann</span>
+        <span class="bridge-note">— man, person; -schaft creates the collective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "team" comes from Old English; German uses the -schaft suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">团队</span>
+        <span class="bridge-note">— tuánduì (group + line) — ordered group of people</span>
+      </div>
+      <div class="story">
+        <em>Mannschaft</em> is a team of people united for a common purpose. Though it derives from <em>Mann</em> (man), it now refers to any team regardless of gender. In soccer, the German national team is "Die Mannschaft" — the team representing the nation itself.
+      </div>
+    </div>
+
+    <!-- LANDSCHAFT card -->
+    <div class="ety-card" id="card-landschaft">
+      <div class="word-header">
+        <span class="word-main">Landschaft</span>
+        <span class="word-pron">/ˈlantʃaft/</span>
+      </div>
+      <div class="word-meaning">landscape — an expanse of land considered as a unified aesthetic and geographical region</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Land</span>
+        <span class="bridge-note">— land; -schaft creates the unified region</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">landscape</span>
+        <span class="bridge-note">— from Dutch landschap; came to English via painting terminology</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">风景</span>
+        <span class="bridge-note">— fēngjǐng (wind + view) — the scenery seen by wind and observer</span>
+      </div>
+      <div class="story">
+        <em>Landschaft</em> is not just any land, but land viewed as a unified aesthetic entity. The -schaft suffix transforms individual plots of land into "the landscape" — a single cohesive vision. Landscape painting became one of the great German Romantic art forms.
+      </div>
+    </div>
+
+    <!-- WIRTSCHAFT card -->
+    <div class="ety-card" id="card-wirtschaft">
+      <div class="word-header">
+        <span class="word-main">Wirtschaft</span>
+        <span class="word-pron">/ˈvɪrtʃaft/</span>
+      </div>
+      <div class="word-meaning">economy — the system of producing and exchanging goods and services</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wirt</span>
+        <span class="bridge-note">— host, innkeeper, landlord; -schaft creates the collective system</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "economy" comes from Greek oikos (house) + nomos (law)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">经济</span>
+        <span class="bridge-note">— jīngjì (meridians + planned order) — order running through all things</span>
+      </div>
+      <div class="story">
+        <em>Wirtschaft</em> originally referred to household management — the economics of running an inn or estate. It evolved to mean the entire system of economic organization. The -schaft suffix shows how the individual role (innkeeper) becomes the entire collective system.
+      </div>
+    </div>
+
+    <!-- EIGENSCHAFT card -->
+    <div class="ety-card" id="card-eigenschaft">
+      <div class="word-header">
+        <span class="word-main">Eigenschaft</span>
+        <span class="word-pron">/ˈaɪɡənʃaft/</span>
+      </div>
+      <div class="word-meaning">quality — a characteristic or property that belongs to something</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">eigen</span>
+        <span class="bridge-note">— own, proper; -schaft makes it a characteristic quality</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "quality" comes from Latin qualitas; German uses its own suffix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">性质</span>
+        <span class="bridge-note">— xìngzhì (nature + matter) — the nature intrinsic to something</span>
+      </div>
+      <div class="story">
+        <em>Eigenschaft</em> is a quality that properly belongs to something — not an external feature but something intrinsic to the thing's nature. It is something "eigen" — its own — to that object or person.
+      </div>
+    </div>
+
+    <!-- LEIDENSCHAFT card -->
+    <div class="ety-card" id="card-leidenschaft">
+      <div class="word-header">
+        <span class="word-main">Leidenschaft</span>
+        <span class="word-pron">/ˈlaɪdənʃaft/</span>
+      </div>
+      <div class="word-meaning">passion — intense and driving emotion, especially love or desire</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">leiden</span>
+        <span class="bridge-note">— to suffer, to endure; -schaft makes it the state of suffering/passion</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "passion" comes from Latin passio (suffering); same root meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">激情</span>
+        <span class="bridge-note">— jīqíng (excited + feeling) — feeling that excites and moves</span>
+      </div>
+      <div class="story">
+        <em>Leidenschaft</em> has a unique history. It originally meant "suffering" — from <em>leiden</em> (to suffer). But it evolved to mean the suffering that passion causes — the deep pain of caring intensely. In German Romantic literature, <em>Leidenschaft</em> is the mark of a soul capable of profound feeling.
+      </div>
+    </div>
+
+    <!-- BEREITSCHAFT card -->
+    <div class="ety-card" id="card-bereitschaft">
+      <div class="word-header">
+        <span class="word-main">Bereitschaft</span>
+        <span class="word-pron">/bəˈʁaɪtʃaft/</span>
+      </div>
+      <div class="word-meaning">readiness — the state of being prepared or willing to act</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">bereit</span>
+        <span class="bridge-note">— ready, prepared; -schaft creates the state of readiness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">ready</span>
+        <span class="bridge-note">— the adjective; German makes a noun through -schaft</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">准备</span>
+        <span class="bridge-note">— zhǔnbèi (exact + prepare) — the state of being exactly prepared</span>
+      </div>
+      <div class="story">
+        <em>Bereitschaft</em> is readiness — the state in which you are prepared. It can refer to psychological readiness (willingness), military readiness (preparedness), or any kind of prepared state. The -schaft suffix transforms the adjective bereit into a noun representing the condition itself.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE FOURTH RULE ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now you have learned four patterns of reliable gender. Every noun ending in:
+    </p>
+
+    <p class="narrative small">
+      <strong>-ung</strong> is feminine (die). Every verb becomes this kind of noun.
+    </p>
+
+    <p class="narrative small">
+      <strong>-heit or -keit</strong> is feminine (die). Every quality becomes these kinds of nouns.
+    </p>
+
+    <p class="narrative small">
+      <strong>-schaft</strong> is feminine (die). Every collective or relationship becomes this kind of noun.
+    </p>
+
+    <p class="narrative emphasis">
+      Four suffixes. Four types of transformation. Four reliable gender rules. With these alone, you can recognize the gender of thousands of German words. The system is not random. It is elegant. It follows rules that never break.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        You see a word ending in -schaft. What can you say about its gender?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Apply the pattern you've learned.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">It could be any gender</button>
+        <button class="guess-btn" onclick="guess(this, true)">It is always feminine (die)</button>
+        <button class="guess-btn" onclick="guess(this, false)">It is usually masculine (der)</button>
+        <button class="guess-btn" onclick="guess(this, false)">It depends on the root word</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        The word <strong style="color: var(--german);">Leidenschaft</strong> comes from the verb <strong style="color: var(--english);">leiden</strong> (to suffer). What does it now mean?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(The meaning has evolved from the literal sense.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">suffering only</button>
+        <button class="guess-btn" onclick="guess(this, true)">passionate intensity; the suffering that passion causes</button>
+        <button class="guess-btn" onclick="guess(this, false)">a painful memory</button>
+        <button class="guess-btn" onclick="guess(this, false)">a complaint</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">348 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(40%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:40%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 348 words across 37 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">77 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(53%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:53%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 77 patterns and grammar rules across 37 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Thirty-Seven</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Freundschaft</span><span class="cw-english">friendship</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Wissenschaft</span><span class="cw-english">science</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Gesellschaft</span><span class="cw-english">society</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Mannschaft</span><span class="cw-english">team</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Landschaft</span><span class="cw-english">landscape</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Wirtschaft</span><span class="cw-english">economy</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Eigenschaft</span><span class="cw-english">quality</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Leidenschaft</span><span class="cw-english">passion</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Bereitschaft</span><span class="cw-english">readiness</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">The -schaft Suffix</div>
+      <strong style="color: var(--text-bright);">Collective and Relational Nouns</strong> — The -schaft suffix creates nouns that represent collective states, relationships, and organized bodies of people or things.<br><br>
+      <strong style="color: var(--text-bright);">English Parallel</strong> — English uses "-ship" with the same function: friendship, kingship, leadership. German and English inherited this suffix from the same Proto-Germanic source.<br><br>
+      <strong style="color: var(--text-bright);">Gender Rule</strong> — All -schaft nouns are feminine (die). Die Freundschaft, die Wissenschaft, die Gesellschaft, die Mannschaft, die Wirtschaft.<br><br>
+      <strong style="color: var(--text-bright);">Four Reliable Patterns</strong> — You now recognize four types of feminine suffixes: -ung (from verbs), -heit and -keit (from adjectives), and -schaft (collectives and relationships).
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Thirty-Seven
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Nine more words of collective life and meaning.<br>
+        Friendship, science, society, team, landscape, economy, quality, passion, readiness.<br>
+        All the states in which people come together, all the systems in which individuals merge into wholes.<br>
+        And all feminine. All following the pattern. Die Freundschaft. Die Wissenschaft. Die Gesellschaft.<br>
+        The pattern holds.
+      </p>
+      <div class="next-chapter">
+        Chapter Thirty-Eight: Das Wunderbare — Adjectives and the making of wonder
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter36.html" class="nav-btn">← Chapter 36</a>
+    <a href="chapter38.html" class="nav-btn next">Chapter 38 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 37: NETWORK CANVAS ---
+const canvas = document.getElementById('network-canvas');
+const ctx = canvas.getContext('2d');
+let nodes = [];
+let connections = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createNodes();
+}
+
+function createNodes() {
+  nodes = [];
+  const count = Math.floor((canvas.width * canvas.height) / 15000);
+  for (let i = 0; i < count; i++) {
+    nodes.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.05,
+      vy: (Math.random() - 0.5) * 0.05,
+      r: Math.random() * 4 + 2
+    });
+  }
+}
+
+function drawNetwork(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.12)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  nodes.forEach((n, idx) => {
+    n.x += n.vx;
+    n.y += n.vy;
+
+    if (n.x < -10) n.x = canvas.width + 10;
+    if (n.x > canvas.width + 10) n.x = -10;
+    if (n.y < -10) n.y = canvas.height + 10;
+    if (n.y > canvas.height + 10) n.y = -10;
+
+    // Draw connections to nearby nodes
+    nodes.forEach((other, idx2) => {
+      if (idx < idx2) {
+        const dx = other.x - n.x;
+        const dy = other.y - n.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          ctx.strokeStyle = `rgba(212, 165, 116, ${(1 - dist / 150) * 0.4 * (0.3 + scroll * 0.4)})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(n.x, n.y);
+          ctx.lineTo(other.x, other.y);
+          ctx.stroke();
+        }
+      }
+    });
+
+    const alpha = 0.4 + scroll * 0.4;
+    ctx.fillStyle = `rgba(212, 165, 116, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = `rgba(232, 164, 74, ${alpha * 0.8})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  requestAnimationFrame(drawNetwork);
+}
+
+resizeCanvas();
+createNodes();
+requestAnimationFrame(drawNetwork);
+window.addEventListener('resize', () => { resizeCanvas(); createNodes(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Perfect! You see how -schaft creates the collective.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about the pattern you've learned.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What does the -schaft suffix do?",
+    options: ["marks plural nouns", "creates collective and relational nouns from people or things", "adds emphasis to verbs", "indicates past tense"],
+    correct: 1,
+    explanation: "The -schaft suffix creates nouns representing collective states, relationships, and organized bodies."
+  },
+  {
+    question: "What gender are all nouns ending in -schaft?",
+    options: ["masculine (der)", "feminine (die)", "neuter (das)", "it varies"],
+    correct: 1,
+    explanation: "All -schaft nouns are feminine. Die Freundschaft, die Wissenschaft, die Gesellschaft, die Mannschaft."
+  },
+  {
+    question: "Which word means 'science'?",
+    options: ["Mathematik", "Wissenschaft", "Forschung", "Wissen"],
+    correct: 1,
+    explanation: "Wissenschaft (knowing together) is the German word for science, emphasizing collective knowledge."
+  },
+  {
+    question: "What does Gesellschaft mean?",
+    options: ["a single person", "society as an organized group of people", "a school", "a friendship group"],
+    correct: 1,
+    explanation: "Gesellschaft means society — the collective body of people with shared institutions and culture."
+  },
+  {
+    question: "From what root does Leidenschaft come?",
+    options: ["leiden (to suffer)", "leiten (to lead)", "lieben (to love)", "laufen (to run)"],
+    correct: 0,
+    explanation: "Leidenschaft comes from leiden (to suffer). It evolved to mean the passionate intensity, the suffering caused by care."
+  },
+  {
+    question: "How many reliable feminine gender suffixes have you learned?",
+    options: ["one", "two", "three", "four"],
+    correct: 3,
+    explanation: "You've learned four: -ung (verbs), -heit/-keit (qualities), and -schaft (collectives)."
+  },
+  {
+    question: "What does Landschaft mean?",
+    options: ["land ownership", "a landscape; unified aesthetic region", "rural property", "a map"],
+    correct: 1,
+    explanation: "Landschaft is landscape — land viewed as a unified aesthetic and geographical entity."
+  },
+  {
+    question: "What is Wirtschaft?",
+    options: ["a business owner", "an economy; system of production and exchange", "a restaurant", "a workshop"],
+    correct: 1,
+    explanation: "Wirtschaft is the economy — the system of producing, exchanging, and managing goods and services."
+  },
+  {
+    question: "Which suffix is most like the English -ship ending?",
+    options: ["-ung", "-heit", "-schaft", "-lich"],
+    correct: 2,
+    explanation: "-schaft corresponds to English -ship: Freundschaft = friendship, Mannschaft = team-ship."
+  },
+  {
+    question: "What does Eigenschaft mean?",
+    options: ["a personal name", "a quality or characteristic", "private property", "an owner"],
+    correct: 1,
+    explanation: "Eigenschaft means a quality or property that properly belongs to something (eigen = own)."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>95 words and 13 major patterns</strong> across 37 chapters. With four completely reliable gender rules (-ung, -heit/-keit, and -schaft all feminine), you can recognize the gender of thousands upon thousands of German words instantly. The system is not arbitrary. It is systematic, elegant, and reliable.</p>
+      <p style="margin-top: 8px;"><strong>Master Pattern Recognition:</strong> You can now see how German creates meaning through systematic word-building. Verbs become nouns. Qualities become nouns. Collectives become nouns. Each transformation serves a purpose. Each follows rules that never break.</p>
+      <p style="margin-top: 8px;">In the final chapter, we step back to see the forest: adjectives, the modifiers that make meaning richer and more precise.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- SPEAK GERMAN WORDS INLINE ---
+document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

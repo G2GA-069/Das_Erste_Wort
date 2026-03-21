@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 33: Die Zusammensetzung</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --compound: #d4b895;
+  }
+  html { scroll-behavior: smooth; background: #0a0e1a; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3a3a2a 70%, #4a4a3a 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  #assembly-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  .content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 60px 24px 120px; }
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+  .scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .scene.visible { opacity: 1; transform: translateY(0); }
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+  .german-word.revealed { border-bottom-color: transparent; }
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .quiz-question.hidden { display: none; }
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+  .quiz-reset { text-align: center; }
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+  .post-quiz-summary.show { display: block; }
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+  .word-collection.show { display: block; }
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .scene { margin-bottom: 60px; }
+  }
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="assembly-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Thirty-Three</div>
+    <h1>Die Zusammensetzung</h1>
+    <div class="subtitle">The Compound — German's Greatest Superpower</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      German has a secret power that English lost centuries ago, a mechanism so creative and productive that a single German speaker can invent new words on the fly and be instantly understood. It is the ability to compound nouns, to take two or more words and fuse them into a single, grammatically unified unit that creates entirely new meanings.
+    </p>
+
+    <p class="narrative">
+      An English speaker sees a glove for the hand and calls it a "glove." A German speaker sees the same object and calls it a <span class="german-word" data-card="handschuh">"Handschuh"</span> — literally "hand-shoe," a shoe for your hand. Both languages are describing the same object. But German's compound reveals the metaphor: a glove is to your hand as a shoe is to your foot. The structure of the language teaches classification, analogy, relationship.
+    </p>
+
+    <p class="narrative">
+      This is not accident. This is not etymology. This is living grammar, a generative system that allows infinite extension. If a "Handschuh" is a hand-shoe, then a "Fußschuh" (foot-shoe) is a shoe. And a "Kopfschuh" would be a hat. The system is logical, transparent, productive.
+    </p>
+
+    <p class="narrative emphasis">
+      German compound nouns are how the language thinks. They reveal the conceptual categories, the metaphors, the organizing logic of human experience as understood by German speakers.
+    </p>
+  </div>
+
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Consider eight compound nouns, each revealing a different way German conceptualizes the world.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="handschuh">Handschuh</span> — glove. Hand (hand) + Schuh (shoe). A shoe for your hand.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="kuehlschrank">Kühlschrank</span> — refrigerator. Kühl (cool) + Schrank (cupboard). A cupboard that keeps things cool.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="staubsauger">Staubsauger</span> — vacuum cleaner. Staub (dust) + Sauger (sucker). A thing that sucks up dust.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="krankenhaus">Krankenhaus</span> — hospital. Kranken (sick) + Haus (house). A house for the sick.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="flugzeug">Flugzeug</span> — airplane. Flug (flight) + Zeug (thing/stuff). A thing for flight, a flying-thing.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="schildkroete">Schildkröte</span> — turtle. Schild (shield) + Kröte (toad). A shield-toad, a toad with a shield.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zahnbuerste">Zahnbürste</span> — toothbrush. Zahn (tooth) + Bürste (brush). A brush for teeth.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="schlagzeug">Schlagzeug</span> — drums (percussion instruments). Schlag (hit/strike) + Zeug (thing). Things that you strike.
+    </p>
+
+    <!-- HANDSCHUH card -->
+    <div class="ety-card" id="card-handschuh">
+      <div class="word-header">
+        <span class="word-main">Handschuh</span>
+        <span class="word-pron">/ˈhantʃuː/</span>
+      </div>
+      <div class="word-meaning">glove — a covering for the hand, typically with separate compartments for each finger</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Hand (hand) + Schuh (shoe)</span>
+        <span class="bridge-note">— a shoe for the hand</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">glove</span>
+        <span class="bridge-note">— opaque etymologically; no transparent structure</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">手套</span>
+        <span class="bridge-note">— shǒutào (hand + covering) — also a transparent compound</span>
+      </div>
+      <div class="story">
+        <em>Handschuh</em> is pure metaphor crystallized into grammar. A glove works like a shoe: it wraps the extremity, protects it, contains it. German makes this analogy explicit in the compound structure. The Chinese 手套 (shǒutào) uses a similar logic but emphasizes covering rather than the shoe metaphor. Both languages reveal that understanding gloves requires understanding the category of hand-coverings, and that hand-coverings work like foot-coverings. English has lost this transparent structure; "glove" is etymologically opaque, its origins obscured.
+      </div>
+    </div>
+
+    <!-- KÜHLSCHRANK card -->
+    <div class="ety-card" id="card-kuehlschrank">
+      <div class="word-header">
+        <span class="word-main">Kühlschrank</span>
+        <span class="word-pron">/ˈkyːlʃʁaŋk/</span>
+      </div>
+      <div class="word-meaning">refrigerator — an appliance for preserving food by cooling</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Kühl (cool) + Schrank (cupboard/cabinet)</span>
+        <span class="bridge-note">— a cooling cupboard</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">refrigerator</span>
+        <span class="bridge-note">— from Latin "refrigerare" (to cool); describes function, not form</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">冰箱</span>
+        <span class="bridge-note">— bīngxiāng (ice + box) — same compound logic as German</span>
+      </div>
+      <div class="story">
+        <em>Kühlschrank</em> is one of the most iconic German compounds. It is transparent in a way English "refrigerator" is not. The word tells you exactly what it is: a cupboard that cools things. It emphasizes function through structure: cooling + cupboard. The Chinese 冰箱 (bīngxiāng) reaches for a similar transparency: "ice-box," emphasizing what makes it work (ice) rather than the cooling action. Both languages reveal a cognitive preference for transparent compounds that name both structure and function.
+      </div>
+    </div>
+
+    <!-- STAUBSAUGER card -->
+    <div class="ety-card" id="card-staubsauger">
+      <div class="word-header">
+        <span class="word-main">Staubsauger</span>
+        <span class="word-pron">/ˈʃtaʊpˌzaʊɡɐ/</span>
+      </div>
+      <div class="word-meaning">vacuum cleaner — an appliance for cleaning surfaces by suction</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Staub (dust) + Sauger (sucker)</span>
+        <span class="bridge-note">— a dust-sucker, a thing that sucks up dust</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">vacuum cleaner</span>
+        <span class="bridge-note">— uses function (vacuum/suction) but loses the "dust" component</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">吸尘器</span>
+        <span class="bridge-note">— xīchénqì (suck/inhale + dust + machine) — explicitly names both action and target</span>
+      </div>
+      <div class="story">
+        <em>Staubsauger</em> is a compound that reveals German's ability to name both agent and object in a single word structure. It is not just a "cleaner" but specifically a "dust-sucker." The Chinese 吸尘器 (xīchénqì) takes a similar approach, including the action (suck), the target (dust), and the agent (machine). Both languages prefer named transparency: instead of a vague "vacuum" (Latin "vacuus," empty), German and Chinese both explicitly state what is being removed and how.
+      </div>
+    </div>
+
+    <!-- KRANKENHAUS card -->
+    <div class="ety-card" id="card-krankenhaus">
+      <div class="word-header">
+        <span class="word-main">Krankenhaus</span>
+        <span class="word-pron">/ˈkʁaŋkənˌhaʊs/</span>
+      </div>
+      <div class="word-meaning">hospital — an institution for medical care of the sick</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Kranken (sick) + Haus (house)</span>
+        <span class="bridge-note">— a house for the sick</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">hospital</span>
+        <span class="bridge-note">— from Latin "hospitale" (hospice); does not reveal function in structure</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">医院</span>
+        <span class="bridge-note">— yīyuàn (medicine + institution) — emphasizes the medical function</span>
+      </div>
+      <div class="story">
+        <em>Krankenhaus</em> is a classifying compound. It places hospitals in the category of houses — institutions that provide shelter and care. The word structure teaches you how to think about hospitals: they are houses, places of care and safety. Medieval hospitals were literally houses where the sick were gathered and cared for; the German compound preserves this fundamental understanding. The Chinese 医院 (yīyuàn) takes a different route, emphasizing the function (medicine) over the structure (place of care), but both reveal institutional thinking about medicine and care.
+      </div>
+    </div>
+
+    <!-- FLUGZEUG card -->
+    <div class="ety-card" id="card-flugzeug">
+      <div class="word-header">
+        <span class="word-main">Flugzeug</span>
+        <span class="word-pron">/ˈfluːktsɔɪk/</span>
+      </div>
+      <div class="word-meaning">airplane — an aircraft powered by engines for transport through the air</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Flug (flight) + Zeug (thing/stuff)</span>
+        <span class="bridge-note">— a thing for flight, a flying-thing</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">airplane</span>
+        <span class="bridge-note">— aero- (air) + plane (flat surface); refers to its structure, not its purpose</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">飞机</span>
+        <span class="bridge-note">— fēijī (fly + machine) — emphasizes action (flying) and agent (machine)</span>
+      </div>
+      <div class="story">
+        <em>Flugzeug</em> is remarkable for using "Zeug," a somewhat informal word meaning "thing" or "stuff." Rather than a high-tech term, German calls an airplane simply "a flying-thing." This informality speaks to a democratic approach to technology: it is just a thing designed for flying, no more mystical than a car or a tool. The compound emphasizes function and purpose (flying) over technical structure. Chinese 飞机 (fēijī) emphasizes both the action and the mechanical nature, but German's choice of "Zeug" reveals a different cultural attitude toward technology: machines are things, humble tools for human purposes.
+      </div>
+    </div>
+
+    <!-- SCHILDKRÖTE card -->
+    <div class="ety-card" id="card-schildkroete">
+      <div class="word-header">
+        <span class="word-main">Schildkröte</span>
+        <span class="word-pron">/ˈʃɪltkʁøːtə/</span>
+      </div>
+      <div class="word-meaning">turtle — a reptile with a hard protective shell</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Schild (shield) + Kröte (toad)</span>
+        <span class="bridge-note">— a shield-toad, a toad with a shield on its back</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">turtle</span>
+        <span class="bridge-note">— from Old French "turtre"; etymology unclear</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">乌龟</span>
+        <span class="bridge-note">— wūguī (dark + turtle) — the word "gui" originally meant turtle</span>
+      </div>
+      <div class="story">
+        <em>Schildkröte</em> is a whimsical compound that reveals how German classifies animals through metaphor. A turtle is a toad (a familiar amphibian) that has been equipped with a shield. The metaphor emphasizes the shell as protective armor. German chose to classify the turtle not by its reptilian nature but by finding its closest domestic relative (the toad) and describing the most distinctive feature (the protective shell). This shows how compounding allows for idiosyncratic, poetic classification. The Chinese 乌龟 (wūguī) is more opaque etymologically, though 龟 itself originally meant turtle.
+      </div>
+    </div>
+
+    <!-- ZAHNBÜRSTE card -->
+    <div class="ety-card" id="card-zahnbuerste">
+      <div class="word-header">
+        <span class="word-main">Zahnbürste</span>
+        <span class="word-pron">/ˈtsaːnbʏʁstə/</span>
+      </div>
+      <div class="word-meaning">toothbrush — a brush for cleaning teeth</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Zahn (tooth) + Bürste (brush)</span>
+        <span class="bridge-note">— a brush for teeth</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">toothbrush</span>
+        <span class="bridge-note">— transparent compound, English preserves this structure</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">牙刷</span>
+        <span class="bridge-note">— yáshuā (tooth + brush) — identical logic to both German and English</span>
+      </div>
+      <div class="story">
+        <em>Zahnbürste</em> is a simple, transparent compound that works identically in German, English, and Chinese. All three languages preserve the compound structure: object + tool. This shows that when a compound is new or a technology is universal, languages tend to preserve transparency. The compound is not opaque; it does not require memorization. It tells you exactly what it is: a brush for teeth. This is the power of the German compound system: it allows for infinite innovation without loss of intelligibility.
+      </div>
+    </div>
+
+    <!-- SCHLAGZEUG card -->
+    <div class="ety-card" id="card-schlagzeug">
+      <div class="word-header">
+        <span class="word-main">Schlagzeug</span>
+        <span class="word-pron">/ˈʃlaːktsɔɪk/</span>
+      </div>
+      <div class="word-meaning">drums (percussion instruments) — musical instruments struck to produce sound</div>
+      <div class="bridge">
+        <span class="bridge-label deu">COMP</span>
+        <span class="bridge-word">Schlag (hit/strike) + Zeug (thing)</span>
+        <span class="bridge-note">— things that you strike, striking-things</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">drums</span>
+        <span class="bridge-note">— from an imitative root; does not reveal function</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">鼓</span>
+        <span class="bridge-note">— gǔ — a single ancient character; less transparent</span>
+      </div>
+      <div class="story">
+        <em>Schlagzeug</em> returns to the "Zeug" (thing/stuff) strategy, pairing it with "Schlag" (to hit/strike). It is a category noun: "striking-things." This compound reveals that drums are not a specific object but a category of percussion instruments unified by the action performed on them: striking. If you need to name a new percussion instrument (a cowbell, a gong), you can place it in the same category: it is Schlagzeug. The word system is infinitely extensible. The German approach of using functional categories (things you strike, things you play, things you blow into) allows for classification of instruments without needing to memorize specific terms.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      One crucial rule about German compounds: the gender of the entire compound is determined by the gender of the final component. A "Handschuh" is masculine (der Handschuh) because "Schuh" is masculine. A "Kühlschrank" is masculine because "Schrank" is masculine. A "Schildkröte" is feminine because "Kröte" is feminine.
+    </p>
+
+    <p class="narrative">
+      This means that the gender does not depend on the semantic content of the first part — the "hand" part of "Handschuh" does not determine gender. The gender is determined entirely by the grammatical class of the last word. This is a structural principle: compounds are organized with the head word at the end, and the head word determines all the grammatical properties of the whole.
+    </p>
+
+    <p class="narrative">
+      Chinese shows the opposite pattern. In compounds like 冰箱 (bīngxiāng, refrigerator), the modifier comes first and the head comes second. But the logic is similar: the structure reveals what the speaker thinks about the relationship between the parts.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words from Chapter Thirty-Three: The Compound</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Handschuh</span><span class="cw-english">glove</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Kühlschrank</span><span class="cw-english">fridge</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Staubsauger</span><span class="cw-english">vacuum</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Krankenhaus</span><span class="cw-english">hospital</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Flugzeug</span><span class="cw-english">airplane</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Schildkröte</span><span class="cw-english">turtle</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Zahnbürste</span><span class="cw-english">toothbrush</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Schlagzeug</span><span class="cw-english">drums</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Transparent Structure</strong> — German compounds reveal their meaning through component parts. A "Kühlschrank" is explicitly a "cool-cupboard."<br><br>
+      <strong style="color: var(--text-bright);">Metaphorical Classification</strong> — A glove is a "hand-shoe"; a turtle is a "shield-toad." Compounds reveal how a culture conceptualizes relationships.<br><br>
+      <strong style="color: var(--text-bright);">Head-Final Structure</strong> — The final word determines grammatical properties (gender, number, case). The head word comes at the end.<br><br>
+      <strong style="color: var(--text-bright);">Infinite Productivity</strong> — New compounds can be created on the fly and understood immediately without memorization.
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="quiz-container">
+      <h3>Chapter Thirty-Three Comprehension Quiz</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div id="quiz-score" class="quiz-score"></div>
+      <div id="quiz-reset" class="quiz-reset"></div>
+      <div id="post-quiz-summary" class="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Thirty-Three
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Eight compound nouns. One fundamental principle: German builds words like architecture builds buildings — from component parts that remain visible in the final structure.<br>
+        The compounds you have learned reveal how German speakers conceptualize the world: through metaphor, through function, through transparent structure.<br>
+        In the final chapter, we examine words that specifically mean "thing" and "stuff" — the building blocks themselves.
+      </p>
+      <div class="next-chapter">
+        Chapter Thirty-Four: Das Zeug — The Stuff, The Thing
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter32.html" class="nav-btn">← Chapter 32</a>
+    <a href="chapter34.html" class="nav-btn next">Chapter 34 →</a>
+  </div>
+
+</div>
+
+<script>
+
+const canvas = document.getElementById('assembly-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let blocks = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createBlocks();
+}
+
+function createBlocks() {
+  blocks = [];
+  for (let i = 0; i < 6; i++) {
+    for (let j = 0; j < 3; j++) {
+      blocks.push({
+        x: (i + 1) * canvas.width / 7,
+        y: (j + 1) * canvas.height / 4,
+        w: 40 + Math.random() * 20,
+        h: 30 + Math.random() * 15,
+        alpha: 0.08
+      });
+    }
+  }
+}
+
+function createParticles() {
+  particles = [];
+  const count = Math.floor((canvas.width * canvas.height) / 5000);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random() * 0.4 + 0.1,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.008 + 0.002
+    });
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  blocks.forEach(b => {
+    ctx.fillStyle = `rgba(196, 154, 108, ${b.alpha + scroll * 0.05})`;
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+    ctx.strokeStyle = `rgba(196, 154, 108, ${0.15 + scroll * 0.1})`;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(b.x, b.y, b.w, b.h);
+  });
+
+  particles.forEach((p) => {
+    p.wobble += p.wobbleSpeed;
+    p.x += Math.sin(p.wobble) * 0.3;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(196, 154, 108, ${p.alpha + scroll * 0.1})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+const quizData = [
+  {
+    question: "What is a 'Handschuh' literally composed of?",
+    options: ["Hand + Tuch (cloth)", "Hand + Schuh (shoe)", "Hand + Zeug (thing)", "Haut + Schuh"],
+    correct: 1,
+    explanation: "Handschuh = Hand (hand) + Schuh (shoe) = a shoe for your hand. It's a metaphorical compound."
+  },
+  {
+    question: "What does 'Kühlschrank' describe?",
+    options: ["a cold room", "a cool cupboard/cabinet", "an ice machine", "a freezing box"],
+    correct: 1,
+    explanation: "Kühlschrank = Kühl (cool) + Schrank (cupboard) = a cooling cupboard that preserves food."
+  },
+  {
+    question: "In German compounds, which word determines the gender?",
+    options: ["The first word (modifier)", "The second word (head)", "Both words equally", "A special gender marker"],
+    correct: 1,
+    explanation: "The final/head word determines gender. 'Handschuh' is masculine (der Handschuh) because 'Schuh' is masculine."
+  },
+  {
+    question: "What does 'Staubsauger' literally mean?",
+    options: ["dust sweeper", "dust vacuum", "dust-sucker", "dust machine"],
+    correct: 2,
+    explanation: "Staubsauger = Staub (dust) + Sauger (sucker) = a thing that sucks up dust."
+  },
+  {
+    question: "What advantage do German compounds have over English words like 'refrigerator'?",
+    options: ["They're shorter", "They reveal their structure and meaning transparently", "They're easier to spell", "They sound better"],
+    correct: 1,
+    explanation: "'Kühlschrank' tells you what it does (cool) and what it is (a cupboard). 'Refrigerator' is Latin-based and opaque."
+  },
+  {
+    question: "How is a 'Schildkröte' (turtle) conceptually classified in German?",
+    options: ["as a type of lizard", "as a shield-carrying toad", "as an aquatic reptile", "as a slow creature"],
+    correct: 1,
+    explanation: "Schildkröte = Schild (shield) + Kröte (toad) = metaphorically, a toad wearing a protective shield."
+  },
+  {
+    question: "What does 'Schlagzeug' literally mean?",
+    options: ["wooden instruments", "percussion section", "striking-things", "hitting-equipment"],
+    correct: 2,
+    explanation: "Schlagzeug = Schlag (strike/hit) + Zeug (thing) = things you strike. It's a functional category for percussion."
+  },
+  {
+    question: "Why can German speakers easily understand new compounds?",
+    options: ["They memorize all compounds", "The structure is transparent; parts remain recognizable", "There aren't really new ones", "German is more flexible than other languages"],
+    correct: 1,
+    explanation: "Compounds are rule-governed; if you know the parts, you understand the whole without memorization."
+  },
+  {
+    question: "How does Chinese handle compound nouns compared to German?",
+    options: ["Exactly the same way", "China doesn't use compounds", "Modifier comes first, then head (opposite of German)", "German and Chinese use no compounds"],
+    correct: 2,
+    explanation: "Chinese typically places the modifier first: 冰箱 (ice-box) vs. German's head-final structure."
+  },
+  {
+    question: "What does the compound system reveal about German speakers?",
+    options: ["They love long words", "They organize reality through metaphor and function", "They borrowed all words from other languages", "Their compounds are random"],
+    correct: 1,
+    explanation: "German compounds show how speakers conceptualize categories, make metaphorical connections, and organize knowledge."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have learned <strong>321 words and patterns</strong> across 33 chapters. You understand compound noun formation, the most distinctive feature of German noun morphology.</p>
+      <p style="margin-top: 8px;"><strong>Compound Mastery:</strong> You recognize how German creates unlimited new words from transparent components, and how this system reveals cultural values and conceptual frameworks.</p>
+      <p style="margin-top: 8px;">One final chapter awaits: the words that mean "thing" itself.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+    document.getElementById('quiz-reset').innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+document.querySelectorAll('.german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">316 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(37%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:37%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 316 words across 33 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">69 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(47%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:47%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 69 patterns and grammar rules across 33 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

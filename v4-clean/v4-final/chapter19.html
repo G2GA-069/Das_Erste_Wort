@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 19</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --enlightenment-bg: #f0f5f9;
+    --enlightenment-accent: #5b8ec4;
+    --enlightenment-light: #ffffff;
+    --enlightenment-dark: #3d5a7a;
+    --text: #2c3e50;
+    --text-bright: #1a252f;
+    --german: #5b8ec4;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --accent-gold: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--enlightenment-light);
+  }
+
+  body {
+    background: linear-gradient(to bottom,
+      #f0f5f9 0%,
+      #e8f0f7 40%,
+      #e0e8f0 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- ENLIGHTENMENT CANVAS --- */
+  #enlightenmentCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--enlightenment-accent);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(60, 90, 122, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(60, 90, 122, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--enlightenment-accent), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(44, 62, 80, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--enlightenment-accent);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(91, 142, 196, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--enlightenment-dark);
+    border-bottom-color: var(--enlightenment-dark);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(240, 245, 249, 0.95), rgba(224, 232, 240, 0.95));
+    border: 1px solid rgba(91, 142, 196, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(91, 142, 196, 0.1);
+  }
+
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--enlightenment-accent);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(44, 62, 80, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(91, 142, 196, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(91, 142, 196, 0.15); color: var(--enlightenment-accent); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(44, 62, 80, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(91, 142, 196, 0.1);
+    font-size: 1rem;
+    color: rgba(44, 62, 80, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(240, 245, 249, 0.9), rgba(224, 232, 240, 0.9));
+    border: 1px solid rgba(91, 142, 196, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(91, 142, 196, 0.08);
+    border: 1px solid rgba(91, 142, 196, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(91, 142, 196, 0.15);
+    border-color: var(--enlightenment-accent);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #2d8a4d;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(44, 62, 80, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--enlightenment-accent);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(91, 142, 196, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(91, 142, 196, 0.06);
+    border-left: 2px solid rgba(91, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(44, 62, 80, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--enlightenment-accent);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(240, 245, 249, 0.95), rgba(224, 232, 240, 0.95));
+    border: 1px solid rgba(91, 142, 196, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(91, 142, 196, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(91, 142, 196, 0.06);
+    border: 1px solid rgba(91, 142, 196, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--enlightenment-accent);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(44, 62, 80, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--enlightenment-accent);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(44, 62, 80, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #5b8ec4, #7aa5d4, #9ac4e0);
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(91, 142, 196, 0.25);
+    border-radius: 50%;
+    background: rgba(91, 142, 196, 0.08);
+    color: var(--enlightenment-accent);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(91, 142, 196, 0.2); border-color: rgba(91, 142, 196, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(91, 142, 196, 0.3); border-color: var(--enlightenment-accent); }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+  /* --- QUIZ STYLES --- */
+  .quiz-container {
+    background: rgba(20, 15, 10, 0.8);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-header h2 {
+    font-size: 1.8rem;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+
+  .quiz-header p {
+    color: rgba(212, 202, 187, 0.8);
+    font-size: 0.95rem;
+  }
+
+  .quiz-question {
+    margin-bottom: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .quiz-question:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .quiz-q-text {
+    font-size: 1.05rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    padding: 12px 16px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.correct {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: #f44336;
+    color: #f44336;
+  }
+
+  .quiz-result {
+    text-align: center;
+    padding: 20px;
+    margin-top: 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+  }
+
+  .quiz-result.pass {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border: 1px solid #4caf50;
+  }
+
+  .quiz-result.fail {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+  }
+
+  .quiz-hidden {
+    display: none;
+  }
+
+  @media (max-width: 700px) {
+    .quiz-container { padding: 24px 16px; }
+    .quiz-header h2 { font-size: 1.5rem; }
+    .quiz-option { padding: 10px 12px; font-size: 0.95rem; }
+  }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="enlightenmentCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Nineteen</div>
+    <h1>Die Aufklärung</h1>
+    <div class="subtitle">The Enlightenment</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: KÖNIGSBERG ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The year is 1740. The city is Königsberg, in what is now Lithuania. And every morning, a man of precisely sixty years old steps out of his modest house at exactly 4:47 AM.
+    </p>
+
+    <p class="narrative">
+      His name is Immanuel Kant. He walks the same route every single day — down Mulackstrasse, through the gardens, past the bridge, around the fortifications — so faithfully that the townspeople have set their clocks by him. He is so predictable, so systematic, so <em>reasonable</em>, that he has become something like a living equation: a man who has rationalized even his own movements.
+    </p>
+
+    <p class="narrative">
+      And yet this man — this walking clock, this human prototype of logical precision — is about to accomplish something extraordinary.
+    </p>
+
+    <p class="narrative">
+      He is going to prove that German can be the language of philosophy.
+    </p>
+
+    <p class="narrative emphasis">
+      He is going to remake thought itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: A REVOLUTIONARY CHOICE ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      For fifteen hundred years, philosophy had been written in <em>Latin</em>. Descartes wrote in Latin. Spinoza wrote in Latin. The entire European intellectual tradition had been built in a dead language — a language nobody spoke in the streets, nobody learned from their mother, a language so alien to daily life that philosophers had become a breed apart: men who thought in one tongue and lived in another.
+    </p>
+
+    <p class="narrative">
+      But Kant made a radical choice. When he sat down to write his greatest work — the <em>Kritik der reinen Vernunft</em> (Critique of Pure Reason) — he did not write in Latin. He wrote in German. The language of butchers and bakers. The language of mothers singing lullabies. The language of ordinary people in ordinary conversations.
+    </p>
+
+    <p class="narrative">
+      And when he did, something unexpected happened. The German language did not fail. It <em>transformed</em>.
+    </p>
+
+    <p class="narrative">
+      German — with its ability to construct new words from old roots, with its precision and its power — became the language of reason itself. Philosophers across Europe began to write in German. German became the language of systematic thought. German became the language in which you could think the most complex thoughts about the nature of thought.
+    </p>
+
+    <p class="narrative">
+      A language had proven it could hold not just nursery rhymes and folk tales, but the architecture of pure reason.
+    </p>
+
+    <p class="narrative">
+      This is <span class="german-word" data-card="aufklaerung">Aufklärung</span> — the Enlightenment. And it needed an entirely new philosophical vocabulary.
+    </p>
+
+    <!-- AUFKLÄRUNG card -->
+    <div class="ety-card" id="card-aufklaerung">
+      <div class="word-header">
+        <span class="word-main">Aufklärung</span>
+        <span class="word-pron">/ˈaʊfˌklɛːʁʊŋ/</span>
+      </div>
+      <div class="word-meaning">enlightenment — the clearing-up, the emergence from self-imposed darkness</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf (up) + klären (to clarify) + -ung</span>
+        <span class="bridge-note">— literally "the clearing-up"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kant's definition:</span>
+        <span class="bridge-note">— "Man's emergence from his self-imposed immaturity"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">启蒙</span>
+        <span class="bridge-note">— qǐ (open) + méng (darkness) = "open the darkness"</span>
+      </div>
+      <div class="story">
+        Notice the beautiful construction: <em>Auf</em> (up) + <em>klären</em> (to clarify, from <em>klar</em> = clear) + <em>-ung</em> (the process). German builds the very meaning into the word's structure. Aufklärung is not just an abstract concept — it is the <em>act of clearing things up</em>, compressed into a single word. And notice the Chinese 启蒙: it means to open (启) the darkness (蒙). Two languages, two metaphors, arriving at the same truth. In both cases, enlightenment is about <em>revealing what was hidden</em>.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: NEW WORDS FOR NEW THOUGHTS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Kant's Critique of Pure Reason is 800 pages long. It is one of the most difficult books ever written in any language. And it required an entirely new vocabulary — concepts that had never existed before, German words that had to be invented to hold thoughts that had never been thought.
+    </p>
+
+    <p class="narrative">
+      Here is the first of them. It is at the very heart of Kant's philosophy.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="vernunft">Vernunft.</span> Reason. But not reason as simple logic — Kant's Vernunft is something deeper and stranger. It is reason as the deepest faculty of the human mind. And the word itself is built from old Germanic roots:
+    </p>
+
+    <!-- VERNUNFT card -->
+    <div class="ety-card" id="card-vernunft">
+      <div class="word-header">
+        <span class="word-main">Vernunft</span>
+        <span class="word-pron">/fɛɐ̯ˈnʊnft/</span>
+      </div>
+      <div class="word-meaning">reason — from vernehmen (to perceive, to take in). Reason as deep perception.</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver + nehmen + -ung → vernehmen (to perceive)</span>
+        <span class="bridge-note">— German building meaning from roots</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Vernunft</span>
+        <span class="bridge-note">— "the state of deep perception"</span>
+      </div>
+      <div class="story">
+        <em>Vernunft</em> comes from <em>vernehmen</em> — which means "to perceive," "to take in," "to hear." The idea is that reason is not calculation or logic applied <em>from outside</em>, but something you <em>perceive</em> — something that emerges from paying deep attention to the world. Ver- is a prefix meaning "thoroughly" or "completely," so Vernunft is "the thorough taking-in," or "complete perception." It is reason rooted in perception itself. This is very German: instead of borrowing the Latin <em>ratio</em>, German built the word from its own materials, revealing its own philosophy in the construction.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Now — in the act of experiencing the world, what happens? Your eyes see something. Your ears hear something. But how does all that sensory chaos become <em>knowledge</em>? How does the flood of impressions become order? This is the question Kant asked. And he needed a new word for the answer:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="erfahrung">Erfahrung.</span> Experience. But look at what the word is made of:
+    </p>
+
+    <!-- ERFAHRUNG card -->
+    <div class="ety-card" id="card-erfahrung">
+      <div class="word-header">
+        <span class="word-main">Erfahrung</span>
+        <span class="word-pron">/ɛɐ̯ˈfaːʁʊŋ/</span>
+      </div>
+      <div class="word-meaning">experience — from fahren (to travel, to journey). Experience as a journey through the world.</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">er + fahren + -ung = "the journeying-through"</span>
+        <span class="bridge-note">— Er- means "through" or "resulting in"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">fahren = to travel, to drive, to journey</span>
+        <span class="bridge-note">— Cf. English "ford" (to cross a river)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">经验</span>
+        <span class="bridge-note">— jīngyàn = pass-through (经) + test/experience (验)</span>
+      </div>
+      <div class="story">
+        Experience is a <em>journey</em> through something. It is movement, passage, traveling from one place to another. When you have an experience, you travel through it — you live through it, cross through it, move forward within it. The Chinese word 经验 works the same way: 经 (to pass through) + 验 (to test). Both languages see experience not as a static possession but as an active journey, a passage, a testing of yourself against the world. Kant believed that true knowledge comes not from abstract reason alone, but from experience — from journeying through the world with your mind.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And once you have had an experience — once you have journeyed through the world — how do you <em>think</em> about it? How do you hold it in your mind? Kant needed another word:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="vorstellung">Vorstellung.</span> An idea. A representation. A thought. But the construction is extraordinary:
+    </p>
+
+    <!-- VORSTELLUNG card -->
+    <div class="ety-card" id="card-vorstellung">
+      <div class="word-header">
+        <span class="word-main">Vorstellung</span>
+        <span class="word-pron">/ˈfoːɐ̯ʃtɛlʊŋ/</span>
+      </div>
+      <div class="word-meaning">idea, representation, presentation — something placed before the mind</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">vor (before) + stellen (to place, to put) + -ung</span>
+        <span class="bridge-note">— literally "the placing-before"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">stellen</span>
+        <span class="bridge-note">— related to "Stelle" (place, position)</span>
+      </div>
+      <div class="story">
+        An idea is literally something <em>placed before you</em>. It is as if your consciousness is a stage, and ideas are objects placed upon it. "Vor" (before, in front of) + "stellen" (to place, to put) = to place something before the mind. In this word, Kant captured his entire theory of how thought works: the mind is a space, and ideas are things that appear in that space. The word's structure reveals the philosophy. And this is why German was so perfect for the task — it could build philosophical concepts from transparent, meaningful parts that the reader could almost see being constructed in front of them.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE ARCHITECTURE OF REALITY ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Kant was asking the deepest possible question: What is <em>real</em>? What is the difference between what seems to be and what actually <em>is</em>? He needed a word for the nature of reality itself:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wirklichkeit">Wirklichkeit.</span> Reality. But notice — this word has nothing to do with Latin or Greek. It is pure German, built from Germanic roots that go back to the Proto-Indo-European language itself:
+    </p>
+
+    <!-- WIRKLICHKEIT card -->
+    <div class="ety-card" id="card-wirklichkeit">
+      <div class="word-header">
+        <span class="word-main">Wirklichkeit</span>
+        <span class="word-pron">/ˈvɪɐ̯klɪçkaɪ̯t/</span>
+      </div>
+      <div class="word-meaning">reality — the state of having effect, of truly working in the world</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wirken (to work, to have effect) + -lich (like, having the quality of) + -keit</span>
+        <span class="bridge-note">— literally "the state of being effective"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wirken</span>
+        <span class="bridge-note">— related to "Werk" (work) and PIE *werg- (to work, to make)</span>
+      </div>
+      <div class="story">
+        Reality is what <em>works</em>. It is what has <em>effect</em>. This is a profound philosophical choice: Kant defined reality not by abstract properties but by efficacy — by what actually does something in the world. Something is real not because it exists in some Platonic realm of forms, but because it <em>works</em>, because it produces effects, because you can't deny its power over you. The word Wirklichkeit contains this entire insight: reality = the state of being-effective. And again, the structure is transparent: a working German word about the nature of working itself.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But Kant also noticed something strange: we never actually perceive reality directly. We perceive <em>appearances</em>. We see things as they seem to us, not as they are in themselves. So he needed a word for this:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="erscheinung">Erscheinung.</span> Appearance. Phenomenon. The way things <em>show themselves</em> to us:
+    </p>
+
+    <!-- ERSCHEINUNG card -->
+    <div class="ety-card" id="card-erscheinung">
+      <div class="word-header">
+        <span class="word-main">Erscheinung</span>
+        <span class="word-pron">/ɛɐ̯ˈʃaɪ̯nʊŋ/</span>
+      </div>
+      <div class="word-meaning">appearance, phenomenon — the shining-forth, the way something shows itself</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">er + scheinen + -ung = "the shining-forth"</span>
+        <span class="bridge-note">— scheinen means "to shine" or "to appear"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">scheinen</span>
+        <span class="bridge-note">— related to "Schein" (illusion, semblance, appearance)</span>
+      </div>
+      <div class="story">
+        An Erscheinung is what appears, what shines forth, what presents itself to your perception. The word is built from "scheinen" (to shine) — as if things literally shine when they appear to us. For Kant, there is a crucial distinction: phenomena (Erscheinungen) are what we experience, but the things-in-themselves (Dinge an sich) remain hidden. We know the world as it appears to us, but never as it truly is independent of our perception. The word Erscheinung captures this: it is literally about shining and showing, not about being.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And if appearances are what we perceive, what <em>makes</em> something appear? What structures an appearance? Kant had a shocking answer: the mind itself structures what we perceive. And for this structure, he needed a word:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="bedingung">Bedingung.</span> Condition. The thing that makes something what it is:
+    </p>
+
+    <!-- BEDINGUNG card -->
+    <div class="ety-card" id="card-bedingung">
+      <div class="word-header">
+        <span class="word-main">Bedingung</span>
+        <span class="word-pron">/bəˈdɪŋʊŋ/</span>
+      </div>
+      <div class="word-meaning">condition — from bedingen (to condition, to determine). A condition is what makes a thing what it is.</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">be + dingen + -ung = "the thing-making"</span>
+        <span class="bridge-note">— be- is a prefix meaning "to make," "to cause"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Ding</span>
+        <span class="bridge-note">— thing (related to PIE *teng-, to discuss, to argue — things are what we discuss!)</span>
+      </div>
+      <div class="story">
+        A Bedingung is literally "the making of things" — from be- (to make) + dingen (things, or to make into things). Conditions are what transform raw potential into actual things. For Kant, the conditions of experience — space and time — are what make it possible for anything to appear to us at all. Without the condition of space, you couldn't perceive objects. Without the condition of time, you couldn't perceive change or sequence. The word Bedingung contains this insight: a condition is what <em>makes</em> things possible, what turns mere chaos into structured reality.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: CONNECTIONS ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But the world is not a collection of isolated things. Things connect. They relate to each other. They form patterns. Kant needed a word for this web of relationships:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zusammenhang">Zusammenhang.</span> Context. Connection. The way things hang together:
+    </p>
+
+    <!-- ZUSAMMENHANG card -->
+    <div class="ety-card" id="card-zusammenhang">
+      <div class="word-header">
+        <span class="word-main">Zusammenhang</span>
+        <span class="word-pron">/tsuˈzamənˌhaŋ/</span>
+      </div>
+      <div class="word-meaning">context, connection, coherence — things hanging together in relationship</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zusammen (together) + hängen (to hang)</span>
+        <span class="bridge-note">— literally "hanging-together"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zusammen</span>
+        <span class="bridge-note">— from "zu" (to) + "samme" (together) — things coming together</span>
+      </div>
+      <div class="story">
+        A Zusammenhang is a coherent whole where each part hangs from and depends on the others. Nothing exists in isolation — everything is suspended in a web of relationships. This is one of Kant's key insights: the mind doesn't receive isolated sense impressions; it receives them as part of a coherent structure. The word captures this perfectly: things don't just exist, they <em>hang together</em>, they are connected, they form a unified system. And again, the word's structure shows the thought: you can visualize things hanging together, held in suspension by their mutual connections.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But if things hang together, what is it that they hang together <em>against</em>? What is the background, the opposite? Every relationship requires something to relate to. And so Kant needed a word for the objects of perception themselves:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gegenstand">Gegenstand.</span> Object. The thing that stands against you:
+    </p>
+
+    <!-- GEGENSTAND card -->
+    <div class="ety-card" id="card-gegenstand">
+      <div class="word-header">
+        <span class="word-main">Gegenstand</span>
+        <span class="word-pron">/ˈɡeːɡənʃtant/</span>
+      </div>
+      <div class="word-meaning">object — from gegen (against) + stehen (to stand). An object is what stands against you.</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">gegen (against) + stand (standing, from stehen = to stand)</span>
+        <span class="bridge-note">— literally "standing-against"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">gegenüber</span>
+        <span class="bridge-note">— "across from," "facing" — from the same root</span>
+      </div>
+      <div class="story">
+        An object is something that <em>stands against</em> you. It resists you. It is not you. There is a distance between the perceiver and the perceived, and the object stands in that space. For Kant, this was crucial: knowledge is a relationship between a subject (you) and an object (the thing you know). They stand in opposition to each other, and knowledge is the act of bridging that gap. The word Gegenstand captures this opposition perfectly: it is not something abstract or internal, but something external, something that <em>stands before you</em>, something you must overcome or understand.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: CONSCIOUSNESS ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      At the very heart of Kant's philosophy lies a simple question: How is knowledge possible? How does a mind that exists inside a body come to know a world that exists outside that body? And the answer, for Kant, depends on a faculty that cannot be adequately explained by Latin or Greek. It requires a distinctly German word:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="bewusstsein">Bewusstsein.</span> Consciousness. The state of being aware. Look at its construction:
+    </p>
+
+    <!-- BEWUSSTSEIN card -->
+    <div class="ety-card" id="card-bewusstsein">
+      <div class="word-header">
+        <span class="word-main">Bewusstsein</span>
+        <span class="word-pron">/bəˈvʊstsaɪ̯n/</span>
+      </div>
+      <div class="word-meaning">consciousness, awareness — the state of being aware, of knowing</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">be + wusst + sein = "the state of being aware"</span>
+        <span class="bridge-note">— from wissen (to know) via wusst (knew)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wusst</span>
+        <span class="bridge-note">— past tense of wissen (to know), related to "Wissen" (knowledge)</span>
+      </div>
+      <div class="story">
+        Bewusstsein literally means "the state of being-knowing." It combines "be-" (to be in a state of) with "wusst" (from wissen, to know) and "-sein" (to be, being). To be conscious is to be in a state of knowing. And this captures something profound: consciousness is not a thing, it is a state. It is what happens when you are in the condition of knowing. You are not conscious because you possess some special substance called consciousness; you are conscious because you know, and that knowing is a state of being. For Kant, consciousness is the act of synthesizing the data of experience into unified knowledge. And the German word captures this perfectly: consciousness is the activity of being-aware, the ongoing state of knowing-ness.
+      </div>
+    </div>
+
+    <p class="narrative">
+      These ten words — built entirely from Germanic roots, layered with meaning, transparent in their construction — became the foundation of modern philosophy. They spread from German universities across Europe. Philosophers in other languages began to borrow them or translate them, but they could never quite capture the precision of the originals.
+    </p>
+
+    <p class="narrative">
+      Because these are not arbitrary sounds attached to abstract ideas. They are thoughts made visible in language. They are philosophy you can almost see being built, word by word, root by root.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE DAILY WALK ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      While Kant sat in his study writing about the conditions of experience, he was living a life of absolute regularity. Every morning. Every afternoon. The same route. The same pace. He never traveled more than a few miles from Königsberg in his entire life. He never married. He never left Prussia. And yet, inside that hermetic existence, he constructed a philosophy that would reshape human thought.
+    </p>
+
+    <p class="narrative">
+      This is the paradox of the Enlightenment: that the clearest, most rational thinking about the world emerged not from travel and adventure, but from the most methodical, repetitive, almost mechanical discipline. Reason, it seemed, required regularity. Order. System.
+    </p>
+
+    <p class="narrative">
+      The townspeople of Königsberg saw Kant walk past every day, and they could set their clocks. They thought they were watching a living demonstration of human reason made flesh — a man so rational he had systematized even his own movement through space and time.
+    </p>
+
+    <p class="narrative">
+      And in a sense, they were right. Because what else is Kant's philosophy but an attempt to map the order that underlies all experience? To show that beneath the chaos of sensation lies a structure — systematic, lawful, knowable.
+    </p>
+
+    <div class="aside-box">
+      <div class="aside-title">Kant's Punctual Walks</div>
+      Kant was so precise in his daily route that the townspeople of Königsberg set their clocks by him. He walked every day for over forty years, never deviating from the same path. This obsessive regularity was not a flaw in his thinking — it was an expression of it. For Kant, order was the prerequisite for knowledge. The mind imposes order on the chaos of sense data. And Kant lived that principle: he imposed perfect order on his own life, so that his mind would be free to contemplate the deepest questions. The walk itself became a kind of meditation — the body moving with clockwork precision while the mind ranged across the entire landscape of human knowledge.
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Why German Became the Language of Philosophy</div>
+      When Kant wrote his Critique of Pure Reason in German, he was making a revolutionary claim: that the language of ordinary people could be the vehicle for the highest thought. But German had unique advantages. Its ability to create new compound words from existing roots meant that it could adapt to express new concepts without having to borrow from Latin or Greek. When Kant needed a word for "appearance," he didn't invent something arbitrary — he used the existing German word "Erscheinung" and layered new philosophical meaning onto it. The word already had a history, but now it meant something more. German speakers felt the precision in this: they could see how the old roots were being used in new ways. This transparency — this ability to see the components of meaning stacked like blocks — became the defining feature of German as a philosophical language. And it showed something crucial: that a language's capacity for philosophy depends not on how ancient it is, or how many other languages have borrowed from it, but on how systematically it can build meaning from its own materials.
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        You've learned that <strong style="color: var(--enlightenment-accent);">Aufklärung</strong> means "the clearing-up."<br><br>
+        What do you think <strong style="color: var(--enlightenment-accent);">geklärt</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: it's the past tense form of the root we just saw.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">crowded</button>
+        <button class="guess-btn" onclick="guess(this, true)">clarified</button>
+        <button class="guess-btn" onclick="guess(this, false)">darkened</button>
+        <button class="guess-btn" onclick="guess(this, false)">blocked</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        You know that <strong style="color: var(--enlightenment-accent);">wirken</strong> means "to work" or "to have effect,"<br>
+        and that <strong style="color: var(--enlightenment-accent);">Wirklichkeit</strong> is reality.<br><br>
+        So what does <strong style="color: var(--enlightenment-accent);">unwirksam</strong> mean?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: "un-" is a prefix meaning "not")</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">powerful</button>
+        <button class="guess-btn" onclick="guess(this, true)">ineffective</button>
+        <button class="guess-btn" onclick="guess(this, false)">working</button>
+        <button class="guess-btn" onclick="guess(this, false)">lasting</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 3 ==================== -->
+  <div class="scene" id="scene-guess3">
+    <div class="guess-section">
+      <div class="prompt">
+        Review: You've learned <strong style="color: var(--enlightenment-accent);">Zusammenhang</strong> (hanging-together) and <strong style="color: var(--enlightenment-accent);">Gegenstand</strong> (standing-against).<br><br>
+        These words show how German builds abstract concepts from concrete, physical verbs.<br>
+        Which of these is a consistent pattern in German philosophical vocabulary?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">Abstract nouns built from verbs about physical action</button>
+        <button class="guess-btn" onclick="guess(this, false)">Single, unchanging root words from Latin</button>
+        <button class="guess-btn" onclick="guess(this, false)">Borrowed terms from other languages</button>
+        <button class="guess-btn" onclick="guess(this, false)">Abbreviations of longer words</button>
+      </div>
+      <div class="guess-feedback" id="feedback3"></div>
+    </div>
+  </div>
+
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Transparent Philosophy</strong> — German builds concepts you can see inside. Every philosophical term is transparent: Aufklärung (up+clearing = enlightenment), Bewusstsein (aware+being = consciousness), Vorstellung (before+placing = idea/representation). Unlike Latin or Greek philosophical terms that are opaque to non-specialists, German terms can be decoded.<br><br>
+    <strong style="color: var(--text-bright);">Prefix Precision</strong> — The prefix system creates philosophical exactness: vor- (before, as in Vor-stellung), er- (out of, as in Er-fahrung), zusammen- (together, as in Zusammen-hang), gegen- (against, as in Gegen-stand). Each prefix modifies meaning systematically.<br><br>
+    <strong style="color: var(--text-bright);">Why German for Philosophy</strong> — Compound power lets you coin exact terms. When Kant needed a word for his philosophy, German could build it from visible parts. Er-fahrung doesn't mean "travel" anymore; it means "the-journey-through" of experience itself.<br><br>
+    <strong style="color: var(--text-bright);">Abstract from Concrete</strong> — fahren→Erfahrung (travel→experience), wirken→Wirklichkeit (work→reality), stehen→Gegenstand (stand→object). Philosophy in German is philosophy you can see.
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Nineteen</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Aufklärung</span><span class="cw-english">enlightenment</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Vernunft</span><span class="cw-english">reason</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Erfahrung</span><span class="cw-english">experience</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Vorstellung</span><span class="cw-english">idea</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Wirklichkeit</span><span class="cw-english">reality</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Erscheinung</span><span class="cw-english">appearance</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Bedingung</span><span class="cw-english">condition</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Zusammenhang</span><span class="cw-english">context</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Gegenstand</span><span class="cw-english">object</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Bewusstsein</span><span class="cw-english">consciousness</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== CONCEPTS LEARNED (THIS CHAPTER) ==================== -->
+    <div style="margin-top: 32px;">
+      <h3 style="text-align: center; color: rgba(212, 202, 187, 0.8); font-size: 1.1rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.2em;">Concepts Learned in Chapter Nineteen</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+        <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Transparent Philosophy</span><span class="cw-english">German builds concepts you can see inside</span></div>
+        <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Prefix Precision</span><span class="cw-english">Vor-, Er-, Zusammen-, Gegen-</span></div>
+        <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Why German for Philosophy</span><span class="cw-english">Compound power lets you coin exact terms</span></div>
+        <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Abstract from Concrete</span><span class="cw-english">fahren→Erfahrung, travel→experience</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER 19 QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <h2>Chapter 19 Quiz — 80% Required</h2>
+        <p>Kant thinks in German. Can you unlock the transparent philosophy?</p>
+      </div>
+
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>1.</strong> What does "Aufklärung" literally mean when broken into its components?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Up + clearing (enlightenment)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Light + knowledge</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Understanding + wisdom</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Reason + truth</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>2.</strong> Which prefix in German is used in "Vorstellung" and means "before" or "prior"?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Vor-</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Er-</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Zusammen-</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Gegen-</button>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>3.</strong> The word "Erfahrung" (experience) is built from which concrete verb?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Fahren (to travel)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Erkennen (to recognize)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Fühlen (to feel)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Verstehen (to understand)</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>4.</strong> Why is German particularly suited for philosophy, according to the chapter?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">It borrowed many Latin and Greek philosophical terms</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Compound power lets you coin exact terms from visible parts (transparent philosophy)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">It has strict grammar rules that enforce logical thinking</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Kant was German, so German became the language of philosophy</button>
+        </div>
+      </div>
+
+      <div class="quiz-result" id="quizResult"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">190 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(22%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:22%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Aufklärung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">enlightenment</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Vernunft</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">reason</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Erfahrung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">experience</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Vorstellung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">idea, representation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wirklichkeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">reality</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Erscheinung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">appearance, phenomenon</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bedingung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">condition</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zusammenhang</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">context, coherence</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gegenstand</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">object</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bewusstsein</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">consciousness</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td colspan="3" style="padding:8px 10px;text-align:center;color:rgba(212,202,187,0.4);font-size:0.8rem;border-top:1px solid rgba(232,164,74,0.08);">Chapters 1–18: ~180 more words</td></tr>
+</table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">41 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(28%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:28%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Transparent philosophy</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Aufklärung=up+clearing, Bewusstsein=aware+being</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Prefix precision</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">vor-, er-, zusammen-, gegen-</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Why German for philosophy</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Compound power creates exact terms</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Abstract from concrete</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fahren→Erfahrung, wirken→Wirklichkeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">19</td></tr>
+<tr><td colspan="3" style="padding:8px 10px;text-align:center;color:rgba(212,202,187,0.4);font-size:0.8rem;border-top:1px solid rgba(155,142,196,0.08);">Chapters 1–18: ~55 more patterns</td></tr>
+</table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Nineteen
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. The language of reason itself. A man in Königsberg walking the same route every day,<br>
+        thinking thoughts that would reshape philosophy for centuries.<br>
+        The mind at its clearest. The word at its most precise.<br>
+        And German proving that ordinary language could hold the highest thought.
+      </p>
+      <div class="next-chapter">
+        Chapter Twenty: The Romantic Response — coming soon
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter18.html" class="nav-btn">← Chapter 18</a>
+    <a href="chapter20.html" class="nav-btn next">Chapter 20 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- QUIZ VARIABLES ---
+let quizAnswers = [];
+
+// --- ENLIGHTENMENT CANVAS: LUMINOUS GEOMETRY ---
+const canvas = document.getElementById('enlightenmentCanvas');
+const ctx = canvas.getContext('2d');
+let shapes = [];
+let beams = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initShapes() {
+  shapes = [];
+  // Geometric shapes that rotate
+  for (let i = 0; i < 8; i++) {
+    const angle = (Math.PI * 2 * i) / 8;
+    shapes.push({
+      x: canvas.width / 2 + Math.cos(angle) * (canvas.width * 0.25),
+      y: canvas.height * 0.3 + Math.sin(angle) * (canvas.height * 0.15),
+      type: i % 3, // 0=circle, 1=triangle, 2=line
+      angle: Math.random() * Math.PI * 2,
+      rotateSpeed: (Math.random() - 0.5) * 0.005,
+      opacity: 0.08 + Math.random() * 0.04
+    });
+  }
+
+  // Initialize beams
+  beams = [];
+  const count = 5;
+  for (let i = 0; i < count; i++) {
+    beams.push({
+      angle: (Math.PI * 2 * i) / count,
+      length: Math.max(canvas.width, canvas.height),
+      opacity: 0.06 + Math.random() * 0.04
+    });
+  }
+}
+
+function drawShapes() {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height * 0.3;
+
+  shapes.forEach(shape => {
+    shape.angle += shape.rotateSpeed;
+    const x = centerX + Math.cos(shape.angle) * 120;
+    const y = centerY + Math.sin(shape.angle) * 80;
+
+    ctx.strokeStyle = `rgba(91, 142, 196, ${shape.opacity})`;
+    ctx.lineWidth = 1.5;
+
+    if (shape.type === 0) {
+      // Circle
+      ctx.beginPath();
+      ctx.arc(x, y, 30, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (shape.type === 1) {
+      // Triangle
+      ctx.beginPath();
+      ctx.moveTo(x, y - 30);
+      ctx.lineTo(x + 30, y + 20);
+      ctx.lineTo(x - 30, y + 20);
+      ctx.closePath();
+      ctx.stroke();
+    } else {
+      // Intersecting lines
+      ctx.beginPath();
+      ctx.moveTo(x - 40, y);
+      ctx.lineTo(x + 40, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y - 40);
+      ctx.lineTo(x, y + 40);
+      ctx.stroke();
+    }
+  });
+}
+
+function drawBeams() {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height * 0.3;
+
+  beams.forEach(beam => {
+    const endX = centerX + Math.cos(beam.angle) * beam.length;
+    const endY = centerY + Math.sin(beam.angle) * beam.length;
+
+    ctx.strokeStyle = `rgba(91, 142, 196, ${beam.opacity})`;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+  });
+}
+
+function drawGridlines() {
+  const gridSize = 60;
+  const scroll = window.scrollY / window.innerHeight;
+  const opacity = 0.02 + scroll * 0.02;
+
+  ctx.strokeStyle = `rgba(91, 142, 196, ${opacity})`;
+  ctx.lineWidth = 0.5;
+
+  for (let x = 0; x < canvas.width; x += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+
+  for (let y = 0; y < canvas.height; y += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+}
+
+function drawLensEffect() {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height * 0.3;
+  const size = 50;
+
+  // Semi-transparent circle acting as a lens/prism
+  ctx.strokeStyle = 'rgba(91, 142, 196, 0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, size, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Subtle color separation
+  ctx.strokeStyle = 'rgba(212, 165, 116, 0.05)';
+  ctx.beginPath();
+  ctx.arc(centerX + 10, centerY, size - 10, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(240, 245, 249, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawGridlines();
+  drawBeams();
+  drawShapes();
+  drawLensEffect();
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+initShapes();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); initShapes(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Precisely right. German reveals its thinking in its structure.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about the roots we just examined...';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- QUIZ FUNCTIONALITY ---
+function checkAnswer(btn, isCorrect) {
+  const question = btn.closest('.quiz-question');
+  const options = question.querySelectorAll('.quiz-option');
+
+  options.forEach(opt => opt.style.pointerEvents = 'none');
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    quizAnswers.push(true);
+  } else {
+    btn.classList.add('incorrect');
+    quizAnswers.push(false);
+  }
+
+  // Highlight correct answer
+  if (!isCorrect) {
+    options.forEach(opt => {
+      if (opt.onclick.toString().includes('true')) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  // Check if quiz is complete
+  if (quizAnswers.length === 4) {
+    const correctCount = quizAnswers.filter(a => a).length;
+    const percentage = (correctCount / 4) * 100;
+    const resultDiv = document.getElementById('quizResult');
+
+    if (percentage >= 80) {
+      resultDiv.textContent = `Passed! You scored ${correctCount}/4 (${percentage.toFixed(0)}%). Philosophy unlocked!`;
+      resultDiv.classList.add('pass');
+    } else {
+      resultDiv.textContent = `You scored ${correctCount}/4 (${percentage.toFixed(0)}%). Review the chapter and try again!`;
+      resultDiv.classList.add('fail');
+    }
+  }
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

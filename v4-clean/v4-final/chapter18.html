@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 18</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink-dark: #0f0d1a;
+    --ink-transition: #3d2e4a;
+    --ink-mid: #6b5a7a;
+    --cream-light: #f4f0e8;
+    --cream-warm: #e8e0d0;
+    --text: #4a4238;
+    --text-bright: #2a211a;
+    --german: #d4a574;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --gold: #d4af37;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--ink-dark);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0f0d1a 0%, #3d2e4a 30%, #f4f0e8 70%, #e8e0d0 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* --- CANVAS BACKGROUNDS --- */
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 20px;
+    position: relative;
+    z-index: 11;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--german);
+    margin-bottom: 20px;
+    opacity: 0.85;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+    color: var(--text-bright);
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--german);
+    margin-bottom: 40px;
+    opacity: 0.9;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    animation: bobbing 2s ease-in-out infinite;
+    font-size: 1.4rem;
+    color: var(--german);
+    opacity: 0.7;
+  }
+
+  @keyframes bobbing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+  }
+
+  /* --- SCENES & NARRATIVE --- */
+  .scene {
+    margin: 80px 0;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+    animation-delay: 0.1s;
+  }
+
+  .scene.visible { opacity: 1; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene-marker {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--german), transparent);
+    margin: 60px 0;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+
+  .narrative em {
+    font-style: italic;
+    color: var(--german);
+  }
+
+  .narrative strong {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--german);
+    line-height: 1.8;
+    margin: 1.2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1rem;
+    color: var(--text);
+    opacity: 0.85;
+  }
+
+  .divider {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--german);
+    margin: 60px 0;
+    opacity: 0.5;
+  }
+
+  /* --- GERMAN WORDS (clickable etymology triggers) --- */
+  .german-word {
+    position: relative;
+    cursor: pointer;
+    color: var(--german);
+    font-weight: 500;
+    border-bottom: 2px solid var(--gold);
+    transition: all 0.3s ease;
+    padding: 2px 4px;
+    display: inline-block;
+  }
+
+  .german-word:hover {
+    background: rgba(212, 165, 116, 0.1);
+    border-bottom-color: var(--german);
+  }
+
+  .german-word.revealed {
+    background: rgba(212, 165, 116, 0.15);
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: rgba(245, 242, 235, 0.95);
+    border-left: 4px solid var(--german);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0 30px 0;
+    max-width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .ety-card.open {
+    max-height: 2000px;
+    opacity: 1;
+    pointer-events: auto;
+    margin-bottom: 40px;
+  }
+
+  .word-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .word-main {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    font-family: Georgia, serif;
+  }
+
+  .word-pron {
+    font-size: 0.9rem;
+    color: var(--text);
+    opacity: 0.7;
+    font-family: monospace;
+  }
+
+  .word-meaning {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .bridge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.2); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.2); color: var(--english); }
+  .bridge-label.deu { background: rgba(212, 165, 116, 0.2); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.2); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    font-weight: 500;
+    font-family: Georgia, serif;
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.4rem;
+  }
+
+  .bridge-note {
+    font-size: 0.95rem;
+    color: var(--text);
+    opacity: 0.75;
+    flex-grow: 1;
+  }
+
+  .story {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(212, 165, 116, 0.2);
+  }
+
+  .story em {
+    font-style: italic;
+    color: var(--german);
+  }
+
+  .story strong {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  /* --- CHARACTER DISPLAY (Chinese) --- */
+  .char-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background: rgba(245, 242, 235, 0.5);
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+
+  .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--chinese);
+  }
+
+  .pinyin {
+    font-size: 1rem;
+    color: var(--text);
+    opacity: 0.8;
+  }
+
+  /* --- GUESS/INTERACTIVE SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.08), rgba(196, 154, 108, 0.08));
+    border: 2px solid var(--german);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    position: relative;
+  }
+
+  .prompt {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+
+  .guess-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    padding: 16px 20px;
+    font-size: 1.1rem;
+    border: 2px solid var(--german);
+    background: rgba(212, 165, 116, 0.05);
+    color: var(--text-bright);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .guess-btn:hover {
+    background: rgba(212, 165, 116, 0.15);
+    border-color: var(--german);
+    transform: translateX(4px);
+  }
+
+  .guess-btn:active {
+    transform: translateX(2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(76, 175, 80, 0.15);
+    border-color: #4caf50;
+    color: #2d5016;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: #f44336;
+    color: #b71c1c;
+    opacity: 0.6;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    color: var(--text);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    padding: 12px;
+    margin-top: 12px;
+    border-left: 3px solid var(--german);
+    padding-left: 16px;
+  }
+
+  .guess-feedback.show {
+    opacity: 1;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(245, 242, 235, 0.9);
+    border-left: 4px solid var(--german);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 40px 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .aside-box strong {
+    color: var(--text-bright);
+    font-weight: 600;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    padding: 40px;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1.8rem;
+    color: var(--german);
+    margin-bottom: 32px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(212, 165, 116, 0.1);
+    border: 2px solid var(--german);
+    border-radius: 8px;
+    padding: 14px 18px;
+    min-width: 100px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .cw-german {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .cw-english {
+    font-size: 0.9rem;
+    color: var(--text);
+    opacity: 0.75;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 20px;
+    margin-top: 80px;
+  }
+
+  .end-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--german), transparent);
+    margin: 40px 0;
+  }
+
+  .next-chapter {
+    font-size: 1.1rem;
+    color: var(--german);
+    margin-top: 40px;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--german), var(--gold));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- ORNATE BORDER (decorative frame) --- */
+  #baroque-frame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(212, 165, 116, 0.25);
+    border-radius: 50%;
+    background: rgba(212, 165, 116, 0.08);
+    color: var(--german);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(212, 165, 116, 0.2); border-color: rgba(212, 165, 116, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(212, 165, 116, 0.3); border-color: var(--german); }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="baroque-canvas"></canvas>
+<canvas id="starfield"></canvas>
+<canvas id="baroque-frame"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Eighteen</div>
+    <h1>Die Sprachgesellschaften</h1>
+    <div class="subtitle">The Language Societies</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE WOUND ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      By 1650, the German-speaking lands had been burning for thirty years.
+    </p>
+
+    <p class="narrative">
+      The Thirty Years' War had carved the Holy Roman Empire into a graveyard. Entire regions were depopulated. Cities were reduced to ash. And through it all, one thing had haunted the educated classes: the French language, still ascending, still elegant, still confident — while German, their own language, seemed fractured, provincial, inadequate by comparison.
+    </p>
+
+    <p class="narrative">
+      In the smoke of the Peace of Westphalia, German scholars made a decision. They would not accept this humiliation. They would not allow their language to be colonized by foreign words and foreign prestige. Instead, they would do something radical: they would <em>design</em> German deliberately, consciously, systematically — turning it into something that could rival French, Latin, and Greek.
+    </p>
+
+    <p class="narrative emphasis">
+      They would heal their language the way a physician heals a wound: by cleaning it, by strengthening it, by restoring it to a purity it had almost lost.
+    </p>
+
+    <p class="narrative">
+      This is the story of the Sprachgesellschaften — the language societies — and of how a culture in ruins chose to rebuild itself, word by word.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE SOCIETIES FORM ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The first and most famous of these societies was the <em>Fruchtbringende Gesellschaft</em> — the Fruit-Bearing Society — founded in 1617, even before the war's end. Its members were aristocrats and scholars. Its mission was clear: to standardize German, to purify it of French loan words, and to prove that German could express anything — science, philosophy, poetry, law — with the same elegance and precision as the great classical languages.
+    </p>
+
+    <p class="narrative">
+      They had a symbol: a palm tree, bearing fruit. Every member took a plant name as a pseudonym. They called themselves things like "der Gesellige" (the Sociable One), "der Hoffnungsvolle" (the Hopeful One), "der Fruchtbringende" (the Fruit-Bearing One himself). These were not real names — they were aspirations, intentions, philosophical positions taken in linguistic form.
+    </p>
+
+    <p class="narrative">
+      And they had a weapon: the <em>German dictionary</em>. If you could show that a German word for something already existed — even an old, forgotten German word — then a French or Latin import was unnecessary. The societies combed through old texts, ancient glosses, regional dialects, looking for treasures buried in their language's past.
+    </p>
+
+    <p class="narrative">
+      What they were doing was something entirely new: <em>consciously standardizing a modern language</em>. This was not Latin, which had been dead for centuries and could be studied in codices and treatises. This was not Greek, preserved in ancient texts. This was a living language, spoken by millions, changing every day — and they were trying to fix it, to freeze its best parts, to make it obey rules.
+    </p>
+
+    <p class="narrative">
+      This is what we call the beginning of <em>linguistic nationalism</em>. And it would reshape not just German, but every European language.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 3: THE REPLACEMENT GAME ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The members of the Fruchtbringende Gesellschaft began playing what we might call "the replacement game." Take a French word. Find — or invent — a German equivalent. Then fight for it.
+    </p>
+
+    <p class="narrative">
+      Not all replacements worked. Some were brilliant. Some were ridiculous. But the principle was clear: German must be <em>German</em>, not a pale imitation of French dressed up in German letters.
+    </p>
+
+    <p class="narrative">
+      Consider the word for "address" — where you receive mail, where a speaker stands to give a speech. The French word <span class="german-word" data-card="adresse">Adresse</span> was creeping into German, considered more sophisticated, more modern. The societies proposed instead <span class="german-word" data-card="anschrift">Anschrift</span> — literally, "an-writing," something written on or at something else, the place where your name is written so that letters find you. The word took. We use it today.
+    </p>
+
+    <p class="narrative">
+      But consider the word for "window." The French <em>fenêtre</em> was trying to win. And yet German already had Fenster — from Latin, but so thoroughly naturalized that no one thought of it as foreign anymore. The societies didn't need to replace this one. The word was already German, already home. Fenster survived without a battle because it had never been foreign in spirit, only in origin.
+    </p>
+
+    <p class="narrative">
+      Then there's the question of time. The French used the word "moment" — the smallest unit of duration. German had <span class="german-word" data-card="augenblick">Augenblick</span> — literally, "eye-blink," the moment so brief you can barely see it. It's a perfect German word. Germanic, even poetic. A moment is the blink of an eye. The societies championed Augenblick, and over time it became the preferred word. Today, <em>Augenblick</em> is German for "moment" in the sense of a brief instant of time, while <em>Moment</em> persists in more technical contexts.
+    </p>
+
+    <!-- ANSCHRIFT card -->
+    <div class="ety-card" id="card-anschrift">
+      <div class="word-header">
+        <span class="word-main">Anschrift</span>
+        <span class="word-pron">/ˈanʃɹɪft/</span>
+      </div>
+      <div class="word-meaning">address — the writing that directs you, the location of belonging</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">An + Schrift</span>
+        <span class="bridge-note">— at + writing = something written at/on something</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">at-write</span>
+        <span class="bridge-note">— English has no direct equivalent; we borrowed "address" directly from French</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">地址</span>
+        <span class="bridge-note">— dìzhǐ — place-finger/pointer, where you point to locate someone</span>
+      </div>
+      <div class="story">
+        Anschrift is a triumph of the Fruchtbringende Gesellschaft's work. The societies didn't invent this word — it was already present in German. But they elevated it, championed it, ensured it survived against the French invader. The word is perfectly transparent: if you know "an" (on/at) and "Schrift" (writing), you understand <em>Anschrift</em> immediately. It's the writing written <em>at</em> your home, the label that directs mail to you. Compare this to "address," which English borrowed from French, and which has no obvious meaning in English — you have to know its Latin roots to understand that it means "to-direct" (ad-dress). German's solution is clearer, more immediate, more honest about its meaning. The Gesellschaft proved that a living language could be shaped by conscious effort, that tradition and logic could work together to resist foreign infiltration.
+      </div>
+    </div>
+
+    <!-- AUGENBLICK card -->
+    <div class="ety-card" id="card-augenblick">
+      <div class="word-header">
+        <span class="word-main">Augenblick</span>
+        <span class="word-pron">/ˈaʊɡənblɪk/</span>
+      </div>
+      <div class="word-meaning">moment — a glimpse, a blink, the smallest unit of perceived time</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Auge + Blick</span>
+        <span class="bridge-note">— eye + glance/look = a glance of the eye</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">eye-glance</span>
+        <span class="bridge-note">— English has no such word; we use "moment," from French "moment"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">瞬间</span>
+        <span class="bridge-note">— shùnjiān — blink-between, the moment between blinks</span>
+      </div>
+      <div class="story">
+        Look at how the same idea appears across languages. German: eye-blink. Chinese: blink-between. Both cultures captured the same insight — that a moment is measured by how long your eye stays open, by the time between blinks. This is not coincidence. It reflects something deep about human perception: the blink is indeed the minimal unit of conscious vision, the rhythm of the eye. The Fruchtbringende Gesellschaft didn't invent Augenblick, but they rescued it from provincial obscurity and made it cosmopolitan. Today it's one of the most beautiful German words, used poetically to mean not just a moment but a moment of insight, of illumination — a moment when the eye opens to see something true. In German, every speaker learns that a moment is literally the blink of an eye.
+      </div>
+    </div>
+
+    <p class="narrative">
+      These societies understood something crucial: you don't kill a foreign word by banning it. You kill it by offering a better German alternative — one that fits the way German speakers already think, that uses the patterns and metaphors already embedded in the language.
+    </p>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: GOTTSCHED AND THE GRAMMAR ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But replacing individual words was not enough. What German needed was <em>grammar</em> — systematic rules. What it needed was a codification of how the language <em>should</em> work, agreed upon by scholars, taught in schools, followed by writers.
+    </p>
+
+    <p class="narrative">
+      This is where <em>Johann Christoph Gottsched</em> enters the story. In 1748, Gottsched published what became the standard grammar of German for the next two centuries. He did something radical: he said that the Saxon dialect — the dialect of Leipzig and the educated urban centers — should be the standard for all German. Not the peasant dialects. Not the aristocratic dialects. Not some abstract "best" German. The dialect of the educated merchant class became law.
+    </p>
+
+    <p class="narrative">
+      Gottsched then systematized everything. Case endings. Verb conjugations. Sentence structure. Spelling. He took the chaos of a living language and turned it into a system of rules. Not all his rules survived — later grammarians corrected him — but his principle did: <em>German could be standardized, codified, taught.</em>
+    </p>
+
+    <p class="narrative">
+      This sounds simple. But it was revolutionary. For the first time, a modern language was being treated like Latin — fixed, studied, taught from a written grammar rather than picked up from context. German was no longer just a dialect, a regional variation. It was becoming <em>Hochdeutsch</em> — High German, the elevated, standardized form that would represent German culture to the world.
+    </p>
+
+    <p class="narrative">
+      And as this happened, something extraordinary occurred: the language itself became more unified. Printers in different cities started following Gottsched's spelling rules. Writers across the German lands could now read each other more easily. A merchant in Hamburg could understand a scholar in Munich not just by dialect but by written standard. The printed page was doing what no emperor could do — it was making German one language.
+    </p>
+
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        The societies were fighting French infiltration into German. We've seen Anschrift replace the French Adresse.<br><br>
+        What do you think <strong style="color: var(--german);">Mundart</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: Mund = mouth, Art = kind/way)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">language art</button>
+        <button class="guess-btn" onclick="guess(this, true)">dialect</button>
+        <button class="guess-btn" onclick="guess(this, false)">speech therapy</button>
+        <button class="guess-btn" onclick="guess(this, false)">mouth disease</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 5: MUNDART AND DIALECT ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      As German was being standardized, scholars also needed a word for what <em>wasn't</em> standard. They needed a word for the local speech, the village dialect, the way people actually talked when they weren't trying to be educated.
+    </p>
+
+    <p class="narrative">
+      Enter <span class="german-word" data-card="mundart">Mundart</span> — literally, "mouth-kind," the kind of speaking that comes out of a particular mouth, a particular community, a particular place. It's a brilliant word. Every German speaker understands it immediately. A Mundart is not just different — it's personal, local, warm, rooted. It's what your grandmother speaks. It's the sound of home.
+    </p>
+
+    <p class="narrative">
+      The societies recognized something important: they were not trying to eliminate dialects. They were establishing a <em>standard</em> for written German, for educated speech, for the language of culture and commerce. But Mundarten — regional dialects — would continue to live and flourish in the homes and villages of the German lands. What was happening was not suppression but <em>hierarchy</em>: Hochdeutsch would be the official language, but Mundarten would remain alive beneath it.
+    </p>
+
+    <p class="narrative">
+      This is what we call <em>diglossia</em> — the coexistence of a high, formal, standardized version of a language with low, informal, regional versions. It was becoming the normal state of European languages. And it worked. People could code-switch — speak Mundart at home, Hochdeutsch at school or court — because both existed within a single linguistic community.
+    </p>
+
+    <!-- MUNDART card -->
+    <div class="ety-card" id="card-mundart">
+      <div class="word-header">
+        <span class="word-main">Mundart</span>
+        <span class="word-pron">/ˈmʊntaʁt/</span>
+      </div>
+      <div class="word-meaning">dialect — the way a mouth speaks, the speech kind of a place</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Mund + Art</span>
+        <span class="bridge-note">— mouth + kind/way = the kind of speaking of a mouth</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">dialect</span>
+        <span class="bridge-note">— from Greek "dia-" (apart) + "lektos" (speech) = speech set apart</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">方言</span>
+        <span class="bridge-note">— fāngyán — region-speech, the speech of a region</span>
+      </div>
+      <div class="story">
+        Mundart teaches us something about how languages name themselves. German creates the word from immediate, embodied experience: a dialect is what comes from a <em>mouth</em>, the physical organ of speech. English borrows the Greek term, which is more abstract. Chinese emphasizes geography: a dialect is the speech of a particular <em>region</em>. Each language reflects its culture's understanding of language variation. German is the most human, most visceral. When you say Mundart, you're literally pointing to the mouth that speaks it, the person rooted in a place. This is why Mundarten have survived so strongly in German-speaking regions — they're not just "bad German" or "rural speech." They're legitimate ways of speaking, with their own names, their own dignity, their own reality as ways of being in the world.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE DICTIONARY DREAMS ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Once you have standardization, you need reference books. You need to say: "This is what German is. This is what German words mean. Here are the rules."
+    </p>
+
+    <p class="narrative">
+      This is why the late 17th and 18th centuries saw a flood of German dictionaries. The societies understood that a word written down, in a book, becomes official in a way that spoken language never can. Print is permanence. Print is authority. Print is how you freeze a living language into a standard form.
+    </p>
+
+    <p class="narrative">
+      The German word for dictionary is <span class="german-word" data-card="woerterbuch">Wörterbuch</span> — literally, "word-book." No Greek. No Latin roots hidden in there. Just honest, transparent German: it is a book of words. The word teaches you exactly what it means. When you open a Wörterbuch, you are opening a book of words, systematically arranged, each word explained.
+    </p>
+
+    <p class="narrative">
+      And this matters. Because the great French dictionary — the Académie française's <em>Dictionnaire</em> — had taught Europe what a modern, authoritative dictionary could be. The Germans now created equivalents. The <em>Grammatisch-kritisches Wörterbuch</em> (Grammatico-Critical Dictionary) by Johann Christoph Adelung became the standard reference for educated Germans. It didn't just list words. It explained their history, their proper use, their relationship to other words.
+    </p>
+
+    <p class="narrative">
+      What was emerging was a new kind of linguistic consciousness: the idea that a language could be <em>studied</em>, <em>codified</em>, <em>improved</em>. Not by royal decree. Not by military force. But by scholars working together, publishing books, establishing standards that writers would follow because they agreed these standards made the language better.
+    </p>
+
+    <!-- WOERTERBUCH card -->
+    <div class="ety-card" id="card-woerterbuch">
+      <div class="word-header">
+        <span class="word-main">Wörterbuch</span>
+        <span class="word-pron">/ˈvɛʁtɐbʊx/</span>
+      </div>
+      <div class="word-meaning">dictionary — a book of words, a catalog of language itself</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wörter + Buch</span>
+        <span class="bridge-note">— words + book = a book of words</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">dictionary</span>
+        <span class="bridge-note">— from Latin "dictio" (diction, speech) — less transparent than German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">字典</span>
+        <span class="bridge-note">— zìdiǎn — character-code/reference, the reference for characters</span>
+      </div>
+      <div class="story">
+        German's word for dictionary is perhaps the most honest in any language. It is simply "a book of words." There is no Greek, no Latin, no hidden roots — just the obvious, transparent meaning. Compare this to English "dictionary" (from Latin "dictio") or French "dictionnaire" — both obscure their origins. Chinese 字典 emphasizes reference and structure — it is the "code-book" for characters. But German just says: this is a book. In it are words. That's all. This reflects the Enlightenment values that shaped German language culture: clarity, transparency, honesty about what things are. A dictionary is not some mystical tome. It's a book. It contains words. You open it and you find words. Wörterbuch embodies this democratic, straightforward approach to knowledge.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        The societies were establishing rules for spelling and grammar.<br><br>
+        The German word for "spelling" or "orthography" is <strong style="color: var(--german);">Rechtschreibung</strong>.<br><br>
+        What do you think this means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: Recht = right/correct, Schreibung = writing)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">correct writing</button>
+        <button class="guess-btn" onclick="guess(this, false)">right-hand writing</button>
+        <button class="guess-btn" onclick="guess(this, false)">legal documents</button>
+        <button class="guess-btn" onclick="guess(this, false)">writing rules in books</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 7: HOCHDEUTSCH ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      All of this work — the standardization, the grammar books, the dictionaries — was creating something entirely new: <span class="german-word" data-card="hochdeutsch">Hochdeutsch</span>, or High German.
+    </p>
+
+    <p class="narrative">
+      The term itself is revealing. "High" German doesn't mean geographically high (though the High German-speaking regions are in the south, in Bavaria and Swabia). "High" German means <em>elevated</em> German — the formal, standardized, prestigious version of the language, as opposed to the many local Mundarten.
+    </p>
+
+    <p class="narrative">
+      What the Fruchtbringende Gesellschaft and Gottsched and Adelung had accomplished was this: they had taken a chaotic welter of regional dialects and established a <em>standard form</em> that speakers across the entire German-speaking world could learn, adopt, and use. They didn't eliminate the dialects — in fact, German dialects are still vibrantly alive. But they created a <em>common language</em> above them.
+    </p>
+
+    <p class="narrative">
+      This is what standardization looks like. Not the death of a language. Its <em>unification</em>.
+    </p>
+
+    <p class="narrative">
+      And now, something remarkable happened: the printed page, armed with standardized spelling and grammar, began to <em>create</em> the standard. Writers read Gottsched's grammar and Adelung's dictionary and began to write according to them. Children learned to read and write using books based on these standards. Within a generation or two, Hochdeutsch had become real — not just an idea, but a lived, daily language used by millions of educated German speakers across a vast territory.
+    </p>
+
+    <!-- HOCHDEUTSCH card -->
+    <div class="ety-card" id="card-hochdeutsch">
+      <div class="word-header">
+        <span class="word-main">Hochdeutsch</span>
+        <span class="word-pron">/ˈhoːxdɔʏtʃ/</span>
+      </div>
+      <div class="word-meaning">High German, standard German — the elevated, codified form of the language</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Hoch + Deutsch</span>
+        <span class="bridge-note">— high/elevated + German = the elevated German language</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">Standard German</span>
+        <span class="bridge-note">— English uses a borrowed term; we say "standard," from Latin "standard"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">高级德语</span>
+        <span class="bridge-note">— gāojíyǔ — high-level language, same concept</span>
+      </div>
+      <div class="story">
+        Compare Hochdeutsch to Putonghua — 普通话 — the "common speech" of China. Germany and China solved the same problem of linguistic unification in the same era through remarkably parallel means. Both nations standardized one dialect as the national standard. Both used education and print to spread the standard. Both maintained the prestige dialect above local Mundarten or dialects. The difference: German calls it "High" German (implying elevation), while Chinese calls it "Common" Chinese (implying universality). Both are correct — the standard is simultaneously elevated (in prestige) and common (in use). What Hochdeutsch and Putonghua represent is the modern project of linguistic nation-building: the transformation of a language-group into a <em>nation</em> through the standardization of speech.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: MEANING IN THE MAKING ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But there's one more layer to this story. Because as the Fruchtbringende Gesellschaft was standardizing German, they weren't just choosing words. They were making philosophical statements about the language itself.
+    </p>
+
+    <p class="narrative">
+      Consider the word <span class="german-word" data-card="ausdruck">Ausdruck</span> — expression, or a word/phrase used to express an idea. German breaks it down literally: Aus (out) + Druck (press/pressure). To express something is literally to "press it out," to force it from your mouth into the world.
+    </p>
+
+    <p class="narrative">
+      And then there's <span class="german-word" data-card="bedeutung">Bedeutung</span> — meaning, significance. This word is constructed from Be- (a prefix making the word active) + Deutung (interpretation). The "Deut-" root is ancient: it relates to "deutsch" itself — the word that means "German," which literally means "of the people, vernacular." To give something <em>Bedeutung</em> is to make it <em>deutsch</em> — to make it clear, to make it known, to make it understandable to ordinary people.
+    </p>
+
+    <p class="narrative">
+      What this reveals is something profound: the German language, through its own morphology, was building in a philosophy of language. A word expressed meaning by pressing it out. Meaning was created by making something clear to people. Language was not about decoration or ornament — it was about <em>clarity</em> and <em>transparency</em>.
+    </p>
+
+    <p class="narrative">
+      The societies understood this. They weren't just replacing French words with German words. They were defending a particular way of thinking about language — one that valued plainness, directness, the honest expression of thought.
+    </p>
+
+    <!-- AUSDRUCK card -->
+    <div class="ety-card" id="card-ausdruck">
+      <div class="word-header">
+        <span class="word-main">Ausdruck</span>
+        <span class="word-pron">/ˈaʊsdɹʊk/</span>
+      </div>
+      <div class="word-meaning">expression — the act of pressing something out, of making it manifest</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Aus + Druck</span>
+        <span class="bridge-note">— out + pressure/print = to press outward</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">expression</span>
+        <span class="bridge-note">— from Latin "ex-" (out) + "premere" (press) — same root idea!</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">表达</span>
+        <span class="bridge-note">— biǎodá — show-reach, to show and reach (communicate)</span>
+      </div>
+      <div class="story">
+        Ausdruck is a wonderful accident of linguistic cognition. German literally means "pressing out," and English literally means the same thing (ex-press), but we forget the Latin root. Both languages captured the same metaphor: to express is to apply pressure, to force something from inside to outside, from thought to speech. Chinese takes a different approach: expression is about "showing and reaching" — it's not about internal pressure but about successful communication, about the expression reaching the listener. The metaphors reveal different philosophies of language: Germanic languages emphasize the pressure of thought seeking utterance, while Chinese emphasizes the connection between speaker and listener. Both are true.
+      </div>
+    </div>
+
+    <!-- BEDEUTUNG card -->
+    <div class="ety-card" id="card-bedeutung">
+      <div class="word-header">
+        <span class="word-main">Bedeutung</span>
+        <span class="word-pron">/bəˈdɔʏtʊŋ/</span>
+      </div>
+      <div class="word-meaning">meaning, significance — the act of making something clear and German</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Be- + Deutung</span>
+        <span class="bridge-note">— prefix making active + interpretation/clarity = to make clear</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">meaning</span>
+        <span class="bridge-note">— from Old English "mænan" — related to "main," the essence</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">意思</span>
+        <span class="bridge-note">— yìsi — intention-thought, what someone intends to communicate</span>
+      </div>
+      <div class="story">
+        Here is where German's philosophy becomes visible. Bedeutung is related to "deutsch" — the very word for the German language. To have <em>Bedeutung</em> is to be <em>deutsch</em>, to be clear, to be of and for the people. The Fruchtbringende Gesellschaft lived this philosophy: to make language pure and German was to make it clear and honest. A borrowed French word was unclear, ornamental, a barrier between thought and expression. A true German word was direct, transparent, immediately understandable. This is ideology encoded into etymology. The language itself was being shaped to embody the belief that German was a language of clarity and truth, while foreign languages (implicitly French) were ornamental and obscure.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== SCENE 9: THE PURIFIERS ==================== -->
+  <div class="scene" id="scene9">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Some members of the societies took this project to extremes. They were called the <span class="german-word" data-card="sprachreiniger">Sprachreiniger</span> — language purifiers — and they believed that <em>every</em> foreign word should be eliminated.
+    </p>
+
+    <p class="narrative">
+      Some of their suggestions were comic. One proposed "Zitterose" (trembling-rose) for "nervous" — from the idea that being nervous makes you tremble. Another wanted "Freistatt" (free-place) for "asylum." These words had no staying power. They failed because they didn't match how German speakers actually thought and spoke.
+    </p>
+
+    <p class="narrative">
+      But the impulse behind the purifiers was serious. They believed — and not without reason — that a language invaded by foreign words is a culture under siege. If we let French words dominate German, we are letting French thought, French aesthetics, French ways of seeing dominate German culture. This was not paranoia. This was the struggle of a post-war nation trying to recover its cultural confidence.
+    </p>
+
+    <p class="narrative">
+      What emerged from this struggle was a middle path. Not all foreign words were expelled — that would be impossible and undesirable. But a <em>preference</em> for German words was established. A norm. An ideal. When a German word existed or could be created, it was favored over a foreign equivalent. Foreign words that remained were increasingly naturalized — they were "germanized," made to follow German patterns and feel at home in German speech.
+    </p>
+
+    <!-- SPRACHREINIGER card -->
+    <div class="ety-card" id="card-sprachreiniger">
+      <div class="word-header">
+        <span class="word-main">Sprachreiniger</span>
+        <span class="word-pron">/ˈʃpʁaːxʁaɪnɪɡɐ/</span>
+      </div>
+      <div class="word-meaning">language purifier — one who cleans the language of foreign words</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Sprache + reinigen + -er</span>
+        <span class="bridge-note">— language + clean + -er (one who does) = one who cleans language</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">language purist</span>
+        <span class="bridge-note">— "purist" is more abstract; German is more literal and active</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">语言净化者</span>
+        <span class="bridge-note">— yǔyán jìnghuà zhě — language-purify-er, one who purifies language</span>
+      </div>
+      <div class="story">
+        Sprachreiniger is a fascinating word because it reveals the mindset of early modern linguistic nationalism. The metaphor is medical: language can be "clean" or "contaminated." Foreign words are a disease, a pollution. Purity is health. This ideology seems strange to us now — we know that languages are constantly borrowing from each other, that this borrowing enriches rather than diminishes them. But in 1650-1700, in the aftermath of war and political fragmentation, the impulse to purify made sense. It was about cultural survival and national identity. The Sprachreiniger were extreme, yes, but the sentiment behind them was shared across educated German society. The question was not whether to prefer German to French — the answer was obviously yes — but how far to take the preference. Where was the line between reasonable preference and absurd purism? That line is still being negotiated in German culture today.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 10: RECHTSCHREIBUNG ==================== -->
+  <div class="scene" id="scene10">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      One of the most important products of this era was standardized spelling. The German word for spelling is <span class="german-word" data-card="rechtschreibung">Rechtschreibung</span> — literally, "right-writing" or "correct-writing."
+    </p>
+
+    <p class="narrative">
+      Before Gottsched, spelling in German was chaotic. The same word might be spelled three different ways depending on the printer, the region, the writer's mood. "Green" was grün, gruen, gruen, gryn. "Beautiful" was schön, schon, schoen. The letter "ß" (Eszett, a combination of "s" and "z") was sometimes written as "ss," sometimes as "ß," inconsistently across texts.
+    </p>
+
+    <p class="narrative">
+      Gottsched changed this. He codified spelling. He said: this is how you write this word. Forever. From now on, when you write German, you follow these rules. No exceptions. No local variations. The same spelling everywhere, from Hamburg to Munich.
+    </p>
+
+    <p class="narrative">
+      This sounds bureaucratic. But it was profound. Because spelling standardization meant that written German could be truly unified. A reader in Berlin could understand a text from Vienna without having to decipher wildly variant spellings. Printers across the German lands could use standardized typefaces and rules. Books became more uniform, more stable, more authoritative.
+    </p>
+
+    <p class="narrative">
+      And what's remarkable is that much of Gottsched's spelling — with modifications — is still used in German today. When you open a modern German book, you are reading a spelling system established nearly three centuries ago, refined and adjusted over time but fundamentally unchanged. German orthography is a fossil — and a very useful one, because it preserves the historical layers of how language was standardized.
+    </p>
+
+    <!-- RECHTSCHREIBUNG card -->
+    <div class="ety-card" id="card-rechtschreibung">
+      <div class="word-header">
+        <span class="word-main">Rechtschreibung</span>
+        <span class="word-pron">/ˈʁɛçtʃʁaɪbʊŋ/</span>
+      </div>
+      <div class="word-meaning">spelling, orthography — the correct way of writing a language</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Recht + Schreibung</span>
+        <span class="bridge-note">— right/correct + writing = the correct way of writing</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">spelling</span>
+        <span class="bridge-note">— from "spell," to name the letters — less transparent than Rechtschreibung</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">拼写</span>
+        <span class="bridge-note">— pīnxiě — join-write, to join sounds into written form</span>
+      </div>
+      <div class="story">
+        German's word for spelling reveals its philosophy. "Rechtschreibung" — correct-writing — implies that there IS a correct way, a standard, a norm. English "spelling" is vaguer; it just means "saying out the letters." Chinese "joining-writing" emphasizes the phonetic process. But German emphasizes the moral, normative dimension: there is a RIGHT way and a WRONG way to write. This is the legacy of Gottsched — the belief that language standardization is not just practical but moral. When you use correct Rechtschreibung, you are participating in German culture, you are following German rules, you are part of the unified German-speaking community. This is ideology, but ideology that works — it gives people a sense of belonging to something larger than themselves.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== FINAL SCENE: LEGACY ==================== -->
+  <div class="scene" id="scene-legacy" style="display: none;">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The work of the Fruchtbringende Gesellschaft and Gottsched did not end in the 18th century. It echoes through the centuries. Because what they proved is this: a language can be shaped. Not forced, not violently imposed — but gently guided through the power of example, standardization, education, and print.
+    </p>
+
+    <p class="narrative">
+      When you speak German today, you are speaking a language that was consciously shaped by scholars who believed it had the capacity to express anything human civilization could think. You are following spelling rules established nearly three centuries ago. You are using a grammar systematized by a man who believed that clarity and order could be imposed on the chaos of speech.
+    </p>
+
+    <p class="narrative">
+      And perhaps most importantly, you are participating in a linguistic community that stretches from Hamburg to Vienna, from Berlin to Zurich — all speaking a version of the same standardized language. The Mundarten still exist, yes. People still speak the dialects of their grandmothers. But above these local languages floats Hochdeutsch, a common language that makes understanding possible across vast distances and differences.
+    </p>
+
+    <p class="narrative emphasis">
+      This is what standardization truly means: not the death of a language, but its unification. Not the erasure of local speech, but the creation of a common standard above it. A language that can heal itself.
+    </p>
+
+    <aside class="aside-box">
+      <div class="aside-title">The Fruchtbringende Gesellschaft: A Closer Look</div>
+      Founded in 1617 by Prince Ludwig I of Anhalt-Köthen, the Fruchtbringende Gesellschaft never had more than a few hundred members at its peak, but its influence was enormous. The society published a series of important texts, including:
+      <br><br>
+      <strong>Gueintz's "Deutscher Sprachlehre" (1641)</strong> — an early attempt at a systematic grammar of German<br>
+      <strong>"Von der Deutschen Poeterey" (1624)</strong> — Opitz's influential work on German poetry and language<br>
+      <strong>"Teutscher Sprachschatz" (1691)</strong> — Stieler's vast treasure-house of German words, collecting and codifying the language<br><br>
+      The society disbanded officially in the early 1800s, but its work had already been subsumed into the larger project of German nationalism and linguistic standardization. Every German grammar book, every dictionary, every standardization effort since has built on foundations laid by the Fruchtbringende Gesellschaft.
+    </aside>
+
+    <aside class="aside-box">
+      <div class="aside-title">Gottsched's Grammar (1748): The Rulebook of German</div>
+      Gottsched's "Grundlegung einer Deutschen Sprachkunst" (Foundation of German Language Art) was the most influential grammar of German for nearly a century. What made it revolutionary:<br><br>
+      <strong>Systematic coverage</strong> — Gottsched covered nouns, adjectives, verbs, cases, conjugations, sentence structure — everything<br>
+      <strong>Clear rules</strong> — Not just examples, but explicit rules that could be followed<br>
+      <strong>Standardized dialect</strong> — Saxon German (the dialect of educated Leipzig and Dresden) became the norm<br>
+      <strong>Consistent spelling</strong> — Gottsched made spelling choices that became the standard<br><br>
+      Later grammarians revised Gottsched. The Grimm brothers (famous for fairy tales but also brilliant linguists) corrected his oversimplifications. But the principle remained: German could be standardized, codified, taught. This principle shaped not just German but modern linguistics itself.
+    </aside>
+
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Language Societies</strong> — Fruchtbringende Gesellschaft defended German from French dominance through organized, systematic work.<br><br>
+    <strong style="color: var(--text-bright);">Purism Movement</strong> — Replacing French loans with Germanic coinages: Zeitschrift (journal), Augenblick (moment), Wörterbuch (dictionary).<br><br>
+    <strong style="color: var(--text-bright);">Compound Elegance</strong> — Augenblick (eye+moment = instant), Wörterbuch (word+book = dictionary), Rechtschreibung (right+writing = spelling) — Germanic compounds beat French simplicity.<br><br>
+    <strong style="color: var(--text-bright);">Standardisation</strong> — Gottsched's 1748 grammar codified the rules. Hochdeutsch (High German) emerged as an ideal form above all dialects.
+  </div>
+
+  <!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Eighteen</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Anschrift</span><span class="cw-english">address</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Augenblick</span><span class="cw-english">moment</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Mundart</span><span class="cw-english">dialect</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Wörterbuch</span><span class="cw-english">dictionary</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Hochdeutsch</span><span class="cw-english">standard German</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Ausdruck</span><span class="cw-english">expression</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Bedeutung</span><span class="cw-english">meaning</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Sprachreiniger</span><span class="cw-english">language purifier</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Rechtschreibung</span><span class="cw-english">spelling</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== CONCEPTS LEARNED ==================== -->
+    <div style="margin-top: 32px; margin-bottom: 32px;">
+      <h3 style="text-align: center; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.3em; color: rgba(232, 164, 74, 0.6); margin-bottom: 20px;">Concepts Learned in Chapter Eighteen</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+        <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Language Societies</span><span class="cw-english">Fruchtbringende Gesellschaft defended German</span></div>
+        <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Purism Movement</span><span class="cw-english">Replacing French loans with Germanic coinages</span></div>
+        <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Compound Elegance</span><span class="cw-english">Augenblick, Wörterbuch, Rechtschreibung</span></div>
+        <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Standardisation</span><span class="cw-english">Gottsched's 1748 grammar fixed the rules</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: QUIZ GATEWAY (80% REQUIRED) ==================== -->
+  <div class="scene" id="scene-quiz-intro">
+    <p class="narrative emphasis" style="text-align: center; margin-top: 60px;">
+      You've journeyed through the era of the language societies. The Fruchtbringende Gesellschaft, Gottsched's grammar, Adelung's dictionary — the standardization of German was underway. Before you continue to the final scenes of this chapter, test your understanding.
+    </p>
+    <p class="narrative" style="text-align: center; opacity: 0.8; margin-bottom: 60px;">
+      You must answer at least 8 of the 10 questions correctly to proceed (80% gate).
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ SECTION ==================== -->
+  <div class="scene" id="scene-quiz" style="display: none;">
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 1 of 10</div>
+      <div class="quiz-question">Which organization was most famous for purifying and standardizing German after the Thirty Years' War?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, true)">The Fruchtbringende Gesellschaft</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">The French Academy</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">The Prussian Court</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">The University of Berlin</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback1"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 2 of 10</div>
+      <div class="quiz-question">What does "Augenblick" literally mean?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Eye-blink, a moment of perception</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">A quick glance in one direction</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">The blink of an owl's eye</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">A moment of darkness</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback2"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 3 of 10</div>
+      <div class="quiz-question">Gottsched's greatest contribution was:</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Inventing new German words</button>
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Standardizing German grammar and spelling</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Writing the first German novel</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Creating the Fruchtbringende Gesellschaft</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback3"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 4 of 10</div>
+      <div class="quiz-question">What is "Mundart"?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, true)">A local dialect or regional way of speaking</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">The official language of a city</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">A written form of German</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">A rule for pronouncing German</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback4"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 5 of 10</div>
+      <div class="quiz-question">The societies fought to replace French "Adresse" with the German word:</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Anschrift (an-writing, address)</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Augenblick</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Wörterbuch</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Hochdeutsch</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback5"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 6 of 10</div>
+      <div class="quiz-question">What does "Wörterbuch" literally mean?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Word-book, a book of words</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Writing-guide</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Language law</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Rule-collector</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback6"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 7 of 10</div>
+      <div class="quiz-question">What does "Hochdeutsch" mean?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, false)">German spoken in the mountains</button>
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Elevated, standardized German — the formal standard</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">German spoken by the nobility</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Loud or shouted German</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback7"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 8 of 10</div>
+      <div class="quiz-question">Which of these is most clearly a review word from earlier chapters?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Augenblick</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Hochdeutsch</button>
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Wasser</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Rechtschreibung</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback8"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 9 of 10</div>
+      <div class="quiz-question">What does "Ausdruck" literally mean?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Pressed-out, to press something outward into expression</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">A written document</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">The tone of voice</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">An exception or special case</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback9"></div>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-prompt">Question 10 of 10</div>
+      <div class="quiz-question">What does "Rechtschreibung" literally mean?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Rights and writings</button>
+        <button class="quiz-btn" onclick="quizGuess(this, true)">Correct-writing, the standardized spelling system</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">The rules of law</button>
+        <button class="quiz-btn" onclick="quizGuess(this, false)">Writing with correct hand-position</button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback10"></div>
+    </div>
+
+    <div class="post-quiz" id="post-quiz" style="display: none;">
+      <p style="font-size: 1.3rem; color: var(--german); margin: 40px 0;">You have completed the quiz. Your score is: <span id="quiz-score">0</span>/10</p>
+      <p id="quiz-message" style="font-size: 1.15rem; color: var(--text); margin: 20px 0;"></p>
+      <button id="continue-btn" style="display: none; padding: 14px 28px; margin-top: 20px; background: var(--german); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1.1rem;">Continue to Chapter Conclusion</button>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">180 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(21%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:21%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Anschrift</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">address</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Augenblick</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">moment</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mundart</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">dialect</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wörterbuch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">dictionary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Hochdeutsch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">standard German</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ausdruck</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">expression</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bedeutung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">meaning</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sprachreiniger</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">language purifier</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Rechtschreibung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">spelling</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–17</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~168 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">39 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(26%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:26%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Language societies</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Fruchtbringende Gesellschaft defended German</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Purism movement</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">replacing French with Germanic coinages</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Compound elegance</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Augenblick, Wörterbuch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Standardisation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Gottsched's 1748 grammar codified Hochdeutsch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">18</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–17</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~51 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Eighteen
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Nine words. Nine stories of a language healing itself.<br>
+        From the ashes of war, a nation rebuilds its words.<br>
+        German is no longer fragmented — it is standardized, unified, powerful.<br>
+        The scholars have done their work. The language is ready for the world.
+      </p>
+      <div class="next-chapter">
+        Chapter Nineteen: Die Dichter (The Poets) — coming soon
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter17.html" class="nav-btn">← Chapter 17</a>
+    <a href="chapter19.html" class="nav-btn next">Chapter 19 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 18: BAROQUE FRAME & INK-TO-CREAM TRANSITION ---
+const canvas = document.getElementById('baroque-canvas');
+const ctx = canvas.getContext('2d');
+const frameCanvas = document.getElementById('baroque-frame');
+const frameCtx = frameCanvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  frameCanvas.width = window.innerWidth;
+  frameCanvas.height = window.innerHeight;
+}
+
+// Draw ornate Baroque frame as we scroll
+function drawBaroqueFrame() {
+  const scrolled = window.scrollY;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = Math.min(scrolled / (maxScroll * 0.3), 1);
+
+  frameCtx.clearRect(0, 0, frameCanvas.width, frameCanvas.height);
+
+  if (progress > 0) {
+    frameCtx.strokeStyle = `rgba(212, 165, 116, ${progress * 0.4})`;
+    frameCtx.lineWidth = 2;
+
+    // Top line
+    const topLineLength = frameCanvas.width * progress;
+    frameCtx.beginPath();
+    frameCtx.moveTo((frameCanvas.width - topLineLength) / 2, 60);
+    frameCtx.lineTo((frameCanvas.width - topLineLength) / 2 + topLineLength, 60);
+    frameCtx.stroke();
+
+    // Bottom line
+    frameCtx.beginPath();
+    frameCtx.moveTo((frameCanvas.width - topLineLength) / 2, frameCanvas.height - 60);
+    frameCtx.lineTo((frameCanvas.width - topLineLength) / 2 + topLineLength, frameCanvas.height - 60);
+    frameCtx.stroke();
+
+    // Left and right lines
+    const sideLineHeight = (frameCanvas.height - 120) * progress;
+    frameCtx.beginPath();
+    frameCtx.moveTo(40, 60 + (frameCanvas.height - 120 - sideLineHeight) / 2);
+    frameCtx.lineTo(40, 60 + (frameCanvas.height - 120 - sideLineHeight) / 2 + sideLineHeight);
+    frameCtx.stroke();
+
+    frameCtx.beginPath();
+    frameCtx.moveTo(frameCanvas.width - 40, 60 + (frameCanvas.height - 120 - sideLineHeight) / 2);
+    frameCtx.lineTo(frameCanvas.width - 40, 60 + (frameCanvas.height - 120 - sideLineHeight) / 2 + sideLineHeight);
+    frameCtx.stroke();
+  }
+}
+
+// Draw decorative quill strokes and dictionary elements
+function drawDecorations() {
+  const scrolled = window.scrollY;
+  const progress = Math.min(scrolled / window.innerHeight, 1);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.globalAlpha = 0.05;
+
+  // Decorative quill strokes
+  ctx.strokeStyle = '#d4af37';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+    ctx.quadraticCurveTo(
+      Math.random() * canvas.width,
+      Math.random() * canvas.height,
+      Math.random() * canvas.width,
+      Math.random() * canvas.height
+    );
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+function drawFrame() {
+  drawDecorations();
+  drawBaroqueFrame();
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+drawFrame();
+window.addEventListener('resize', () => { resizeCanvas(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct! You understand how these words were built.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite. Try again, or click the word to see its full etymology.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ LOGIC ---
+let quizAnswers = {};
+let quizCorrect = 0;
+
+function quizGuess(btn, correct) {
+  const section = btn.closest('.quiz-section');
+  const feedback = section.querySelector('.quiz-feedback');
+  const questionNum = section.querySelector('.quiz-prompt').textContent.split(' ')[1];
+
+  if (correct) {
+    if (!quizAnswers[questionNum]) quizCorrect++;
+    quizAnswers[questionNum] = true;
+    btn.classList.add('correct');
+    feedback.textContent = 'Correct!';
+    feedback.classList.add('show');
+  } else {
+    quizAnswers[questionNum] = false;
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not correct. Try another option.';
+    feedback.classList.add('show');
+  }
+
+  // Check if all quiz questions are answered
+  if (Object.keys(quizAnswers).length === 10) {
+    showQuizResults();
+  }
+}
+
+function showQuizResults() {
+  document.getElementById('quiz-score').textContent = quizCorrect;
+  document.getElementById('post-quiz').style.display = 'block';
+
+  let message = '';
+  if (quizCorrect >= 8) {
+    message = 'Excellent! You have mastered the language societies and standardization. You may proceed to the final scenes.';
+    document.getElementById('continue-btn').style.display = 'inline-block';
+    document.getElementById('continue-btn').addEventListener('click', () => {
+      document.getElementById('scene-quiz').style.display = 'none';
+      document.getElementById('scene-legacy').style.display = 'block';
+      document.getElementById('scene-legacy').scrollIntoView({ behavior: 'smooth' });
+    });
+  } else {
+    message = `You scored ${quizCorrect}/10. Please review the etymology cards and try again. (You need 8/10 to continue.)`;
+    document.getElementById('continue-btn').style.display = 'none';
+  }
+
+  document.getElementById('quiz-message').textContent = message;
+}
+
+// Show quiz when user scrolls to it
+let quizShown = false;
+window.addEventListener('scroll', () => {
+  if (!quizShown && window.scrollY > document.getElementById('scene-quiz-intro').offsetTop - window.innerHeight) {
+    quizShown = true;
+    setTimeout(() => {
+      document.getElementById('scene-quiz').style.display = 'block';
+      document.getElementById('scene-quiz').scrollIntoView({ behavior: 'smooth' });
+    }, 500);
+  }
+});
+
+// --- MOBILE: prevent double-tap zoom on interactive elements ---
+document.querySelectorAll('.guess-btn, .quiz-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+if (window.innerWidth < 600) {
+  // Already handled in CSS, but can add mobile-specific JS if needed
+}
+
+// --- AUDIO PRONUNCIATION (Web Speech API) ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

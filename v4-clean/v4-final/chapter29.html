@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 29: Der Aufstieg (The Ascent)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --ascent: #e8b97a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a0f0a 0%, #0f0a05 40%, #0a0804 70%, #050302 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- ASCENT PARTICLES CANVAS --- */
+  #ascent-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ascent);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--ascent), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--ascent), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="ascent-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twenty-Nine</div>
+    <h1>Der Aufstieg</h1>
+    <div class="subtitle">The Ascent</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: CLIMBING ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a mountain. A steep climb, upward, ever upward. Your feet on stone, your hands gripping rock, the air growing thinner as you rise. You climb not because you are compelled but because the summit calls to you. Because what lies above is worth the effort of ascending.
+    </p>
+
+    <p class="narrative">
+      And as you climb, a strange thing happens: the world below becomes smaller. What seemed enormous — the problems, the doubts, the weight of ordinary life — recedes. From a great height, perspective changes. You see further. You understand more.
+    </p>
+
+    <p class="narrative">
+      Language has its own peaks and valleys. And now we begin to climb toward one of the most important and troublesome concepts in German grammar: the separable prefix. This is the grammar that confuses English speakers most. This is the mountain that towers over German grammar.
+    </p>
+
+    <p class="narrative emphasis">
+      This chapter teaches the greatest challenge in German verb conjugation. But also, once you understand it, one of the most elegant systems in any language.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE MOST PRODUCTIVE SEPARABLE PREFIX ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The prefix <span class="german-word" data-card="auf">auf-</span> means "up" or "open." It is the most productive separable prefix in German. And here is where German grammar reveals one of its deepest secrets: some prefixes attach to verbs and can never separate. The <span class="german-word" data-speak="true">ver-</span> prefix from Chapter 27, for example, is inseparable. It stays attached forever.
+    </p>
+
+    <p class="narrative">
+      But the <span class="german-word" data-speak="true">auf-</span> prefix is different. It is <em>separable</em>. And this separation is not a failure of grammar — it is the core of how German word order works.
+    </p>
+
+    <p class="narrative">
+      Let me show you what this means. When you conjugate a verb with a separable prefix, the prefix goes to the end of the clause in certain grammatical positions. For example:
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-speak="true">Ich stehe morgens auf.</span> (I get up in the mornings.)
+    </p>
+
+    <p class="narrative small">
+      Notice: the verb is <span class="german-word" data-speak="true">aufstehen</span> (to get up), but in conjugation it splits: <span class="german-word" data-speak="true">ich stehe... auf</span>. The prefix goes to the end of the main clause.
+    </p>
+
+    <p class="narrative">
+      This seems chaotic to English speakers. We do not split verbs this way. But in German, this is the natural, expected behavior. And once you understand the pattern, you realize it is not chaotic — it is systematic. It is elegant. It is a feature, not a bug.
+    </p>
+
+    <!-- AUF card -->
+    <div class="ety-card" id="card-auf">
+      <div class="word-header">
+        <span class="word-main">auf-</span>
+        <span class="word-pron">/aʊ̯f/</span>
+      </div>
+      <div class="word-meaning">prefix — up, open, outward; separable prefix that moves to sentence-end in conjugation</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*upo</span>
+        <span class="bridge-note">— up, above, related to "upon" in English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">up</span>
+        <span class="bridge-note">— identical meaning, but does not function as a separable prefix in English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf-</span>
+        <span class="bridge-note">— SEPARABLE: splits from verb root in conjugation (stehe auf, not aufstehe)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">起 / 开</span>
+        <span class="bridge-note">— qǐ / kāi (up, rise / open) — separate words, not prefixes</span>
+      </div>
+      <div class="story">
+        The <em>auf-</em> prefix is the gateway to understanding German word order and separability. In the infinitive form <em>aufstehen</em> (to get up), the prefix and root are united. But in conjugation — when the verb is used in a sentence — the prefix separates and moves to the end of the clause. This happens in main clauses: <em>Ich stehe auf</em> (I get up). But in subordinate clauses, the entire verb moves to the end together: <em>...weil ich aufstehe</em> (because I get up). This is one of the defining features of German syntax and one of the greatest challenges for learners. Chinese, as an analytic language, does not have this problem: its words rarely attach or separate; they maintain their independence.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This is the discovery that changes everything about how German grammar makes sense: word order is not random. It is a feature. The verb moves to different positions depending on the grammatical context. The prefix separates because the verb has moved. This is not chaos — this is syntax expressing meaning through position.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: EIGHT WORDS OF ASCENT ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let me show you eight words built with the <span class="german-word" data-speak="true">auf-</span> prefix. Each one demonstrates the power of ascending, opening, beginning.
+    </p>
+
+    <p class="narrative small">
+      The first: <span class="german-word" data-card="aufstehen">aufstehen</span> — to get up, to rise. From <em>stehen</em> (to stand). When you rise in the morning, you <span class="german-word" data-speak="true">stehen auf</span>.
+    </p>
+
+    <p class="narrative small">
+      The second: <span class="german-word" data-card="aufmachen">aufmachen</span> — to open. From <em>machen</em> (to make, to do). To open a door is to make it open, to activate the opening.
+    </p>
+
+    <p class="narrative small">
+      The third: <span class="german-word" data-card="aufgabe">Aufgabe</span> — task, assignment. From <em>geben</em> (to give). An Aufgabe is something given to you to do — a task assigned.
+    </p>
+
+    <p class="narrative small">
+      The fourth: <span class="german-word" data-card="aufhoeren">aufhören</span> — to stop, to cease. From <em>hören</em> (to hear, to listen). To stop is to stop listening, to cease paying attention.
+    </p>
+
+    <p class="narrative small">
+      The fifth: <span class="german-word" data-card="aufklaerung">Aufklärung</span> — enlightenment, the Age of Enlightenment. From <em>klären</em> (to clarify, to clear up). Enlightenment is the clearing up of understanding — making things clear through reason.
+    </p>
+
+    <p class="narrative small">
+      The sixth: <span class="german-word" data-card="aufpassen">aufpassen</span> — to pay attention, to watch out. From <em>passen</em> (to fit, to match). To pay attention is to fit yourself to what is happening, to match your awareness to events.
+    </p>
+
+    <p class="narrative small">
+      The seventh: <span class="german-word" data-card="aufnehmen">aufnehmen</span> — to record, to take up. From <em>nehmen</em> (to take). To record is to take up and capture sound or image.
+    </p>
+
+    <p class="narrative small">
+      The eighth: <span class="german-word" data-card="auffallen">auffallen</span> — to stand out, to catch the eye. From <em>fallen</em> (to fall). When something stands out, it falls into your awareness, it catches you.
+    </p>
+
+    <!-- AUFSTEHEN card -->
+    <div class="ety-card" id="card-aufstehen">
+      <div class="word-header">
+        <span class="word-main">aufstehen</span>
+        <span class="word-pron">/ˈaʊ̯fʃteːən/</span>
+      </div>
+      <div class="word-meaning">to get up, to rise — to stand up from sitting or lying down; to wake</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + stehen</span>
+        <span class="bridge-note">— up + to stand = to stand up, separated in conjugation: ich stehe auf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stand up</span>
+        <span class="bridge-note">— two words in English, but same meaning; English doesn't use a separable prefix</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">起床</span>
+        <span class="bridge-note">— qǐchuáng (rise + bed) — two independent words, not a prefix system</span>
+      </div>
+      <div class="story">
+        <em>Aufstehen</em> is perhaps the most common word demonstrating German separability. In the infinitive form, it is one word: <em>aufstehen</em>. But in conjugation, it splits: <em>ich stehe morgens auf</em> (I get up in the morning). The structure shows how German word order works: the conjugated verb (<em>stehe</em>) goes in the second position in a main clause, and the prefix (<em>auf</em>) goes to the end. This word order is not haphazard — it creates a rhythm and emphasis that places the prefix at the end where it is heard last, lingering in the listener's mind.
+      </div>
+    </div>
+
+    <!-- AUFMACHEN card -->
+    <div class="ety-card" id="card-aufmachen">
+      <div class="word-header">
+        <span class="word-main">aufmachen</span>
+        <span class="word-pron">/ˈaʊ̯fmaxən/</span>
+      </div>
+      <div class="word-meaning">to open — to make open, to unlock, to uncover</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + machen</span>
+        <span class="bridge-note">— up/open + to make = to make open, separated: ich mache auf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">open</span>
+        <span class="bridge-note">— single word in English, derived from different roots but same meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">打开</span>
+        <span class="bridge-note">— dǎkāi (hit/strike + open) — compound word showing opening through force</span>
+      </div>
+      <div class="story">
+        <em>Aufmachen</em> is revealing because it shows how German builds new meanings from combinations. <em>Machen</em> (to make) is combined with <em>auf-</em> (open) to create a new verb meaning "to open." This is productive: <em>zumachen</em> (zu- = to/closed + machen = to close), <em>aufräumen</em> (auf- + räumen = to tidy up). Chinese also builds meaning through compounding: 打开 (dǎkāi, hit + open) shows opening through forceful action. Both languages are systematic in how they build complex meanings from simpler elements.
+      </div>
+    </div>
+
+    <!-- AUFGABE card -->
+    <div class="ety-card" id="card-aufgabe">
+      <div class="word-header">
+        <span class="word-main">Aufgabe</span>
+        <span class="word-pron">/ˈaʊ̯fɡaːbə/</span>
+      </div>
+      <div class="word-meaning">task, assignment, duty — something given to do</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + geben</span>
+        <span class="bridge-note">— up/open + to give = that which is given to you to accomplish</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">task</span>
+        <span class="bridge-note">— from Old French "tasque," related to "tax" (impose a burden)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">任务</span>
+        <span class="bridge-note">— rènwù (responsibility + matter) — emphasizes the duty aspect</span>
+      </div>
+      <div class="story">
+        <em>Aufgabe</em> is a noun derived from the separable verb <em>aufgeben</em> (to give up, to assign a task). When something is <em>aufgegeben</em> (given to you), it becomes your <em>Aufgabe</em> (task). The word shows how productively German creates nouns from verbs: the past participle form becomes a noun. This is why German can seem so compact — one root can generate multiple parts of speech: <em>geben</em> (give), <em>Gabe</em> (gift), <em>Aufgabe</em> (task), <em>aufgeben</em> (to give up).
+      </div>
+    </div>
+
+    <!-- AUFHÖREN card -->
+    <div class="ety-card" id="card-aufhoeren">
+      <div class="word-header">
+        <span class="word-main">aufhören</span>
+        <span class="word-pron">/ˈaʊ̯fhøːʁən/</span>
+      </div>
+      <div class="word-meaning">to stop, to cease — to discontinue, to quit</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + hören</span>
+        <span class="bridge-note">— up/open + to hear = to stop listening, separated: ich höre auf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stop</span>
+        <span class="bridge-note">— from Old Frisian "stoppa," originally meaning to block or plug</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">停止</span>
+        <span class="bridge-note">— tíngzhǐ (stop + halt) — double emphasis on cessation</span>
+      </div>
+      <div class="story">
+        <em>Aufhören</em> is interesting semantically because it uses "up/open" + "hear" to express stopping. The logic is: when you stop hearing something, you cease listening to it. You open yourself up away from it. The prefix <em>auf-</em> here contributes the sense of breaking contact, of severing attention. German's separability means: <em>Ich höre auf</em> (I stop). The prefix at the end carries the sense of cessation.
+      </div>
+    </div>
+
+    <!-- AUFKLÄRUNG card -->
+    <div class="ety-card" id="card-aufklaerung">
+      <div class="word-header">
+        <span class="word-main">Aufklärung</span>
+        <span class="word-pron">/ˈaʊ̯fklɛːʁʊŋ/</span>
+      </div>
+      <div class="word-meaning">enlightenment, clarification — the clearing up of understanding; the historical Age of Enlightenment</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + klären</span>
+        <span class="bridge-note">— up/open + to clarify = the clearing up of understanding</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">enlightenment</span>
+        <span class="bridge-note">— from en- + light, expressing the same idea of light displacing darkness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">启蒙</span>
+        <span class="bridge-note">— qǐmēng (open/enlighten + ignorance/sleep) — opening the darkness of unknowing</span>
+      </div>
+      <div class="story">
+        <em>Aufklärung</em> is one of the most historically and philosophically important German words. It refers to the 18th-century Enlightenment — <em>die Aufklärung</em> — which was central to European intellectual history. The word beautifully expresses the concept: <em>auf-</em> (up, open) + <em>klären</em> (to clarify, to make clear). The act of clarifying, of making things clear through reason, of opening up understanding from the darkness of ignorance. German philosophical language would not be the same without this word. Note the connection to Chapter 19, which discussed enlightenment in linguistic context — German's Aufklärung reaches far into philosophy and history.
+      </div>
+    </div>
+
+    <!-- AUFPASSEN card -->
+    <div class="ety-card" id="card-aufpassen">
+      <div class="word-header">
+        <span class="word-main">aufpassen</span>
+        <span class="word-pron">/ˈaʊ̯fpasən/</span>
+      </div>
+      <div class="word-meaning">to pay attention, to watch out — to be careful, to observe closely</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + passen</span>
+        <span class="bridge-note">— up/open + to fit = to fit yourself to what's happening, separated: ich passe auf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">pay attention</span>
+        <span class="bridge-note">— from "attention" (from Latin attendere = to attend to), different etymology but same meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">注意</span>
+        <span class="bridge-note">— zhùyì (pour/focus + meaning/intention) — emphasizing the deliberate direction of attention</span>
+      </div>
+      <div class="story">
+        <em>Aufpassen</em> demonstrates how a separable prefix can transform meaning. <em>Passen</em> means "to fit" or "to suit." <em>Aufpassen</em> means "to pay attention" — you fit yourself mentally to what is happening around you. The <em>auf-</em> adds the sense of actively orienting yourself to match the world. In conjugation: <em>Ich passe auf dich auf</em> (I watch out for you / I'm careful about you). Notice the double <em>auf</em> here — the prefix appears twice because there are two instances of the verb form.
+      </div>
+    </div>
+
+    <!-- AUFNEHMEN card -->
+    <div class="ety-card" id="card-aufnehmen">
+      <div class="word-header">
+        <span class="word-main">aufnehmen</span>
+        <span class="word-pron">/ˈaʊ̯fneːmən/</span>
+      </div>
+      <div class="word-meaning">to record, to take up — to capture (audio/video), to incorporate, to absorb</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + nehmen</span>
+        <span class="bridge-note">— up/open + to take = to take up and capture, separated: ich nehme auf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">record</span>
+        <span class="bridge-note">— from Latin "recordari" (to remember), fundamentally different concept despite same function</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">录音</span>
+        <span class="bridge-note">— lùyīn (record + sound) — compound showing the mechanical capture of sound</span>
+      </div>
+      <div class="story">
+        <em>Aufnehmen</em> shows how systematically German builds vocabulary from separable verbs. The basic meaning is "to take up" (to accept, to incorporate, to admit). The technical meaning "to record" comes from taking up sounds or images. A recording studio is an <em>Aufnahmestudio</em>. A recording is an <em>Aufnahme</em>. All built from the same root: <em>nehmen</em> (to take) + <em>auf-</em> (up). Chinese expresses recording differently: 录音 is mechanical, literal: "record sound." German's metaphorical approach — "take up sound" — shows how language builds meaning through imagery.
+      </div>
+    </div>
+
+    <!-- AUFFALLEN card -->
+    <div class="ety-card" id="card-auffallen">
+      <div class="word-header">
+        <span class="word-main">auffallen</span>
+        <span class="word-pron">/ˈaʊ̯ffɑlən/</span>
+      </div>
+      <div class="word-meaning">to stand out, to catch the eye — to be noticeable, to attract attention</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">auf- + fallen</span>
+        <span class="bridge-note">— up/open + to fall = to fall into awareness, separated: mir fällt etwas auf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stand out</span>
+        <span class="bridge-note">— literally to stand apart, but semantically different from German's falling into awareness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">突出</span>
+        <span class="bridge-note">— túchū (break through + protrude) — emphasizing the forceful emergence into attention</span>
+      </div>
+      <div class="story">
+        <em>Auffallen</em> is delightful because it uses <em>fallen</em> (to fall) with <em>auf-</em> (up/open) to express standing out. The metaphor is: when something stands out to you, it falls into your awareness. You are minding your business, and suddenly something falls up into your consciousness. Note the reflexive construction: <em>Mir fällt etwas auf</em> (Something falls upon me in a noticeable way). The dative case shows that the standing out is something that happens to you, not something you actively do. German's separability means the impact of auffallen is spread across the clause, with the falling happening at the end.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: WHY SEPARABILITY MATTERS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      You might ask: why does German separate these prefixes? Why not keep the verb together like most other languages do?
+    </p>
+
+    <p class="narrative">
+      The answer lies in word order and emphasis. By separating the prefix, German allows the conjugated verb to stay in the second position of the clause (where all conjugated verbs go in main clauses), while the prefix moves to the end. This creates a specific rhythm and emphasis. What comes last in a sentence is heard last and often carries the most emphasis.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-speak="true">Ich stehe morgens auf.</span> The word "auf" (up) comes at the end, carrying emphasis and resonance. This is not chaotic — it is elegant. It is syntax expressing meaning through position.
+    </p>
+
+    <p class="narrative">
+      In subordinate clauses, the rules change entirely. The entire verb complex moves to the end of the clause:
+    </p>
+
+    <p class="narrative small">
+      <span class="german-word" data-speak="true">...weil ich morgens aufstehe.</span> (because I in-the-morning up-stand = because I get up in the morning)
+    </p>
+
+    <p class="narrative">
+      Here, the prefix and root reunite at the end of the subordinate clause. This shows that separability is not random — it is a systematic response to word order rules.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE VIEW FROM THE SUMMIT ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      You have climbed to the summit. The air is thin here. The view is vast.
+    </p>
+
+    <p class="narrative">
+      Now you understand the <span class="german-word" data-speak="true">auf-</span> prefix. You understand that German separability is not a chaos — it is an expression of word order and meaning through position. You understand that what seems strange to English speakers is actually elegant and systematic.
+    </p>
+
+    <p class="narrative">
+      And with this understanding comes another realization: you have discovered one of the most fundamental features of German grammar. Separable verbs are everywhere in German. They are not an exception — they are the rule. Once you understand how they work, German grammar suddenly becomes more transparent. The complexity resolves into system. The chaos becomes order.
+    </p>
+
+    <p class="narrative">
+      The prefix that begins this chapter — <span class="german-word" data-speak="true">auf-</span> (up) — is a guide to understanding ascent in many forms. Ascent toward understanding. Ascent toward mastery. Ascent toward the summit of German grammar.
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <h3>The Ascent: Quiz</h3>
+    <div id="quiz-questions"></div>
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Back</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score" style="display: none;"></div>
+    <div class="quiz-reset" id="quiz-reset" style="display: none;">
+      <button onclick="resetQuiz()">Reset Quiz</button>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">284 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(33%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:33%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 284 words across 29 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">61 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(42%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:42%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 61 patterns and grammar rules across 29 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="word-collection" id="word-collection">
+    <h3>Words Unlocked</h3>
+    <div class="collected-words" id="collected-words"></div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p class="next-chapter">← Chapter 28 · Chapter 30 →</p>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter28.html" class="nav-btn">← Chapter 28</a>
+    <a href="chapter30.html" class="nav-btn next">Chapter 30 →</a>
+  </div>
+
+</div>
+
+<script>
+
+/* --- ASCENT CANVAS ANIMATION --- */
+const canvas = document.getElementById('ascent-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + Math.random() * 100;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = -Math.random() * 1 - 0.5;
+    this.size = Math.random() * 2 + 0.5;
+    this.opacity = Math.random() * 0.4 + 0.1;
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x < -10) this.x = canvas.width + 10;
+    if (this.x > canvas.width + 10) this.x = -10;
+    if (this.y < -100) {
+      this.y = canvas.height + 100;
+      this.opacity = Math.random() * 0.4 + 0.1;
+    }
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = `rgba(232, 185, 122, ${this.opacity})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+const particleCount = window.innerWidth < 768 ?
+  Math.floor((canvas.width * canvas.height) / 8000) :
+  Math.floor((canvas.width * canvas.height) / 5000);
+
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle());
+}
+
+// Draw staircase/ascending pattern
+function drawStairs() {
+  const time = Date.now() * 0.0002;
+  const stairs = 6;
+  const stepWidth = canvas.width / (stairs + 1);
+  const stepHeight = canvas.height / (stairs + 1);
+
+  for (let i = 0; i < stairs; i++) {
+    const x = stepWidth * (i + 1);
+    const y = canvas.height - stepHeight * (i + 1);
+    const alpha = 0.15 + Math.sin(time + i) * 0.1;
+
+    ctx.strokeStyle = `rgba(232, 185, 122, ${alpha})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x - 40, y);
+    ctx.lineTo(x + 40, y);
+    ctx.stroke();
+
+    ctx.strokeStyle = `rgba(232, 185, 122, ${alpha * 0.5})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y - 40);
+    ctx.stroke();
+  }
+}
+
+function animate() {
+  ctx.fillStyle = 'rgba(10, 8, 4, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.update();
+    p.draw(ctx);
+  });
+
+  drawStairs();
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* --- PROGRESS BAR --- */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+/* --- SCENE OBSERVER --- */
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+/* --- ETYMOLOGY CARDS --- */
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+/* --- AUDIO PRONUNCIATION --- */
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// All german-word spans that don't have cards are speak-only
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => {
+    speakGerman(word.textContent.trim());
+  });
+});
+
+// Add speak buttons to etymology cards
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+/* --- QUIZ SYSTEM --- */
+const quizData = [
+  {
+    question: "What does a 'separable' prefix in German mean?",
+    options: ["it splits the word into two parts", "it detaches from the verb root in main clauses and moves to sentence-end", "it can never be used with certain verbs", "it changes the meaning completely"],
+    correct: 1,
+    explanation: "A separable prefix moves to the end of a main clause in conjugation. For example, 'aufstehen' becomes 'ich stehe auf' (I get up), not 'ich aufstehe.'"
+  },
+  {
+    question: "What does the auf- prefix mean?",
+    options: ["down or closed", "up or open", "around or about", "away or apart"],
+    correct: 1,
+    explanation: "The auf- prefix means 'up' or 'open.' It is the most productive separable prefix in German."
+  },
+  {
+    question: "In the sentence 'Ich stehe morgens auf,' where does the prefix appear?",
+    options: ["at the beginning before the verb", "in the middle with the verb", "at the end of the clause", "it doesn't appear at all"],
+    correct: 2,
+    explanation: "The prefix 'auf' appears at the end of the main clause: ich stehe auf (I stand up). The conjugated verb 'stehe' is in second position, and the prefix moves to the end."
+  },
+  {
+    question: "What happens to the prefix in a subordinate clause like 'weil ich aufstehe'?",
+    options: ["the prefix remains at the end", "the prefix reunites with the root at the end of the clause", "the prefix moves to the beginning", "the prefix disappears"],
+    correct: 1,
+    explanation: "In subordinate clauses, the entire verb moves to the end, so the prefix reunites with the root: 'weil ich aufstehe' (because I get up). The whole verb is together at the end."
+  },
+  {
+    question: "From the chapter: What is Aufgabe?",
+    options: ["a type of food", "a task or assignment", "a place to live", "a method of teaching"],
+    correct: 1,
+    explanation: "Aufgabe (from auf- + geben = to give) means a task or assignment — something given to you to do."
+  },
+  {
+    question: "Which of these is NOT a separable verb prefix?",
+    options: ["auf-", "ab-", "ver-", "an-"],
+    correct: 2,
+    explanation: "The ver- prefix (from Chapter 27) is INSEPARABLE. It never detaches from the root. Auf-, ab-, and an- are all separable prefixes."
+  },
+  {
+    question: "What does 'ich passe auf' mean?",
+    options: ["I fit something together", "I pay attention", "I arrange things", "I adapt to something"],
+    correct: 1,
+    explanation: "'Aufpassen' (auf- + passen = to fit) with separation 'ich passe auf' means 'I pay attention' or 'I watch out.'"
+  },
+  {
+    question: "From Chapter 27: What makes ver- prefix different from auf- prefix?",
+    options: ["ver- is separable, auf- is not", "auf- is inseparable, ver- is separable", "ver- is inseparable, auf- is separable", "they are identical"],
+    correct: 2,
+    explanation: "Ver- (from Chapter 27) is an INSEPARABLE prefix that always stays attached to the verb root. Auf- is SEPARABLE and moves to sentence-end in main clauses."
+  },
+  {
+    question: "What is Aufklärung in the context of this chapter?",
+    options: ["a time of darkness", "enlightenment, clarification (historically the Age of Enlightenment)", "a type of art movement", "a religious ceremony"],
+    correct: 1,
+    explanation: "Aufklärung (auf- + klären = to clarify) means enlightenment or clarification. It refers to the 18th-century Enlightenment period, central to European intellectual history."
+  },
+  {
+    question: "How does the separability of auf- contribute to German word order and emphasis?",
+    options: ["it makes sentences shorter", "it allows the conjugated verb to stay in second position while the prefix goes to the end for emphasis", "it is merely a grammatical quirk with no purpose", "it makes German sound more musical"],
+    correct: 1,
+    explanation: "Separability allows German to maintain its strict word order rule (conjugated verbs in second position in main clauses) while moving the prefix to the end for emphasis and impact."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.style.display = 'block';
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    setTimeout(() => {
+      document.getElementById('word-collection').classList.add('show');
+      document.getElementById('quiz-reset').style.display = 'block';
+      populateWordCollection();
+    }, 500);
+  } else {
+    document.getElementById('quiz-reset').style.display = 'block';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+  document.getElementById('quiz-summary').classList.remove('show');
+  document.getElementById('word-collection').classList.remove('show');
+  document.getElementById('quiz-reset').style.display = 'none';
+  document.getElementById('quiz-score').style.display = 'none';
+  initializeQuiz();
+}
+
+const collectedWordsList = [
+  { de: 'aufstehen', en: 'get up' },
+  { de: 'aufmachen', en: 'open' },
+  { de: 'Aufgabe', en: 'task' },
+  { de: 'aufhören', en: 'stop' },
+  { de: 'Aufklärung', en: 'enlightenment' },
+  { de: 'aufpassen', en: 'pay attention' },
+  { de: 'aufnehmen', en: 'record' },
+  { de: 'auffallen', en: 'stand out' }
+];
+
+function populateWordCollection() {
+  const container = document.getElementById('collected-words');
+  container.innerHTML = '';
+
+  collectedWordsList.forEach((word, idx) => {
+    const div = document.createElement('div');
+    div.className = 'collected-word';
+    div.style.animationDelay = `${idx * 0.1}s`;
+    div.innerHTML = `<div class="cw-german">${word.de}</div><div class="cw-english">${word.en}</div>`;
+    container.appendChild(div);
+
+    setTimeout(() => div.classList.add('show'), idx * 100);
+  });
+}
+
+initializeQuiz();
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

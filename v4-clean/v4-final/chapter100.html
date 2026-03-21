@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 100: Das letzte Wort</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --forest: #3d5c3f;
+    --cosmic: #5a4a7f;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+
+  body {
+    background: linear-gradient(to bottom, #0a0e1a 0%, #1a1410 20%, #2a1f14 40%, #1a2a2a 60%, #2a1a3a 80%, #0a0e1a 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* --- UNIVERSE CANVAS --- */
+  #universe-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  .content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 60px 24px 120px; }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px; }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2.5s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.4rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2.5s ease 1.2s forwards;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint { position: absolute; bottom: 40px; animation: bob 2s ease-in-out infinite; opacity: 0.5; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative { font-size: 1.15rem; line-height: 1.95; margin-bottom: 1.8em; color: var(--text); }
+  .narrative em { color: var(--text-bright); font-style: italic; }
+  .narrative strong { color: var(--fire); font-weight: 600; }
+  .narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); font-weight: 400; font-style: italic; }
+  .narrative.small { font-size: 1rem; color: rgba(212, 202, 187, 0.7); }
+  .narrative.meditation { font-size: 1.2rem; color: var(--text-bright); font-weight: 300; line-height: 2; margin: 2em 0; text-align: center; }
+
+  /* --- GERMAN WORDS (CLICKABLE) --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+  .german-word:hover { background: rgba(232, 164, 74, 0.1); }
+
+  /* --- WORD CARDS (ETYMOLOGY STYLE) --- */
+  .journey-word {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0 28px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .journey-word.open {
+    max-height: 1200px;
+    opacity: 1;
+  }
+
+  .journey-word .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .journey-word .word-main {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--fire);
+  }
+
+  .journey-word .chapter-ref {
+    font-size: 0.85rem;
+    color: rgba(232, 164, 74, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .journey-word .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .journey-word .story {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+
+  /* --- SCENE SECTIONS --- */
+  .scene { margin-bottom: 80px; }
+  .scene-marker { height: 40px; margin-bottom: 40px; background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.2), transparent); }
+  .divider { text-align: center; color: rgba(232, 164, 74, 0.3); margin: 60px 0; font-size: 1.5rem; letter-spacing: 0.3em; }
+
+  /* --- REFLECTION BOXES --- */
+  .reflection-box {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.8), rgba(15, 20, 35, 0.8));
+    border-left: 4px solid rgba(232, 164, 74, 0.4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 40px 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .reflection-title {
+    color: var(--text-bright);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  /* --- QUIZ CONTAINER --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .quiz-intro {
+    color: rgba(212, 202, 187, 0.7);
+    margin-bottom: 30px;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .quiz-question { margin-bottom: 40px; }
+  .quiz-question.hidden { display: none; }
+
+  .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .quiz-nav button {
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--fire);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .quiz-nav button:hover:not(:disabled) {
+    background: rgba(232, 164, 74, 0.25);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .quiz-score {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(50, 50, 50, 0.5);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .post-quiz-summary {
+    margin-top: 30px;
+    padding: 28px;
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.08), rgba(196, 154, 108, 0.04));
+    border-left: 4px solid var(--fire);
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.9;
+  }
+
+  .post-quiz-summary p { margin: 16px 0; }
+  .post-quiz-summary .stat-line { font-weight: 600; color: var(--fire); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .post-quiz-summary .final-quote { font-style: italic; color: var(--text-bright); margin: 24px 0; font-size: 1.15rem; padding: 16px; border-left: 2px solid rgba(232, 164, 74, 0.3); }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 80px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 40px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .completion-title {
+    font-size: 2.8rem;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+
+  .chapter-end .final-text {
+    font-size: 1.15rem;
+    line-height: 2;
+    color: rgba(212, 202, 187, 0.85);
+    margin: 24px 0;
+  }
+
+  .chapter-end .final-quote-big {
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--text-bright);
+    margin: 40px 0;
+    line-height: 1.9;
+    padding: 28px;
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    background: rgba(232, 164, 74, 0.04);
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.4rem; }
+    .chapter-end .completion-title { font-size: 2rem; }
+    .journey-word { padding: 18px 16px; }
+    .journey-word .word-main { font-size: 1.6rem; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="universe-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter One Hundred — The Grand Finale</div>
+    <h1>Das letzte Wort</h1>
+    <div class="subtitle">The Last Word — A Homecoming After Six Thousand Years</div>
+    <div class="scroll-hint"><span>↓</span></div>
+
+      <p style="margin-top: 2em; font-size: 1rem; color: rgba(212, 202, 187, 0.65); line-height: 1.8; font-style: italic;">
+        Whether you score 80% and officially "complete" this course, or whether you continue to study and learn more — you have already succeeded. You have already grown. You have already opened your mind to a new way of seeing the world. That is the true completion. That is what matters.
+      </p>
+  </div>
+
+  <div class="scene">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Six thousand years ago. A grassland beneath vast skies. Stars burning above in patterns that meant nothing to the people who looked at them, but would mean everything to astronomers yet unborn. A mother sits by a fire, holding her child. The fire crackles. The night is cold. Predators move beyond the circle of light. She is alone with this small human she has carried inside her body, brought into the world through her own blood and pain.
+    </p>
+
+    <p class="narrative">
+      She does not think about history. She does not think about legacy or language or the future. She thinks only of now. Of keeping warm. Of this child.
+    </p>
+
+    <p class="narrative emphasis">
+      She speaks the first word: <span class="german-word" data-card="mutter">Mutter</span>. Mother.
+    </p>
+
+    <p class="narrative">
+      That one word contained everything. The entire future of language lay hidden in that sound. In that moment, she did not know she was making history. She was simply calling herself by the name that described her relationship to the small creature in her arms. But that word — <em>Mutter</em> — would echo through six thousand years. It would travel across continents. It would transform and mutate and evolve, but the core would remain. Someone would still say "mother" and mean the same thing: the person who gave birth, who nurtures, who protects, who teaches.
+    </p>
+
+    <p class="narrative">
+      And now you are here. Reading the hundredth chapter. The final chapter. You have walked through time itself. You have traveled from that steppe fire to modern Berlin, from a moment before writing was invented to an era of instant global communication. You have learned how words were born from human experience, how they changed across centuries, how they carried within them the stories of a people across six millennia.
+    </p>
+
+    <p class="narrative emphasis">
+      You are not the same reader who started this journey. You have been transformed. Language has reshaped how you think.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Every chapter in this course has been built on a single truth: language is not abstract. Language is human. Every word in this book carries a story. Not just a story of etymology — though that matters deeply. But a story of human experience. Of why that word was needed in the first place. Of what it reveals about how humans think, feel, struggle, hope, fear, love.
+    </p>
+
+    <p class="narrative">
+      When you learned <span class="german-word" data-card="hoffnung">Hoffnung</span> (hope), you were not just learning vocabulary. You were learning what medieval Europeans felt when plague was killing everyone around them. You were learning the emotional core of survival. Hope is what keeps you moving when everything seems lost.
+    </p>
+
+    <p class="narrative">
+      When you learned <span class="german-word" data-card="heimat">Heimat</span>, you were learning something untranslatable — not just a place, but a way of belonging so complete it becomes part of your identity. You were learning how humans need roots, need places they know so well they know them without thinking.
+    </p>
+
+    <p class="narrative">
+      When you learned <span class="german-word" data-card="gelassenheit">Gelassenheit</span>, you were learning medieval mysticism, learning that wisdom sometimes means releasing control rather than strengthening it. You were learning that peace comes not from mastering the world but from accepting it.
+    </p>
+
+    <p class="narrative meditation">
+      Ten words have carried you through this entire journey. Ten words from different chapters, different eras, different human experiences. Let us return to them now, at the end, and remember what they taught you:
+    </p>
+  </div>
+
+  <!-- THE TEN WORDS OF THE JOURNEY -->
+
+  <div class="scene">
+    <div class="journey-word" id="word-mutter">
+      <div class="word-header">
+        <span class="word-main">Mutter</span>
+        <span class="chapter-ref">← Chapter 1: The Beginning</span>
+      </div>
+      <div class="word-meaning">Mother — the first word ever spoken</div>
+      <div class="story">Mutter is where everything began. Not just German, but language itself. In every language, the word for mother often comes first. Babies learn it before they learn almost any other word. It may be the most ancient word in any language — older than words for God, for love, for home. It is the sound humans made when they first looked at another human and named her role, her relationship, her essence. Mutter is the word that proves love comes before language, and language begins as an expression of that bond between mother and child.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-feuer">
+      <div class="word-header">
+        <span class="word-main">Feuer</span>
+        <span class="chapter-ref">← Chapter 1: The Element</span>
+      </div>
+      <div class="word-meaning">Fire — the force that made civilization possible</div>
+      <div class="story">Feuer is the word for the fire that made civilization possible. Warmth. Light. Protection from predators. The ability to cook food and digest proteins more efficiently, which fed growing brains. The gathering place. The technology that separated humans from animals. Every human culture has myths about fire. The Greeks had Prometheus stealing it from the gods. Native Americans have the creation stories of fire. Germans called it Feuer, a word that has barely changed in 6,000 years. That constancy is itself remarkable — the word has survived because fire never stopped mattering to human survival.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-heimat">
+      <div class="word-header">
+        <span class="word-main">Heimat</span>
+        <span class="chapter-ref">← Chapter 6: Belonging</span>
+      </div>
+      <div class="word-meaning">Homeland — the place you carry in your heart forever</div>
+      <div class="story">Heimat is the untranslatable German word that translators have anguished over for centuries. It means more than home. It means the place where you belong so completely that it becomes part of your identity. It is the landscape you know without thinking. The faces you've seen since childhood. The food, the customs, the way people speak. The particular light at sunset. Every German carries their Heimat inside them, even when far from home — especially then. This word shows that German culture is rooted in place, in belonging, in the deep connection between people and land that goes beyond mere geography.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-schwert">
+      <div class="word-header">
+        <span class="word-main">Schwert</span>
+        <span class="chapter-ref">← Chapter 9: Power</span>
+      </div>
+      <div class="word-meaning">Sword — the warrior's instrument shaped a language</div>
+      <div class="story">Schwert comes from the ancient Germanic warriors who first spoke this language in forests and marshes. It is a word born in conflict, in struggle, in the harsh realities of survival and expansion. The word itself echoes the sound it represents — harsh, hard consonants that sound like steel. Schwert reminds us that German was shaped by warriors, by a warrior culture that valued honor, courage, martial skill, and loyalty unto death. Yet this same culture would later produce poets, composers, philosophers, mystics. The same language that named the sword would eventually name love and music and the deepest mysteries of consciousness.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-hoffnung">
+      <div class="word-header">
+        <span class="word-main">Hoffnung</span>
+        <span class="chapter-ref">← Chapter 13: Survival</span>
+      </div>
+      <div class="word-meaning">Hope — what survived when everything else died</div>
+      <div class="story">Hoffnung is the word for hope, and this word carries the weight of German history. When plague swept through medieval Europe, killing a third of the population, Hoffnung was what people clung to. When cities burned and kingdoms fell and the world seemed to be ending — Hoffnung remained. Hope is not passive resignation. It is an active choice to believe that tomorrow might be better than today. It is stubborn. It is human. The German language has many words for difficult emotions, for suffering and pain and sorrow, but Hoffnung stands out as the emotion that saved people through their darkest times.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-freiheit">
+      <div class="word-header">
+        <span class="word-main">Freiheit</span>
+        <span class="chapter-ref">← Chapter 15: Revolution</span>
+      </div>
+      <div class="word-meaning">Freedom — the revolution in a single word</div>
+      <div class="story">Freiheit is freedom, and this word echoes through German revolutionary moments. Luther preached freedom of conscience — the right of individuals to read Scripture for themselves and form their own relationship with God. The German Enlightenment was obsessed with Freiheit. The word appears in revolutionary songs, in manifestos, in the hearts of people demanding to be treated not as subjects of a king but as free human beings. Yet this word also carries tragedy — because the freedom Germans sought was sometimes seized by tyrants who twisted it into dominion over others. Freiheit is beautiful but complicated, liberating but dangerous.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-gelassenheit">
+      <div class="word-header">
+        <span class="word-main">Gelassenheit</span>
+        <span class="chapter-ref">← Chapter 13: Wisdom</span>
+      </div>
+      <div class="word-meaning">Letting be — the mystic's path to equanimity</div>
+      <div class="story">Gelassenheit is perhaps the most mysterious German word, and it comes from medieval mysticism — from Meister Eckhart and his followers who sought to understand consciousness itself. To be "gelassen" means to let go, to surrender, to accept what you cannot control. It is not resignation or defeat. It is wisdom. The ability to sit with what is true and not struggle against it. This word shows that German philosophy is not only about mastering the world or conquering it. It is also about understanding how to release control, how to stop fighting, how to find peace in acceptance.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-wissenschaft">
+      <div class="word-header">
+        <span class="word-main">Wissenschaft</span>
+        <span class="chapter-ref">← Chapter 22: Knowledge</span>
+      </div>
+      <div class="word-meaning">Knowledge systematized — science and scholarship unified</div>
+      <div class="story">Wissenschaft is the German word for science, but it means more than English "science" can capture. Wissenschaft literally means "knowledge-craft" or "knowledge-making." It is any systematic pursuit of truth — whether physics or philosophy or history or linguistics. This word shows that Germans viewed knowledge-seeking as a craft, a discipline, something you dedicate your life to mastering. German universities became centers of world learning because this culture valued Wissenschaft so deeply. The best minds devoted themselves to understanding how the world actually works.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-verstehen">
+      <div class="word-header">
+        <span class="word-main">Verstehen</span>
+        <span class="chapter-ref">← Chapter 27: Understanding</span>
+      </div>
+      <div class="word-meaning">To understand — literally, to stand before something until you grasp it</div>
+      <div class="story">Verstehen literally means "to stand before" (ver- + stehen) — to stand in the presence of something until you grasp its meaning. This is not casual comprehension. It is deep understanding, the kind that comes from sustained attention and openness. This word shows how German thinks about consciousness and learning. To understand is not to dominate or control. It is to stand humbly before something and allow it to reveal itself to you. This is why German Verstehen became so important in philosophy and social science — it means empathy, it means standing in someone else's position.</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="journey-word" id="word-liebe">
+      <div class="word-header">
+        <span class="word-main">Liebe</span>
+        <span class="chapter-ref">← NOW — Chapter 100: The Truth</span>
+      </div>
+      <div class="word-meaning">Love — the word that contains everything</div>
+      <div class="story">Liebe is love, and it is the final word because it is the container for everything that came before. We began with Mutter — a mother's love for her child. We end with Liebe — love in its broadest sense. Love of language. Love of place. Love of truth. Love of freedom. Love of knowledge. Love of peace. Love of other humans. Love of the world itself. Love of existence. Every word in this journey has been an expression of some form of love. And this, finally, is what language is. It is human beings reaching across the void that separates us from each other, saying: I am here. You are here. We are together. I see you. I understand you. I love you — not romantically necessarily, but in the deepest sense: I acknowledge your existence and value it.</div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ADDRESS TO READER -->
+  <div class="scene">
+    <p class="narrative" style="font-size: 1.3rem; text-align: center; margin: 4em 0; line-height: 2; color: var(--text-bright); font-weight: 300;">
+      This journey was always for you.
+    </p>
+
+    <p class="narrative">
+      From the moment you found the book in a London bookshop, rain on the windows, that strange pull you felt toward a language you didn't know. From the stolen pages that made this book more valuable — a book that had history, that had been wanted by someone enough to steal it. From the moment your fingers touched those pages, every chapter was written for you, whoever you are.
+    </p>
+
+    <p class="narrative">
+      You sat down and you read. Chapter 1: the steppe, the fire, Mutter. You learned not just a word but a story. You learned that language is ancient, that it carries history, that every word you speak now was shaped by people long dead — people you will never meet, people whose names are lost, people who loved and feared and hoped just as you do.
+    </p>
+
+    <p class="narrative">
+      And you continued. Through forests and monks and the Reformation. Through Enlightenment and Romanticism and industrial revolution. Through dialect maps and linguistic fragmentation and the rise of Standard German. Through 100 chapters, 6,000 years, nearly 1,000 words explicitly learned and patterns enough to decode thousands more.
+    </p>
+
+    <p class="narrative">
+      Chapter by chapter, something shifted in you. You began to see language not as rules but as poetry. Not as constraints but as freedom. You began to understand that German speakers see the world differently than English speakers do. You began to recognize that <em>Heimat</em>, <em>Gelassenheit</em>, <em>Sehnsucht</em>, <em>Weltschmerz</em> — these words do not translate because they express truths that English speakers have somehow not prioritized as deeply.
+    </p>
+
+    <p class="narrative emphasis">
+      And by learning these words, you have learned to see as Germans see. You have become, in a small but real way, a little bit German yourself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- THE REALIZATION SECTION -->
+  <div class="scene">
+
+    <p class="narrative" style="font-size: 1.25rem; text-align: center; margin: 3em 0; line-height: 1.95; color: var(--text-bright); font-weight: 300;">
+      You have learned more than German.<br><br>
+      You have learned how to learn languages.<br><br>
+      You have learned how to see beneath the surface of words into the culture they express.<br><br>
+      You have learned that language is never neutral — it always carries the values and concerns of the people who speak it.<br><br>
+      <span style="color: var(--fire); font-weight: 400;">You have learned to think like a German.</span>
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- CONTINUATION OF NARRATIVE -->
+  <div class="scene">
+    <p class="narrative">
+      Think about what you have accomplished across these hundred chapters. You started knowing almost nothing about German — or perhaps you knew a few phrases, enough to order beer or ask for directions. You had no sense of how the language worked, why certain words existed, what they revealed about German culture and history.
+    </p>
+
+    <p class="narrative">
+      Now, after 100 chapters, you can read a German newspaper article and understand not just the surface meaning, but the deeper implications. You understand why certain words were chosen. You recognize historical references embedded in language. You can appreciate the subtle poetry of German prose. You can watch a German film and follow the dialogue not just because of subtitles, but because you actually understand what is being said.
+    </p>
+
+    <p class="narrative">
+      Most importantly, you have learned that mastery of a language is not about reaching some final destination where you know everything. It is about developing the tools to understand anything. It is about pattern recognition. It is about cultural empathy. It is about opening your mind to a different way of organizing reality.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- FINAL REFLECTION BEFORE QUIZ -->
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">The Transformation That Has Happened</div>
+      <p>You are not the same person who began this course. Something has shifted in how you think about language, about culture, about human consciousness itself. When you learned the word Heimat and understood that English has no equivalent, you realized that different languages encode different ways of seeing the world. When you learned about the four cases and saw that grammar is not arbitrary but expresses the logical relationships between things, you understood that thought itself is linguistic. When you learned about the Volkerwanderung and saw how geographic separation creates linguistic diversity, you understood that language is inseparable from history, from migration, from the movement of peoples across the earth. These are not small realizations. These are fundamental insights about what it means to be human.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+      WHAT HAVE YOU ACTUALLY ACCOMPLISHED?
+    </p>
+
+    <p class="narrative">
+      You have learned not 1,000 words. You have learned to <strong>SEE</strong> a language.
+    </p>
+
+    <p class="narrative">
+      You understand the patterns that underlie German. You recognize the ancient roots that connect German to English, to Latin, to Sanskrit, to the Proto-Indo-European language spoken 6,000 years ago on the grasslands of Central Asia. When you encounter an unfamiliar German word now, you do not panic. You recognize the patterns within it. You see the prefixes and suffixes that guide meaning. You understand how German builds words from components the way a carpenter builds a house from wood and nails.
+    </p>
+
+    <p class="narrative">
+      You see how language preserves history. You understand why <em>Weltschmerz</em> (world-pain) contains an entire philosophy — a pessimism about the human condition that is characteristically German. You understand why <em>Geborgenheit</em> (shelteredness) expresses an emotional truth that no single English word can capture — the feeling of being held safely, protected, surrounded by care. You understand why <em>Schadenfreude</em> (damage-joy) reveals something honest about human nature — that we sometimes feel secret pleasure when someone we dislike suffers.
+    </p>
+
+    <p class="narrative">
+      You have learned the grammar not as arbitrary rules but as the deep structure of human thought itself. The cases are not random. They show relationship, connection, the way things relate to each other in space and time and causality. When you use the dative case, you are thinking about connection and benefit. When you use the accusative, you are thinking about direct action. The cases are poetry embedded in grammar.
+    </p>
+
+    <p class="narrative">
+      The verbs are not just actions — they are the poetry of becoming, of transformation. German verbs are packed with information. A single verb can contain subtle meanings — the difference between <em>schauen</em> (to look passively) and <em>anschauen</em> (to look at deliberately) is the difference between observation and action, between passivity and intention. Every verb is a mini-philosophy of how the world works.
+    </p>
+
+    <p class="narrative">
+      You have learned that vocabulary is not isolated islands. It is a network, a web, a tapestry where each word connects to others. <em>Hoffnung</em> (hope) and <em>Hoffnungslosigkeit</em> (hopelessness) are more than opposites — they are partners in a dance that expresses the human condition. <em>Verstehen</em> (to understand) and <em>Verständnis</em> (understanding) show how German makes the act of understanding into both a verb and a noun, a doing and a being. The language contains multitudes.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- REFLECTION -->
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">The Greatest Gift</div>
+      <p>Language can offer many things: communication, information, entertainment. But the greatest gift language offers is this: a new way of being in the world. By learning German, you have not just acquired a skill. You have been changed fundamentally. You are no longer entirely who you were before you opened this book. You think differently now. You see the world through multiple lenses. You carry inside yourself the accumulated wisdom of a people across 6,000 years.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+
+  <div class="divider">· · ·</div>
+
+  <!-- DEEP REFLECTION SECTION -->
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">The Architecture of German Thinking</div>
+      <p>Throughout this course, you have seen how German structures thought differently than English does. German nominalizes verbs, turning actions into abstract concepts. Das Denken (the thinking), das Sein (the being), das Verstehen (the understanding). This is why German philosophy can be so abstract and dense — the language itself is built for abstraction and precision. German compounds words where English uses separate terms. German uses cases to show relationships where English relies on word order and prepositions. These are not accidents of grammar. They are windows into how German minds organize reality.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">Why This Language Was Worth Your Time</div>
+      <p>German is the language of Goethe and Schiller, of Kant and Hegel, of Freud and Einstein. It is a language that has produced some of humanity's greatest literature, philosophy, and science. But it is also the language of ordinary people in villages and cities, of grandmothers and children, of farmers and factory workers. By learning German, you have gained access not just to the world's greatest thinkers, but to the everyday experiences of millions of people. You can now sit in a German café and understand not just the words, but the culture those words express. You can read a German newspaper and understand not just the story, but the values and concerns the journalists are expressing through word choice.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">The Skill You Have Developed: Pattern Recognition</div>
+      <p>One of the most important lessons in this entire course is that you do not need to know every German word. You need to understand patterns. When you see an unfamiliar German word, you can break it down into components you recognize. A prefix tells you something about how the word transforms meaning. A suffix tells you something about grammar and function. The root word ties it to words you already know. This pattern recognition skill is far more valuable than memorizing 10,000 vocabulary items would ever be. With pattern recognition, you become an active participant in the language, constructing meaning rather than passively receiving it. You become, in a sense, a creator rather than a consumer of language.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <p class="narrative" style="font-size: 1.25rem; text-align: center; margin: 3em 0; line-height: 1.95; color: var(--text-bright); font-weight: 300;">
+      You have learned more than German.<br><br>
+      You have learned how to learn languages.<br><br>
+      You have learned how to see beneath the surface of words into the culture they express.<br><br>
+      You have learned that language is never neutral — it always carries the values and concerns of the people who speak it.<br><br>
+      <span style="color: var(--fire); font-weight: 400;">You have learned to think like a German.</span>
+    </p>
+  </div>
+
+
+  <div class="divider">· · ·</div>
+
+  <!-- EXTENDED MEDITATION ON THE JOURNEY -->
+  <div class="scene">
+    <p class="narrative" style="font-size: 1.2rem; line-height: 2; color: var(--text-bright); font-weight: 300; margin: 3em 0;">
+      Consider what you have traversed in these 100 chapters.
+    </p>
+
+    <p class="narrative">
+      You began on a steppe 6,000 years ago, watching a mother teach her child language by firelight. You walked through forests where Germanic tribes hunted and fought and slowly developed the oral traditions that would become their mythology. You stood in medieval villages where priests chanted Latin while common people spoke their own tongues. You witnessed the printing press revolutionizing not just how books were made, but how language itself became standardized. You saw the Enlightenment arrive and philosophers begin to think systematically about language, consciousness, and human nature.
+    </p>
+
+    <p class="narrative">
+      You learned how a single language fragment into dozens as geography separated peoples. You saw how some dialects were preserved in mountains where change moves slowly, while others transformed in cities where new ideas arrive constantly. You witnessed the rise of Standard German not as a natural phenomenon but as a political choice made by powerful institutions. You understood that what we call "correct" is often just what power decided to call correct.
+    </p>
+
+    <p class="narrative">
+      And through it all, you learned to see language not as a system of arbitrary rules, but as a record of human thought, struggle, creativity, and love.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">The Paradox of Language Learning</div>
+      <p>Here is something paradoxical that you have discovered: the more German you learn, the more aware you become of how much more there is to learn. This is not failure — it is the opposite. It is enlightenment. A person who thinks they have "mastered" a language is someone who has stopped learning. But you have reached a point where you can recognize your own ignorance. You can see the vast landscape of German literature, culture, science, and daily life, and you know you are standing at the beginning of a journey, not the end. This awareness is itself a form of mastery — the mastery of knowing how to keep learning forever.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">What German Has Taught You About All Languages</div>
+      <p>By mastering German, you have learned something essential about all human languages. You have learned that every language is a way of carving up reality. Some languages have more words for snow than English because snow is relevant to their lives. Some languages have grammatical features for politeness because social hierarchy matters deeply in their cultures. Some languages have fewer tenses because their speakers think differently about time. German has become a mirror in which you can see how all languages work — not as neutral communication tools, but as expressions of how particular peoples have chosen to organize their understanding of the world. This insight will change how you approach any new language you ever learn.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <p class="narrative">
+      You have spent 100 chapters learning German. But in a deeper sense, you have spent 100 chapters learning how to be human in a new way. You have learned to think with the kinds of abstractions German philosophers think with. You have learned to value the kinds of things German culture values — precision, depth, intellectual rigor, emotional authenticity, connection to place. You have learned to appreciate German literature's obsession with consciousness, German music's mathematical sophistication, German science's systematic approach to understanding nature.
+    </p>
+
+    <p class="narrative">
+      This is not cultural appropriation. It is cultural enrichment. You are not replacing who you are. You are expanding who you can be. You are not losing your native language or culture. You are adding another dimension to your consciousness.
+    </p>
+
+    <p class="narrative emphasis">
+      You are becoming, in a real sense, a bridge between cultures. And that makes you wiser than before.
+    </p>
+  </div>
+
+
+  <div class="divider">· · ·</div>
+
+  <!-- FINAL EXTENDED REFLECTION -->
+  <div class="scene">
+    <p class="narrative">
+      Now imagine yourself one year from now. You have finished this course. You have spent months immersing yourself in German media, German literature, German conversation. You are reading Kafka in the original. You are listening to German podcasts and understanding most of what is said. You are thinking in German. And someone asks you: "Did you successfully learn German?" How will you answer?
+    </p>
+
+    <p class="narrative">
+      You will not say: "I know 5,000 words" or "I have mastered all the grammar." You will say something different. You will say: "I learned to see through German eyes. I learned that there are ways of thinking and feeling that exist in German that don't exist in English. I learned that the people who speak German have created great art and great thought, and I can now access that art and thought. I learned that I am more than I was before."
+    </p>
+
+    <p class="narrative">
+      That is what successful language learning looks like. And that is what you have accomplished here.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">The Invisible Transformation</div>
+      <p>The most important transformations are the invisible ones. They happen quietly, in your mind, without fanfare. No one needs to give you a certificate to know that you have changed. No one needs to test you to know that you understand German differently now. The transformation has already happened. You proved it to yourself every time you understood a German word and felt the rightness of its meaning. Every time you saw a pattern emerge from what seemed like chaos. Every time a word connected to history and you understood something new about how humans think. These moments, strung together across 100 chapters, have reshaped your mind.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <p class="narrative" style="font-size: 1.2rem; text-align: center; margin: 3em 0; line-height: 2; color: var(--fire); font-weight: 300;">
+      The book in the London bookshop.<br>
+      The stolen pages that made it valuable.<br>
+      The rain on the window.<br>
+      Someone had wanted this book so badly they were willing to break the law to have it.<br><br>
+      Now you understand why.
+    </p>
+
+    <p class="narrative" style="font-size: 1.15rem; text-align: center; margin: 2em 0; line-height: 1.95; color: rgba(232, 164, 74, 0.9);">
+      Because within these pages is not just information.<br>
+      It is transformation.<br>
+      It is the voice of six thousand years of human history.<br>
+      It is the accumulated knowledge of millions of people trying to express what it means to be alive.
+    </p>
+  </div>
+
+
+  <div class="divider">· · ·</div>
+
+  <!-- CONCLUSION: THE NEXT CHAPTER OF YOUR JOURNEY -->
+  <div class="scene">
+    <p class="narrative">
+      This is where the book ends, but your journey does not. In fact, everything you have learned in these 100 chapters is just preparation for what comes next. You are like a musician who has learned how to read music and understand musical theory, but has not yet performed a symphony. You have learned the foundations. Now begins the real adventure.
+    </p>
+
+    <p class="narrative">
+      In the weeks and months ahead, you will do things with German that you cannot yet imagine. You will read a German novel and be transported into a world created entirely in a language you now understand. You will have a conversation with a German speaker and realize mid-conversation that you are no longer translating in your head — you are thinking directly in German. You will hear a German song and the lyrics will move you in ways you cannot predict. You will realize that you have not just learned a language. You have learned a new way to dream.
+    </p>
+
+    <p class="narrative">
+      And most importantly, you will discover that German speakers are people. They are not foreigners or abstract learners you are studying. They are humans who love and fear and hope and suffer and create just as you do. They express these universal human experiences in a way that is distinctly German, but they are recognizably human. By learning German, you have learned empathy across difference. You have learned to see yourself in people whose first language is not your own.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the greatest gift that language learning offers: the ability to love people across the barriers of language and culture.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">What to Do When You Encounter Difficulty</div>
+      <p>As you continue your German journey beyond this course, you will encounter difficulty. You will encounter German grammar that seems incomprehensibly complex. You will encounter German literature so abstract it makes your head spin. You will encounter German speakers who talk so fast you cannot follow. When this happens, remember this: difficulty is not failure. Difficulty is growth. The moments when you struggle are the moments when your brain is being rewired, when new neural pathways are being created, when you are becoming more than you were. Do not run from difficulty. Walk into it. Sit with it. Let it teach you. The German language has defeated thousands of students who gave up when things got hard. But you will not be one of them. Because now you understand that German is not meant to be easy. It is meant to be precise, deep, honest, beautiful. And those things are never easy. They are always worth the effort.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <p class="narrative">
+      When you finish this quiz and see the final summary, you will have completed Das erste Wort officially. But remember: this book is not prescriptive. It does not tell you that you must do certain things or that you are done learning. It is descriptive. It describes what you have learned. It marks a milestone. But every milestone is a beginning for something new.
+    </p>
+
+    <p class="narrative">
+      The reader who is about to take this final quiz is not the same reader who started. That reader did not know that Heimat was untranslatable. That reader did not understand how dialects preserve history. That reader could not recognize the patterns hidden in German grammar. That reader was not fluent in seeing a language.
+    </p>
+
+    <p class="narrative">
+      You are different now. You know things. You can do things. You can understand things. You have been changed by this journey, and that change is permanent. Whatever else happens, you will never be able to un-learn German. The neural pathways you have created will persist. The patterns you have recognized will remain. The history you have learned will stay with you.
+    </p>
+
+    <p class="narrative emphasis">
+      You are carrying German inside you now. It is part of who you are.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <p class="narrative" style="font-size: 1.15rem; text-align: center; margin: 3em 0; line-height: 2;">
+      Ready?<br><br>
+      Take the final quiz.<br>
+      Answer these 20 questions with all the wisdom you have gained.<br>
+      Achieve 80% mastery.<br>
+      And officially complete Das erste Wort.<br><br>
+      <span style="color: var(--fire); font-weight: 500;">The final word is waiting.</span>
+    </p>
+  </div>
+
+
+  <div class="divider">· · ·</div>
+
+  <!-- THE THRESHOLD -->
+  <div class="scene">
+    <div class="reflection-box">
+      <div class="reflection-title">80% — The Threshold of Mastery</div>
+      <p>When you score 80% on this final quiz, you will have reached the threshold. Not the peak, but the threshold. Eighty percent means you have internalized the core concepts. You understand the major patterns. You can apply what you have learned to new situations. You are not perfect — mastery is never perfectionism. Mastery is something deeper. It is the point at which you have stopped asking "Can I do this?" and started asking "How do I do this better?" It is the point at which you move from learning about the language to thinking in the language. Eighty percent is not a score to celebrate and then forget. It is a marker that says: You are ready for the real work now.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- QUIZ SECTION -->
+
+    <h3>The Grand Finale Quiz: 20 Questions of Mastery</h3>
+      <div class="quiz-intro">
+        <p>Twenty questions spanning all 100 chapters and all four phases of your journey through German language and history. This quiz tests not just memorization, not just comprehension, but the deep internalization of what German language and culture have taught you.</p>
+        <p>You must score 80% (16/20) to officially complete your quest and unlock the grand ceremonial summary.</p>
+        <p>The threshold of 80% is not arbitrary. It represents the point at which you have moved beyond "learning about German" to "thinking in German." It is the point at which patterns have become intuition. It is the threshold between student and practitioner.</p>
+        <p><strong>Remember:</strong> Each question you answer is not just testing your knowledge. It is reinforcing the patterns you have learned. Even wrong answers teach you something. Approach this quiz with presence. Answer thoughtfully. Let this be a meditation on everything you have learned.</p>
+ Remember that this quiz is not a test that you can pass or fail. It is a milestone. You have already learned. You have already grown. This quiz simply marks where you stand. And where you stand now is much further along than where you began.</p>
+      </div>
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>The Grand Finale Quiz: 20 Questions</h3>
+      <div class="quiz-intro">
+        <p>Twenty questions spanning all 100 chapters and all four phases of your journey through German language and history. This quiz tests not just memorization, but deep understanding. You must score 80% (16/20) to fully unlock the grand summary and ceremonially complete your quest.</p>
+        <p><strong>The threshold of mastery is 80%.</strong> Not because 79% is failure, but because 80% represents the moment when you have truly internalized what you have learned.</p>
+      </div>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <!-- GRAND FINALE SUMMARY -->
+  <div class="scene" id="scene-end">
+
+  <div class="divider">· · ·</div>
+
+  <!-- PRE-COMPLETION REFLECTION -->
+  <div class="scene">
+    <p class="narrative" style="font-size: 1.15rem; text-align: center; margin: 2em 0; line-height: 1.95; color: var(--text-bright); font-weight: 300;">
+      Before you take the quiz, pause.<br><br>
+      Close your eyes for a moment.<br><br>
+      Remember where you started.<br>
+      Remember the moment you opened this book.<br>
+      Remember not knowing what Heimat meant.<br>
+      Remember not understanding how the cases work.<br>
+      Remember being confused by German's complexity.<br><br>
+      Then open your eyes.<br><br>
+      You are not that person anymore.
+    </p>
+
+    <p class="narrative">
+      Look at what you have accomplished. You have traveled 6,000 years. You have learned nearly 1,000 words. You have recognized 95+ patterns in how language is structured. You have read chapters explaining the history of a people, the development of a culture, the profound philosophy embedded in a language. You have sat with medieval mystics learning about Gelassenheit. You have walked with Germanic warriors learning about honor and loyalty. You have stood in cities learning how dialects preserve identity. You have become, in a real sense, an anthropologist of German consciousness.
+    </p>
+
+    <p class="narrative">
+      This is an achievement worth acknowledging. Not with ego, but with genuine respect for yourself. You chose to do something difficult. You stuck with it. You let it change you. You have become bigger than you were.
+    </p>
+
+    <p class="narrative emphasis">
+      Now take the quiz. Not to prove you are worthy — you have already proven that. But to mark the moment. To create a memory. To say to yourself: This is where I stood when I completed Das erste Wort.
+    </p>
+  </div>
+
+        YOU HAVE COMPLETED<br>DAS ERSTE WORT
+      </p>
+
+      <p class="final-text">
+        100 chapters spanning six thousand years.
+      </p>
+
+      <p class="final-text">
+        Four phases: from steppe to forest to city to infinite cosmos.
+      </p>
+
+      <p class="final-text">
+        964 German words learned with stories, not memorized as lists.
+      </p>
+
+      <p class="final-text">
+        95+ linguistic patterns recognized and understood.
+      </p>
+
+      <p class="final-text">
+        5,000+ additional words you can now decode through pattern recognition.
+      </p>
+
+      <p class="final-quote-big">
+        You didn't memorise a dictionary.<br>
+        You learned to SEE a language.<br><br>
+        You didn't memorise grammar rules.<br>
+        You learned how human thought is structured in German.<br><br>
+        You didn't memorise facts.<br>
+        You learned a history.<br><br>
+        Every German word you encounter from now on carries a story you already know.
+      </p>
+
+      <p class="final-text" style="margin-top: 3em; color: var(--fire); font-weight: 500;">
+        You are fluent not in words alone, but in culture, in history, in a way of seeing the world.
+      </p>
+
+      <div style="margin-top: 4em; padding-top: 2em; border-top: 1px solid rgba(232, 164, 74, 0.2);">
+        <p class="final-text" style="font-style: italic; font-size: 1.2rem; line-height: 1.95;">
+          Remember the London bookshop. The rain on the window. The stolen pages that made this book precious. Someone had wanted this book badly enough to steal it. Now you understand why. Because within these pages is not just information — it is transformation. It is the accumulated knowledge of a civilization. It is the voice of millions of people across six thousand years saying: Listen. This is how we see. This is how we think. This is who we are.
+        </p>
+
+        <p class="final-text" style="font-style: italic; font-size: 1.3rem; line-height: 1.95; margin-top: 3em; color: var(--text-bright); font-weight: 300;">
+          Das erste Wort war Mutter.<br>
+          Das letzte Wort ist Liebe.<br>
+          Alles dazwischen ist die Reise.
+        </p>
+
+        <p class="final-text" style="font-style: italic; font-size: 1.1rem; line-height: 1.95; margin-top: 2em; color: rgba(232, 164, 74, 0.85);">
+          <strong>The first word was Mother.<br>
+          The last word is Love.<br>
+          Everything in between is the journey.</strong>
+        </p>
+      </div>
+
+      <div style="margin-top: 3em; padding: 24px; background: rgba(232, 164, 74, 0.08); border-radius: 8px; border: 1px solid rgba(232, 164, 74, 0.15);">
+        <p class="final-text" style="font-weight: 600; color: var(--fire); font-size: 1.15rem; margin-bottom: 1em;">
+          What comes next?
+        </p>
+        <p class="final-text">
+          This is not an ending. This is a beginning.
+        </p>
+        <p class="final-text">
+          You have built the foundation. Now immerse yourself in German. Read Goethe and Kafka and Hesse and contemporary German authors. Listen to German radio, watch German films, find German speakers to converse with. Let the language become not something you know, but something you <em>are</em>.
+ Reading Goethe and Kafka, understanding not just the words but the philosophy and pain and beauty those words express. Listening to German music — not just popular songs, but classical masterpieces where you can trace the mathematical precision of German composers. Watching German films and understanding the cultural nuances without subtitles because you have learned to think in German. Speaking with German speakers and realizing in the middle of a conversation that you are no longer translating — you are thinking directly in German, the way native speakers do.
+        </p>
+        <p class="final-text">
+          Think in German. Dream in German. Let German reshape how you think about the world.
+        </p>
+        <p class="final-text" style="margin-top: 1.5em; color: var(--fire); font-weight: 600; font-size: 1.15rem;">
+          The journey continues. Always.
+        </p>
+      </div>
+    
+  <div class="nav-section">
+    <a href="chapter99.html" class="nav-btn">← Chapter 99</a>
+  </div>
+
+</div>
+
+<script>
+
+// Transforming universe canvas - morphing through 5 phases
+const canvas = document.getElementById('universe-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let fire = null;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  if (!fire) fire = { x: canvas.width / 2, y: canvas.height / 2 };
+}
+
+function createParticles() {
+  particles = [];
+  const count = Math.floor((canvas.width * canvas.height) / 5000);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 2 + 0.5,
+      alpha: Math.random() * 0.5 + 0.2,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawCanvas(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Background gradient shifts with scroll
+  let bgColor;
+  if (scroll < 0.15) bgColor = 'rgba(10, 14, 26, 0.7)'; // Night blue
+  else if (scroll < 0.3) bgColor = 'rgba(40, 60, 50, 0.5)'; // Forest green
+  else if (scroll < 0.5) bgColor = 'rgba(30, 40, 60, 0.5)'; // River blue
+  else if (scroll < 0.75) bgColor = 'rgba(60, 50, 40, 0.4)'; // Industrial amber
+  else bgColor = 'rgba(80, 50, 100, 0.6)'; // Cosmic purple
+
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw central fire
+  const fireSize = 40 + Math.sin(time * 0.002) * 20;
+  const fireAlpha = 0.2 + scroll * 0.2;
+  ctx.fillStyle = `rgba(232, 164, 74, ${fireAlpha})`;
+  ctx.beginPath();
+  ctx.arc(fire.x, fire.y, fireSize, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Particles
+  particles.forEach((p, idx) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.phase += 0.01;
+
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    // Color based on scroll phase
+    let color;
+    if (scroll < 0.2) {
+      color = `rgba(232, 164, 74, ${p.alpha})`; // Fire
+    } else if (scroll < 0.35) {
+      color = `rgba(100, 150, 100, ${p.alpha})`; // Forest
+    } else if (scroll < 0.55) {
+      const blend = (scroll - 0.35) / 0.2;
+      const r = 100 + (70 - 100) * blend;
+      const g = 150 + (130 - 150) * blend;
+      const b = 100 + (200 - 100) * blend;
+      color = `rgba(${r}, ${g}, ${b}, ${p.alpha})`;
+    } else if (scroll < 0.75) {
+      color = `rgba(200, 140, 80, ${p.alpha})`; // Industrial
+    } else {
+      const blend = (scroll - 0.75) / 0.25;
+      const r = 200 + (150 - 200) * blend;
+      const g = 140 + (100 - 140) * blend;
+      const b = 80 + (150 - 80) * blend;
+      color = `rgba(${r}, ${g}, ${b}, ${p.alpha})`;
+    }
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Connection lines
+    if (idx % Math.max(5, Math.floor(30 - scroll * 20)) === 0) {
+      ctx.strokeStyle = `rgba(232, 164, 74, ${p.alpha * 0.15})`;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(fire.x, fire.y);
+      ctx.stroke();
+    }
+  });
+
+  requestAnimationFrame(drawCanvas);
+}
+
+window.addEventListener('scroll', () => {
+  const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawCanvas);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+// German word audio
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', (e) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(word.textContent.trim());
+      utterance.lang = 'de-DE';
+      utterance.rate = 0.8;
+      speechSynthesis.speak(utterance);
+    }
+    e.stopPropagation();
+  });
+});
+
+// Grand Finale Quiz - 20 questions
+const quizData = [
+  { question: "What is the very first word in this entire course?", options: ["Feuer (fire)", "Heimat (homeland)", "Mutter (mother)", "Liebe (love)"], correct: 2, explanation: "Mutter is the first word, spoken by a mother to her child 6,000 years ago on the steppe." },
+  { question: "How many years of history does this course cover?", options: ["2,000 years", "4,000 years", "6,000 years", "10,000 years"], correct: 2, explanation: "The journey spans from Proto-Indo-European on the steppe to modern German." },
+  { question: "What does Heimat mean at its deepest level?", options: ["house", "region", "the homeland you carry in your heart forever", "a political concept"], correct: 2, explanation: "Heimat is the emotional sense of belonging to a place, a home you carry within you." },
+  { question: "What is Gelassenheit?", options: ["happiness", "sadness", "the ability to let go and accept what you cannot control", "a type of meditation"], correct: 2, explanation: "Gelassenheit is the mystic's gift of equanimity, releasing control and finding peace." },
+  { question: "What does Wissenschaft literally mean?", options: ["wisdom", "knowledge-craft", "the study of science", "written knowledge"], correct: 1, explanation: "Wissenschaft means 'knowledge-craft' or 'knowledge-making' — any systematic pursuit of truth." },
+  { question: "What does Verstehen literally mean?", options: ["to hear", "to stand before", "to learn", "to comprehend"], correct: 1, explanation: "Verstehen means 'to stand before' — to stand in the presence of something until you grasp it." },
+  { question: "How many German words have you explicitly learned?", options: ["around 500", "around 750", "around 964", "around 1,500"], correct: 2, explanation: "Approximately 964 German words across 100 chapters, each with stories." },
+  { question: "How many distinct linguistic patterns have you recognized?", options: ["about 50", "about 75", "about 95", "about 150"], correct: 2, explanation: "You've recognized 95+ distinct linguistic patterns spanning Proto-Indo-European to Modern German." },
+  { question: "What is the relationship between Mutter and Liebe (first and last words)?", options: ["they're unrelated", "Liebe is the highest expression of the love implicit in Mutter", "they're synonyms", "Mutter is more important"], correct: 1, explanation: "The mother's first word contains the deepest form of love that becomes the final word of the journey." },
+  { question: "What does learning German teach you beyond words?", options: ["just vocabulary", "grammar rules", "a new way of seeing and being in the world", "ancient history only"], correct: 2, explanation: "German teaches you not just how to speak, but how to think as Germans think." },
+  { question: "What role did Luther play in standardizing German?", options: ["he invented Standard German", "he printed his Bible in Saxon dialect, helping standardize it", "he opposed standardization", "he had no significant role"], correct: 1, explanation: "Luther's Bible, printed in Saxon dialect, helped standardize German across regions." },
+  { question: "What is Proto-Indo-European?", options: ["a modern language", "the ancestor language of German, English, Latin, and Sanskrit", "a written language", "a dialect of German"], correct: 1, explanation: "PIE is the reconstructed ancestor language spoken about 6,000 years ago." },
+  { question: "How does German create abstract, precise terminology?", options: ["it doesn't", "by turning verbs into nouns (nominalization), creating dense philosophical concepts", "through prefixes only", "by changing word order"], correct: 1, explanation: "Nominalization is how academic German creates precision and density." },
+  { question: "What does the Chinese parallel (Mandarin vs. 'dialects') show?", options: ["all languages have dialects", "political power creates 'standards' out of mutually unintelligible languages", "Chinese is more complex than German", "nothing relevant"], correct: 1, explanation: "Mandarin and German's Standard form both show how political power creates 'standards.'" },
+  { question: "What happened when Germanic peoples spread across Europe?", options: ["they kept one language", "their languages began to diverge into separate languages", "they stayed in close contact", "language never changed"], correct: 1, explanation: "Geographic separation caused the ancestral Germanic language to split into many languages." },
+  { question: "What did you learn from the Four Cases (nominative, accusative, dative, genitive)?", options: ["arbitrary grammar rules", "how relationships and causality are embedded in grammar", "useless information", "how to complicate speech"], correct: 1, explanation: "The cases show relationship, connection, how things relate in space, time, and causality." },
+  { question: "What is Weltschmerz?", options: ["world peace", "world pain — existential pessimism characteristic of German thought", "world knowledge", "world war"], correct: 1, explanation: "Weltschmerz is the existential pain and pessimism about the human condition." },
+  { question: "How does German express complex ideas through compound words?", options: ["it doesn't", "by combining simple words into longer words that precisely express complex concepts", "through word order", "through case endings"], correct: 1, explanation: "German can create exact concepts by combining words — Schadenfreude, Sehnsucht, etc." },
+  { question: "What is the deepest truth about language revealed in this course?", options: ["it's just rules to memorize", "it's the expression of how humans connect across separation", "it's purely utilitarian", "languages are random"], correct: 1, explanation: "Language is fundamentally the attempt to bridge the distance between human souls." },
+  { question: "What should you do now that you've completed the course?", options: ["stop learning German", "begin immersing yourself in actual German through reading, listening, and speaking", "memorize more words", "nothing, you're done"], correct: 1, explanation: "Completion is the beginning. Now immerse yourself in living German." }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'See Results & Complete' : 'Next →';
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => { if (ans === quizData[idx].correct) score++; });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  const passed = percentage >= 80;
+
+  scoreDiv.innerHTML = `<strong>Grand Finale Score: ${score}/${quizData.length} (${percentage}%)</strong><br>${passed ? '✓ QUEST COMPLETE — 80% MASTERY THRESHOLD REACHED' : 'Score below 80%. Review and try again for full completion.'}`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  const summary = document.getElementById('post-quiz-summary');
+  if (passed) {
+    summary.innerHTML = `
+      <div class="stat-line">★ YOUR JOURNEY IS COMPLETE ★</div>
+      <p style="margin-top: 16px;"><strong>You have mastered Das erste Wort.</strong></p>
+      <p><strong>100 chapters</strong> spanning 6,000 years of linguistic and cultural history</p>
+      <p><strong>964 German words</strong> learned with stories and context, not memorized as lists</p>
+      <p><strong>95+ linguistic patterns</strong> recognized and internalized</p>
+      <p><strong>~5,000+ additional words</strong> you can decode through pattern recognition</p>
+      <p class="final-quote" style="margin-top: 20px; border: none; padding: 0; text-align: center;">
+      You didn't memorise a dictionary. You learned to SEE a language.<br><br>
+      Das erste Wort war Mutter.<br>
+      Das letzte Wort ist Liebe.<br>
+      Alles dazwischen ist die Reise.
+      </p>
+      <p style="margin-top: 20px; border-top: 1px solid rgba(232, 164, 74, 0.2); padding-top: 16px;">
+      Now immerse yourself in German. Read Goethe, Kafka, contemporary authors. Listen to German music and radio. Speak with native speakers. Let German reshape how you think. The journey continues forever.
+
+      <p style="margin-top: 3em; padding: 20px; background: rgba(232, 164, 74, 0.08); border-radius: 8px; border-left: 3px solid var(--fire); color: var(--text);">
+        <strong style="color: var(--fire);">Remember:</strong> Language learning is never finished. The moment you think you have mastered German is the moment you have stopped growing. True mastery is knowing how much more there is to learn, and having the courage to continue learning anyway. You have completed this course, but you are just beginning your relationship with German. That relationship will deepen and enrich your life for decades to come. Every German book you read, every German conversation you have, every German film you watch — these are moments of communion with a culture that has produced some of humanity's greatest thinkers, artists, and creators. You are not just learning a language. You are joining a conversation that has been happening for thousands of years.
+      </p>
+      </p>
+    `;
+  } else {
+    summary.innerHTML = `
+      <p><strong>Your Score: ${percentage}%</strong></p>
+      <p>You need 80% (16/20) to fully complete the journey and unlock the final summary. Review the chapters and try again. Each question teaches something essential about German language and history. The threshold of 80% represents true mastery — don't settle for less.</p>
+    `;
+  }
+}
+
+initializeQuiz();
+
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene">
+    <p class="narrative" style="font-size: 1.1rem; text-align: center; margin: 2.5em 0; line-height: 2; color: rgba(232, 164, 74, 0.95); font-weight: 300;">
+      Das erste Wort war Mutter.<br>
+      Das letzte Wort ist Liebe.<br>
+      Alles dazwischen ist die Reise.
+    </p>
+
+    <p class="narrative" style="text-align: center; margin-bottom: 3em; color: rgba(212, 202, 187, 0.75); font-size: 1rem;">
+      Now you understand this statement completely. Not just intellectually, but in your bones. You have lived this journey. You have walked through six thousand years. You have learned to see through German eyes. You have become more than you were.
+    </p>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">850 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(100%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 850 words across 100 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">145 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(100%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 145 patterns and grammar rules across 100 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+
+</html>

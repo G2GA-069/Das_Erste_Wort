@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 16: Die Spaltung</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --protestant: #d4a574;
+    --catholic: #8b3a3a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0e1a 0%, #1a1410 40%, #8b5a2b 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- SPLIT CANVAS BACKGROUND --- */
+  #splitcanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+  /* --- QUIZ STYLES --- */
+  .quiz-container {
+    background: rgba(20, 15, 10, 0.8);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-header h2 {
+    font-size: 1.8rem;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+
+  .quiz-header p {
+    color: rgba(212, 202, 187, 0.8);
+    font-size: 0.95rem;
+  }
+
+  .quiz-question {
+    margin-bottom: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .quiz-question:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .quiz-q-text {
+    font-size: 1.05rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    padding: 12px 16px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.correct {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: #f44336;
+    color: #f44336;
+  }
+
+  .quiz-result {
+    text-align: center;
+    padding: 20px;
+    margin-top: 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+  }
+
+  .quiz-result.pass {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border: 1px solid #4caf50;
+  }
+
+  .quiz-result.fail {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+  }
+
+  .quiz-hidden {
+    display: none;
+  }
+
+  @media (max-width: 700px) {
+    .quiz-container { padding: 24px 16px; }
+    .quiz-header h2 { font-size: 1.5rem; }
+    .quiz-option { padding: 10px 12px; font-size: 0.95rem; }
+  }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="splitcanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Sixteen</div>
+    <h1>Die Spaltung</h1>
+    <div class="subtitle">The Schism</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: 1550, THE DIVIDE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      It began with books.
+    </p>
+
+    <p class="narrative">
+      Fifty years after Martin Luther nailed his ninety-five theses to the church door in Wittenberg, a man holds a printed volume. Not a hand-copied manuscript — a book created by the revolutionary technology of movable type. He opens it and reads Luther's translation of the Bible, rendered not in the Latin of Rome, but in the everyday German of the marketplace, the home, the street.
+    </p>
+
+    <p class="narrative">
+      His neighbor — a Catholic in a region loyal to the bishops — receives a different book. The official Vulgate, or a translation approved by the Church. Both men speak German. Both live in the same land. But they are reading <em>different languages</em> now. Not different from each other — yet. But on a collision course.
+    </p>
+
+    <p class="narrative">
+      The printing press had unified knowledge. It had also <em>weaponized</em> it. Words became ammunition. Pamphlets became grenades. And the single German language — already fragmented across dialects and regions — began to <em>split</em> in earnest: not geographically, but ideologically.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the story of how language becomes a battleground.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: SPALTUNG ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The German word is <span class="german-word" data-card="spaltung">Spaltung.</span> A schism. A split. A rift.
+    </p>
+
+    <p class="narrative">
+      Listen to the word itself: SHPALT-oong. The "sp" becomes "sht" at the beginning (as you learned long ago). The "-ung" is the German suffix for an action or state — like the act of doing something, the result of something. But the heart of the word is <em>spalten</em> — to split, to cleave, to tear apart.
+    </p>
+
+    <p class="narrative">
+      And here is the beautiful cruelty of it: the word <em>enacts what it describes</em>. Say it aloud, and you can feel the language splitting in your mouth: SHPALT. The sound itself fractures.
+    </p>
+
+    <!-- SPALTUNG etymology card -->
+    <div class="ety-card" id="card-spaltung">
+      <div class="word-header">
+        <span class="word-main">Spaltung</span>
+        <span class="word-pron">/ˈʃpaltʊŋ/</span>
+      </div>
+      <div class="word-meaning">a schism, a split — when one becomes two</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">spalten</span>
+        <span class="bridge-note">— to split, to cleave, from Old High German "spaltan"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">split</span>
+        <span class="bridge-note">— the English cognate, though rarely used for ideological divisions</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">分裂</span>
+        <span class="bridge-note">— fēnliè — divide + crack, the same sense of breaking into parts</span>
+      </div>
+      <div class="story">
+        The suffix "-ung" transforms a verb into a noun representing either the action or its result. From "spalten" (to split) comes "Spaltung" (a split/schism). Similarly: "treffen" (to meet) → "Treffung" (a meeting), "lösen" (to solve) → "Lösung" (a solution). German is precise about this distinction: an action, a process, a condition — all captured in one morpheme. And when the word itself fragments across syllables, pronunciation emphasizes the meaning: a <em>split</em> word describing a split world.
+      </div>
+    </div>
+
+    <p class="narrative">
+      By the late 1500s, Germany was no longer one land speaking one language — not quite. It was two lands, two faiths, two growing linguistic cultures. The Reformation had torn not just the Church, but the very words used to describe salvation, sin, community, authority.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE PAMPHLET WARS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the alleys of Augsburg and Nuremberg, vendors sell something new to the common people: not books, but pages. Single sheets or folded pamphlets, printed hastily, distributed by hand or read aloud in taverns. These are <span class="german-word" data-card="flugblatt">Flugblätter</span> — literally, "flying leaves" or "flying sheets." The social media of the sixteenth century.
+    </p>
+
+    <p class="narrative">
+      A Protestant pamphlet denounces papal corruption. A Catholic response appears days later, defending the priesthood. A grotesque woodcut shows the Pope as an anti-Christ. Another shows Luther as a demon. The printers work through the night. The vendors shout in the markets. The words fly.
+    </p>
+
+    <p class="narrative">
+      And here is what matters for language: these pamphlets were not written in the learned Latin of the universities or the official courts. They were written in the spoken German of the region — Protestant German, influenced by Luther's translation and the written standards emerging from the centers of Reformation power (Wittenberg, Zurich), or Catholic German, drawing on the Bavarian and Austrian chancellery traditions.
+    </p>
+
+    <p class="narrative">
+      Two Germanys were being written. Into paper. Into print. Into memory.
+    </p>
+
+    <!-- FLUGBLATT card -->
+    <div class="ety-card" id="card-flugblatt">
+      <div class="word-header">
+        <span class="word-main">Flugblatt</span>
+        <span class="word-pron">/ˈflʊkblat/</span>
+      </div>
+      <div class="word-meaning">a pamphlet or leaflet — a sheet that flies, carrying ideas</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Flug</span>
+        <span class="bridge-note">— flight, derived from "fliegen" (to fly)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Blatt</span>
+        <span class="bridge-note">— leaf, sheet, page — from Proto-Germanic *bladam</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">broadside</span>
+        <span class="bridge-note">— the English term for a similar format, though with different connotations</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">传单</span>
+        <span class="bridge-note">— chuándān — to transmit + single sheet, the same compound logic</span>
+      </div>
+      <div class="story">
+        German excels at creating compound words that build meaning step by step. "Flugblatt" is a perfect example: Flug (flight) + Blatt (leaf/sheet). A sheet that flies. The image is vivid and metaphorically true — ideas scattered like leaves on the wind. English handles this concept differently, using the word "broadside" (from the nautical term for firing all cannons at once), which has a more aggressive connotation than the German image of dispersal. Both languages were building terminology for a new world of mass communication, and both chose metaphors from the natural world. German saw flight; English saw warfare.
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Pamphlet Explosion</div>
+      Between 1517 (when Luther posted his theses) and 1580, an estimated 10,000 different Flugblätter were printed and distributed across German territories. That's more than 200 per year. In some years, over 600. Woodcut illustrations made them accessible to the illiterate — images of martyrs, popes, demons, saints. The religious divide was not just theological; it was <em>visual</em>, <em>linguistic</em>, <em>commercial</em>. Printers who had previously worked on identical projects now competed, their Flugblätter becoming weapons in an ideological war that would eventually become literal war—the Thirty Years' War, 1618-1648, would leave a third of the German territories depopulated.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: PREDIGT & SERMON ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      On Sunday morning, the church fills. But the sermon — the <span class="german-word" data-card="predigt">Predigt</span> — will be different depending on which church you enter.
+    </p>
+
+    <p class="narrative">
+      In a Protestant church, the pastor stands before the congregation and preaches in German. Not Latin (which the common people could not understand). Luther had changed this. He had insisted that <em>ordinary people should hear God's word in the language of ordinary life</em>. This was revolutionary. This was dangerous. But it was also seductive: if the liturgy was in German, then German itself became sacred. Holy. The language of divine truth.
+    </p>
+
+    <p class="narrative">
+      In a Catholic church a few streets away, the priest still chants in Latin. But increasingly, Catholic regions began to develop their own written German — not Luther's, but an official Catholic standard, drawn from the chancellery languages of Bavaria and Austria, from the great Benedictine monasteries. A Catholic German emerged: more conservative, more closely tied to Latin learning, less influenced by the democratic impulse of the Reformation.
+    </p>
+
+    <p class="narrative">
+      And so, over the course of a generation, two Germanys developed not just in politics, but in language. The same words began to mean different things in different mouths.
+    </p>
+
+    <!-- PREDIGT card -->
+    <div class="ety-card" id="card-predigt">
+      <div class="word-header">
+        <span class="word-main">Predigt</span>
+        <span class="word-pron">/ˈpreːdɪkt/</span>
+      </div>
+      <div class="word-meaning">a sermon — the spoken word as sacred act</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">praedicāre</span>
+        <span class="bridge-note">— Latin: to proclaim, to preach, from prae (before) + dicāre (to speak)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Predigt</span>
+        <span class="bridge-note">— borrowed from Latin but naturalized in German through regular usage</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">predication</span>
+        <span class="bridge-note">— the philosophical meaning (making a claim), not the religious one</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">讲道</span>
+        <span class="bridge-note">— jiǎngdào — to speak + the way, doctrine (Taoism/Buddhism influence in the term)</span>
+      </div>
+      <div class="story">
+        Here is a rare instance: a German word borrowed from Latin, not through conquest or the Church's authority, but through Protestantism's very challenge to Latin authority. Luther needed a German word for what priests did in pulpits, and "Predigt" was borrowed and fully naturalized. Meanwhile, English developed "preach" and "preacher" from the same Latin root through Norman French influence — showing how language families carry different layers of historical trauma and transformation. The Chinese term reveals something philosophical: 讲 (speak) and 道 (the way/dao) — the sermon as transmission of doctrine, of cosmic order, not just speech but <em>cosmic utterance</em>.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        When two groups of people share the same language but develop in isolation, do they develop the same new words, or different ones?<br><br>
+        Think about Protestants and Catholics developing written German standards — what would you expect?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">the same words — language is universal</button>
+        <button class="guess-btn" onclick="guess(this, true)">different words — each group creates its own vocabulary</button>
+        <button class="guess-btn" onclick="guess(this, false)">neither — they stop changing language</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: KETZER & SCHULD ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Here is where language becomes ideology. Listen to how the two sides described each other.
+    </p>
+
+    <p class="narrative">
+      The Catholic Church spoke of <span class="german-word" data-card="ketzer">Ketzer</span> — heretics. Those who believed the wrong doctrine, who had strayed from the true faith. The word comes from the Cathars, a group of medieval heretics, whose name came from Greek <em>katharoi</em> — the pure ones. A heretical sect had claimed to be pure; now their name became synonymous with heresy itself. In the mouth of Catholic authorities, <em>Ketzer</em> meant: those deceived by false prophets, those who had broken faith.
+    </p>
+
+    <p class="narrative">
+      But listen to the same word in a Protestant context — spoken not about them, but <em>by</em> them, about themselves. Luther and his followers reclaimed it, sometimes with defiance: we are the Ketzers, yes, because we refuse to accept false doctrine. Because we <em>choose</em> the pure faith over the corrupted Church. The meaning did not change, but its emotional weight — its moral vector — inverted entirely.
+    </p>
+
+    <p class="narrative">
+      And then there is <span class="german-word" data-card="schuld">Schuld.</span> Guilt. Debt. The word that captures something essential about how German thought about sin.
+    </p>
+
+    <!-- KETZER card -->
+    <div class="ety-card" id="card-ketzer">
+      <div class="word-header">
+        <span class="word-main">Ketzer</span>
+        <span class="word-pron">/ˈkɛttsɐ/</span>
+      </div>
+      <div class="word-meaning">a heretic — one who has strayed from received truth</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">κάθαροι</span>
+        <span class="bridge-note">— Greek katharoi (the pure ones) — a heretical sect rebranded as heretics themselves</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Ketzer</span>
+        <span class="bridge-note">— from Middle High German, fully naturalized and semantically loaded</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">heretic</span>
+        <span class="bridge-note">— from Greek hairetikos (one who chooses) — a different etymological path to similar meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">异端</span>
+        <span class="bridge-note">— yìduān — different + doctrine, a purely semantic rather than etymological match</span>
+      </div>
+      <div class="story">
+        The Cathars were a twelfth-century religious movement in southern France that claimed to represent pure Christianity. When the Church destroyed them, the name "Cathar" became fixed in medieval Latin as the label for heresy itself. German inherited this laden term and used it throughout the medieval and early modern periods. What's remarkable is how the word became a <em>site of contestation</em> during the Reformation — Protestants and Catholics each claimed to be the true believers and branded the other as Ketzers. Language became a mirror of ideological conflict. English borrowed a different Greek root ("hairetikos," one who chooses) to create "heretic," emphasizing the idea of <em>choosing</em> wrong rather than being <em>pure wrong</em> — a subtle distinction that reflects different theological concerns.
+      </div>
+    </div>
+
+    <!-- SCHULD card -->
+    <div class="ety-card" id="card-schuld">
+      <div class="word-header">
+        <span class="word-main">Schuld</span>
+        <span class="word-pron">/ʃʊlt/</span>
+      </div>
+      <div class="word-meaning">guilt, debt — sin and obligation inseparably bound</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">schulden</span>
+        <span class="bridge-note">— to owe, from Old High German "sculd"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*skel-</span>
+        <span class="bridge-note">— to cut, to separate; guilt as separation from community/God</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">should, shall</span>
+        <span class="bridge-note">— English dispersed this root; we say "I owe" not "I schuld"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">罪</span>
+        <span class="bridge-note">— zuì — sin and crime (the same character); like Schuld, it conflates moral and legal debt</span>
+      </div>
+      <div class="story">
+        In German, Schuld (guilt/debt) is one word, not two. This is not accidental — it reflects a profound theological insight that shaped Reformation debate. If sin is <em>Schuld</em>, then it is a debt owed to God, a separation that must be paid for or forgiven. During the Reformation, Protestants and Catholics fiercely debated how Schuld could be absolved: through confession and penance (Catholic), or through faith alone (Protestant). But both sides were arguing about the same concept — one German word carrying the weight of salvation. English split this semantic field into multiple words ("guilt," "debt," "sin," "obligation"), each with different connotations. German's compressed terminology forced the theology to be more precise: sin IS debt, and the relationship with God IS a ledger that must be balanced.
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">Words as Weapons: Linguistic Territories</div>
+      The Reformation did not just divide Christianity — it divided the <em>vocabulary of faith</em>. Consider a simple theological concept: the act of confessing sin to a priest. In Catholic German, this was <span class="german-word" data-card="beichte">Beichte</span> (from "bijiht," acknowledgment, purely Germanic). But over time, as the Reformation took hold, Protestant regions began to prefer the word <em>Sündenbekenntnis</em> — a more explicit compound meaning "confession of sin." Same concept, different framing. The Protestant version emphasized <em>personal acknowledgment</em> rather than <em>institutional procedure</em>. Language became theology. Words became identity markers. To speak Catholic German or Protestant German was not just a linguistic choice — it was a confession of faith.
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 6: SÜNDE & BEICHTE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But there is another layer to this linguistic warfare. Not all the new vocabulary was invented — some was <em>redirected</em>. Old words given new meanings. Words that had meant one thing in Catholic German now meant something subtly different in Protestant German.
+    </p>
+
+    <p class="narrative">
+      Take <span class="german-word" data-card="sunde">Sünde</span> — sin. An ancient word, from Proto-Germanic <em>*sundijō</em>, possibly related to English "sunder" (to separate). Sin as separation — from God, from community, from grace. This is a theological insight built into the word itself.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-card="beichte">Beichte</span> — confession. Not borrowed from Latin, but purely Germanic, from "bijiht" (acknowledgment). But here is the crucial difference: for Catholics, Beichte was something done <em>to a priest</em>, a sacrament, an institutional practice. For Protestants, it became something more internal — a confession before God, mediated through prayer and faith rather than clerical authority.
+    </p>
+
+    <p class="narrative">
+      The words did not change. The theology did. And that theological shift began to reshape the language itself.
+    </p>
+
+    <!-- SÜNDE card -->
+    <div class="ety-card" id="card-sunde">
+      <div class="word-header">
+        <span class="word-main">Sünde</span>
+        <span class="word-pron">/ˈzʏndə/</span>
+      </div>
+      <div class="word-meaning">sin — transgression and spiritual separation</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sundijō</span>
+        <span class="bridge-note">— possibly related to *sunder (to separate, to part)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Sünde</span>
+        <span class="bridge-note">— from Old High German "suntea," carrying the sense of rupture</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">sin</span>
+        <span class="bridge-note">— Old English "synn," same root, though the metaphorical resonance is muted</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">罪</span>
+        <span class="bridge-note">— zuì — sin and crime merged into one character, reflecting a different moral philosophy</span>
+      </div>
+      <div class="story">
+        The connection between "Sünde" and "sunder" (to separate) is not certain, but it's theologically profound. Sin as separation from God — as a rupture in the cosmic order. This fits perfectly with Christian theology, yet the word predates Christianity, suggesting that the Proto-Germanic peoples already conceived of wrongdoing as a kind of tearing or breaking. Whether or not the etymology is correct, the theological resonance is real, and German speakers across centuries internalized this meaning: Sünde is not just bad action, it's <em>separation</em>. The Chinese character 罪 (zuì), by contrast, contains no etymological suggestion of separation — instead, it can mean both sin and crime, conflating the moral and legal realms. Two languages, two ways of thinking about wrongdoing.
+      </div>
+    </div>
+
+    <!-- BEICHTE card -->
+    <div class="ety-card" id="card-beichte">
+      <div class="word-header">
+        <span class="word-main">Beichte</span>
+        <span class="word-pron">/ˈbaɪ̯xtə/</span>
+      </div>
+      <div class="word-meaning">confession — the act of acknowledging wrongdoing</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">bijiht</span>
+        <span class="bridge-note">— Old High German: acknowledgment, confession (purely Germanic, not Latin)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">confession</span>
+        <span class="bridge-note">— from Latin confessio (to acknowledge), a borrowed term</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">bekennen</span>
+        <span class="bridge-note">— to confess, to acknowledge (the verb form still in use)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">忏悔</span>
+        <span class="bridge-note">— chàn-huǐ — repentance + remorse, emphasizing emotional transformation</span>
+      </div>
+      <div class="story">
+        Here's a remarkable linguistic choice: German kept a <em>Germanic</em> word for confession rather than borrowing from Latin like English did. "Beichte" from Old High German "bijiht" means acknowledgment, avowal — the act of speaking truth. This is theologically significant because it emphasizes the <em>act of speaking</em> rather than the institutional role of the confessor. When Protestants later challenged the sacramental nature of Catholic confession, they could point to the German word itself: Beichte is simply <em>acknowledgment</em>, not a priest-mediated ritual. Language became ideology. The Chinese term 忏悔 (chàn-huǐ) is composed of two emotional states: remorse and regret, putting emphasis on internal transformation rather than external confession. Three languages, three different pathways to expressing the same spiritual reality.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        If a word like "Beichte" emphasizes the act of <em>speaking and acknowledging</em>, which Reformation theology would find this most useful?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Remember: Protestants emphasized faith and direct relationship with God; Catholics emphasized sacraments and clerical authority.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">Protestants — the emphasis on personal acknowledgment fits their theology</button>
+        <button class="guess-btn" onclick="guess(this, false)">Catholics — they needed to emphasize priestly authority</button>
+        <button class="guess-btn" onclick="guess(this, false)">neither — the word is neutral</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: STREIT & KRIEG ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      As the sixteenth century wore on, the arguments became more heated. What had begun as theological dispute became <span class="german-word" data-card="streit">Streit</span> — bitter argument, heated dispute. From Proto-Germanic *strīdaz, related to English "strife."
+    </p>
+
+    <p class="narrative">
+      Streit leads to more Streit. Pamphlets provoke counter-pamphlets. Sermons challenge other sermons. And slowly, inexorably, the linguistic conflict transformed into something else entirely.
+    </p>
+
+    <p class="narrative">
+      By 1618, the bitterness had curdled into something deeper — <span class="german-word" data-card="krieg">Krieg.</span> War. A word you have encountered before, in Chapter Six, but now it takes on a new, and terrible, meaning: the Thirty Years' War, fought across German territories, leaving vast regions emptied of life.
+    </p>
+
+    <p class="narrative">
+      The language of faith had become the language of warfare. Words as weapons, then weapons as words — killing in the name of God, of doctrine, of linguistic and ideological purity.
+    </p>
+
+    <!-- STREIT card -->
+    <div class="ety-card" id="card-streit">
+      <div class="word-header">
+        <span class="word-main">Streit</span>
+        <span class="word-pron">/ʃtraɪ̯t/</span>
+      </div>
+      <div class="word-meaning">dispute, quarrel, conflict — but not yet violence</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*strīdaz</span>
+        <span class="bridge-note">— to quarrel, to fight (but implies striving, struggling)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Streit</span>
+        <span class="bridge-note">— dispute with emotional heat, but typically verbal or ideological</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">strife</span>
+        <span class="bridge-note">— same root, same sense of bitter contention</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">争执</span>
+        <span class="bridge-note">— zhēngzhí — to strive + grip/grasp, a grasping for control</span>
+      </div>
+      <div class="story">
+        "Streit" occupies a fascinating semantic space between disagreement and violence. The root *strīdaz suggests vigorous action, striving, struggle — but not necessarily bloodshed. This reflects a historical moment when religious and linguistic disputes were fought through words, pamphlets, and rhetoric before they became literal wars. German kept this word for ideological conflict throughout the Reformation, reserving "Krieg" (war) for actual military violence. But by 1618, the distance between Streit and Krieg had collapsed. Ideological conflict had become total war.
+      </div>
+    </div>
+
+    <!-- KRIEG card (revisited) -->
+    <div class="ety-card" id="card-krieg">
+      <div class="word-header">
+        <span class="word-main">Krieg</span>
+        <span class="word-pron">/kʁiːk/</span>
+      </div>
+      <div class="word-meaning">war — the ultimate failure of language</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*krig-</span>
+        <span class="bridge-note">— to struggle, to overcome (possibly related to Old Norse "krig")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Krieg</span>
+        <span class="bridge-note">— war, armed conflict, the ultimate breakdown of communication</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">war</span>
+        <span class="bridge-note">— from Proto-Germanic *werra (confusion, strife) — a different etymological path to the same meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">战争</span>
+        <span class="bridge-note">— zhànzhēng — to fight + to rise up, a rebellion-based concept</span>
+      </div>
+      <div class="story">
+        The Thirty Years' War killed approximately a third of the German-speaking population. Whole regions were depopulated. Villages were burnt. Armies requisitioned crops, leading to famine. This war was fought over religious doctrine, over linguistic authority, over whose version of German would become standard. In the end, the Peace of Westphalia (1648) established that each German territory could choose its own faith — Catholic, Lutheran, or Reformed. But the language? The war had fragmented German further. Protestant regions developed their written standard, Catholic regions theirs. The single German language had become many Germanys, separated not just by religion but by written norms, pronunciation patterns, and vocabulary. War ended the ideological conflict; linguistic fragmentation became the permanent scar.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: THE LEGACY ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      By 1650, the war was over. Over 300,000 people dead. The German territories were exhausted, fragmented, impoverished. But something had shifted in the language itself.
+    </p>
+
+    <p class="narrative">
+      The two written standards — Protestant and Catholic — persisted. Slowly, over the next centuries, they would converge again, influenced by the political consolidation of Prussia and the cultural authority of German Classicism in the 18th century. But the memory of the split remained in the language: in pronunciation differences (still audible today between Bavaria and Berlin), in vocabulary choices, in the very emotional weight of certain words.
+    </p>
+
+    <p class="narrative">
+      This is what war does to language: it doesn't destroy it, but it marks it. It leaves scars that healslowly, unevenly. The German that emerged from the Thirty Years' War was no longer the unified language that Luther had tried to establish. It was marked territory. Contested space.
+    </p>
+
+    <p class="narrative">
+      And far to the east, in what would become Russia, a similar fragmentation was beginning. The Orthodox Church would resist the Latin and German influences that were reshaping Europe's linguistic landscape. Cyrillic script, Church Slavonic liturgy, a different theology — all would create a Russian that stood apart from the Germanic and Romance language families.
+    </p>
+
+    <p class="narrative emphasis">
+      Language is not just shaped by war — it becomes the war. Words are the battleground.
+    </p>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">The "-ung" suffix</strong> — Transforms verbs into nouns representing actions or states (spalten→Spaltung, lösen→Lösung, treffen→Treffung)<br><br>
+    <strong style="color: var(--text-bright);">Germanic roots for sacred concepts</strong> — Predigt (borrowed from Latin), Beichte (purely Germanic), Sünde (ancient Germanic)<br><br>
+    <strong style="color: var(--text-bright);">The same word, inverted meanings</strong> — Ketzer could mean both "heretical" and "chosen as pure" depending on who spoke it<br><br>
+    <strong style="color: var(--text-bright);">Compound meanings</strong> — Schuld merges guilt and debt; Flugblatt merges flight and sheet — German's power to build meaning from component parts<br><br>
+    <strong style="color: var(--text-bright);">Religious division creates linguistic division</strong> — Streit (dispute) eventually becomes Krieg (war); words no longer bridge gaps but mark them
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Sixteen</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Spaltung</span><span class="cw-english">schism/split</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Flugblatt</span><span class="cw-english">pamphlet</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Predigt</span><span class="cw-english">sermon</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Ketzer</span><span class="cw-english">heretic</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Schuld</span><span class="cw-english">guilt/debt</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Sünde</span><span class="cw-english">sin</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Beichte</span><span class="cw-english">confession</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Streit</span><span class="cw-english">dispute</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Krieg</span><span class="cw-english">war</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== CONCEPTS LEARNED IN CHAPTER 16 ==================== -->
+    <div class="word-collection" style="margin-top: 48px;">
+      <h3>Concepts Learned in Chapter Sixteen</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Language as Weapon</span><span class="cw-english">pamphlets weaponised German for ideology</span></div>
+        <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Religious Vocabulary Split</span><span class="cw-english">Catholic vs Protestant word choices diverged</span></div>
+        <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Compound Expression</span><span class="cw-english">Flugblatt = flying+leaf, Spaltung = splitting</span></div>
+        <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Theological Precision</span><span class="cw-english">Schuld, Sünde, Beichte — moral vocabulary</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER 16 QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <h2>Chapter 16 Quiz — 80% Required</h2>
+        <p>Religious division splits German language. How much did you absorb?</p>
+      </div>
+
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>1.</strong> What does the "-ung" suffix do in German, as demonstrated by "spalten → Spaltung"?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Transforms verbs into nouns representing actions or states</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Changes the tense of a verb to past</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Makes a word plural or feminine</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Indicates a negative or opposite meaning</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>2.</strong> What is the key difference between Flugblatt and a traditional Latin-based term for pamphlet?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Flugblatt is transparent: "flying + leaf" — you can see the meaning in the components</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Flugblatt is a purely Greek term that Germans borrowed</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Flugblatt is a technical term used only by scholars</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Flugblatt has no religious significance, unlike Latin terms</button>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>3.</strong> Which word from Chapter 16 merges two concepts: "guilt" and "debt"?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Sünde</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Schuld</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Beichte</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Streit</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>4.</strong> How did the Reformation change the relationship between "Streit" (dispute) and "Krieg" (war) in German language?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">They became synonyms overnight after Luther's translation</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Religious division created linguistic division — words no longer bridged gaps but marked them</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Streit became obsolete and was replaced by Krieg</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">They have no connection to religious conflict</button>
+        </div>
+      </div>
+
+      <div class="quiz-result" id="quizResult"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">160 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(18%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:18%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Spaltung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">schism</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Flugblatt</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">pamphlet</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Predigt</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sermon</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ketzer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">heretic</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schuld</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">guilt</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sünde</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sin</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Beichte</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">confession</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Streit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">dispute</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Krieg</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">war</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–15</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~150 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">35 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(24%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:24%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">-ung suffix</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">spalten → Spaltung, lösen → Lösung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Germanic sacred roots</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Predigt, Beichte, Sünde</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Same word inverted</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Ketzer = heretical or chosen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Compound meanings</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Schuld = guilt+debt, Flugblatt = flight+sheet</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Religious division → linguistic</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Streit becomes Krieg</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">16</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–15</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~42 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Sixteen
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Nine words. Nine stories. Religious schism becomes linguistic fragmentation.<br>
+        Pamphlets and Predigten become weapons. Streit becomes Krieg.<br>
+        Language bears the scars of history, even as it shapes history's course.<br><br>
+        <span style="font-style: italic;">The words never forget what was said. The languages never forget what was fought.</span>
+      </p>
+      <div class="next-chapter">
+        Chapter Seventeen: The Age of Nations — coming soon
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter15.html" class="nav-btn">← Chapter 15</a>
+    <a href="chapter17.html" class="nav-btn next">Chapter 17 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- QUIZ VARIABLES ---
+let quizAnswers = [];
+
+// --- CHAPTER 16: SPLIT CANVAS SCHISM SCENE ---
+const canvas = document.getElementById('splitcanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let pamphlets = [];
+let churches = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 15000) :
+    Math.floor((canvas.width * canvas.height) / 10000);
+
+  for (let i = 0; i < count; i++) {
+    const side = Math.random() < 0.5 ? 'left' : 'right';
+    particles.push({
+      x: side === 'left' ? Math.random() * (canvas.width / 2) : canvas.width / 2 + Math.random() * (canvas.width / 2),
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3 * (side === 'left' ? -1 : 1),
+      vy: (Math.random() - 0.3) * 0.2,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random() * 0.4 + 0.1,
+      side: side
+    });
+  }
+}
+
+function createPamphlets() {
+  pamphlets = [];
+  const count = window.innerWidth < 600 ? 15 : 30;
+
+  for (let i = 0; i < count; i++) {
+    const side = Math.random() < 0.5 ? 'left' : 'right';
+    pamphlets.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 100,
+      y: canvas.height / 2 + (Math.random() - 0.5) * 200,
+      vx: (Math.random() + 0.5) * (side === 'left' ? -1 : 1),
+      vy: (Math.random() - 0.5) * 0.8,
+      w: 30 + Math.random() * 20,
+      h: 50 + Math.random() * 30,
+      rotation: Math.random() * Math.PI * 2,
+      vr: (Math.random() - 0.5) * 0.05,
+      alpha: Math.random() * 0.5 + 0.3,
+      side: side
+    });
+  }
+}
+
+function createChurches() {
+  // Simple church silhouettes at top
+  churches = [
+    { x: canvas.width * 0.25, y: canvas.height * 0.1, type: 'protestant' },
+    { x: canvas.width * 0.75, y: canvas.height * 0.1, type: 'catholic' }
+  ];
+}
+
+function drawProtestantChurch(x, y, scale) {
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.3)';
+  // Simple pointed steeple
+  ctx.beginPath();
+  ctx.moveTo(x - 20 * scale, y + 40 * scale);
+  ctx.lineTo(x, y - 40 * scale);
+  ctx.lineTo(x + 20 * scale, y + 40 * scale);
+  ctx.fill();
+
+  // Base
+  ctx.fillRect(x - 15 * scale, y + 35 * scale, 30 * scale, 20 * scale);
+}
+
+function drawCatholicChurch(x, y, scale) {
+  ctx.fillStyle = 'rgba(139, 58, 58, 0.3)';
+  // Ornate dome
+  ctx.beginPath();
+  ctx.arc(x, y - 20 * scale, 25 * scale, Math.PI, 0, false);
+  ctx.fill();
+
+  // Base
+  ctx.fillRect(x - 20 * scale, y + 15 * scale, 40 * scale, 25 * scale);
+}
+
+function drawSplitBackground(scrollProgress) {
+  const splitX = canvas.width / 2;
+
+  // Left half - Protestant (golden amber)
+  ctx.fillStyle = `rgb(${Math.floor(212 * (0.5 + scrollProgress * 0.3))}, ${Math.floor(165 * (0.5 + scrollProgress * 0.2))}, ${Math.floor(116 * (0.5 + scrollProgress * 0.1))})`;
+  ctx.fillRect(0, 0, splitX, canvas.height);
+
+  // Right half - Catholic (crimson purple)
+  ctx.fillStyle = `rgb(${Math.floor(139 * (0.5 + scrollProgress * 0.3))}, ${Math.floor(58 * (0.5 + scrollProgress * 0.2))}, ${Math.floor(58 * (0.5 + scrollProgress * 0.1))})`;
+  ctx.fillRect(splitX, 0, canvas.width, canvas.height);
+
+  // Jagged tear line
+  ctx.strokeStyle = `rgba(255, 100, 100, ${0.2 + scrollProgress * 0.3})`;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+
+  const jag = 20 + scrollProgress * 30;
+  for (let i = 0; i < canvas.height; i += jag) {
+    const offset = (Math.random() - 0.5) * 20 * (1 + scrollProgress);
+    ctx.lineTo(splitX + offset, i);
+  }
+  ctx.stroke();
+
+  // Fire particles at tear line
+  if (scrollProgress > 0.3) {
+    for (let i = 0; i < canvas.height; i += 60) {
+      const fireIntensity = Math.sin(Date.now() * 0.003 + i * 0.01) * 0.3 + 0.5;
+      ctx.fillStyle = `rgba(232, 100, 74, ${fireIntensity * (scrollProgress - 0.3) * 2})`;
+      ctx.beginPath();
+      ctx.arc(splitX + (Math.random() - 0.5) * 30, i + (Math.random() - 0.5) * 40, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function drawFrame(time) {
+  const scrollProgress = Math.min(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight), 1);
+
+  drawSplitBackground(scrollProgress);
+
+  // Draw churches
+  churches.forEach(church => {
+    if (church.type === 'protestant') {
+      drawProtestantChurch(church.x, church.y, 1);
+    } else {
+      drawCatholicChurch(church.x, church.y, 1);
+    }
+  });
+
+  // Draw and update text particles (flowing streams)
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+
+    if (p.side === 'left' && p.x < 0) p.x = canvas.width / 2;
+    if (p.side === 'right' && p.x > canvas.width) p.x = canvas.width / 2;
+    if (p.y > canvas.height) p.y = 0;
+    if (p.y < 0) p.y = canvas.height;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.side === 'left'
+      ? `rgba(212, 165, 116, ${p.alpha})`
+      : `rgba(139, 58, 58, ${p.alpha})`;
+    ctx.fill();
+  });
+
+  // Draw pamphlets (flying outward from center)
+  pamphlets.forEach(pam => {
+    pam.x += pam.vx;
+    pam.y += pam.vy;
+    pam.rotation += pam.vr;
+
+    ctx.save();
+    ctx.translate(pam.x, pam.y);
+    ctx.rotate(pam.rotation);
+
+    ctx.fillStyle = pam.side === 'left'
+      ? `rgba(212, 165, 116, ${pam.alpha})`
+      : `rgba(139, 58, 58, ${pam.alpha})`;
+    ctx.fillRect(-pam.w / 2, -pam.h / 2, pam.w, pam.h);
+
+    // Text lines on pamphlet
+    ctx.strokeStyle = `rgba(212, 202, 187, ${pam.alpha * 0.5})`;
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(-pam.w / 2 + 2, -pam.h / 2 + 8 + i * 8);
+      ctx.lineTo(pam.w / 2 - 2, -pam.h / 2 + 8 + i * 8);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  });
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createParticles();
+createPamphlets();
+createChurches();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); createPamphlets(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate collected words
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct. Language divides along the fault lines of belief and power.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite. Think about how groups isolated from each other develop differently...';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE: prevent double-tap zoom on interactive elements ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- MOBILE: reduce particle count on small screens for performance ---
+if (window.innerWidth < 600) {
+  particles = particles.slice(0, Math.floor(particles.length / 2));
+  pamphlets = pamphlets.slice(0, Math.floor(pamphlets.length / 2));
+}
+
+// --- AUDIO PRONUNCIATION (Web Speech API) ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- QUIZ FUNCTIONALITY ---
+function checkAnswer(btn, isCorrect) {
+  const question = btn.closest('.quiz-question');
+  const options = question.querySelectorAll('.quiz-option');
+
+  options.forEach(opt => opt.style.pointerEvents = 'none');
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    quizAnswers.push(true);
+  } else {
+    btn.classList.add('incorrect');
+    quizAnswers.push(false);
+  }
+
+  // Highlight correct answer
+  if (!isCorrect) {
+    options.forEach(opt => {
+      if (opt.onclick.toString().includes('true')) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  // Check if quiz is complete
+  if (quizAnswers.length === 4) {
+    const correctCount = quizAnswers.filter(a => a).length;
+    const percentage = (correctCount / 4) * 100;
+    const resultDiv = document.getElementById('quizResult');
+
+    if (percentage >= 80) {
+      resultDiv.textContent = `Passed! You scored ${correctCount}/4 (${percentage.toFixed(0)}%). Excellent understanding!`;
+      resultDiv.classList.add('pass');
+    } else {
+      resultDiv.textContent = `You scored ${correctCount}/4 (${percentage.toFixed(0)}%). Review the chapter and try again!`;
+      resultDiv.classList.add('fail');
+    }
+  }
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 70: Reflexive Verben</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --conjunction: #d9a77a;
+    --scholarly-blue: #1a3a52;
+    --warm-gold: #c9a961;
+  }
+  html { scroll-behavior: smooth; background: #0a0e1a; }
+  body {
+    background: linear-gradient(to bottom, var(--scholarly-blue) 0%, var(--night) 30%, var(--night-mid) 60%, var(--warm-gold) 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+  }
+  #mirror-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  .content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 60px 24px 120px; }
+  .title-screen { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px; }
+  .title-screen h1 { font-size: 3.5rem; font-weight: 300; color: var(--text-bright); opacity: 0; animation: fadeUp 2s ease 0.5s forwards; }
+  .title-screen .subtitle { font-size: 1.3rem; font-weight: 300; font-style: italic; color: var(--fire); opacity: 0; animation: fadeUp 2s ease 1.2s forwards; margin-bottom: 2em; }
+  .title-screen .chapter-label { font-size: 0.9rem; opacity: 0; animation: fadeUp 2s ease 0.2s forwards; }
+  .scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3); margin-top: 3em; }
+  .scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+  .scene.visible { opacity: 1; transform: translateY(0); }
+  .scene-marker { display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--fire), transparent); margin: 0 auto 40px; }
+  .narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+  .narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center; font-style: italic; margin: 2em 0; }
+  .german-word { color: var(--german); font-weight: 600; cursor: pointer; border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; }
+  .german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+  .vocab-card { background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95)); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 28px 32px; margin: 24px 0 32px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.5s ease; }
+  .vocab-card.open { max-height: 1200px; opacity: 1; }
+  .vocab-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .vocab-card .word-main { font-size: 2rem; font-weight: 700; color: var(--german); }
+  .vocab-card .word-meaning { font-size: 1.1rem; color: var(--english); }
+  .vocab-card .word-content { margin-top: 12px; font-size: 1rem; color: rgba(212, 202, 187, 0.85); line-height: 1.7; }
+  .vocab-card .usage-note { background: rgba(232, 164, 74, 0.05); border-left: 2px solid rgba(232, 164, 74, 0.2); padding: 12px 16px; margin-top: 12px; border-radius: 4px; font-size: 0.95rem; }
+  .grammar-box { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2); border-radius: 8px; padding: 24px; margin: 28px 0; font-size: 1rem; color: var(--text-bright); }
+  .grammar-box .rule-title { font-size: 1.2rem; color: #f4c67a; font-weight: 600; margin-bottom: 16px; }
+  .example-pair { background: rgba(10, 14, 26, 0.5); border-left: 2px solid #e8a44a; padding: 16px; margin: 12px 0; border-radius: 4px; }
+  .example-label { font-size: 0.8rem; text-transform: uppercase; color: #e8a44a; margin-bottom: 4px; }
+  .example-text { color: var(--text-bright); font-weight: 500; }
+  .example-translation { font-size: 0.95rem; color: var(--english); margin-top: 8px; }
+  .aside-box { background: rgba(232, 164, 74, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3); padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; }
+  .aside-box .aside-title { font-size: 0.8rem; text-transform: uppercase; color: #e8a44a; margin-bottom: 8px; }
+  .pronoun-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; font-size: 0.95rem; }
+  .pronoun-row { display: contents; }
+  .pronoun-cell { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.12); padding: 12px 16px; border-radius: 6px; text-align: center; }
+  .pronoun-cell.header { font-weight: 600; color: var(--fire); background: rgba(232, 164, 74, 0.12); }
+  .pronoun-table-labels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; font-size: 0.9rem; color: var(--fire); font-weight: 600; text-align: center; }
+  .verb-comparison-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; font-size: 0.9rem; }
+  .verb-comparison-row { display: contents; }
+  .verb-comparison-cell { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.12); padding: 12px 16px; border-radius: 6px; }
+  .verb-comparison-cell.header { font-weight: 600; color: var(--fire); background: rgba(232, 164, 74, 0.12); }
+  .comparison-type-box { background: rgba(232, 164, 74, 0.06); border: 1px solid rgba(232, 164, 74, 0.12); border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+  .comparison-type-title { font-weight: 600; color: var(--fire); margin-bottom: 12px; font-size: 0.95rem; }
+  .quiz-container { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95)); border: 1px solid rgba(232, 164, 74, 0.12); border-radius: 16px; padding: 40px 32px; margin: 60px 0; }
+  .quiz-container h3 { font-size: 1.3rem; color: var(--text-bright); text-align: center; margin-bottom: 32px; }
+  .quiz-question { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.08); border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+  .quiz-question .q-text { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2); color: var(--text); padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-family: 'Cormorant Garamond', serif; font-size: 1rem; }
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); }
+  .quiz-nav { display: flex; gap: 12px; justify-content: center; margin-top: 32px; }
+  .quiz-nav button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; padding: 12px 28px; border-radius: 8px; cursor: pointer; }
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; }
+  .quiz-score { text-align: center; font-size: 1.3rem; color: #f4c67a; margin: 24px 0; }
+  .post-quiz-summary { background: rgba(232, 164, 74, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3); padding: 24px 28px; margin: 24px 0; border-radius: 0 8px 8px 0; display: none; }
+  .post-quiz-summary.show { display: block; }
+  .nav-links { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(232, 164, 74, 0.15); }
+  .nav-link { color: var(--fire); text-decoration: none; font-size: 0.95rem; transition: color 0.3s ease; }
+  .nav-link:hover { color: var(--fire-glow); }
+  .chapter-number { color: rgba(232, 164, 74, 0.5); }
+  @media (max-width: 768px) { .pronoun-table, .verb-comparison-table { grid-template-columns: 1fr; } .title-screen h1 { font-size: 2.5rem; } }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="mirror-canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 70</div>
+    <h1 data-speak="true">Reflexive Verben</h1>
+    <p class="subtitle" data-speak="true">Verbs That Act Upon Themselves</p>
+    <p class="scroll-hint" data-speak="true">Mirror, Mirror on the Wall<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">
+      Reflexive verbs are unique in German. They're verbs where the action is performed on oneself—the subject and the object are the same entity. When you say <span class="german-word" data-card="sich_waschen">sich waschen</span> (to wash oneself), the action returns to the person performing it. The <span class="german-word" data-card="sich">sich</span> pronoun marks the reflexive quality.
+    </p>
+    <p class="narrative" data-speak="true">
+      Reflexive verbs are extraordinarily common in German, far more so than in English. In English, we often say "I wash" to mean "I wash myself," but German explicitly marks the reflexivity. This makes the language more precise and reveals the hidden structure of action and agency. By mastering reflexive verbs, you unlock one of the most characteristic features of German grammar.
+    </p>
+  </div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">What Is a Reflexive Verb?</p>
+    <p class="narrative" data-speak="true">A reflexive verb is one in which the action flows backward—the subject performs the action on themselves. The reflexive pronoun (mich, dich, sich, uns, euch, sich) stands in for the object, creating a mirror relationship between the subject and the grammatical object.</p>
+    <div class="grammar-box">
+      <div class="rule-title">The Mirror Concept</div>
+      <div class="example-pair">
+        <div class="example-label">Non-Reflexive (Linear Action)</div>
+        <div class="example-text" data-speak="true">Ich wasche den Hund. (I wash the dog)</div>
+        <div class="example-translation">Subject and object are different.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Reflexive (Mirror Action)</div>
+        <div class="example-text" data-speak="true">Ich wasche mich. (I wash myself)</div>
+        <div class="example-translation">Subject performs the action on themselves.</div>
+      </div>
+    </div>
+    <div class="aside-box">
+      <div class="aside-title">Why This Matters</div>
+      <p data-speak="true">Many German verbs are obligatorily reflexive—you cannot use them without the reflexive pronoun. Others are optionally reflexive, depending on the context. This semantic flexibility is part of German's expressive power.</p>
+    </div>
+  </div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Reflexive Pronouns: Accusative & Dative</p>
+    <p class="narrative" data-speak="true">The reflexive pronouns come in two forms: accusative and dative. The accusative pronouns (mich, dich, sich, uns, euch, sich) are used when the subject is the direct object. The dative pronouns (mir, dir, sich, uns, euch, sich) are used when someone else is the direct object but the action still benefits the subject.</p>
+    <div class="pronoun-table-labels">
+      <div>Person</div>
+      <div>Accusative Reflexive</div>
+      <div>Dative Reflexive</div>
+    </div>
+    <div class="pronoun-table">
+      <div class="pronoun-row">
+        <div class="pronoun-cell header">1st Sing.</div>
+        <div class="pronoun-cell" data-speak="true">mich</div>
+        <div class="pronoun-cell" data-speak="true">mir</div>
+      </div>
+      <div class="pronoun-row">
+        <div class="pronoun-cell header">2nd Sing.</div>
+        <div class="pronoun-cell" data-speak="true">dich</div>
+        <div class="pronoun-cell" data-speak="true">dir</div>
+      </div>
+      <div class="pronoun-row">
+        <div class="pronoun-cell header">3rd/Formal</div>
+        <div class="pronoun-cell" data-speak="true">sich</div>
+        <div class="pronoun-cell" data-speak="true">sich</div>
+      </div>
+      <div class="pronoun-row">
+        <div class="pronoun-cell header">1st Plural</div>
+        <div class="pronoun-cell" data-speak="true">uns</div>
+        <div class="pronoun-cell" data-speak="true">uns</div>
+      </div>
+      <div class="pronoun-row">
+        <div class="pronoun-cell header">2nd Plural</div>
+        <div class="pronoun-cell" data-speak="true">euch</div>
+        <div class="pronoun-cell" data-speak="true">euch</div>
+      </div>
+      <div class="pronoun-row">
+        <div class="pronoun-cell header">3rd Plural</div>
+        <div class="pronoun-cell" data-speak="true">sich</div>
+        <div class="pronoun-cell" data-speak="true">sich</div>
+      </div>
+    </div>
+    <div class="grammar-box">
+      <div class="rule-title">Accusative Reflexive: The Subject Is the Direct Object</div>
+      <p data-speak="true" style="margin-bottom: 12px;">Use accusative when the subject is receiving the action directly. This is the most common reflexive form.</p>
+      <div class="example-pair">
+        <div class="example-label">Ich wasche mich</div>
+        <div class="example-text" data-speak="true">I wash myself (the subject is washed)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Du siehst dich</div>
+        <div class="example-text" data-speak="true">You see yourself</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Sie erinnert sich</div>
+        <div class="example-text" data-speak="true">She remembers herself</div>
+      </div>
+    </div>
+    <div class="grammar-box">
+      <div class="rule-title">Dative Reflexive: The Subject Benefits But Isn't the Direct Object</div>
+      <p data-speak="true" style="margin-bottom: 12px;">Use dative when there's a direct object but the action benefits the subject.</p>
+      <div class="example-pair">
+        <div class="example-label">Ich wasche mir die Hände</div>
+        <div class="example-text" data-speak="true">I wash (for myself) the hands = I wash my hands</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Du putzt dir die Zähne</div>
+        <div class="example-text" data-speak="true">You clean (for yourself) the teeth = You brush your teeth</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Er kauft sich einen Kaffee</div>
+        <div class="example-text" data-speak="true">He buys (for himself) a coffee</div>
+      </div>
+    </div>
+    <div class="aside-box">
+      <div class="aside-title">Quick Distinction</div>
+      <p data-speak="true"><strong>Accusative:</strong> "Ich wasche mich" (I am washed) — the subject IS the object<br><strong>Dative:</strong> "Ich wasche mir die Hände" — someone else is the object, but I benefit</p>
+    </div>
+  </div>
+
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Obligatory vs. Optional Reflexivity</p>
+    <p class="narrative" data-speak="true">Not all German verbs are reflexive, and not all reflexive verbs are obligatorily reflexive. Some verbs are always reflexive (like <span class="german-word" data-card="sich_freuen">sich freuen</span> — to be happy). Others can be either reflexive or non-reflexive, depending on meaning and context.</p>
+    <div class="comparison-type-box">
+      <div class="comparison-type-title">Type 1: Obligatorily Reflexive Verbs</div>
+      <p data-speak="true" style="font-size: 0.95rem; margin-bottom: 8px;">These verbs MUST be used with a reflexive pronoun. They have no non-reflexive form.</p>
+      <div class="example-pair">
+        <div class="example-label">sich freuen (to be happy)</div>
+        <div class="example-text" data-speak="true">Ich freue mich auf die Ferien.</div>
+        <div class="example-translation">I am happy about the vacation.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">sich erinnern (to remember)</div>
+        <div class="example-text" data-speak="true">Ich erinnere mich nicht.</div>
+        <div class="example-translation">I don't remember.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">sich irren (to be wrong)</div>
+        <div class="example-text" data-speak="true">Du irrst dich!</div>
+        <div class="example-translation">You are mistaken!</div>
+      </div>
+    </div>
+    <div class="comparison-type-box">
+      <div class="comparison-type-title">Type 2: Optionally Reflexive Verbs</div>
+      <p data-speak="true" style="font-size: 0.95rem; margin-bottom: 8px;">These can be used reflexively or non-reflexively depending on the meaning.</p>
+      <div class="example-pair">
+        <div class="example-label">waschen / sich waschen</div>
+        <div class="example-text" data-speak="true">Non-reflexive: Ich wasche das Auto.</div>
+        <div style="margin-top: 8px;" data-speak="true">Reflexive: Ich wasche mich.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">interessieren / sich interessieren</div>
+        <div class="example-text" data-speak="true">Non-reflexive: Dieser Film interessiert mich.</div>
+        <div style="margin-top: 8px;" data-speak="true">Reflexive: Ich interessiere mich für Musik.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">unterhalten / sich unterhalten</div>
+        <div class="example-text" data-speak="true">Non-reflexive: Der Film unterhält mich.</div>
+        <div style="margin-top: 8px;" data-speak="true">Reflexive: Wir unterhalten uns.</div>
+      </div>
+    </div>
+    <div class="aside-box">
+      <div class="aside-title">Reflexive vs. Passive</div>
+      <p data-speak="true">Don't confuse reflexive verbs with passive voice. A reflexive verb is active—the subject actively performs the action on themselves. "Ich wasche mich" (I wash myself—active/reflexive) is different from "Ich werde gewaschen" (I am washed—passive).</p>
+    </div>
+  </div>
+
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Conjugation of Reflexive Verbs</p>
+    <p class="narrative" data-speak="true">Reflexive verbs are conjugated exactly like regular verbs—the only difference is the reflexive pronoun, which changes with the subject. Here's the present tense conjugation using <span class="german-word" data-card="sich_waschen">sich waschen</span>.</p>
+    <div class="verb-comparison-table">
+      <div class="verb-comparison-row">
+        <div class="verb-comparison-cell header">Subject</div>
+        <div class="verb-comparison-cell header">Reflexive Pronoun</div>
+        <div class="verb-comparison-cell header">Conjugated Verb</div>
+      </div>
+      <div class="verb-comparison-row">
+        <div class="verb-comparison-cell" data-speak="true">ich</div>
+        <div class="verb-comparison-cell" data-speak="true">mich</div>
+        <div class="verb-comparison-cell" data-speak="true">wasche</div>
+      </div>
+      <div class="verb-comparison-row">
+        <div class="verb-comparison-cell" data-speak="true">du</div>
+        <div class="verb-comparison-cell" data-speak="true">dich</div>
+        <div class="verb-comparison-cell" data-speak="true">wäschst</div>
+      </div>
+      <div class="verb-comparison-row">
+        <div class="verb-comparison-cell" data-speak="true">er/sie/es</div>
+        <div class="verb-comparison-cell" data-speak="true">sich</div>
+        <div class="verb-comparison-cell" data-speak="true">wäscht</div>
+      </div>
+      <div class="verb-comparison-row">
+        <div class="verb-comparison-cell" data-speak="true">wir</div>
+        <div class="verb-comparison-cell" data-speak="true">uns</div>
+        <div class="verb-comparison-cell" data-speak="true">waschen</div>
+      </div>
+      <div class="verb-comparison-row">
+        <div class="verb-comparison-cell" data-speak="true">ihr</div>
+        <div class="verb-comparison-cell" data-speak="true">euch</div>
+        <div class="verb-comparison-cell" data-speak="true">wascht</div>
+      </div>
+      <div class="verb-comparison-row">
+        <div class="verb-comparison-cell" data-speak="true">sie/Sie</div>
+        <div class="verb-comparison-cell" data-speak="true">sich</div>
+        <div class="verb-comparison-cell" data-speak="true">waschen</div>
+      </div>
+    </div>
+    <div class="grammar-box">
+      <div class="rule-title">Complete Conjugation: sich waschen (to wash oneself)</div>
+      <div class="example-pair">
+        <div class="example-label">ich</div>
+        <div class="example-text" data-speak="true">Ich wasche mich.</div>
+        <div class="example-translation">I wash myself.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">du</div>
+        <div class="example-text" data-speak="true">Du wäschst dich.</div>
+        <div class="example-translation">You wash yourself.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">er/sie/es</div>
+        <div class="example-text" data-speak="true">Er wäscht sich.</div>
+        <div class="example-translation">He washes himself.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">wir</div>
+        <div class="example-text" data-speak="true">Wir waschen uns.</div>
+        <div class="example-translation">We wash ourselves.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">ihr</div>
+        <div class="example-text" data-speak="true">Ihr wascht euch.</div>
+        <div class="example-translation">You all wash yourselves.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">sie/Sie</div>
+        <div class="example-text" data-speak="true">Sie waschen sich.</div>
+        <div class="example-translation">They/You (formal) wash themselves.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-6">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Core 8 Reflexive Verbs</p>
+    <p class="narrative" data-speak="true">These eight verbs are among the most frequently used reflexive verbs in German. Master them, and you'll handle most everyday reflexive situations.</p>
+    <div class="vocab-card" data-card="sich_waschen">
+      <div class="word-header">
+        <div class="word-main">sich waschen</div>
+        <div class="word-meaning">to wash oneself</div>
+      </div>
+      <div class="word-content" data-speak="true">Accusative reflexive verb. Optional reflexive—you can also "wash the car" non-reflexively. One of the core daily-life verbs.</div>
+      <div class="usage-note" data-speak="true">"Ich wasche mich jeden Morgen." (I wash myself every morning.)</div>
+    </div>
+    <div class="vocab-card" data-card="sich_freuen">
+      <div class="word-header">
+        <div class="word-main">sich freuen</div>
+        <div class="word-meaning">to be happy, to rejoice</div>
+      </div>
+      <div class="word-content" data-speak="true">Obligatorily reflexive. You cannot say "ich freue" without the reflexive pronoun. Often followed by "auf" or "über".</div>
+      <div class="usage-note" data-speak="true">"Ich freue mich auf die Ferien." (I'm happy about the vacation.) / "Sie freut sich über das Geschenk." (She's happy about the gift.)</div>
+    </div>
+    <div class="vocab-card" data-card="sich_erinnern">
+      <div class="word-header">
+        <div class="word-main">sich erinnern</div>
+        <div class="word-meaning">to remember</div>
+      </div>
+      <div class="word-content" data-speak="true">Obligatorily reflexive with accusative pronoun. Followed by "an" (of) + accusative when specifying what is remembered.</div>
+      <div class="usage-note" data-speak="true">"Ich erinnere mich an das Konzert." (I remember the concert.) / "Erinnerst du dich?" (Do you remember?)</div>
+    </div>
+    <div class="vocab-card" data-card="sich_setzen">
+      <div class="word-header">
+        <div class="word-main">sich setzen</div>
+        <div class="word-meaning">to sit down (to place oneself sitting)</div>
+      </div>
+      <div class="word-content" data-speak="true">Accusative reflexive. Note: "sitzen" (to be sitting) is not reflexive, but "sich setzen" (to sit down) is. The reflexivity marks the action of placing yourself seated.</div>
+      <div class="usage-note" data-speak="true">"Ich setze mich hin." (I sit down.) / "Setz dich!" (Sit down!)</div>
+    </div>
+    <div class="vocab-card" data-card="sich_irren">
+      <div class="word-header">
+        <div class="word-main">sich irren</div>
+        <div class="word-meaning">to be wrong, to err, to be mistaken</div>
+      </div>
+      <div class="word-content" data-speak="true">Obligatorily reflexive. You cannot say "Du irrst!" You must use "Du irrst dich!" The error reflexively attaches to the person.</div>
+      <div class="usage-note" data-speak="true">"Ich irre mich." (I'm mistaken.) / "Du irrst dich vollständig!" (You're completely wrong!)</div>
+    </div>
+    <div class="vocab-card" data-card="sich_unterhalten">
+      <div class="word-header">
+        <div class="word-main">sich unterhalten</div>
+        <div class="word-meaning">to converse, to chat, to entertain oneself</div>
+      </div>
+      <div class="word-content" data-speak="true">Optional reflexive with multiple meanings. Non-reflexively: "The film entertains me." Reflexively: "We converse." Often used to mean "to have a conversation".</div>
+      <div class="usage-note" data-speak="true">"Wir unterhalten uns über Politik." (We converse about politics.) / "Ich unterhalte mich gerne." (I enjoy entertaining myself.)</div>
+    </div>
+    <div class="vocab-card" data-card="die_Hände_waschen">
+      <div class="word-header">
+        <div class="word-main">sich die Hände waschen</div>
+        <div class="word-meaning">to wash one's hands (literal & figurative)</div>
+      </div>
+      <div class="word-content" data-speak="true">Dative reflexive construction. The dative reflexive pronoun (mir, dir, sich) appears with a direct object (die Hände). This is how German expresses possession with body parts—use dative reflexive + definite article instead of a possessive adjective.</div>
+      <div class="usage-note" data-speak="true">"Ich wasche mir die Hände." (I wash my hands) / "Er wäscht sich die Hände von dieser Sache." (He washes his hands of this matter—figurative meaning.)</div>
+    </div>
+    <div class="vocab-card" data-card="sich_vorstellen">
+      <div class="word-header">
+        <div class="word-main">sich vorstellen</div>
+        <div class="word-meaning">to introduce oneself, to imagine</div>
+      </div>
+      <div class="word-content" data-speak="true">Accusative reflexive with two distinct but related meanings. "To introduce oneself" is the social meaning. "To imagine" comes from the older sense of "to present to one's mind." Highly polysemous.</div>
+      <div class="usage-note" data-speak="true">"Ich stelle mich vor." (I introduce myself.) / "Ich stelle mir ein Haus vor." (I imagine a house.) / "Stell dir vor!" (Imagine! / You won't believe it!)</div>
+    </div>
+  </div>
+
+  <div class="scene scene-7">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Practical Contexts & Natural Usage</p>
+    <p class="narrative" data-speak="true">Reflexive verbs are woven throughout everyday German. From morning routines to emotional expressions to social interactions, you'll encounter them constantly.</p>
+    <div class="grammar-box">
+      <div class="rule-title">Morning Routine</div>
+      <div class="example-pair">
+        <div class="example-label">Daily Actions</div>
+        <div class="example-text" data-speak="true">Ich wache auf, wasche mich, putze mir die Zähne, kämme mir die Haare, und ziehe mich an.</div>
+        <div class="example-translation">I wake up, wash myself, brush my teeth, comb my hair, and dress myself.</div>
+      </div>
+    </div>
+    <div class="grammar-box">
+      <div class="rule-title">Emotions & Mental States</div>
+      <div class="example-pair">
+        <div class="example-label">Expressing Feelings</div>
+        <div class="example-text" data-speak="true">Ich freue mich auf das Wochenende. Ich erinnere mich gerne. Ich unterhalte mich gut mit dir.</div>
+        <div class="example-translation">I'm happy about the weekend. I enjoy remembering. I have a good time conversing with you.</div>
+      </div>
+    </div>
+    <div class="grammar-box">
+      <div class="rule-title">Social Interactions</div>
+      <div class="example-pair">
+        <div class="example-label">Introductions & Politeness</div>
+        <div class="example-text" data-speak="true">Ich stelle mich vor. Ich erinnere mich an dein Gesicht. Ich irre mich vielleicht.</div>
+        <div class="example-translation">I introduce myself. I remember your face. I might be mistaken.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-container">
+    <h3 data-speak="true">Chapter 70 Quiz: Reflexive Verbs (80% = 12 Questions)</h3>
+    <div id="quiz-questions"></div>
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+    <div class="quiz-reset" style="text-align: center; margin-top: 20px;">
+      <button onclick="resetQuiz()" style="background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; padding: 12px 28px; border-radius: 8px; cursor: pointer;">Start Over</button>
+    </div>
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+  </div>
+
+  <div class="scene scene-8">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Advanced Reflexivity: Mutual & Reciprocal Actions</p>
+    <p class="narrative" data-speak="true">Reflexive pronouns can express not just actions on oneself, but also mutual or reciprocal actions. When multiple subjects perform actions on each other, the same reflexive forms apply, creating elegant constructions that express relationship and reciprocity.</p>
+    <div class="grammar-box">
+      <div class="rule-title">Mutual/Reciprocal Reflexivity</div>
+      <p data-speak="true" style="margin-bottom: 12px;">When the subject is plural, reflexive pronouns can indicate that the subjects are acting on each other rather than on themselves individually.</p>
+      <div class="example-pair">
+        <div class="example-label">Individual Action</div>
+        <div class="example-text" data-speak="true">Ich wasche mich. Du wäschst dich. (I wash myself. You wash yourself.)</div>
+        <div class="example-translation">Each person washes their own body.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Mutual Action</div>
+        <div class="example-text" data-speak="true">Wir waschen uns. (We wash each other.)</div>
+        <div class="example-translation">The subjects wash one another—a shared, reciprocal action.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Mutual Example 1</div>
+        <div class="example-text" data-speak="true">Sie umarmen sich. (They hug [each other].)</div>
+        <div class="example-translation">Multiple subjects embrace one another.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Mutual Example 2</div>
+        <div class="example-text" data-speak="true">Wir sehen uns morgen. (We'll see each other tomorrow.)</div>
+        <div class="example-translation">A mutual, reciprocal meeting is planned.</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Mutual Example 3</div>
+        <div class="example-text" data-speak="true">Sie küssen sich. (They kiss [each other].)</div>
+        <div class="example-translation">Mutual expression of affection.</div>
+      </div>
+    </div>
+    <div class="aside-box">
+      <div class="aside-title">Ambiguity & Context</div>
+      <p data-speak="true">Sometimes "sie waschen sich" is ambiguous—it could mean "they wash themselves" (individual action) or "they wash each other" (mutual action). Context usually clarifies, but German speakers sometimes add "einander" (each other) or "gegenseitig" (mutually) to be explicit: "Sie waschen sich gegenseitig" (They wash each other mutually).</p>
+    </div>
+  </div>
+
+  <div class="scene scene-9">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Reflexive Verbs in Different Tenses</p>
+    <p class="narrative" data-speak="true">Reflexive verbs conjugate in all tenses exactly like regular verbs. Only the reflexive pronoun remains constant (matching the subject). This consistency makes reflexive verbs reliable once you master the core forms.</p>
+    <div class="grammar-box">
+      <div class="rule-title">sich waschen (to wash oneself) in Multiple Tenses</div>
+      <div class="example-pair">
+        <div class="example-label">Present Tense</div>
+        <div class="example-text" data-speak="true">Ich wasche mich. (I wash myself.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Past Tense (Präteritum)</div>
+        <div class="example-text" data-speak="true">Ich wusch mich. (I washed myself.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Perfect Tense (Perfekt)</div>
+        <div class="example-text" data-speak="true">Ich habe mich gewaschen. (I have washed myself.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Pluperfect Tense (Plusquamperfekt)</div>
+        <div class="example-text" data-speak="true">Ich hatte mich gewaschen. (I had washed myself.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Future Tense</div>
+        <div class="example-text" data-speak="true">Ich werde mich waschen. (I will wash myself.)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">Conditional</div>
+        <div class="example-text" data-speak="true">Ich würde mich waschen. (I would wash myself.)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-10">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">Common Mistakes & Clarifications</p>
+    <p class="narrative" data-speak="true">Even advanced learners sometimes confuse reflexive verbs with passive voice, or struggle with accusative vs. dative reflexivity. Here are the most frequent errors and how to avoid them.</p>
+    <div class="grammar-box">
+      <div class="rule-title">Mistake 1: Confusing Reflexive with Passive</div>
+      <div class="example-pair">
+        <div class="example-label">WRONG (Passive)</div>
+        <div class="example-text" data-speak="true">Das Buch wird gelesen. (The book is being read—passive)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">CORRECT (Reflexive)</div>
+        <div class="example-text" data-speak="true">Ich lese mich. (This would be reflexive, but rarely used—I read myself?)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">The Key Difference</div>
+        <div class="example-text" data-speak="true">Passive: Agent is hidden or deemphasized. "The book is read." (by someone unknown)<br>Reflexive: Subject explicitly acts on themselves. "I wash myself" (active voice, reflexive).</div>
+      </div>
+    </div>
+    <div class="grammar-box">
+      <div class="rule-title">Mistake 2: Wrong Reflexive Case</div>
+      <div class="example-pair">
+        <div class="example-label">WRONG</div>
+        <div class="example-text" data-speak="true">Ich wasche mir mich. (I wash dative me accusative me—double reflexive!)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">CORRECT</div>
+        <div class="example-text" data-speak="true">Ich wasche mich. (Accusative—I wash myself)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">OR CORRECT (with body part)</div>
+        <div class="example-text" data-speak="true">Ich wasche mir die Hände. (Dative reflexive + accusative direct object)</div>
+      </div>
+    </div>
+    <div class="grammar-box">
+      <div class="rule-title">Mistake 3: Forgetting the Reflexive Pronoun</div>
+      <div class="example-pair">
+        <div class="example-label">WRONG</div>
+        <div class="example-text" data-speak="true">Ich freue auf die Ferien. (Missing the reflexive pronoun)</div>
+      </div>
+      <div class="example-pair">
+        <div class="example-label">CORRECT</div>
+        <div class="example-text" data-speak="true">Ich freue mich auf die Ferien. (Correct with reflexive pronoun)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-links">
+    <a href="chapter69.html" class="nav-link"><span class="chapter-number">← Ch 69</span> Comparatives</a>
+    <a href="chapter71.html" class="nav-link">Lassen <span class="chapter-number">Ch 71 →</span></a>
+  </div>
+
+</div>
+
+<script>
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.hasAttribute('data-card')) {
+    const card = document.querySelector('[data-card="' + e.target.getAttribute('data-card') + '"]');
+    if (card && card.classList.contains('vocab-card')) {
+      card.classList.toggle('open');
+    }
+  }
+  if (e.target.hasAttribute('data-speak') && e.target.textContent.trim()) {
+    speakGerman(e.target.textContent);
+  }
+});
+
+const quizData = [
+  { question: "What does a reflexive verb mean?", options: ["A verb that repeats", "An action the subject performs on themselves", "A verb about reflection", "A verb in past tense"], correct: 1, explanation: "A reflexive verb is one where the subject performs the action on themselves (sich waschen = to wash oneself)." },
+  { question: "Which pronoun makes 'waschen' reflexive?", options: ["mein", "mich", "mir", "me"], correct: 1, explanation: "'Mich' is the accusative reflexive pronoun: Ich wasche mich." },
+  { question: "In 'Ich wasche mir die Hände,' which case is 'mir'?", options: ["Nominative", "Accusative", "Dative", "Genitive"], correct: 2, explanation: "'Mir' is dative reflexive. The hands (die Hände) are the direct object." },
+  { question: "Is 'sich freuen' obligatorily reflexive?", options: ["No, you can say 'ich freue'", "Yes, you must use the reflexive pronoun", "Only sometimes", "Only in formal German"], correct: 1, explanation: "'Sich freuen' MUST have the reflexive pronoun—there is no non-reflexive form." },
+  { question: "What is the reflexive form of 'ich' in accusative?", options: ["mir", "mein", "mich", "me"], correct: 2, explanation: "'Mich' is the accusative reflexive for 'ich'." },
+  { question: "Complete: 'Du _____ dich hin.' (to sit down)", options: ["setzt", "sitzest", "setze", "setzt"], correct: 0, explanation: "The 2nd person singular form of setzen is 'setzt': Du setzt dich hin." },
+  { question: "Which is obligatorily reflexive?", options: ["waschen", "sich erinnern", "interessieren", "kochen"], correct: 1, explanation: "'Sich erinnern' must be reflexive—there's no non-reflexive 'erinnern'." },
+  { question: "What does 'sich irren' mean?", options: ["To make an error for someone else", "To be wrong/mistaken", "To err in writing", "To confuse others"], correct: 1, explanation: "'Sich irren' means to be wrong or mistaken: Du irrst dich!" },
+  { question: "In dative reflexive 'Ich putze mir die Zähne,' what is the direct object?", options: ["mir", "die Zähne", "Ich", "putze"], correct: 1, explanation: "'Die Zähne' (the teeth) is the direct object; 'mir' is the dative reflexive pronoun." },
+  { question: "What is the accusative reflexive for 'sie' (she)?", options: ["sich", "ihr", "sie", "ihnen"], correct: 0, explanation: "The accusative reflexive for 3rd person singular is 'sich'." },
+  { question: "Which sentence is correct?", options: ["Ich interessiere Musik.", "Ich interessiere mich für Musik.", "Ich interessiere mir Musik.", "Musik interessiert sich."], correct: 1, explanation: "'Sich interessieren' is reflexive with für: Ich interessiere mich für Musik." },
+  { question: "Wer wäscht sich die Hände? This uses which reflexive case?", options: ["Accusative", "Dative", "Nominative", "Genitive"], correct: 1, explanation: "'Sich' here is dative (mir/dich/sich/uns/euch/sich), and 'die Hände' is the direct object." }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion() {
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+  document.getElementById('quiz-questions').innerHTML = `
+    <div class="quiz-question">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `<div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '') : ''}" onclick="selectAnswer(${i})" data-speak="true">${opt}</div>`).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232,164,74,0.1); font-size: 0.95rem; color: rgba(212,202,187,0.8);" data-speak="true">${q.explanation}</div>` : ''}
+    </div>
+  `;
+  updateNavButtons();
+}
+
+function selectAnswer(i) {
+  if (answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = i;
+  if (i === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) { currentQuestion++; displayQuestion(); }
+  else showScore();
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) { currentQuestion--; displayQuestion(); }
+}
+
+function updateNavButtons() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function showScore() {
+  const pct = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('quiz-summary').classList.add('show');
+  document.getElementById('quiz-summary').innerHTML = `<p data-speak="true"><strong>Quiz Complete!</strong></p><p style="margin-top: 12px;" data-speak="true">Reflexive verbs turn action inward—${pct >= 80 ? 'excellent understanding!' : 'keep practicing!'}</p>`;
+}
+
+function resetQuiz() {
+  currentQuestion = 0; score = 0; answered = {};
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-summary').classList.remove('show');
+  displayQuestion();
+}
+
+const canvas = document.getElementById('mirror-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawMirror() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const time = Date.now() / 1000;
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.2)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(centerX, 0);
+  ctx.lineTo(centerX, canvas.height);
+  ctx.stroke();
+
+  for (let i = 0; i < 12; i++) {
+    const angle = (time + i * 0.5) * 0.3;
+    const distance = 100 + Math.sin(angle) * 50;
+    const leftX = centerX - distance;
+    const leftY = centerY + Math.cos(angle * 2) * 80;
+    ctx.fillStyle = `rgba(232, 164, 74, ${0.6 - i * 0.04})`;
+    ctx.beginPath();
+    ctx.arc(leftX, leftY, 3 + Math.sin(angle) * 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    const rightX = centerX + distance;
+    const rightY = leftY;
+    ctx.fillStyle = `rgba(201, 169, 97, ${0.6 - i * 0.04})`;
+    ctx.beginPath();
+    ctx.arc(rightX, rightY, 3 + Math.sin(angle) * 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  requestAnimationFrame(drawMirror);
+}
+
+drawMirror();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(s => observer.observe(s));
+
+displayQuestion();
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+</body>
+</html>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">612 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(72%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:72%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 612 words across 70 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">119 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(82%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:82%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 119 patterns across 70 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 58: Ich habe gemacht (Perfekt)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --fire: #e8a44a; --fire-glow: #f4c67a; --ember: #c45d2c; --night: #0a0e1a; --night-mid: #131a2e;
+  --night-light: #1c2640; --star: #e8dcc8; --text: #d4cabb; --text-bright: #efe8db;
+  --german: #e8a44a; --chinese: #c49a6c; --english: #8a9bae; --pie: #9b8ec4; --perfekt: #b4c9b8;
+}
+html { scroll-behavior: smooth; background: var(--night); }
+body {
+  background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+  background-attachment: fixed; color: var(--text); font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem; line-height: 1.85; overflow-x: hidden; -webkit-text-size-adjust: 100%; min-height: 100dvh;
+}
+#canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, var(--fire), var(--fire-glow));
+  width: 0%; z-index: 999; box-shadow: 0 0 20px rgba(232, 164, 74, 0.6); }
+.content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 60px 24px 120px; }
+.title-screen { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; text-align: center; padding: 40px 20px; }
+.title-screen .chapter-label { font-size: 0.9rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(212, 202, 187, 0.4); opacity: 0; animation: fadeUp 2s ease 0.2s forwards; margin-bottom: 0.5em; }
+.title-screen .chapter-number { font-size: 3.5rem; font-weight: 700; color: var(--fire);
+  opacity: 0; animation: fadeUp 2s ease 0.4s forwards; }
+.title-screen h1 { font-size: 3.2rem; font-weight: 500; color: var(--text-bright);
+  opacity: 0; animation: fadeUp 2s ease 0.7s forwards; margin-bottom: 0.5em; }
+.title-screen .subtitle { font-size: 1.3rem; font-weight: 300; font-style: italic; color: var(--perfekt);
+  opacity: 0; animation: fadeUp 2s ease 1.1s forwards; margin-bottom: 2em; }
+.scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3);
+  font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 3em; }
+.scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+.scene.visible { opacity: 1; transform: translateY(0); }
+.scene-marker { display: block; width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--fire), transparent); margin: 0 auto 40px; }
+.narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+.narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center;
+  font-style: italic; margin: 2em 0; }
+.narrative.small { font-size: 1.05rem; color: rgba(212, 202, 187, 0.6); line-height: 1.7; }
+.german-word { color: var(--german); font-weight: 600; cursor: pointer;
+  border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; position: relative; }
+.german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+.canvas-container { background: linear-gradient(135deg, rgba(26, 35, 55, 0.4), rgba(15, 20, 35, 0.4));
+  border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 24px; margin: 32px 0;
+  display: flex; justify-content: center; align-items: center; min-height: 400px; }
+canvas { display: block; width: 100%; max-width: 100%; height: auto; }
+.ety-card { background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 28px 32px; margin: 24px 0 32px;
+  max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.5s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+}
+.ety-card.open { max-height: 1200px; opacity: 1; }
+.ety-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.ety-card .word-main { font-size: 2rem; font-weight: 700; color: var(--german); }
+.ety-card .word-pron { font-size: 1rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+.ety-card .word-meaning { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 20px;
+  padding-bottom: 16px; border-bottom: 1px solid rgba(232, 164, 74, 0.1); }
+.bridge { display: flex; align-items: center; gap: 12px; margin: 10px 0; font-size: 1rem; flex-wrap: wrap; }
+.bridge-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em;
+  padding: 2px 8px; border-radius: 4px; font-family: 'Noto Serif', serif; min-width: 55px; text-align: center; }
+.bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+.bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+.bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+.bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+.bridge-word { font-size: 1.15rem; font-weight: 500; color: var(--text-bright); }
+.bridge-word.zh { font-family: 'Noto Sans SC', sans-serif; font-size: 1.5rem; }
+.bridge-note { font-size: 0.9rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+.ety-card .story { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232, 164, 74, 0.1);
+  font-size: 1rem; color: rgba(212, 202, 187, 0.75); line-height: 1.7; }
+.grammar-table { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 10px; padding: 24px; margin: 32px 0; overflow-x: auto; }
+.grammar-table table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+.grammar-table th, .grammar-table td { padding: 12px 16px; text-align: left;
+  border-bottom: 1px solid rgba(232, 164, 74, 0.1); color: var(--text); }
+.grammar-table th { background: rgba(232, 164, 74, 0.08); color: var(--fire); font-weight: 600;
+  text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; }
+.grammar-table tr:hover td { background: rgba(232, 164, 74, 0.05); }
+.divider { text-align: center; margin: 60px 0; color: rgba(232, 164, 74, 0.3); font-size: 1.5rem; letter-spacing: 0.5em; }
+.aside-box { background: rgba(180, 201, 184, 0.06); border-left: 2px solid rgba(180, 201, 184, 0.3);
+  padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  line-height: 1.7; color: rgba(212, 202, 187, 0.8); }
+.aside-box .aside-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--perfekt); margin-bottom: 8px; }
+.quiz-container { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.12); border-radius: 16px; padding: 40px 32px; margin: 60px 0; }
+.quiz-container h3 { font-size: 1.3rem; color: var(--text-bright); text-align: center;
+  margin-bottom: 32px; font-weight: 500; }
+.quiz-question { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.08);
+  border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+.quiz-question.hidden { display: none; }
+.quiz-question .q-text { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 16px; font-weight: 500; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2);
+  color: var(--text); padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif; font-size: 1rem; text-align: left; }
+.quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+.quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+.quiz-nav { display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+.quiz-nav button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25);
+  color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1rem; padding: 12px 28px;
+  border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+.quiz-score { text-align: center; font-size: 1.3rem; color: var(--fire-glow); margin: 24px 0; font-weight: 500; }
+.quiz-reset { text-align: center; }
+.quiz-reset button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25);
+  color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+  padding: 12px 32px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.quiz-reset button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+.post-quiz-summary { background: rgba(180, 201, 184, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3);
+  padding: 24px 28px; margin: 24px 0; border-radius: 0 8px 8px 0; font-size: 1rem;
+  line-height: 1.7; color: rgba(212, 202, 187, 0.8); display: none; }
+.post-quiz-summary.show { display: block; }
+.collected-words { display: none; margin-top: 40px; padding-top: 40px;
+  border-top: 1px solid rgba(232, 164, 74, 0.2); }
+.collected-words.show { display: block; }
+.collected-word { background: rgba(180, 201, 184, 0.08); border: 1px solid rgba(180, 201, 184, 0.2);
+  border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; opacity: 0; transform: translateX(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease; }
+.collected-word.show { opacity: 1; transform: translateX(0); }
+.cw-german { font-size: 1.3rem; font-weight: 600; color: var(--german); }
+.cw-english { font-size: 1rem; color: var(--english); margin-left: 12px; }
+.chapter-end { text-align: center; margin: 80px 0 40px; padding-top: 40px;
+  border-top: 1px solid rgba(232, 164, 74, 0.15); color: rgba(212, 202, 187, 0.5); }
+.next-chapter { text-align: center; margin-top: 40px; font-size: 1.15rem; color: var(--fire); }
+.example-sentence { background: rgba(232, 164, 74, 0.05); border-left: 3px solid var(--fire);
+  padding: 16px 20px; margin: 16px 0; font-size: 1.1rem; color: var(--text-bright); font-style: italic; }
+.example-translation { padding-left: 20px; color: rgba(212, 202, 187, 0.7); font-size: 1rem;
+  font-style: normal; margin-top: 6px; }
+.content-section { margin-bottom: 48px; }
+.content-section h2 { font-size: 1.8rem; color: var(--fire); margin-bottom: 24px;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(232, 164, 74, 0.2); }
+.code-block { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 8px; padding: 16px 20px; margin: 16px 0; font-family: 'Courier New', monospace;
+  font-size: 0.95rem; color: var(--text); overflow-x: auto; }
+@media (max-width: 768px) {
+  .content { padding: 60px 24px; }
+  .title-screen h1 { font-size: 2rem; }
+  .title-screen .subtitle { font-size: 1rem; }
+  .canvas-container { min-height: 300px; }
+}
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div class="progress-bar" id="progressBar"></div>
+<canvas id="canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label">Chapter 58</div>
+    <div class="chapter-number">58</div>
+    <h1>Ich habe gemacht</h1>
+    <div class="subtitle">The Perfekt: Conversational Past Tense</div>
+    <div class="scroll-hint"><span>↓</span> Scroll to begin</div>
+  </div>
+
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+    <div class="narrative">
+      In German, the primary way to talk about completed actions in conversation is the Perfekt (literally "perfect" or "completed"). Unlike English, which uses both the simple past ("I made") and present perfect ("I have made") somewhat interchangeably, German has a clear distinction: the Perfekt (conversational past) is what Germans use every day in spoken language.
+    </div>
+    <div class="narrative">
+      The Perfekt is a compound tense made of two parts: an auxiliary verb (haben or sein) in present tense + the past participle of the main verb. The structure is simple, but the rules for formation and auxiliary selection require careful study.
+    </div>
+    <div class="narrative emphasis">
+      The Perfekt is formed: auxiliary verb (haben/sein) + past participle.
+    </div>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="perfektCanvas"></canvas>
+  </div>
+
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <div class="content-section">
+      <h2>The Structure: Auxiliary + Past Participle</h2>
+      <div class="narrative">
+        The Perfekt has two components: the present tense conjugation of haben (to have) or sein (to be), plus the past participle of the main verb. The auxiliary verb is conjugated; the participle stays the same:
+      </div>
+
+      <div class="example-sentence">
+        <strong>Ich habe das Buch gelesen.</strong>
+        <div class="example-translation">I have read the book. (I read the book.)</div>
+      </div>
+
+      <div class="narrative small">
+        Breaking it down: <strong>habe</strong> (present conjugation of haben, "I have") + <strong>gelesen</strong> (past participle of lesen, "read"). The auxiliary is conjugated based on the subject; the participle never changes.
+      </div>
+
+      <div class="example-sentence">
+        <strong>Du hast den Film gesehen.</strong>
+        <div class="example-translation">You have seen the film. (You saw the film.)</div>
+      </div>
+
+      <div class="example-sentence">
+        <strong>Er ist nach Hause gegangen.</strong>
+        <div class="example-translation">He has gone home. (He went home.)</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Regular Past Participles: The Ge- Prefix Pattern</h2>
+
+      <div class="narrative">
+        Regular (weak) verbs form their past participles with a predictable pattern: <strong>ge- + stem + -t</strong>. The stem is the infinitive without the -en ending:
+      </div>
+
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Infinitive</th>
+              <th>Stem</th>
+              <th>Ge- + Stem + -t</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>machen (to make)</td>
+              <td>mach</td>
+              <td><strong>gemacht</strong></td>
+              <td>Ich habe es gemacht.</td>
+            </tr>
+            <tr>
+              <td>arbeiten (to work)</td>
+              <td>arbeit</td>
+              <td><strong>gearbeitet</strong></td>
+              <td>Ich habe gearbeitet.</td>
+            </tr>
+            <tr>
+              <td>spielen (to play)</td>
+              <td>spiel</td>
+              <td><strong>gespielt</strong></td>
+              <td>Wir haben Fußball gespielt.</td>
+            </tr>
+            <tr>
+              <td>kaufen (to buy)</td>
+              <td>kauf</td>
+              <td><strong>gekauft</strong></td>
+              <td>Sie hat ein Kleid gekauft.</td>
+            </tr>
+            <tr>
+              <td>zeigen (to show)</td>
+              <td>zeig</td>
+              <td><strong>gezeigt</strong></td>
+              <td>Er hat mir das Foto gezeigt.</td>
+            </tr>
+            <tr>
+              <td>holen (to fetch)</td>
+              <td>hol</td>
+              <td><strong>geholt</strong></td>
+              <td>Ich habe Wasser geholt.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="narrative small">
+        The pattern is simple for regular verbs: drop -en, add ge- at the beginning and -t at the end. For verbs with stems ending in -t or -d (like arbeiten), add an extra -e before the -t to make it pronounceable: arbeiten → gearbeitet (not just "arbeit").
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Irregular Past Participles: Strong Verbs</h2>
+
+      <div class="narrative">
+        Irregular (strong) verbs change their stem vowel and end in -en instead of -t. These must be memorized because they don't follow the regular pattern. However, they all use the ge- prefix and -en ending:
+      </div>
+
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Infinitive</th>
+              <th>Stem Vowel Change</th>
+              <th>Ge- + Stem + -en</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>gehen (to go)</td>
+              <td>e → a</td>
+              <td><strong>gegangen</strong></td>
+              <td>Ich bin gegangen.</td>
+            </tr>
+            <tr>
+              <td>sehen (to see)</td>
+              <td>e → e</td>
+              <td><strong>gesehen</strong></td>
+              <td>Ich habe es gesehen.</td>
+            </tr>
+            <tr>
+              <td>sprechen (to speak)</td>
+              <td>e → o</td>
+              <td><strong>gesprochen</strong></td>
+              <td>Ich habe mit ihm gesprochen.</td>
+            </tr>
+            <tr>
+              <td>nehmen (to take)</td>
+              <td>e → o</td>
+              <td><strong>genommen</strong></td>
+              <td>Ich habe den Bus genommen.</td>
+            </tr>
+            <tr>
+              <td>trinken (to drink)</td>
+              <td>i → u</td>
+              <td><strong>getrunken</strong></td>
+              <td>Ich habe Wasser getrunken.</td>
+            </tr>
+            <tr>
+              <td>schreiben (to write)</td>
+              <td>e → ie</td>
+              <td><strong>geschrieben</strong></td>
+              <td>Ich habe einen Brief geschrieben.</td>
+            </tr>
+            <tr>
+              <td>finden (to find)</td>
+              <td>i → u</td>
+              <td><strong>gefunden</strong></td>
+              <td>Ich habe meine Schlüssel gefunden.</td>
+            </tr>
+            <tr>
+              <td>kommen (to come)</td>
+              <td>o → o</td>
+              <td><strong>gekommen</strong></td>
+              <td>Ich bin gekommen.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="narrative small">
+        Irregular verbs are the most frequently used verbs in German, so learning their past participles is essential. The good news: all irregular participles follow the ge-...-en pattern. The bad news: the vowel changes vary and must be memorized individually.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Exceptions to the Ge- Prefix Rule</h2>
+
+      <div class="narrative">
+        Some verbs do NOT take the ge- prefix. These are:
+      </div>
+
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Example Verb</th>
+              <th>Participle</th>
+              <th>Example Sentence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Inseparable Prefix (be-, er-, ver-, zer-, ent-, etc.)</td>
+              <td>verstehen (to understand)</td>
+              <td><strong>verstanden</strong></td>
+              <td>Ich habe es verstanden.</td>
+            </tr>
+            <tr>
+              <td>Inseparable Prefix</td>
+              <td>bekommen (to get)</td>
+              <td><strong>bekommen</strong></td>
+              <td>Ich habe ein Geschenk bekommen.</td>
+            </tr>
+            <tr>
+              <td>Inseparable Prefix</td>
+              <td>erinnern (to remember)</td>
+              <td><strong>erinnert</strong></td>
+              <td>Ich habe mich erinnert.</td>
+            </tr>
+            <tr>
+              <td>-ieren verbs (French/Latin origin)</td>
+              <td>studieren (to study)</td>
+              <td><strong>studiert</strong></td>
+              <td>Ich habe Deutsch studiert.</td>
+            </tr>
+            <tr>
+              <td>-ieren verbs</td>
+              <td>telefonieren (to telephone)</td>
+              <td><strong>telefoniert</strong></td>
+              <td>Ich habe mit dir telefoniert.</td>
+            </tr>
+            <tr>
+              <td>-ieren verbs</td>
+              <td>organisieren (to organize)</td>
+              <td><strong>organisiert</strong></td>
+              <td>Ich habe die Party organisiert.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="narrative small">
+        Verbs with inseparable prefixes (be-, er-, ver-, zer-, ent-) do not add ge- because the prefix is inseparable (doesn't come off). Verbs ending in -ieren (usually borrowed from French/Latin) also omit the ge- prefix. Both still use regular or irregular endings (–t for regular, vowel change + -en for irregular).
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Haben vs. Sein: Which Auxiliary Verb?</h2>
+
+      <div class="narrative">
+        This is crucial: most verbs use <strong>haben</strong>, but a special group uses <strong>sein</strong>. The rule is based on semantics, not the verb itself:
+      </div>
+
+      <div class="aside-box">
+        <div class="aside-title">The Sein Rule</div>
+        <div>Use <strong>sein</strong> if the verb indicates: (1) movement from one place to another (gehen, fahren, fliegen), or (2) a change of state (werden, sterben, aufwachen). Use <strong>haben</strong> for everything else.</div>
+      </div>
+
+      <div class="grammar-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Sein (Movement/Change)</th>
+              <th>Example</th>
+              <th>Haben (Everything Else)</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>gehen</strong> (to go)</td>
+              <td>Ich bin gegangen.</td>
+              <td><strong>machen</strong> (to make)</td>
+              <td>Ich habe es gemacht.</td>
+            </tr>
+            <tr>
+              <td><strong>fahren</strong> (to drive)</td>
+              <td>Ich bin gefahren.</td>
+              <td><strong>spielen</strong> (to play)</td>
+              <td>Ich habe gespielt.</td>
+            </tr>
+            <tr>
+              <td><strong>fliegen</strong> (to fly)</td>
+              <td>Ich bin geflogen.</td>
+              <td><strong>singen</strong> (to sing)</td>
+              <td>Ich habe gesungen.</td>
+            </tr>
+            <tr>
+              <td><strong>kommen</strong> (to come)</td>
+              <td>Ich bin gekommen.</td>
+              <td><strong>essen</strong> (to eat)</td>
+              <td>Ich habe gegessen.</td>
+            </tr>
+            <tr>
+              <td><strong>laufen</strong> (to run)</td>
+              <td>Ich bin gelaufen.</td>
+              <td><strong>trinken</strong> (to drink)</td>
+              <td>Ich habe getrunken.</td>
+            </tr>
+            <tr>
+              <td><strong>werden</strong> (to become)</td>
+              <td>Ich bin Arzt geworden.</td>
+              <td><strong>sehen</strong> (to see)</td>
+              <td>Ich habe es gesehen.</td>
+            </tr>
+            <tr>
+              <td><strong>sterben</strong> (to die)</td>
+              <td>Er ist gestorben.</td>
+              <td><strong>schreiben</strong> (to write)</td>
+              <td>Ich habe einen Brief geschrieben.</td>
+            </tr>
+            <tr>
+              <td><strong>aufwachen</strong> (to wake up)</td>
+              <td>Ich bin aufgewacht.</td>
+              <td><strong>haben</strong> (to have)</td>
+              <td>Ich habe Hunger gehabt.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="narrative small">
+        The most important sein verbs are: sein itself (bin gewesen), gehen, kommen, fahren, fliegen, laufen, and the modal-adjacent verbs like werden, sterben, aufwachen. Everything else uses haben.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Full Conjugation Examples</h2>
+
+      <div class="narrative">
+        Here is the complete conjugation of haben and sein in Perfekt with example verbs:
+      </div>
+
+      <div class="grammar-table" style="margin-top: 24px;">
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2"><strong>Perfekt with HABEN:</strong> machen (to make)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ich</td>
+              <td>habe gemacht</td>
+            </tr>
+            <tr>
+              <td>Du</td>
+              <td>hast gemacht</td>
+            </tr>
+            <tr>
+              <td>Er/Sie/Es</td>
+              <td>hat gemacht</td>
+            </tr>
+            <tr>
+              <td>Wir</td>
+              <td>haben gemacht</td>
+            </tr>
+            <tr>
+              <td>Ihr</td>
+              <td>habt gemacht</td>
+            </tr>
+            <tr>
+              <td>Sie (formal)/Sie (they)</td>
+              <td>haben gemacht</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grammar-table" style="margin-top: 24px;">
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2"><strong>Perfekt with SEIN:</strong> gehen (to go)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ich</td>
+              <td>bin gegangen</td>
+            </tr>
+            <tr>
+              <td>Du</td>
+              <td>bist gegangen</td>
+            </tr>
+            <tr>
+              <td>Er/Sie/Es</td>
+              <td>ist gegangen</td>
+            </tr>
+            <tr>
+              <td>Wir</td>
+              <td>sind gegangen</td>
+            </tr>
+            <tr>
+              <td>Ihr</td>
+              <td>seid gegangen</td>
+            </tr>
+            <tr>
+              <td>Sie (formal)/Sie (they)</td>
+              <td>sind gegangen</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="narrative small">
+        Notice: the auxiliary verb (haben/sein) conjugates exactly as it does in present tense. The participle never changes. This is the fundamental structure: (conjugated auxiliary) + (invariant participle).
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Word Order in Complex Sentences</h2>
+
+      <div class="narrative">
+        In German, the past participle typically comes at the end of the sentence, especially in subordinate clauses:
+      </div>
+
+      <div class="example-sentence">
+        <strong>Ich habe das Buch gelesen, das du mir empfohlen hast.</strong>
+        <div class="example-translation">I have read the book that you recommended to me.</div>
+      </div>
+
+      <div class="narrative small">
+        The participle "empfohlen" (recommended) comes at the very end of the subordinate clause. In main clauses, the auxiliary comes earlier: "Ich habe ... gelesen" with the participle before the period.
+      </div>
+    </div>
+
+    <div class="divider">❋</div>
+
+    <div class="content-section">
+      <h2>Etymology & Linguistic Background</h2>
+
+      <div class="ety-card" id="card-perfekt">
+        <div class="word-header">
+          <div class="word-main">Perfekt</div>
+          <div class="word-pron">per-FAYK-t</div>
+        </div>
+        <div class="word-meaning">The conversational past tense formed with auxiliary + participle</div>
+        <div class="bridge">
+          <span class="bridge-label pie">PIE</span>
+          <span class="bridge-word">*per- (forward) + *-fect (done/made)</span>
+          <span class="bridge-note">Latin perfectus = "completed"</span>
+        </div>
+        <div class="bridge">
+          <span class="bridge-label deu">German</span>
+          <span class="bridge-word">Perfekt = auxiliary + past participle</span>
+          <span class="bridge-note">evolved from Latin perfect tense</span>
+        </div>
+        <div class="bridge">
+          <span class="bridge-label eng">English</span>
+          <span class="bridge-word">Present Perfect = "have" + past participle</span>
+          <span class="bridge-note">identical structure</span>
+        </div>
+        <div class="story">
+          The Perfekt name comes from Latin "perfectus" (completed, perfect). German, English, and the Romance languages inherited this structure from Latin: auxiliary verb + past participle. What's remarkable is that German preserved this tense as the primary conversational past, while English uses both simple past and present perfect. German uses the Perfekt for everyday speech; the simple past (Präteritum) is reserved for narrative or formal written German.
+        </div>
+      </div>
+
+      <div class="ety-card" id="card-gemacht">
+        <div class="word-header">
+          <div class="word-main">Gemacht</div>
+          <div class="word-pron">guh-MAHKT</div>
+        </div>
+        <div class="word-meaning">Made, done (past participle of machen)</div>
+        <div class="bridge">
+          <span class="bridge-label pie">PIE</span>
+          <span class="bridge-word">*mag- (to knead, to make)</span>
+          <span class="bridge-note">root meaning "to shape/form"</span>
+        </div>
+        <div class="bridge">
+          <span class="bridge-label deu">German</span>
+          <span class="bridge-word">machen (infinitive) → gemacht (past participle)</span>
+          <span class="bridge-note">ge- + mach + -t (regular formation)</span>
+        </div>
+        <div class="bridge">
+          <span class="bridge-label eng">English</span>
+          <span class="bridge-word">make → made</span>
+          <span class="bridge-note">irregular in English; cognate roots</span>
+        </div>
+        <div class="story">
+          "Machen" comes from PIE *mag-, related to English "make". Both evolved from a root meaning "to shape" or "to knead". German treats it as regular (gemacht, following the ge-...-t pattern), while English has gone irregular (made). Both words are cognates from the same ancient source, but their modern formations diverged as each language evolved differently.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="scene" id="scene-quiz">
+    <div class="divider">❋</div>
+
+    <div class="quiz-container">
+      <h3>Master Perfekt: 12-Question Quiz</h3>
+      <p style="text-align: center; color: rgba(212, 202, 187, 0.6); margin-bottom: 32px; font-size: 1rem;">
+        The Perfekt is how Germans speak about the past. Reach 80% to unlock mastery.
+      </p>
+      <div id="quiz-questions"></div>
+      <div id="quiz-score"></div>
+      <div id="post-quiz-summary" class="post-quiz-summary"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+    </div>
+
+    <div class="scene" id="scene-collection">
+      
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">516 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(60%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:60%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 516 words across 58 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">107 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(73%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:73%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 107 patterns and grammar rules across 58 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<div class="collected-words" id="word-collection-box">
+        <h2 style="text-align: center; color: var(--fire); margin-bottom: 24px;">Your Perfekt Mastery Collection</h2>
+        <div class="collected-word" data-delay="0">
+          <span class="cw-german">Haben</span>
+          <span class="cw-english">have (auxiliary for most verbs)</span>
+        </div>
+        <div class="collected-word" data-delay="100">
+          <span class="cw-german">Sein</span>
+          <span class="cw-english">be (auxiliary for motion/change)</span>
+        </div>
+        <div class="collected-word" data-delay="200">
+          <span class="cw-german">Gemacht</span>
+          <span class="cw-english">made (past participle regular)</span>
+        </div>
+        <div class="collected-word" data-delay="300">
+          <span class="cw-german">Gegangen</span>
+          <span class="cw-english">gone (past participle irregular)</span>
+        </div>
+        <div class="collected-word" data-delay="400">
+          <span class="cw-german">Gesehen</span>
+          <span class="cw-english">seen (past participle irregular)</span>
+        </div>
+        <div class="collected-word" data-delay="500">
+          <span class="cw-german">Ge- + Stem + -t</span>
+          <span class="cw-english">Regular past participle pattern</span>
+        </div>
+        <div class="collected-word" data-delay="600">
+          <span class="cw-german">Ge- + Stem (vowel change) + -en</span>
+          <span class="cw-english">Irregular past participle pattern</span>
+        </div>
+        <div class="collected-word" data-delay="700">
+          <span class="cw-german">Inseparable Prefixes</span>
+          <span class="cw-english">No ge- prefix (be-, er-, ver-, etc.)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" id="scene-end">
+    <div class="divider">✦</div>
+    <div class="chapter-end">
+      <p>You have mastered the Perfekt — the primary way Germans speak about the past.</p>
+      <p style="margin-top: 16px; color: rgba(212, 202, 187, 0.4);">Next, learn about the future tense and probability.</p>
+      <div class="next-chapter" style="margin-top: 32px;">→ Continue to Chapter 61: Ich werde machen (Futur)</div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter57.html" class="nav-btn">← Chapter 57</a>
+    <a href="chapter59.html" class="nav-btn next">Chapter 59 →</a>
+  </div>
+
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What two parts does the Perfekt consist of?",
+    options: ["subject + verb", "auxiliary + past participle", "prefix + stem", "verb + adverb"],
+    correct: 1,
+    explanation: "Perfekt = auxiliary verb (haben/sein) + past participle. Example: habe gemacht (have made)."
+  },
+  {
+    question: "What is the past participle of 'machen'?",
+    options: ["machte", "gemacht", "machen", "machend"],
+    correct: 1,
+    explanation: "'Machen' is regular, so: ge- + mach + -t = gemacht."
+  },
+  {
+    question: "Which auxiliary does 'gehen' use in Perfekt?",
+    options: ["haben", "sein", "will", "werde"],
+    correct: 1,
+    explanation: "'Gehen' indicates movement → sein. 'Ich bin gegangen' (I went)."
+  },
+  {
+    question: "Complete: 'Ich ___ das Buch gelesen.'",
+    options: ["bin", "habe", "werde", "kann"],
+    correct: 1,
+    explanation: "'Lesen' (to read) indicates an action → haben. 'Ich habe gelesen' (I have read)."
+  },
+  {
+    question: "What is the past participle of 'sehen'?",
+    options: ["gesehen", "seht", "gesah", "sah"],
+    correct: 0,
+    explanation: "'Sehen' is irregular: e → e (no vowel change). Ge- + seh + -en = gesehen."
+  },
+  {
+    question: "What prefix rule do verbs like 'verstehen' break?",
+    options: ["they add -en", "they don't add ge-", "they add double ge-", "they add no prefix"],
+    correct: 1,
+    explanation: "Inseparable prefix verbs (be-, er-, ver-) don't add ge-. 'Verstehen' → verstanden (not geverstanden)."
+  },
+  {
+    question: "Which verb uses 'sein' in Perfekt?",
+    options: ["spielen (to play)", "fahren (to drive)", "singen (to sing)", "schlafen (to sleep)"],
+    correct: 1,
+    explanation: "'Fahren' indicates movement → sein. 'Ich bin gefahren' (I drove)."
+  },
+  {
+    question: "What is the regular past participle pattern?",
+    options: ["ge- + stem + -en", "ge- + stem + -t", "prefix + stem", "stem + -ed"],
+    correct: 1,
+    explanation: "Regular verbs: ge- + stem + -t. Examples: gemacht, gespielt, gekauft."
+  },
+  {
+    question: "Conjugate 'ich habe' for 'du':",
+    options: ["du habe", "du haben", "du hast", "du hattest"],
+    correct: 2,
+    explanation: "'Du' with 'haben' = du hast. The auxiliary conjugates; the participle doesn't change."
+  },
+  {
+    question: "What is the past participle of the irregular verb 'kommen'?",
+    options: ["gekom", "kommt", "gekommen", "kommet"],
+    correct: 2,
+    explanation: "'Kommen' is irregular: o → o. Ge- + komm + -en = gekommen."
+  },
+  {
+    question: "Which of these uses 'sein' in Perfekt?",
+    options: ["schreiben (to write)", "schlafen (to sleep)", "sterben (to die)", "singen (to sing)"],
+    correct: 2,
+    explanation: "'Sterben' indicates a change of state (death) → sein. 'Er ist gestorben' (He died)."
+  },
+  {
+    question: "What do -ieren verbs NOT add to the past participle?",
+    options: ["the -en ending", "the ge- prefix", "a vowel change", "the infinitive ending"],
+    correct: 1,
+    explanation: "-ieren verbs (studieren, telefonieren) don't add ge-. 'Ich habe studiert' (not gestudiert)."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = currentQuestion === 0;
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) score++;
+  });
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">Perfekt mastered! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80%.</p>';
+    document.getElementById('quiz-reset').innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+  document.getElementById('quiz-reset').innerHTML = '';
+  document.getElementById('word-collection-box').classList.remove('show');
+  initializeQuiz();
+  document.getElementById('q-0').classList.remove('hidden');
+}
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+      }
+    }
+  });
+});
+
+function resizeCanvas() {
+  const canvas = document.getElementById('perfektCanvas');
+  const container = canvas.parentElement;
+  canvas.width = Math.min(container.clientWidth - 48, 750);
+  canvas.height = 380;
+  drawPerfektAnimation();
+}
+
+function drawPerfektAnimation() {
+  const canvas = document.getElementById('perfektCanvas');
+  const ctx = canvas.getContext('2d');
+  const time = (Date.now() % 3000) / 3000;
+
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.2)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const circleX = canvas.width / 2;
+  const startY = canvas.height * 0.2;
+  const endY = canvas.height * 0.8;
+
+  // Draw timeline
+  ctx.strokeStyle = 'rgba(212, 202, 187, 0.2)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(circleX, startY);
+  ctx.lineTo(circleX, endY);
+  ctx.stroke();
+
+  // Draw completed circle
+  ctx.fillStyle = '#b4c9b8';
+  ctx.beginPath();
+  ctx.arc(circleX, startY + (endY - startY) * time, 15, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Labels
+  ctx.fillStyle = 'rgba(212, 202, 187, 0.6)';
+  ctx.font = '14px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('Now', circleX + 30, canvas.height / 2 + 5);
+  ctx.font = 'italic 12px Arial';
+  ctx.fillText('(Looking back at past)', circleX + 30, canvas.height / 2 + 25);
+
+  // Past indicator
+  ctx.font = '14px Arial';
+  ctx.fillStyle = 'rgba(180, 201, 184, 0.5)';
+  ctx.fillText('Past Action Completed', circleX - 150, startY + (endY - startY) * time + 5);
+
+  // Arrow showing direction
+  ctx.strokeStyle = 'rgba(180, 201, 184, 0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(circleX - 60, startY + (endY - startY) * time);
+  ctx.lineTo(circleX - 20, startY + (endY - startY) * time);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+initializeQuiz();
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

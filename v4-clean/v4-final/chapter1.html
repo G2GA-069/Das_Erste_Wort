@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 1</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0e1a 0%, #1a1410 40%, #8b5a2b 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- STARFIELD CANVAS --- */
+  #starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- GRIMM BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:10px 14px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="starfield"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter One</div>
+    <h1>Das erste Wort</h1>
+    <div class="subtitle">The First Word</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE STEPPE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Six thousand years ago, on a vast grassland stretching from the Black Sea to the Ural Mountains, a people gathered around a fire.
+    </p>
+
+    <p class="narrative">
+      They had no cities. No writing. No name for themselves that history would remember. They herded cattle across the endless steppe, watched the same stars we watch tonight, drank water from the same rivers that still flow. They were nobody special — just a few thousand people, living ordinary lives in an extraordinary landscape.
+    </p>
+
+    <p class="narrative">
+      And yet, the words they spoke around that fire would one day become <em>English</em>. And <em>German</em>. And Latin, and Greek, and Hindi, and Persian, and dozens of other languages spoken by half the world's population today. Every word you have ever read in English — every sentence on this page — carries the echo of their voices.
+    </p>
+
+    <p class="narrative">
+      Linguists call their language <em>Proto-Indo-European</em>. They call these people the Proto-Indo-Europeans. But we don't need to remember the label. We need to remember the fire. Because everything begins there.
+    </p>
+
+    <p class="narrative emphasis">
+      And the very first word begins with a child.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 2: MUTTER ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A baby, held against its mother's chest. Feeding. The infant's lips press together, vibrate, and release the only consonant a human mouth can produce while nursing:
+    </p>
+
+    <p class="narrative emphasis">
+      "Mmmmm—"
+    </p>
+
+    <p class="narrative">
+      Then the mouth opens. The simplest vowel. The sound of breath itself:
+    </p>
+
+    <p class="narrative emphasis">
+      "—aah."
+    </p>
+
+    <p class="narrative">
+      <em>Ma.</em>
+    </p>
+
+    <p class="narrative">
+      This is not a German word. It is not an English word. It is not a Chinese word. It is a <em>human</em> word — perhaps the oldest sound in the history of our species. And it means the same thing in almost every language on earth.
+    </p>
+
+    <p class="narrative">
+      In English: <em>mama, mother.</em><br>
+      In German: <span class="german-word" data-card="mutter">Mutter.</span><br>
+      In French: <em>mère.</em> In Latin: <em>māter.</em> In Sanskrit: <em>mātṛ.</em> In Russian: <em>мать.</em>
+    </p>
+
+    <p class="narrative">
+      And in Mandarin Chinese — a language that shares <em>no</em> common ancestor with any of these:
+    </p>
+
+    <p class="narrative" style="text-align: center; margin: 24px 0;">
+      <span class="char-display">
+        <span class="char">妈妈</span>
+        <span class="pinyin">māma</span>
+      </span>
+    </p>
+
+    <p class="narrative">
+      The same sound. The same meaning. Across every continent, every civilization, every millennium. Not because these languages borrowed from each other — but because every baby on earth is built the same way. The lips press together during nursing. The "m" sound is born from the body itself.
+    </p>
+
+    <p class="narrative">
+      This is your first German word. And you never had to learn it, because you already knew it — six thousand years before you were born.
+    </p>
+
+    <!-- MUTTER etymology card -->
+    <div class="ety-card" id="card-mutter">
+      <div class="word-header">
+        <span class="word-main">Mutter</span>
+        <span class="word-pron">/ˈmʊtɐ/</span>
+      </div>
+      <div class="word-meaning">mother — the person who gave you life, and the first word you gave back</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*méh₂tēr</span>
+        <span class="bridge-note">— the reconstructed root, ~4000 BCE</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">mother</span>
+        <span class="bridge-note">— Old English "mōdor"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Mutter</span>
+        <span class="bridge-note">— Old High German "muoter"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">母 / 妈</span>
+        <span class="bridge-note">— mǔ (formal) / mā (familiar) — no common ancestor, same human instinct</span>
+      </div>
+      <div class="story">
+        The PIE root *méh₂tēr gave birth (quite literally) to an astonishing family of words across dozens of languages: Latin <em>māter</em> → French <em>mère</em>, Spanish <em>madre</em>, Italian <em>madre</em>. Also English <em>maternal</em>, <em>matrix</em>, <em>matter</em> (yes — "matter" originally meant "the substance from which things are born"). German kept the Germanic path: *mōdēr → muoter → Mutter. English took the same path but softened the 't' to 'th': mother. Two siblings, separated by the North Sea.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: FEUER & WASSER ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The fire crackles. It has been burning since before sunset, fed with dried grass and cattle dung — the fuel of the steppe, where trees are scarce. The flames throw shadows across the faces of the family. In the darkness beyond, wolves call. But here, within the circle of light, there is warmth. There is safety. There is home.
+    </p>
+
+    <p class="narrative">
+      The Proto-Indo-Europeans had a word for this fire: something like <em>*péh₂wr̥</em>. Say it aloud — <em>pah-wur</em> — and listen. Over thousands of years, that sound shifted. The "p" softened to an "f" (a change so regular that linguists named it a <em>law</em>). The word became the Germanic <em>*fūr</em>, which became:
+    </p>
+
+    <p class="narrative">
+      In English: <em>fire.</em><br>
+      In German: <span class="german-word" data-card="feuer">Feuer.</span>
+    </p>
+
+    <p class="narrative">
+      Two words that look different on the page — but say them aloud. <em>Fire. Feuer.</em> You can hear the kinship. They are the same ancient word, wearing different clothes after six millennia of travel.
+    </p>
+
+    <!-- FEUER etymology card -->
+    <div class="ety-card" id="card-feuer">
+      <div class="word-header">
+        <span class="word-main">Feuer</span>
+        <span class="word-pron">/ˈfɔʏɐ/</span>
+      </div>
+      <div class="word-meaning">fire — the element that made civilization possible</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*péh₂wr̥</span>
+        <span class="bridge-note">— also gave Greek "pyr" → English "pyre", "pyro-"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">fire</span>
+        <span class="bridge-note">— Old English "fȳr"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Feuer</span>
+        <span class="bridge-note">— the "eu" gives it that warm, round sound</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">火</span>
+        <span class="bridge-note">— huǒ — the character itself depicts flames rising from a base</span>
+      </div>
+      <div class="story">
+        Notice something beautiful: the PIE root *péh₂wr̥ took two separate paths into English. The Germanic path gave us "fire." But the Greek path — <em>pyr</em> — snuck into English through Latin, giving us "pyre" (a funeral fire), "pyromaniac," and "pyrotechnics." So English carries two versions of the same ancient word, one from its Germanic mother, one adopted from its Greek cousin. German kept only the Germanic version: Feuer. One word, one clear line of descent. German is often more honest about its ancestry than English is.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Now look east, to China. The Chinese word for fire is 火 — <em>huǒ</em>. It shares no ancestry with <em>Feuer</em> or <em>fire</em>. But look at the character:
+    </p>
+
+    <p class="narrative" style="text-align: center; margin: 24px 0;">
+      <span class="char-display">
+        <span class="char" style="font-size: 3rem;">火</span>
+        <span class="pinyin">huǒ</span>
+      </span>
+    </p>
+
+    <p class="narrative">
+      It is a picture of flames. Three thousand years ago, when this character was first scratched into oracle bones, it looked even more like fire — a person with arms raised, tongues of flame on either side. Where the Proto-Indo-Europeans captured fire in <em>sound</em>, the Chinese captured it in <em>image</em>. Two civilizations, the same element, two completely different strategies for holding the world in language.
+    </p>
+
+    <p class="narrative">
+      This is the deep difference you will encounter again and again on this journey: Indo-European languages encode meaning in <em>sounds that shift</em>. Chinese encodes meaning in <em>images that endure</em>. The character 火 has looked essentially the same for over three millennia. The word <em>*péh₂wr̥</em> has shapeshifted into a hundred different forms. Same fire. Different philosophies of memory.
+    </p>
+
+    <div class="divider">· · ·</div>
+
+    <p class="narrative">
+      A woman lifts a clay vessel and pours. The liquid catches the firelight.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wasser">Wasser.</span>
+    </p>
+
+    <p class="narrative">
+      Say it. Now say "water." You barely changed anything. The 'W' is the same. The 'a' is the same. Only the middle consonant has shifted — 't' in English, 'ss' in German. These are not similar words. They are the <em>same</em> word, spoken by the same people, split apart when some went to the British Isles and others stayed on the continent.
+    </p>
+
+    <!-- WASSER etymology card -->
+    <div class="ety-card" id="card-wasser">
+      <div class="word-header">
+        <span class="word-main">Wasser</span>
+        <span class="word-pron">/ˈvasɐ/</span>
+      </div>
+      <div class="word-meaning">water — the substance of life itself</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wódr̥</span>
+        <span class="bridge-note">— also gave us "vodka" (Russian, "little water")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">water</span>
+        <span class="bridge-note">— Old English "wæter"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wasser</span>
+        <span class="bridge-note">— the 't' → 'ss' shift is a pattern you'll see again</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">水</span>
+        <span class="bridge-note">— shuǐ — the character depicts flowing streams of water</span>
+      </div>
+      <div class="story">
+        The PIE root *wódr̥ is one of the oldest reconstructed words in human language. From it came not only "water" and "Wasser" but also Russian "вода" (voda) → "vodka" (literally "little water"), Greek "hydor" → English "hydro-", "hydraulic", "dehydrate." Again, English carries two versions: the plain Germanic "water" and the learned Greek "hydro-." And here's something remarkable: the character 水 (shuǐ), in its ancient oracle bone form, showed vertical lines with droplets — literally a drawing of water flowing. Sound and image, independently arriving at the same truth.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        Now — you've seen how close English and German are. The fire is lit, the water is poured.<br><br>
+        Can you guess what <strong style="color: var(--german);">Nacht</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: you say something very similar every evening.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">naked</button>
+        <button class="guess-btn" onclick="guess(this, true)">night</button>
+        <button class="guess-btn" onclick="guess(this, false)">nothing</button>
+        <button class="guess-btn" onclick="guess(this, false)">next</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 4: NACHT & STERN ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="nacht">Nacht.</span> Night. The same word, the same darkness, the same ancient sky.
+    </p>
+
+    <p class="narrative">
+      Look at the English spelling: n-i-g-h-t. That "gh" in the middle — why is it there? English speakers today don't pronounce it. But Germans do. Say <em>Nacht</em> — that "ch" is a soft, throaty sound, like a cat's purr or a whisper of wind. A thousand years ago, English speakers made that same sound. "Night" was pronounced something like "neecht." Over the centuries, the English stopped making the sound but — stubbornly — kept the letters. German kept both the sound and the spelling.
+    </p>
+
+    <p class="narrative">
+      So every time you see a silent "gh" in English — night, light, daughter, knight, thought — you are looking at a <em>ghost</em>. A sound that died in English but still lives, breathing, in German: Nacht, Licht, Tochter, Knecht, Gedanke.
+    </p>
+
+    <!-- NACHT etymology card -->
+    <div class="ety-card" id="card-nacht">
+      <div class="word-header">
+        <span class="word-main">Nacht</span>
+        <span class="word-pron">/naxt/</span>
+      </div>
+      <div class="word-meaning">night — when the world goes quiet and the stars speak</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*nókʷts</span>
+        <span class="bridge-note">— one of the most stable words in all of Indo-European</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">night</span>
+        <span class="bridge-note">— Old English "niht" — the "gh" was once pronounced</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Nacht</span>
+        <span class="bridge-note">— German still pronounces the "ch" that English abandoned</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">夜</span>
+        <span class="bridge-note">— yè — the character contains elements suggesting a person under the moon</span>
+      </div>
+      <div class="story">
+        From *nókʷts came Latin "nox" (giving English "nocturnal," "equinox"), Greek "nyx" (giving "nyctalopia" — night blindness), and the Germanic forms. This is one of those words so ancient, so fundamental, that it barely changed across six thousand years. When you say "Nacht," you are saying essentially the same syllable that the first speakers of this language said, watching the same stars descend over the same steppe. Few words in any language can claim such unbroken continuity.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Night falls. The sky opens. And there, above the steppe — the same constellations that Veronica sees from her window, the same ones the ancient Chinese astronomers mapped with meticulous precision — the stars appear.
+    </p>
+
+    <p class="narrative">
+      In German: <span class="german-word" data-card="stern">Stern.</span><br>
+      In English: <em>star.</em>
+    </p>
+
+    <p class="narrative">
+      Same root. Same sky. The Proto-Indo-European word was something like <em>*h₂stḗr</em> — which also gave Latin <em>stella</em> (→ English "stellar," "constellation"), and Greek <em>astḗr</em> (→ "astronomy," "asterisk," "disaster" — literally "bad star," because the ancients believed catastrophes were written in the stars).
+    </p>
+
+    <!-- STERN etymology card -->
+    <div class="ety-card" id="card-stern">
+      <div class="word-header">
+        <span class="word-main">Stern</span>
+        <span class="word-pron">/ʃtɛʁn/</span>
+      </div>
+      <div class="word-meaning">star — a light burning in the darkness, millions of years old</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₂stḗr</span>
+        <span class="bridge-note">— root of one of the largest word families in IE languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">star</span>
+        <span class="bridge-note">— Old English "steorra"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stern</span>
+        <span class="bridge-note">— note: "st" in German is pronounced "sht" at the start of words</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">星</span>
+        <span class="bridge-note">— xīng — contains 日 (sun/light) at the top: a star is a distant sun</span>
+      </div>
+      <div class="story">
+        "Disaster" comes from Latin/Greek <em>dis-</em> (bad) + <em>astrum</em> (star). A disaster was literally an event caused by an unfavorable alignment of stars. "Asterisk" means "little star" — look at the symbol * and you'll see it. German "Stern" reveals something about German pronunciation: when you see "st" or "sp" at the beginning of a German word, pronounce it "sht" or "shp." So "Stern" sounds like "shtern," "Sprache" (language) sounds like "shprache." This is one of those small keys that unlocks correct German pronunciation across hundreds of words.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And in Chinese: <span class="char-display"><span class="char">星</span><span class="pinyin">xīng</span></span>
+    </p>
+
+    <p class="narrative">
+      Look at the character closely. At the top sits 日 — which means <em>sun</em>. A star, the Chinese decided three thousand years ago, is essentially a distant sun. They were right. It took European science until the sixteenth century to reach the same conclusion. The Chinese character knew it all along.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: FAMILY ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Around the fire, the family settles. The father mends a leather strap. A brother sharpens a blade. A sister hums a song whose melody is lost to us forever, but whose <em>words</em> — or at least their descendants — we can still speak.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="vater">Vater.</span> Father.<br>
+      <span class="german-word" data-card="bruder">Bruder.</span> Brother.<br>
+      <span class="german-word" data-card="schwester">Schwester.</span> Sister.
+    </p>
+
+    <p class="narrative">
+      Say them. <em>Vater, father. Bruder, brother.</em> These aren't just similar — they are the same words, wearing the thinnest of disguises. The "v" in German is pronounced like an English "f." The "d" in <em>Bruder</em> and the "th" in <em>brother</em> are cousins of a single ancient sound.
+    </p>
+
+    <!-- VATER card -->
+    <div class="ety-card" id="card-vater">
+      <div class="word-header">
+        <span class="word-main">Vater</span>
+        <span class="word-pron">/ˈfaːtɐ/</span>
+      </div>
+      <div class="word-meaning">father</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ph₂tḗr</span>
+        <span class="bridge-note">— same root as Latin "pater" → English "paternal"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">father</span>
+        <span class="bridge-note">— Old English "fæder"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Vater</span>
+        <span class="bridge-note">— German "V" is pronounced "F" — Vater sounds like "Fahter"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">父 / 爸</span>
+        <span class="bridge-note">— fù (formal) / bà (familiar) — the "b/p/f" sound echoes across languages</span>
+      </div>
+      <div class="story">
+        Here's something remarkable: just as "m" for mother appears universally, the "p/b/f" sound for father shows up across unrelated language families. PIE *ph₂tḗr, Chinese 爸 (bà), Georgian მამა (mama — wait, that means "father" in Georgian!). The labial consonants — p, b, f, m — are the first sounds babies make, and languages worldwide assigned them to parents. "Papa," "baba," "father," "Vater" — all variations on a baby's earliest experiments with sound.
+      </div>
+    </div>
+
+    <!-- BRUDER card -->
+    <div class="ety-card" id="card-bruder">
+      <div class="word-header">
+        <span class="word-main">Bruder</span>
+        <span class="word-pron">/ˈbʁuːdɐ/</span>
+      </div>
+      <div class="word-meaning">brother</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*bʰréh₂tēr</span>
+        <span class="bridge-note">— one of the most stable family terms</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">brother</span>
+        <span class="bridge-note">— Old English "brōþor"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Bruder</span>
+        <span class="bridge-note">— 'd' where English has 'th' — a regular pattern</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">兄弟</span>
+        <span class="bridge-note">— xiōngdì — Chinese distinguishes older brother (兄) from younger (弟)</span>
+      </div>
+      <div class="story">
+        Chinese makes a distinction here that neither English nor German bothers with: 哥哥 (gēge, older brother) vs. 弟弟 (dìdi, younger brother). In Chinese, you cannot simply say "brother" — you must declare the hierarchy. This reflects a culture where family rank shapes everything from how you speak to where you sit at dinner. English and German flatten this distinction into a single word. Neither approach is better — but each reveals what a culture considers essential enough to encode into its basic vocabulary.
+      </div>
+    </div>
+
+    <!-- SCHWESTER card -->
+    <div class="ety-card" id="card-schwester">
+      <div class="word-header">
+        <span class="word-main">Schwester</span>
+        <span class="word-pron">/ˈʃvɛstɐ/</span>
+      </div>
+      <div class="word-meaning">sister</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*swésōr</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">sister</span>
+        <span class="bridge-note">— Old English "sweostor" — hear the echo of "Schwester"?</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schwester</span>
+        <span class="bridge-note">— "schw" = English "sw" — another pattern to remember</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">姐妹</span>
+        <span class="bridge-note">— jiěmèi — again, Chinese distinguishes older (姐) from younger (妹)</span>
+      </div>
+      <div class="story">
+        "Schwester" and "sister" look quite different on paper, but the Old English form "sweostor" reveals the connection clearly. The German "schw-" corresponds to English "sw-" — a pattern that unlocks many word pairs: schwimmen/swim, Schwein/swine, Schwert/sword, schwarz/swarthy. Once you see this pattern, you'll start spotting it everywhere. And notice both Chinese characters 姐 and 妹 contain the radical 女 (nǚ, woman) — Chinese builds meaning visually, stacking components that tell you what category a word belongs to.
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Brothers Grimm — A Detour</div>
+      You may know Jacob and Wilhelm Grimm as the collectors of fairy tales — Cinderella, Snow White, Rapunzel. But Jacob Grimm's greatest discovery had nothing to do with fairy tales. In 1822, he published a law — <em>Grimm's Law</em> — which proved that the sound changes between languages like Latin, Greek, and Germanic were not random but <em>systematic</em>. Where Latin had a "p," Germanic languages had an "f." Where Latin had a "t," Germanic had a "th." Where Latin had a "k," Germanic had an "h."<br><br>
+      This is why Latin <em>pater</em> became English <em>father</em> and German <em>Vater</em>. Why Latin <em>tres</em> became English <em>three</em> and German <em>drei</em>. Why Latin <em>cornu</em> (horn) became English <em>horn</em> and German <em>Horn</em>.<br><br>
+      Grimm proved that languages change according to rules, not chaos. And those rules are the map we'll follow throughout this entire journey.
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        You've learned that German "schw-" corresponds to English "sw-".<br><br>
+        What do you think <strong style="color: var(--german);">schwimmen</strong> means?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">shimmer</button>
+        <button class="guess-btn" onclick="guess(this, true)">swim</button>
+        <button class="guess-btn" onclick="guess(this, false)">swear</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 6: NAME ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The fire burns lower now. The children are asleep. And the elder of the family does something that humans have done since the beginning of language — something so fundamental that the word for it is identical in English and German:
+    </p>
+
+    <p class="narrative">
+      She gives the newborn child a <span class="german-word" data-card="name">Name.</span>
+    </p>
+
+    <p class="narrative">
+      <em>Name.</em> The same word. The same spelling. The same meaning. Six thousand years of change, migration, war, empire, and revolution — and this word survived it all, untouched, in both languages.
+    </p>
+
+    <!-- NAME card -->
+    <div class="ety-card" id="card-name">
+      <div class="word-header">
+        <span class="word-main">Name</span>
+        <span class="word-pron">/ˈnaːmə/</span>
+      </div>
+      <div class="word-meaning">name — the word that makes a thing <em>known</em></div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₁nómn̥</span>
+        <span class="bridge-note">— survived almost unchanged for 6,000 years</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">name</span>
+        <span class="bridge-note">— Old English "nama"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Name</span>
+        <span class="bridge-note">— identical spelling, slightly different pronunciation (NAH-muh)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">名</span>
+        <span class="bridge-note">— míng — composed of 夕 (evening) + 口 (mouth): calling out in the dark</span>
+      </div>
+      <div class="story">
+        The Chinese character for "name" — 名 (míng) — tells a beautiful story through its components: 夕 (xī, evening) over 口 (kǒu, mouth). The original meaning: <em>to call out your name in the darkness, so others know who you are.</em> In a world without electric light, your name was literally the thing that identified you when you could not be seen. This is poetry compressed into a single character — and it resonates with this very scene: a family around a fire, in the darkness of the steppe, giving a child the word that will identify her for life.
+      </div>
+    </div>
+
+    <p class="narrative">
+      To name a thing is the first act of language. Before grammar, before poetry, before philosophy — there was the pointing finger and the spoken sound. <em>That</em> is fire. <em>This</em> is water. <em>You</em> are my mother. <em>I</em> have a name.
+    </p>
+
+    <p class="narrative">
+      And with that act of naming, something extraordinary began.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE DEPARTURE ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The steppe could not hold them forever.
+    </p>
+
+    <p class="narrative">
+      Over centuries — slowly, imperceptibly, one family and one herd at a time — they spread. Some went west, into the forests of Europe, where their language would split and split again: into Germanic, into Celtic, into Italic, into Slavic. The Germanic branch would travel furthest north, settling the coasts of Scandinavia, the plains of what is now Germany, and eventually — carried by Angles and Saxons across a narrow channel — the island of Britain.
+    </p>
+
+    <p class="narrative">
+      Others went south, into Greece and Anatolia. Others east, through Persia and all the way to India, where their ancient words still echo in Hindi and Urdu and Bengali.
+    </p>
+
+    <p class="narrative">
+      Each group carried the same core vocabulary — <em>Mutter, Vater, Wasser, Feuer, Nacht, Stern, Name</em> — but with every generation, the pronunciation drifted. A vowel shifted here. A consonant softened there. Over time, a single language became dozens, then hundreds, and the people who spoke them forgot they had ever been one family.
+    </p>
+
+    <p class="narrative">
+      But the words remember.
+    </p>
+
+    <p class="narrative emphasis">
+      The words always remember.
+    </p>
+
+    <p class="narrative">
+      And far to the east — beyond the mountains, beyond the deserts, beyond the vast Tibetan plateau — another civilization was writing its own story. Not with shifting sounds but with enduring images. Not on the wind but in bone, then bronze, then bamboo, then silk, then paper. Characters that a scholar in modern Beijing can still read from inscriptions carved three thousand years ago.
+    </p>
+
+    <p class="narrative">
+      Two great traditions of language. Two answers to the same human question: <em>How do we hold the world in words?</em>
+    </p>
+
+    <p class="narrative">
+      Your journey stands at the crossroads of both.
+    </p>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Sound Shifts</strong> — gh→ch, th→d, sw→schw, V→F, st→sht, sp→shp. These consistent transformations unlock the connection between English and German words.<br><br>
+    <strong style="color: var(--text-bright);">Grimm's Law</strong> — Systematic consonant correspondences showing that sound changes follow predictable patterns, not random chaos.<br><br>
+    <strong style="color: var(--text-bright);">Shared PIE Roots</strong> — Mutter/mother, Vater/father, Nacht/night, and Schwester/sister all reveal a common ancestry in Proto-Indo-European.<br><br>
+    <strong style="color: var(--text-bright);">German Pronunciation</strong> — V sounds like F (Vater = "Fahter"), st sounds like sht (Stern = "shtern"). These pronunciation rules are as important as spelling.<br><br>
+    <strong style="color: var(--text-bright);">The Decoder Ring</strong> — Once you know the patterns, you can predict thousands of German words from English. The key to understanding is recognizing that difference follows law.
+  </div>
+
+  <!-- ==================== WORDS GATHERED (TWO-PART: WORDS + CONCEPTS) ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter One</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Mutter</span><span class="cw-english">mother</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Feuer</span><span class="cw-english">fire</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Wasser</span><span class="cw-english">water</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Nacht</span><span class="cw-english">night</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Stern</span><span class="cw-english">star</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Vater</span><span class="cw-english">father</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Bruder</span><span class="cw-english">brother</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Schwester</span><span class="cw-english">sister</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Name</span><span class="cw-english">name</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Wort</span><span class="cw-english">word</span></div>
+      </div>
+    </div>
+
+    <!-- WORDS DETAIL TABLE -->
+    <div style="margin-top:32px;padding:24px;background:rgba(232,164,74,0.05);border-radius:8px;">
+      <h4 style="color:#e8a44a;margin-bottom:16px;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.15em;">Word List: Chapter One</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mutter</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">mother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Feuer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fire</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wasser</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">water</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stern</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">star</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Vater</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">father</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schwester</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sister</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wort</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">word</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+      </table>
+    </div>
+
+    <!-- CONCEPT CARDS -->
+    <div style="margin-top:32px;">
+      <h4 style="color:#e8a44a;margin-bottom:16px;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.15em;">Key Concepts: Chapter One</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Sound Shifts</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">gh→ch, th→d, sw→schw</div>
+        </div>
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Grimm's Law</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">Systematic consonant correspondences</div>
+        </div>
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Shared PIE Roots</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">Mutter/mother, Vater/father, Nacht/night</div>
+        </div>
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">German Pronunciation</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">V sounds like F, st sounds like sht</div>
+        </div>
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">The Decoder Ring</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">Patterns unlock thousands of words</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <!-- WORDS BAR (clickable) -->
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">10 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(1%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:1%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words ▾</div>
+    </div>
+
+    <!-- WORDS DETAIL TABLE (hidden, expands on click) -->
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mutter</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">mother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Feuer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fire</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wasser</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">water</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stern</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">star</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Vater</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">father</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schwester</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sister</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wort</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">word</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+      </table>
+    </div>
+
+    <!-- PATTERNS BAR (clickable) -->
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">5 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(3%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:3%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns ▾</div>
+    </div>
+
+    <!-- PATTERNS DETAIL TABLE (hidden, expands on click) -->
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">gh = ch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night/Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">sw = schw</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">swim/schwimmen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">th = d/t</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother/Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">V = F</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Vater = "Fahter"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">st/sp = sht/shp</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Stern = "shtern"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter One
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Nine words. Nine stories. Five patterns that will unlock hundreds more.<br>
+        The family has left the steppe. The languages have begun to diverge.<br>
+        The journey has begun.
+      </p>
+      <div class="next-chapter">
+        Chapter Two: The Great Divide — coming soon
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="prologue.html" class="nav-btn">← Prologue</a>
+    <a href="chapter2.html" class="nav-btn next">Chapter 2 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 1: PIE STEPPE CAMPFIRE SCENE ---
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+let fireParticles = [];
+let shootingStars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createStars() {
+  stars = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 12000) :
+    Math.floor((canvas.width * canvas.height) / 8000);
+  for (let i = 0; i < count; i++) {
+    const y = Math.random() * (canvas.height * 0.6);
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: y,
+      r: Math.random() * 1.2 + 0.2,
+      alpha: Math.random() * 0.6 + 0.1,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function createShootingStar() {
+  shootingStars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * (canvas.height * 0.4),
+    vx: (Math.random() + 0.5) * 2,
+    vy: (Math.random() + 0.5) * 2,
+    life: 1,
+    maxLife: 1.5
+  });
+}
+
+function createFireParticles() {
+  fireParticles = [];
+  const count = window.innerWidth < 600 ? 40 : 80;
+  const centerX = canvas.width / 2;
+  const bottomY = canvas.height * 0.75;
+  for (let i = 0; i < count; i++) {
+    fireParticles.push({
+      x: centerX + (Math.random() - 0.5) * 100,
+      y: bottomY,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -Math.random() * 0.8 - 0.2,
+      r: Math.random() * 3 + 1,
+      alpha: Math.random() * 0.6 + 0.3,
+      flickerSpeed: Math.random() * 0.08 + 0.02,
+      flickerOffset: Math.random() * Math.PI * 2,
+      lifespan: Math.random() * 150 + 80,
+      age: 0
+    });
+  }
+}
+
+function drawCampfire(centerX, bottomY, intensity) {
+  const scroll = window.scrollY / window.innerHeight;
+  const scale = 1 + scroll * 0.3;
+
+  // Draw grass silhouette
+  ctx.strokeStyle = 'rgba(100, 80, 50, 0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, bottomY + 20);
+  for (let i = 0; i < canvas.width; i += 20) {
+    const h = Math.sin(i * 0.02 + Date.now() * 0.0005) * 8;
+    ctx.lineTo(i, bottomY + 20 + h);
+  }
+  ctx.stroke();
+
+  // Draw campfire triangle - base
+  ctx.fillStyle = `rgba(200, 100, 50, ${0.3 * scale})`;
+  ctx.beginPath();
+  ctx.moveTo(centerX - 80 * scale, bottomY + 30);
+  ctx.lineTo(centerX + 80 * scale, bottomY + 30);
+  ctx.lineTo(centerX, bottomY - 150 * scale);
+  ctx.fill();
+
+  // Draw flickering flames
+  for (let flame = 0; flame < 3; flame++) {
+    const flameX = centerX - 60 + flame * 60;
+    const flameTime = Date.now() * 0.001 + flame;
+    const flameHeight = 120 + Math.sin(flameTime) * 40;
+
+    ctx.fillStyle = `rgba(232, 164, 74, ${(0.4 + Math.sin(flameTime * 0.8) * 0.3) * scale})`;
+    ctx.beginPath();
+    ctx.moveTo(flameX - 30, bottomY + 30);
+    ctx.quadraticCurveTo(flameX - 20 + Math.sin(flameTime * 1.5) * 15, bottomY - flameHeight * 0.6, flameX - 10, bottomY - flameHeight);
+    ctx.quadraticCurveTo(flameX + 10, bottomY - flameHeight, flameX + 20 - Math.sin(flameTime * 1.5) * 15, bottomY - flameHeight * 0.6);
+    ctx.lineTo(flameX + 30, bottomY + 30);
+    ctx.fill();
+
+    ctx.fillStyle = `rgba(244, 198, 122, ${(0.3 + Math.sin(flameTime * 0.9) * 0.2) * scale})`;
+    ctx.beginPath();
+    ctx.moveTo(flameX - 15, bottomY + 20);
+    ctx.quadraticCurveTo(flameX - 8 + Math.sin(flameTime * 1.3) * 8, bottomY - flameHeight * 0.4, flameX, bottomY - flameHeight * 0.8);
+    ctx.quadraticCurveTo(flameX + 8, bottomY - flameHeight * 0.4, flameX + 15, bottomY + 20);
+    ctx.fill();
+  }
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw stars in upper half
+  stars.forEach(s => {
+    const alpha = s.alpha + Math.sin(time * s.twinkleSpeed + s.twinkleOffset) * 0.15;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 220, 200, ${Math.max(0, alpha)})`;
+    ctx.fill();
+  });
+
+  // Draw shooting stars
+  shootingStars = shootingStars.filter(ss => ss.life > 0);
+  shootingStars.forEach(ss => {
+    ss.x += ss.vx;
+    ss.y += ss.vy;
+    ss.life -= 0.01;
+
+    const alpha = (ss.life / ss.maxLife) * 0.7;
+    ctx.strokeStyle = `rgba(232, 220, 200, ${alpha})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(ss.x, ss.y);
+    ctx.lineTo(ss.x - ss.vx * 20, ss.y - ss.vy * 20);
+    ctx.stroke();
+  });
+
+  // Occasionally create shooting stars
+  if (Math.random() < 0.005) {
+    createShootingStar();
+  }
+
+  // Draw campfire
+  const centerX = canvas.width / 2;
+  const bottomY = canvas.height * 0.75;
+  drawCampfire(centerX, bottomY, 1);
+
+  // Update and draw fire particles
+  fireParticles = fireParticles.filter(p => p.age < p.lifespan);
+  fireParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.age++;
+
+    const flicker = Math.sin(time * p.flickerSpeed + p.flickerOffset) * 0.3 + 0.7;
+    const alpha = p.alpha * flicker * (1 - p.age / p.lifespan);
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 164, 74, ${Math.max(0, alpha)})`;
+    ctx.fill();
+  });
+
+  // Spawn new fire particles
+  if (Math.random() < 0.15) {
+    const centerX = canvas.width / 2;
+    const bottomY = canvas.height * 0.75;
+    fireParticles.push({
+      x: centerX + (Math.random() - 0.5) * 100,
+      y: bottomY,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -Math.random() * 0.8 - 0.2,
+      r: Math.random() * 3 + 1,
+      alpha: Math.random() * 0.6 + 0.3,
+      flickerSpeed: Math.random() * 0.08 + 0.02,
+      flickerOffset: Math.random() * Math.PI * 2,
+      lifespan: Math.random() * 150 + 80,
+      age: 0
+    });
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createStars();
+createFireParticles();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createStars(); createFireParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate collected words
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      // Close all cards first
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      // Toggle this one
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'You already knew this word. English and German are closer than you think.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — try again. Listen to the sound...';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE: prevent double-tap zoom on interactive elements ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- MOBILE: reduce star count on small screens for performance ---
+if (window.innerWidth < 600) {
+  stars = stars.slice(0, Math.floor(stars.length / 2));
+}
+
+// --- AUDIO PRONUNCIATION (Web Speech API) ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    // Try to find a German voice
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+// Preload voices (some browsers need this)
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+    
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

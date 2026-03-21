@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 51: Wollen, Können, Müssen</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --modal: #a8d5ba;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #modal-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .scene { margin-bottom: 60px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="modal-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Fifty-One</div>
+    <h1>Wollen, Können, Müssen</h1>
+    <div class="subtitle">The Architecture of Desire, Ability, and Obligation</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE THREE FORCES ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a locked room with three keys floating above it. One key is gold, shimmering with desire. One is silver, solid and strong. One is iron, heavy with necessity. This is the world of German modal verbs — the verbs of volition, capacity, and obligation. These three simple words unlock the deepest architecture of human intention.
+    </p>
+
+    <p class="narrative">
+      All languages have ways to express what we want, what we can do, and what we must do. But German makes this architecture so visible, so structural, that learning these three verbs is like learning to see the bones beneath the skin of language. They are not decorative. They are foundational.
+    </p>
+
+    <p class="narrative">
+      Here is the crucial insight: in German, modal verbs push the main verb to the very end of the sentence. This creates a tension, a delay, a structure that forces you to hold the action in suspension until the final moment. It is not incidental. It is the grammar revealing philosophy — the idea that wanting, ability, and obligation are not the action itself, but the <em>condition</em> on which action depends.
+    </p>
+
+    <p class="narrative emphasis">
+      The three keys unlock not just sentences, but the human architecture of will.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: WOLLEN - DESIRE ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Begin with <span class="german-word" data-card="wollen">wollen</span>. To want. To will. To desire. It is the first of the three forces.
+    </p>
+
+    <p class="narrative">
+      The conjugation is simple, almost deceptively so: ich will, du willst, er will, wir wollen, ihr wollt, sie wollen. Notice the irregularity — the stem changes from "will-" to "woll-" in some forms. This is not a mistake. This is a mark of age. The most frequently used words carry the deepest scars of time, the greatest amount of phonetic erosion and rearrangement.
+    </p>
+
+    <p class="narrative">
+      Now observe the structure: "Ich will schlafen" — I want sleep. But notice: the infinitive "schlafen" comes at the end. The structure is subject-modal-object-infinitive. In English, we say "I want to sleep" or "I want to go" — the infinitive immediately follows the modal. In German, there is a delay. The modal stands alone, waiting. The action hangs at the end. This delay is not stylistic. It is grammatical. It is how German thinks.
+    </p>
+
+    <p class="narrative">
+      Think about what this means. When you say "I want," in English you immediately supply what you want — "to sleep," "to go," "to eat." The whole desire is crystallized in one phrase. But in German, you say "I want," and then the listener must wait, suspended in anticipation, until you reveal what it is you want. The grammar creates narrative tension.
+    </p>
+
+    <!-- WOLLEN card -->
+    <div class="ety-card" id="card-wollen">
+      <div class="word-header">
+        <span class="word-main">Wollen</span>
+        <span class="word-pron">/ˈvɔlən/</span>
+      </div>
+      <div class="word-meaning">to want — to desire, to will, to intend</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wel-</span>
+        <span class="bridge-note">— to wish, to desire, ancient root of will</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">will</span>
+        <span class="bridge-note">— English's modal of future and intention</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wollen</span>
+        <span class="bridge-note">— the infinitive form, the base from which all tenses flow</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">想要</span>
+        <span class="bridge-note">— xiǎngyào (think + want) — thought and desire intertwined</span>
+      </div>
+      <div class="story">
+        <em>Wollen</em> is an ancient word. Its root *wel- meant to wish, to desire, to will — one of the deepest human intentions. In English, the same root gave us "will," which has become the primary way to express the future: "I will go." But in German, "wollen" remains explicitly about wanting, about intention, about the force of desire. When you say "Ich will nach Hause gehen" (I want to go home), you are not just describing a future action. You are expressing the human will toward that action. The desire is central. The action follows. This distinction matters.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: KÖNNEN - ABILITY ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The second key is silver: <span class="german-word" data-card="konnen">können</span>. To be able. To can. Capacity.
+    </p>
+
+    <p class="narrative">
+      The conjugation: ich kann, du kannst, er kann, wir können, ihr könnt, sie können. Again, the stem changes — "kann" in the singular, "könn-" in the plural. The German "ö" is a vowel shift, an ancient umlaut, a mark of Germanic languages' love of internal modification. The same root appears in Old English "cunnan" — to know. In German, the connection is still visible: "Ich kann Deutsch" — I am able in German, I know German. Ability and knowledge live in the same word.
+    </p>
+
+    <p class="narrative">
+      This is profound. In English, we say "I can speak German" or "I know German" — two different verbs, two different concepts. But in German, "Ich kann Deutsch" uses the same verb. The boundary between ability and knowledge is blurred. Can you do something because you know how? Or do you know how because you can do it? The Germans do not separate these. For them, understanding is a kind of ability. Ability is a kind of understanding.
+    </p>
+
+    <p class="narrative">
+      And again, the modal verb structure applies: "Ich kann schlafen" — I can sleep. Literally: "I can" + silence + "sleep." The action waits. The capacity is isolated. This is the grammar of possibility.
+    </p>
+
+    <!-- KÖNNEN card -->
+    <div class="ety-card" id="card-konnen">
+      <div class="word-header">
+        <span class="word-main">Können</span>
+        <span class="word-pron">/ˈkœnən/</span>
+      </div>
+      <div class="word-meaning">to be able — to have the capacity or skill to do something</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*gno-</span>
+        <span class="bridge-note">— to know, to understand, to recognize</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">can</span>
+        <span class="bridge-note">— from Old English "cunnan," to know</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Können</span>
+        <span class="bridge-note">— the same word that means "to know" in some contexts</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">能</span>
+        <span class="bridge-note">— néng (ability, energy, capability) — a single syllable for one of language's deepest concepts</span>
+      </div>
+      <div class="story">
+        <em>Können</em> emerges from the same root as "to know." This is not accidental. In the ancient Germanic mind, to know something and to be able to do it were nearly synonymous. If you knew how to make fire, you could make fire. If you could make fire, you knew the secret. The knowledge was the ability. This is why "Ich kann Deutsch" (I can German) still means both "I am able in German" and "I know German." The two meanings never separated in German the way they did in English. Knowledge remains a form of power, ability remains a form of knowledge.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: MÜSSEN - OBLIGATION ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The third key is iron. Heavy. Immovable. <span class="german-word" data-card="mussen">Müssen</span>. To must. To have to. The voice of necessity, of obligation, of the forces beyond the self.
+    </p>
+
+    <p class="narrative">
+      The conjugation: ich muss, du musst, er muss, wir müssen, ihr müsst, sie müssen. The "ü" is another umlaut, a vowel shift that marks it as Germanic, as ancient, as deeply embedded in the structure of the language. This word carries weight. It is used for constraints, for necessities, for the unavoidable: "Ich muss arbeiten" — I must work. Not I want to. Not I can. I must. The obligation is external, pressing, inescapable.
+    </p>
+
+    <p class="narrative">
+      And here is the crucial observation: müssen is not primarily about desire or ability. It is about constraint. It is about the forces that act upon you, independent of your will. You must eat because your body requires it. You must sleep because nature demands it. You must follow the law because society enforces it. Müssen is the grammar of necessity — of the universal human experience of being subject to forces beyond yourself.
+    </p>
+
+    <p class="narrative">
+      The three verbs create a hierarchy of human experience. At the top: desire, volition, the self expressing itself. In the middle: ability, capacity, what is possible given the constraints of nature and circumstance. At the bottom: necessity, obligation, the immovable fact of what must be. Most of life is lived in the tension between these three forces.
+    </p>
+
+    <!-- MÜSSEN card -->
+    <div class="ety-card" id="card-mussen">
+      <div class="word-header">
+        <span class="word-main">Müssen</span>
+        <span class="word-pron">/ˈmʏsən/</span>
+      </div>
+      <div class="word-meaning">to must — to have to, to be obliged to, to be forced by necessity</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*mus-</span>
+        <span class="bridge-note">— to press, to squeeze, to constrain</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">must</span>
+        <span class="bridge-note">— expressing necessity and obligation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Müssen</span>
+        <span class="bridge-note">— the weight of Germanic vowel shifts marks this as ancient</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">必须</span>
+        <span class="bridge-note">— bìxū (necessary + must) — necessity compressed into two characters</span>
+      </div>
+      <div class="story">
+        <em>Müssen</em> comes from an ancient root meaning to press, to squeeze, to constrain. This is no accident. Necessity presses upon us. Obligation squeezes us into shapes we might not choose. The word carries this weight in its very sound — the German "ü" is a closer, darker vowel than the English "u." When you say "müssen," your mouth closes, your throat tightens. The word itself feels constrained. This is the grammar revealing the meaning.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE ARCHITECTURE ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now step back and observe the architecture. Three verbs. Three forces. Three ways that human will encounters the world.
+    </p>
+
+    <p class="narrative">
+      When you construct a modal sentence in German, you put the modal in the second position (because German sentences have a rigid V2 word order in main clauses — the verb must come second), and then everything else follows, with the main verb in its infinitive form at the very end. This is called the "modal construction" or, in older grammar books, the "modal complex."
+    </p>
+
+    <p class="narrative">
+      Consider this sequence: "Ich will morgen nach Berlin fahren" — I want tomorrow to Berlin to-drive. Literally structured with the action suspended at the end. The whole sentence hangs on the modal. Without it, there is only a fragmentary thought. With it, the thought crystallizes. The modal is not ornamental. It is structural. It is how German encodes intention into syntax.
+    </p>
+
+    <p class="narrative">
+      And here is what makes this profound: in many languages, the modal is added on top of the main verb. "I want to sleep" — two separate acts, joined by a conjunction. But in German, the modal absorbs the main verb into itself. The main verb loses its finite form and becomes a bare infinitive. It becomes subsidiary. It becomes dependent. The modal dominates. The grammar expresses a philosophical truth: what you want, what you can do, what you must do — these are not separate from the action. They are the frame that makes the action possible.
+    </p>
+
+    <p class="narrative emphasis">
+      The three keys unlock more than just sentences. They unlock a way of seeing the human condition: desire, ability, and necessity intertwined.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: SENTENCES AND STRUCTURES ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative small">
+      Here are some examples of modal constructions, each showing how the main verb waits at the end:
+    </p>
+
+    <p class="narrative small">
+      <strong>Wollen (desire):</strong><br>
+      "Ich will ein Buch lesen" (I want a book to-read)<br>
+      "Sie wollen nach Hause gehen" (They want to home to-go)<br>
+      "Wir wollen morgen arbeiten" (We want tomorrow to-work)
+    </p>
+
+    <p class="narrative small">
+      <strong>Können (ability):</strong><br>
+      "Ich kann Deutsch sprechen" (I can German to-speak)<br>
+      "Er kann sehr schnell laufen" (He can very quickly to-run)<br>
+      "Wir können das Problem lösen" (We can the problem to-solve)
+    </p>
+
+    <p class="narrative small">
+      <strong>Müssen (necessity):</strong><br>
+      "Ich muss früh aufstehen" (I must early to-rise)<br>
+      "Sie müssen das Gesetz befolgen" (They must the law to-follow)<br>
+      "Wir müssen morgen umziehen" (We must tomorrow to-move)
+    </p>
+
+    <p class="narrative">
+      Notice the pattern in every sentence: subject, modal verb, object or time expression, and then the infinitive at the end. This is the fundamental structure of German intention. It is relentless. It is consistent. It is how the language trains the mind to think about action, about what we want, about what is possible, about what is necessary.
+    </p>
+
+    <p class="narrative">
+      And observe another thing: in the past tense, modal verbs do something unusual. Instead of using the past participle "gewollt" or "gemusst," German uses the infinitive form: "Ich habe schlafen wollen" — I have sleep want (I wanted to sleep). This is called the "infinitive in place of the past participle." It is as if the language itself rebels against making the action fully historical. The action remains suspended, even in the past. It remains potential, even when it is finished.
+    </p>
+
+    <p class="narrative">
+      This is the deepest secret of German grammar: the modals are not just verbs. They are the skeleton of intentionality. They are how the language encodes the fact that human action is never simple, never direct, never unconditional. It is always mediated by what we want, what we can do, and what we must do.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE PHILOSOPHICAL STRUCTURE ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      There is a philosophy embedded in the grammar of modals. It is this: the human being is never the pure agent of action. You are always constrained, always mediated, always subject to forces outside yourself. You want something — but you might not be able to achieve it. You are able to do something — but you might not want to. And you must do something — whether you want to or not, whether you are able to or not.
+    </p>
+
+    <p class="narrative">
+      This is not pessimism. It is realism. It is an acknowledgment of the human condition. And the Germans, through their language, have encoded this realism into the very structure of grammar. Every time you speak a modal verb, you are expressing a truth about human existence: that action is always mediated, always conditional, always dependent on factors outside the pure will.
+    </p>
+
+    <p class="narrative">
+      Compare this to a language that treats the verb as the pure expression of action — where you simply say "go" or "sleep" or "work" without the mediation of modality. Such a language encodes a different philosophy: that action flows directly from the self, that the will is the sole measure of what happens. But German says no. German says that you cannot understand human action without understanding the frame in which it occurs — the desire, the ability, the necessity that contains it.
+    </p>
+
+    <p class="narrative emphasis">
+      The three keys unlock the house of language. But they also unlock the house of the human soul.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">460 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(54%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:54%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 460 words across 51 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">100 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(68%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:68%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 100 patterns and grammar rules across 51 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words and Concepts from Chapter 51</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Wollen</span><span class="cw-english">to want</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Können</span><span class="cw-english">to be able</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Müssen</span><span class="cw-english">to must</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Grammar Insight: The Modal Construction</div>
+      <strong style="color: var(--text-bright);">V2 and Verb-Final Placement</strong> — In main clauses, the modal verb takes the second position (V2 rule). The main verb becomes an infinitive and moves to the end of the clause.<br><br>
+      <strong style="color: var(--text-bright);">Infinitive Instead of Participle</strong> — In perfect tenses, modals use the infinitive instead of the participle: "Ich habe gehen wollen" (I have go want), not "Ich habe gehen gewollt."<br><br>
+      <strong style="color: var(--text-bright);">Three Forces, One Architecture</strong> — Desire, ability, and necessity are the three pillars of human intention. German grammar makes this architecture visible.<br><br>
+      <strong style="color: var(--text-bright);">The Suspended Action</strong> — The main verb at the end creates narrative suspense. The listener waits for the action to be revealed.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Fifty-One
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Three verbs. Three keys. The architecture of human will is encoded in German grammar. The modal verbs reveal how action is never pure, never unconditional. It is always framed by what we desire, what we are capable of, and what necessity demands.<br>
+        The three keys unlock the deepest rooms of language.
+      </p>
+      <div class="next-chapter">
+        Chapter Fifty-Two: Dürfen, Sollen, Mögen — The Other Three Modals
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter50.html" class="nav-btn">← Chapter 50</a>
+    <a href="chapter52.html" class="nav-btn next">Chapter 52 →</a>
+  </div>
+
+</div>
+
+<script>
+
+const canvas = document.getElementById('modal-canvas');
+const ctx = canvas.getContext('2d');
+let keys = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createKeys();
+}
+
+function createKeys() {
+  keys = [];
+  // Three floating keys at different positions
+  keys.push({ x: canvas.width * 0.2, y: canvas.height * 0.3, rotation: 0, rotSpeed: 0.001, color: '#d4af37' }); // Gold key (wollen)
+  keys.push({ x: canvas.width * 0.5, y: canvas.height * 0.2, rotation: 0.5, rotSpeed: 0.0008, color: '#c0c0c0' }); // Silver key (können)
+  keys.push({ x: canvas.width * 0.8, y: canvas.height * 0.35, rotation: 1, rotSpeed: 0.0012, color: '#704214' }); // Iron key (müssen)
+}
+
+function drawKeys(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  keys.forEach((key, idx) => {
+    key.rotation += key.rotSpeed;
+
+    // Subtle bob motion based on scroll
+    const bobAmount = Math.sin(scroll * Math.PI) * 20;
+    const yPos = key.y + bobAmount;
+
+    ctx.save();
+    ctx.translate(key.x, yPos);
+    ctx.rotate(key.rotation);
+
+    // Key shaft
+    ctx.fillStyle = key.color;
+    ctx.fillRect(-8, -2, 30, 4);
+
+    // Key head (circular)
+    ctx.beginPath();
+    ctx.arc(-12, 0, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Key teeth
+    for (let i = 0; i < 3; i++) {
+      ctx.fillRect(8 + i * 6, -2, 3, 4);
+    }
+
+    ctx.restore();
+
+    // Glow effect
+    ctx.fillStyle = `rgba(232, 164, 74, ${0.1 * (0.5 + 0.5 * Math.sin(time * 0.002 + idx))})`;
+    ctx.beginPath();
+    ctx.arc(key.x, yPos, 40, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawKeys);
+}
+
+resizeCanvas();
+createKeys();
+requestAnimationFrame(drawKeys);
+window.addEventListener('resize', () => { resizeCanvas(); createKeys(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What does the modal verb 'wollen' primarily express?",
+    options: ["obligation", "desire or intention", "ability", "permission"],
+    correct: 1,
+    explanation: "Wollen expresses want, desire, and intention — the first of the three modal forces."
+  },
+  {
+    question: "In the sentence 'Ich kann Deutsch sprechen,' what does 'können' relate to?",
+    options: ["necessity", "both knowledge and ability", "desire", "obligation"],
+    correct: 1,
+    explanation: "Können means both 'to be able' and 'to know.' In German, knowing and ability are closely linked."
+  },
+  {
+    question: "Which modal expresses necessity or obligation?",
+    options: ["wollen", "können", "müssen", "mögen"],
+    correct: 2,
+    explanation: "Müssen expresses obligation, necessity, and what must be done."
+  },
+  {
+    question: "In a German modal construction, where does the main verb appear?",
+    options: ["immediately after the modal", "at the end of the clause as an infinitive", "before the modal", "in the middle of the sentence"],
+    correct: 1,
+    explanation: "The main verb moves to the end of the clause in its infinitive form when a modal is used."
+  },
+  {
+    question: "What does the V2 word order rule mean in German?",
+    options: ["the verb must come second in the clause", "there are two verbs in every sentence", "verbs always come last", "verbs always come first"],
+    correct: 0,
+    explanation: "V2 (Verb-Second) is a fundamental rule: in main clauses, the finite verb must be in the second position."
+  },
+  {
+    question: "In perfect tense, what form do modal verbs use instead of the past participle?",
+    options: ["the gerund", "the present participle", "the infinitive", "the subjunctive"],
+    correct: 2,
+    explanation: "Modals use the infinitive in perfect tenses: 'Ich habe gehen wollen' (I have go want)."
+  },
+  {
+    question: "Which root does 'können' share with the English verb 'can'?",
+    options: ["*wel- (to wish)", "*mus- (to press)", "*gno- (to know)", "*wend- (to go)"],
+    correct: 2,
+    explanation: "Both 'können' and 'can' come from *gno-, meaning 'to know.' Knowing and ability are etymologically linked."
+  },
+  {
+    question: "What philosophical idea is embedded in German modal grammar?",
+    options: ["humans are pure agents of action", "action is always mediated by desire, ability, and necessity", "verbs are the most important part of speech", "modals are optional additions to sentences"],
+    correct: 1,
+    explanation: "German grammar encodes the view that human action is never pure — it is always framed by what we want, can do, and must do."
+  },
+  {
+    question: "Which of these is NOT one of the three main modal verbs?",
+    options: ["wollen", "können", "dürfen", "müssen"],
+    correct: 2,
+    explanation: "Dürfen is one of the 'other three' modals. The primary three are wollen, können, and müssen."
+  },
+  {
+    question: "What is the root meaning of 'müssen'?",
+    options: ["to go", "to wish", "to press or squeeze", "to know"],
+    correct: 2,
+    explanation: "Müssen comes from *mus-, meaning to press or constrain — reflecting how necessity presses upon us."
+  },
+  {
+    question: "In the sentence 'Sie wollen nach Berlin fahren,' which word is the main verb?",
+    options: ["wollen", "nach", "Berlin", "fahren"],
+    correct: 3,
+    explanation: "Fahren (to drive) is the main verb, appearing in infinitive form at the end of the modal construction."
+  },
+  {
+    question: "What is the narrative effect of placing the main verb at the end of a German modal sentence?",
+    options: ["it clarifies the meaning immediately", "it creates suspense and holds the action in suspension", "it makes the sentence shorter", "it has no particular effect"],
+    correct: 1,
+    explanation: "The delayed main verb creates a structure where the listener waits, suspended, until the action is finally revealed."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Chapter Mastery</strong>
+      <p style="margin-top: 8px;">You have mastered the architecture of modal verbs. You understand how wollen (desire), können (ability), and müssen (necessity) structure human intention in German grammar. The three keys unlock not just sentences, but the philosophy of human will encoded in the language.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+document.querySelectorAll('.german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

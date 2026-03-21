@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 90: Wortspiele (Wordplay)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --gold: #d4af37;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  #workshop-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+
+  @media (max-width: 640px) {
+    .page-wrapper { padding: 30px 18px 80px; }
+    body { font-size: 1.1rem; }
+  }
+
+  .title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-screen h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.4s forwards;
+    margin-bottom: 0.3em;
+  }
+
+  .title-screen .title-de {
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1.5em;
+    font-style: italic;
+  }
+
+  .title-screen .description {
+    font-size: 1.3rem;
+    max-width: 700px;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible { opacity: 1; transform: translateY(0); }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1.5em;
+    background: rgba(232, 164, 74, 0.08);
+    border-left: 3px solid var(--german);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    padding: 2px 4px;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid var(--german);
+  }
+
+  .word-card {
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+    transition: all 0.3s ease;
+  }
+
+  .word-card:hover {
+    background: rgba(20, 28, 45, 0.9);
+    border-color: rgba(232, 164, 74, 0.4);
+    box-shadow: 0 8px 32px rgba(232, 164, 74, 0.1);
+  }
+
+  .word-german {
+    font-size: 1.6rem;
+    color: var(--german);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: -0.02em;
+  }
+
+  .word-decomposition {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.8);
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 2px solid var(--fire);
+    border-radius: 4px;
+    font-style: italic;
+  }
+
+  .word-section {
+    margin: 16px 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .word-section-title {
+    color: var(--fire-glow);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+
+  .explanation {
+    background: rgba(26, 35, 55, 0.5);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    color: rgba(212, 202, 187, 0.9);
+  }
+
+  .cultural-note {
+    background: rgba(196, 154, 108, 0.08);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    color: var(--chinese);
+    border-left: 2px solid var(--chinese);
+  }
+
+  .divider {
+    text-align: center;
+    margin: 80px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 80px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show { display: block; }
+
+  .progress-bar {
+    background: rgba(232, 164, 74, 0.15);
+    border-radius: 4px;
+    height: 4px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    background: var(--german);
+    height: 100%;
+    transition: width 0.3s;
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<canvas id="workshop-canvas"></canvas>
+
+<div class="page-wrapper">
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 90</div>
+    <h1 data-speak="true">Wortspiele</h1>
+    <p class="title-de" data-speak="true">Wordplay</p>
+    <p class="description" data-speak="true">The Art of German Compound Words and Untranslatable Treasures. German's gift for combining words creates expressions so specific and culturally resonant that they have become recognized internationally. These words are not just linguistic curiosities—they are windows into the German soul, capturing emotions and observations that require whole sentences in other languages.</p>
+    <p class="scroll-hint" data-speak="true">Explore words that defy translation<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">German is a compounding language. Take two or more words, bind them together, and create an entirely new concept that is more precise and evocative than what those words could express separately. This ability has produced some of the most remarkable words in any language—words that make you smile when you first encounter them, that make you feel seen and understood, that capture something true about human experience in a way that only German seems able to do.</p>
+
+    <p class="narrative emphasis" data-speak="true">"Die deutsche Sprache ist die Sprache der Dichter und der Denker." — German is the language of poets and thinkers.</p>
+
+    <div class="word-card">
+      <div class="word-german">Kummerspeck</div>
+      <div class="word-decomposition" data-speak="true">Kummer (grief, sorrow) + Speck (bacon, fat)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">Weight gained from emotional eating, particularly from eating to cope with sadness, grief, or stress. The bacon (or fat) that accumulates as a result of grief-driven consumption.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">English has "stress eating" or "emotional eating," but these are descriptive of the behavior. Kummerspeck is a noun that directly names the weight itself as a physical manifestation of emotional pain. It captures something both tender and humorous—the acknowledgment that grief makes us eat, and that eating becomes visible on our bodies. The word suggests neither judgment nor approval; it simply recognizes this universal human phenomenon with compassion.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">This word emerged in German culture at a time when food, body, and emotion were understood as interconnected. It reflects a German honesty about acknowledging difficult feelings and their physical consequences without shame. You would say "Ich habe Kummerspeck angesetzt" (I've put on some grief bacon) when recognizing that recent emotional turmoil has affected your weight—it's said with gentle self-awareness rather than judgment.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">悲伤饮食 (bēishāng yǐnshí) — grief eating; or more colloquially, 伤心肥 (shāngxīn féi) — heartbreak fat. Chinese also recognizes this phenomenon but tends toward more clinical or poetic description rather than a single direct noun.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-german">Backpfeifengesicht</div>
+      <div class="word-decomposition" data-speak="true">Backpfeife (a slap to the face) + Gesicht (face)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">A face that so provokes or annoys you that you want to slap it. Not a literal threat, but rather a face so particularly aggravating, smug, or offensive in its expression that violence seems appropriate.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">This is perhaps the most direct and brutally honest word in German. It names the impulse that many people have felt but rarely voice. While you could describe this face using several sentences in English—"a face that makes you want to slap it" or "an exceptionally annoying expression"—only German has crystallized this complex emotional reaction into a single, precise noun. The brilliance is that everyone immediately understands what is meant.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">This word reflects the German tendency toward direct, unflinching honesty. Rather than maintaining social pretense, Germans will acknowledge harsh truths about appearance and behavior. The word is used humorously and critically, often in reference to public figures or annoying individuals. It demonstrates German humor—dark, precise, and unafraid to name uncomfortable realities.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">让人想打的脸 (ràng rén xiǎng dǎ de liǎn) — a face that makes people want to hit it; or 招打的脸 (zhāo dǎ de liǎn) — a face that invites hitting. Chinese requires the full phrase to convey this concept.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-german">Verschlimmbesserung</div>
+      <div class="word-decomposition" data-speak="true">Verschlimm (make worse) + Besserung (improvement)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">An improvement that makes things worse. A "fix" that actually worsens the situation. A well-intentioned attempt to solve a problem that results in a worse outcome than the original problem.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">This paradoxical word captures the ironic situation of attempting to improve something and instead making it worse. English can describe this ("making things worse while trying to fix them"), but has no single word. This is a common enough phenomenon that it deserves its own word—and German recognizes it deserves one. The word is both humorous and deeply insightful about human nature and the law of unintended consequences.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">German engineering culture values precision and problem-solving, which makes the existence of this word even more poignant. It's a word that acknowledges how even the best intentions and careful planning can backfire. You might say "Das war eine echte Verschlimmbesserung" (That was a real worsening-improvement) when referring to a software update that fixed one bug but created three new ones, or a policy change that solved one problem while creating others.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">越改越糟 (yuè gǎi yuè zāo) — the more you fix it, the worse it gets; or 修复反而恶化 (xiūfù fǎn'ér èhuà) — the fix actually worsened it. Chinese tends toward verb-based explanation rather than a compact noun.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-german">Torschlusspanik</div>
+      <div class="word-decomposition" data-speak="true">Tor (gate) + Schluss (closing) + Panik (panic)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">A sense of panic and urgency caused by the fear that time is running out, opportunities are closing, and you must act immediately or lose your chances forever. The metaphor comes from medieval city gates closing at dusk, sealing people in or out for the night.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">This captures a very specific psychological state that many people experience, particularly as they approach life transitions (aging, career changes, relationship deadlines). English requires explanation: "panic about running out of time" or "the fear that opportunities are closing." German has one powerful word that is immediately recognizable to anyone who has felt this pressure.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">The word carries acknowledgment that this fear is not irrational—opportunities are finite, time does pass, and windows do close. Rather than dismissing the feeling, German recognizes it as a real psychological phenomenon worth naming. It's used not in judgment but as recognition of a universal human experience.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">关键时刻焦虑 (guānjiàn shíkè jiāolǜ) — anxiety at critical moments; or more poetically, 白驹过隙 (báijū guòxì) — time fleeting like a white colt passing through a crack. Chinese philosophy recognizes the concept but approaches it more thoughtfully than with panic.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-german">Fremdschämen</div>
+      <div class="word-decomposition" data-speak="true">Fremd (foreign, other) + Schämen (to feel shame)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">To feel shame or embarrassment on behalf of someone else. Secondhand embarrassment. The feeling you get when someone else does something mortifying, and you experience their shame as if it were your own.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">English speakers must say "secondhand embarrassment" or "I felt embarrassed for them." German captures this empathetic response in a single word that emphasizes the psychological reality: you are feeling shame that is not originally yours, shame that belongs to another person that you have somehow incorporated. It's a profoundly empathetic word.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">This word reflects German's capacity for deep empathy and emotional attunement. While many cultures experience this feeling, only German has bothered to name it with its own word. It's used frequently in contemporary conversation, especially when watching entertainment or hearing about others' embarrassing moments.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">为别人感到尴尬 (wèi biérén gǎndào gānguà) — to feel awkward on behalf of others; or 替别人感到羞愧 (tì biérén gǎndào xiūkuì) — to feel shame on behalf of others. Chinese requires the full phrase structure.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-german">Treppenwitz</div>
+      <div class="word-decomposition" data-speak="true">Treppen (stairs) + Witz (joke, wit)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">A witty remark or clever comeback that you think of only after the conversation has ended—specifically, as you're leaving on the stairs. The perfect joke that arrives too late.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">Every language has this experience, and French borrowed the concept as "l'esprit de l'escalier" (wit of the staircase), but German captures it with a word that is more precise: it's not just any witty thought that comes too late, but specifically the thought that comes as you're leaving. English has no single word for this very specific and universal phenomenon.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">This word acknowledges the gap between our social performance in the moment and our mental agility afterward. It's used with gentle humor and self-deprecation. You might say "Mir ist gerade der perfekte Treppenwitz eingefallen" (I just thought of the perfect staircase joke) with a rueful smile, acknowledging the irony of finally having the perfect response now that it's useless.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">事后聪慧 (shìhòu cōnghuì) — wisdom after the fact; or more literally, 现在想到了好对白 (xiànzài xiǎng dào le hǎo duìbai) — only now do I think of good dialogue. Chinese emphasizes the belatedness rather than the specific spatial context.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-german">Weltschmerz</div>
+      <div class="word-decomposition" data-speak="true">Welt (world) + Schmerz (pain, ache)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">A deep, philosophical sadness about the state of the world. Existential melancholy. The ache of contemplating human suffering, injustice, and the limitations of existence itself. It's not personal sadness but a collective, almost cosmic sadness about existence.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">This word carries the weight of German Romantic and Existentialist philosophy. It emerged from thinkers like Schopenhauer and Heine who grappled with the fundamental sorrows of existence. While English might say "melancholy about the world" or "existential sadness," it lacks the gravitational pull that Weltschmerz carries—the sense that this sadness is philosophically justified, even noble.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">Weltschmerz has become recognized internationally because it captures something that German Romantic tradition made central to its worldview. German culture has long valued the ability to sit with difficult emotions and find meaning in them. This word is used both seriously and ironically—you might express genuine Weltschmerz when contemplating global crises, or use it ironically when experiencing minor disappointments.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">世界之痛 (shìjiè zhī ténɡ) — the pain of the world; or 悲观人生观 (bēiguān rénshēng guānɡuān) — pessimistic worldview. Chinese philosophical tradition approaches this differently, through the lens of Buddhism and Taoism rather than German Romanticism.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-german">Schadenfreude</div>
+      <div class="word-decomposition" data-speak="true">Schaden (damage, harm) + Freude (joy)</div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Definition</div>
+        <div class="explanation" data-speak="true">Pleasure taken in another person's misfortune or suffering. The malicious enjoyment that comes from seeing someone else fail, suffer, or experience bad luck.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Why It's Untranslatable</div>
+        <div class="explanation" data-speak="true">This is one of the few German words that has achieved international recognition and appears in English dictionaries. It's untranslatable because it names something fundamentally human that other languages find embarrassing to acknowledge. English requires periphrasis; German names it directly. The word does not judge; it simply describes a psychological reality.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Cultural Context</div>
+        <div class="explanation" data-speak="true">German honesty about human nature includes acknowledging our capacity for malice and envy. Rather than pretending we don't experience Schadenfreude, the language names it and thereby acknowledges it as part of human psychology. This reflects a philosophy that sees human nature clearly, without romantic illusions.</div>
+      </div>
+
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Chinese Approximation</div>
+        <div class="cultural-note" data-speak="true">幸灾乐祸 (xìngzāi lèhuò) — delight at others' disaster; a literal translation that mirrors Schadenfreude exactly. Chinese also directly acknowledges this aspect of human nature without euphemism.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">These eight words represent the crown jewels of German linguistic creativity. They demonstrate how language encodes cultural values and psychological insights. Notice that most of them involve acknowledging uncomfortable or complex emotions: grief eating, the urge to slap faces, well-meaning disasters, time running out, shame on behalf of others, jokes that come too late, existential sadness, and pleasure in others' pain. German culture has created precise words for these experiences because it refuses to look away from difficult psychological realities. This is not pessimism; it is honesty.</p>
+
+    <div class="word-card">
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">The Art of Compounding in German</div>
+        <div class="word-section" data-speak="true">All of these words demonstrate the same linguistic principle: German allows unlimited compounding of words to create new meanings with remarkable precision. The rules are simple: take a noun and add another noun (or verb root + noun), and you create a new word that is both understandable (the meaning emerges from its components) and precise (it captures something more specific than what the individual words convey). This is why German can feel both logically constructed and deeply creative—it follows strict grammatical rules while producing astonishingly evocative results. Mastering these compound words means understanding not just vocabulary but the fundamental way German builds meaning. Unlike English, which tends to use multiple words or long descriptions ("the weight gained from eating too much when sad"), German simply compounds the concepts into one precise, memorable word. This efficiency combined with expressiveness is one of German's greatest strengths as a language.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Recognizing Compounds in the Wild</div>
+        <div class="word-section" data-speak="true">One of your most useful skills will be recognizing compounds and decomposing them to understand meaning. When you encounter a German word you don't know, always ask: can this be broken into smaller components? Kummerspeck breaks into Kummer + Speck. Backpfeifengesicht into Backpfeife + Gesicht. Torschlusspanik into Tor + Schluss + Panik. This decomposition helps you understand not just the word but the thinking behind it. Native speakers often create compounds on the fly to describe novel situations. Once you internalize how German compounds work, you can often guess the meaning of words you've never seen before based on their components. This skill—compound decomposition—is one of your most valuable tools for reading German confidently. In German literature and media, you'll constantly encounter compounds you've never seen before. Rather than being intimidated, treat them as puzzles to solve. The components will almost always lead you to the meaning, because German compounds are built logically, with the meaning residing in the combination of their parts.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Emotional Honesty and Language Design</div>
+        <div class="word-section" data-speak="true">What's striking about these words is how they reveal something about German cultural values. A culture creates words for what matters to it. German creates words for grief-eating, for faces that need slapping, for failed improvements, for time-anxiety, for secondhand shame, for delayed wit, for worldly sadness, and for malicious pleasure. The culture acknowledges the full spectrum of human experience—not just the noble emotions but the uncomfortable ones too. This reflects a philosophical tradition (from Schopenhauer through Nietzsche to Wittgenstein) that valued unflinching clarity over comforting illusions. When you use these words, you're not just speaking German; you're participating in this tradition of honest acknowledgment of the human condition. German literature, film, and conversation frequently reference these concepts because they capture truths about human psychology that polite society often prefers to ignore. But German culture, shaped by its Romantic and Existentialist traditions, has always insisted on naming these realities.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Building Your Own Compounds: Creativity Within Structure</div>
+        <div class="word-section" data-speak="true">As your German improves, you may find yourself wanting to create your own compound words to express novel ideas. This is perfectly natural and is exactly how native speakers extend their language. While not all creative compounds will be "official" dictionary words, German speakers will understand them because the logic is transparent. For instance, if you wanted to describe "the feeling you get when a conversation goes on too long and you don't know how to exit gracefully," you might create something like "Gesprächsverlängerungspanick" (conversation-extension-panic). While this specific word might not exist in dictionaries, any German speaker would immediately understand it because they understand how compounds work. This creative freedom within a rigid grammatical structure is characteristic of German. It allows for both clarity and flexibility, both standardization and innovation. As you advance in your studies, you'll start to see German not as a fixed set of rules and vocabulary, but as a system for generating meaning through the logical combination of linguistic elements.</div>
+      </div>
+    </div>
+
+    <div class="word-card">
+      <div class="word-section">
+        <div class="word-section-title" data-speak="true">Beyond Words: The Psychology of Language</div>
+        <div class="word-section" data-speak="true">These eight words, and hundreds of others like them, demonstrate something profound about language and thought. The philosopher Ludwig Wittgenstein, himself German-speaking, argued that "the limits of my language mean the limits of my world." When German speakers have a word like Fremdschämen, they are primed to notice and acknowledge secondhand embarrassment in ways that English speakers, lacking the word, may not be. They habitually attend to this experience because language has given them a name for it. Conversely, English speakers have words like "privacy" and "fairness" that don't translate perfectly into German, shaping how English and German cultures relate to these concepts differently. This is not to say that speakers of English can't experience or think about secondhand shame, but rather that having a word for something makes it easier to recognize, discuss, and integrate into your understanding. When you learn these German words, you're not just learning vocabulary—you're acquiring new lenses through which to perceive and interpret human experience. You're expanding the limits of your world.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <div class="quiz-container">
+      <h3 data-speak="true">Chapter 90 Quiz: Wordplay and Compounds</h3>
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" data-speak="true">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()" data-speak="true">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="quiz-summary"></div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <a href="chapter89.html" class="nav-btn">← Chapter 89</a>
+    <a href="chapter91.html" class="nav-btn next">Chapter 91 →</a>
+  </div>
+
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What does 'Kummerspeck' literally mean?",
+    options: ["Emotional stress", "Grief + bacon/fat", "Sad food", "Heavy heart"],
+    correct: 1,
+    explanation: "Kummerspeck combines Kummer (grief/sorrow) with Speck (bacon/fat), referring to weight gained from emotional eating."
+  },
+  {
+    question: "Which word describes a face that makes you want to slap it?",
+    options: ["Unschöngesicht", "Backpfeifengesicht", "Wutgesicht", "Ärgergesicht"],
+    correct: 1,
+    explanation: "Backpfeifengesicht literally means 'slap-in-the-face face,' describing an exceptionally annoying or aggravating expression."
+  },
+  {
+    question: "What is a 'Verschlimmbesserung'?",
+    options: ["A good improvement", "An improvement that makes things worse", "A complete failure", "A temporary fix"],
+    correct: 1,
+    explanation: "This paradoxical word combines 'verschlimm' (make worse) with 'Besserung' (improvement) to describe a 'fix' that worsens the situation."
+  },
+  {
+    question: "What is 'Torschlusspanik'?",
+    options: ["Fear of closing gates", "Panic about time running out", "Gate-closing anxiety", "Fear of being locked out"],
+    correct: 1,
+    explanation: "Tor (gate) + Schluss (closing) + Panik describes the panic about running out of time and opportunities closing."
+  },
+  {
+    question: "Which word means to feel shame on behalf of someone else?",
+    options: ["Schande", "Schämen", "Fremdschämen", "Mitschmerz"],
+    correct: 2,
+    explanation: "Fremdschämen combines 'fremd' (foreign/other) with 'schämen' (to feel shame) to describe secondhand embarrassment."
+  },
+  {
+    question: "What is a 'Treppenwitz'?",
+    options: ["A joke you tell on stairs", "A witty remark that comes to you on the way out", "A staircase accident", "A joke about staircases"],
+    correct: 1,
+    explanation: "Treppenwitz literally means 'staircase joke,' referring to the perfect witty comeback you think of only after leaving."
+  },
+  {
+    question: "Which word represents existential sadness about the state of the world?",
+    options: ["Traurigkeit", "Weltschmerz", "Pessimismus", "Angst"],
+    correct: 1,
+    explanation: "Weltschmerz (world-pain) captures philosophical melancholy about human existence and global suffering."
+  },
+  {
+    question: "What does 'Schadenfreude' literally translate to?",
+    options: ["Damage-sadness", "Damage-joy", "Malice-pleasure", "Harm-happiness"],
+    correct: 1,
+    explanation: "Schadenfreude combines 'Schaden' (damage/harm) with 'Freude' (joy) to describe pleasure in others' misfortune."
+  },
+  {
+    question: "How are most of these German words formed?",
+    options: ["From Latin roots", "By combining two or more German words", "From French loanwords", "From English borrowings"],
+    correct: 1,
+    explanation: "German creates new words by compounding existing words—Kummer + Speck, Tor + Schluss + Panik, etc."
+  },
+  {
+    question: "What does the word 'Weltschmerz' originate from?",
+    options: ["Medieval German", "German Romantic and Existentialist philosophy", "Industrial era Germany", "Modern German culture"],
+    correct: 1,
+    explanation: "Weltschmerz emerged from German Romantic and Existentialist philosophers like Schopenhauer and Heine."
+  },
+  {
+    question: "Which feeling is NOT one of the eight words covered?",
+    options: ["Schadenfreude", "Fremdschämen", "Hoffnung", "Weltschmerz"],
+    correct: 2,
+    explanation: "Hoffnung (hope) was not covered. The eight words focus on complex, often uncomfortable emotional experiences."
+  },
+  {
+    question: "What cultural value does the existence of these words suggest?",
+    options: ["Avoidance of difficult emotions", "Emotional honesty without illusions", "Preference for poetic language", "Rejection of all emotions"],
+    correct: 1,
+    explanation: "These words reflect German culture's commitment to acknowledging difficult emotions and uncomfortable psychological realities."
+  },
+  {
+    question: "Which word has been adopted into English dictionaries?",
+    options: ["Kummerspeck", "Backpfeifengesicht", "Schadenfreude", "Treppenwitz"],
+    correct: 2,
+    explanation: "Schadenfreude has achieved international recognition and appears in English dictionaries as a loanword."
+  },
+  {
+    question: "What does decomposing a German compound word help you do?",
+    options: ["Improve your pronunciation", "Guess meanings of unfamiliar words", "Memorize faster", "Understand grammar rules"],
+    correct: 1,
+    explanation: "Breaking compounds into components (Kummer + Speck) helps you understand meaning and guess unfamiliar compound words."
+  },
+  {
+    question: "Which philosophical tradition influenced words like 'Weltschmerz'?",
+    options: ["British empiricism", "German Romanticism and Existentialism", "French rationalism", "Italian humanism"],
+    correct: 1,
+    explanation: "Words like Weltschmerz reflect Germany's rich Romantic and Existentialist philosophical traditions."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion(){
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+  document.getElementById('progress').style.width = ((currentQuestion + 1) / quizData.length) * 100 + '%';
+  document.getElementById('quiz-questions').innerHTML = `
+    <div class="quiz-question">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : (i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '')) : ''}"
+               onclick="selectAnswer(${i})" data-speak="true">${opt}</div>
+        `).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(232,164,74,0.1);font-size:0.95rem;color:rgba(212,202,187,0.8);" data-speak="true"><strong>Explanation:</strong> ${q.explanation}</div>` : ''}
+    </div>
+  `;
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function selectAnswer(i){
+  if(answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = i;
+  if(i === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion(){
+  if(currentQuestion < quizData.length - 1){
+    currentQuestion++;
+    displayQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function previousQuestion(){
+  if(currentQuestion > 0){
+    currentQuestion--;
+    displayQuestion();
+  }
+}
+
+function showScore(){
+  const pct = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('quiz-summary').classList.add('show');
+  document.getElementById('quiz-summary').innerHTML = `
+    <p data-speak="true"><strong>Chapter 90 Complete!</strong></p>
+    <p style="margin-top:12px" data-speak="true">You now understand eight of German's most remarkable words. These words reflect the German genius for precision and emotional honesty. As you encounter German text, watch for compound words and practice decomposing them—this skill will unlock countless new words.</p>
+    ${pct >= 80 ? '<p style="margin-top:12px; color: var(--fire-glow)" data-speak="true">Excellent! Your understanding of German wordplay is outstanding.</p>' : '<p style="margin-top:12px; color: var(--fire-glow)" data-speak="true">Strong foundation. Review these words and notice them in German media.</p>'}
+  `;
+}
+
+function drawPlayingCards() {
+  const canvas = document.getElementById('workshop-canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let time = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    time += 0.01;
+
+    for(let i = 0; i < 8; i++) {
+      const x = (canvas.width / 8) * (i + 0.5);
+      const y = canvas.height / 2 + Math.sin(time + i) * 80;
+      const rotation = Math.sin(time + i * 0.5) * 0.3;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rotation);
+      ctx.strokeStyle = `rgba(232, 164, 74, ${0.08 + Math.sin(time + i) * 0.03})`;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-30, -50, 60, 100);
+      ctx.restore();
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(s => observer.observe(s));
+
+window.addEventListener('load', () => {
+  drawPlayingCards();
+  displayQuestion();
+  document.querySelectorAll('[data-speak="true"]').forEach(el => {
+    el.addEventListener('click', function(e){
+      if(window.speakGerman) window.speakGerman(this.textContent);
+    });
+  });
+});
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">772 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(90%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:90%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 772 words across 90 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">139 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(95%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:95%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 139 patterns across 90 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

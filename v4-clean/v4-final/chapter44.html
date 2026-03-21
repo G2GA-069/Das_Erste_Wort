@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 44: Die Wiederholung (The Repetition)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a; --fire-glow: #f4c67a; --ember: #c45d2c; --night: #0a0e1a;
+    --text: #d4cabb; --text-bright: #efe8db; --german: #e8a44a; --chinese: #c49a6c;
+    --english: #8a9bae; --pie: #9b8ec4; --workshop: #d4a574;
+  }
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+  #workshop-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+  .page-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  #progressBar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, #8b4513, #daa520); transition: width 0.1s ease-out; z-index: 999; }
+  .title-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 40px; }
+  .title-screen h1 { font-size: 4rem; font-weight: 300; color: var(--text-bright); opacity: 0; animation: fadeUp 2s ease 0.4s forwards; margin-bottom: 1em; }
+  .title-screen .title-de { font-size: 3.5rem; font-weight: 400; color: var(--german); opacity: 0; animation: fadeUp 2s ease 0.8s forwards; margin-bottom: 1.5em; font-style: italic; }
+  .title-screen .description { font-size: 1.3rem; max-width: 600px; color: rgba(212, 202, 187, 0.6); line-height: 1.8; opacity: 0; animation: fadeUp 2s ease 1.2s forwards; margin-bottom: 2em; }
+  .title-screen .chapter-label { font-size: 0.9rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(212, 202, 187, 0.4); opacity: 0; animation: fadeUp 2s ease 0.2s forwards; margin-bottom: 0.5em; }
+  .scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3); font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 3em; }
+  .scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+  .scene.visible { opacity: 1; transform: translateY(0); }
+  .scene-marker { display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--workshop), transparent); margin: 0 auto 40px; }
+  .narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+  .narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center; font-style: italic; margin: 2em 0; }
+  .narrative.small { font-size: 1.05rem; color: rgba(212, 202, 187, 0.6); line-height: 1.7; }
+  .german-word { color: var(--german); font-weight: 600; cursor: pointer; border-bottom: 1px dotted rgba(232, 164, 74, 0.4); transition: all 0.3s ease; }
+  .german-word:hover { color: var(--fire-glow); border-bottom-color: var(--fire-glow); }
+  .german-word.revealed { border-bottom-color: transparent; }
+  .aside-box { background: linear-gradient(135deg, rgba(155, 142, 196, 0.08), rgba(196, 154, 108, 0.08)); border-left: 3px solid rgba(232, 164, 74, 0.4); padding: 24px 28px; margin: 40px 0; border-radius: 0 8px 8px 0; font-size: 1.05rem; line-height: 1.75; color: rgba(212, 202, 187, 0.85); }
+  .aside-box strong { color: var(--fire-glow); }
+  .aside-box .aside-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(232, 164, 74, 0.6); margin-bottom: 12px; display: block; }
+  .ety-card { background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95)); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 12px; padding: 28px 32px; margin: 24px 0 32px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.5s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .ety-card.open { max-height: 1200px; opacity: 1; }
+  .ety-card .word-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .ety-card .word-main { font-size: 2rem; font-weight: 700; color: var(--german); }
+  .ety-card .word-pron { font-size: 1rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+  .ety-card .word-meaning { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(232, 164, 74, 0.1); }
+  .bridge { display: flex; align-items: center; gap: 12px; margin: 10px 0; font-size: 1rem; flex-wrap: wrap; }
+  .bridge-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; padding: 2px 8px; border-radius: 4px; min-width: 55px; text-align: center; }
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+  .bridge-word { font-size: 1.15rem; font-weight: 500; color: var(--text-bright); }
+  .bridge-word.zh { font-family: 'Noto Sans SC', sans-serif; font-size: 1.5rem; }
+  .bridge-note { font-size: 0.9rem; color: rgba(212, 202, 187, 0.5); font-style: italic; }
+  .ety-card .story { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232, 164, 74, 0.1); font-size: 1rem; color: rgba(212, 202, 187, 0.75); line-height: 1.7; }
+  .speak-btn { background: rgba(232, 164, 74, 0.1); border: 1px solid rgba(232, 164, 74, 0.2); color: var(--fire); font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; margin-left: auto; }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: var(--fire); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); color: var(--fire-glow); }
+  .divider { text-align: center; margin: 60px 0; color: rgba(212, 202, 187, 0.3); font-size: 1.3rem; letter-spacing: 0.3em; }
+  .quiz-section, .word-collection { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(15, 20, 35, 0.95)); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 16px; padding: 40px 32px; margin: 60px 0; display: none; }
+  .quiz-section.show, .word-collection.show { display: block; }
+  .quiz-header { text-align: center; margin-bottom: 40px; }
+  .quiz-header h2 { font-size: 1.5rem; color: var(--text-bright); margin-bottom: 8px; }
+  .quiz-header p { color: rgba(212, 202, 187, 0.6); font-size: 1rem; }
+  .quiz-item { margin-bottom: 28px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+  .quiz-item.correct { background: rgba(74, 140, 74, 0.15); }
+  .quiz-item.incorrect { background: rgba(196, 93, 44, 0.15); }
+  .quiz-question { font-size: 1.1rem; margin-bottom: 16px; color: var(--text-bright); }
+  .quiz-options { display: grid; gap: 10px; }
+  .quiz-option { background: rgba(0,0,0,0.3); border: 1px solid rgba(232, 164, 74, 0.15); padding: 12px 16px; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; color: var(--text); }
+  .quiz-option:hover { border-color: var(--fire); background: rgba(232, 164, 74, 0.08); }
+  .quiz-option input { margin-right: 10px; }
+  .quiz-option.selected { border-color: var(--fire); background: rgba(232, 164, 74, 0.15); }
+  .quiz-option.correct { border-color: #4a8c4a; background: rgba(74, 140, 74, 0.15); }
+  .quiz-option.incorrect { border-color: #c45d2c; background: rgba(196, 93, 44, 0.15); }
+  .quiz-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 32px; }
+  .quiz-nav button { flex: 1; background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; padding: 14px 24px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+  .quiz-nav button:hover:not(:disabled) { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .quiz-score { text-align: center; font-size: 1.3rem; color: var(--fire-glow); margin: 24px 0; font-weight: 500; }
+  .quiz-reset { text-align: center; }
+  .quiz-reset button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; padding: 12px 32px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+  .quiz-reset button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .post-quiz-summary { background: rgba(155, 142, 196, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3); padding: 24px 28px; margin: 24px 0; border-radius: 0 8px 8px 0; font-size: 1rem; line-height: 1.7; color: rgba(212, 202, 187, 0.8); display: none; }
+  .post-quiz-summary.show { display: block; }
+  .word-collection h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(232, 164, 74, 0.5); margin-bottom: 24px; }
+  .collected-words { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .collected-word { display: flex; flex-direction: column; align-items: center; background: rgba(232, 164, 74, 0.06); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 10px; padding: 14px 20px; min-width: 90px; opacity: 0; transform: scale(0.8); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .collected-word.show { opacity: 1; transform: scale(1); }
+  .cw-german { font-size: 1.1rem; color: var(--german); font-weight: 600; }
+  .cw-english { font-size: 0.85rem; color: var(--english); margin-top: 4px; }
+  .chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 40px 0 20px; margin-top: 60px; border-top: 1px solid rgba(232, 164, 74, 0.1); }
+  .nav-button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2); color: var(--text); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 1rem; transition: all 0.3s ease; display: inline-block; }
+  .nav-button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .chapter-counter { text-align: center; font-size: 0.9rem; color: rgba(212, 202, 187, 0.4); letter-spacing: 0.1em; }
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div id="progressBar"></div>
+<canvas id="workshop-canvas"></canvas>
+
+<div class="page-wrapper">
+
+  <div class="title-screen" id="titleScreen">
+    <p class="chapter-label">Chapter Forty-Four</p>
+    <h1>The Repetition</h1>
+    <p class="title-de">Die Wiederholung</p>
+    <p class="description">A spiral ascending through the night sky, traced in warm gold against deep blue. Each loop returns to the same position—yet higher. Repetition that elevates. The word "wieder-" (again) contains a paradox: you cannot step in the same river twice. Yet seven German words teach the language of return, recovery, and renewal. How does repetition make you advance?</p>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a spiral path carved into obsidian, glowing from within with warm gold light. Each turn of the spiral follows the exact same curve as the turn before it, yet with each revolution, the path rises higher into the night sky. You trace the same pattern again and again, and yet you are never at the same place twice. This is the paradox of the spiral, and it is the central metaphor for understanding <span class="german-word" data-speak="true">wieder-</span> (again) in German.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-speak="true">Wieder-</span> means "again," and it is one of the most paradoxical prefixes in any language. When you do something <span class="german-word" data-speak="true">wieder</span> (again), you are not returning to the exact starting point. You are repeating an action, but from a different position in time and space. The spiral never touches itself; it only circles back. This is profoundly different from simply repeating the same action identically. In German, <span class="german-word" data-speak="true">wieder</span> contains within it the knowledge that repetition is transformation. Every return is a new beginning at a higher elevation.
+    </p>
+
+    <p class="narrative">
+      When a child learns to walk, she falls repeatedly. Each fall is a repetition, yet each is different. Her muscles are stronger now. Her balance has improved. Her understanding of weight and motion has deepened. When she falls the tenth time, she has returned to the same action—falling—yet she is no longer the same person who fell the first time. This is the truth that <span class="german-word" data-speak="true">wieder</span> encodes: repetition is spiral, not circle.
+    </p>
+
+    <aside class="aside-box">
+      <span class="aside-title">Canvas Meditation: The Ascending Spiral</span>
+      Watch as golden particles trace an ascending spiral against the deep blue night sky. Each loop returns to the same position—yet at a higher elevation. The particles shimmer and glow as they move, never pausing, never rushing. At the center of the spiral, a soft warm light glows continuously. This is the visual language of this chapter: return with elevation, repetition with transformation, motion that appears circular but is actually ascending.
+    </aside>
+
+    <p class="narrative emphasis">
+      This chapter is about the spiral of language. Each of these seven words carries within it the image of circular motion combined with vertical ascent. They teach us that repetition is not monotony. Repetition is the path to mastery. Repetition is how we climb.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+    
+    <p class="narrative">
+      <span class="german-word" data-card="wiederholen">Wiederholen</span> is "to repeat," literally "to fetch-again." This is a word of retrieval. When you repeat something, you are not creating it anew from the void. You are fetching it from where it was left, retrieving it from the past, bringing it forward into the present moment. A student asks her teacher to <span class="german-word" data-speak="true">wiederholen</span> the explanation. She is not asking for a brand-new explanation, but for the teacher to fetch back the explanation that was already given, to retrieve it from the moment it was first spoken and bring it forward again. The student is asking: "Fetch back that knowledge you already shared with me. Let me receive it once more, and perhaps this time I will understand it better."
+    </p>
+
+    <p class="narrative">
+      In a music rehearsal, the conductor says <span class="german-word" data-speak="true">Wiederholen wir!</span> (Let us repeat!) The musicians do not play a new piece. They fetch back the passage they just played and play it again. Yet because they are more skilled now, more attentive to detail, more unified as an ensemble, the second playing is richer than the first. The spiral rises. The notes are the same, but the musicians have climbed.
+    </p>
+
+    <p class="narrative">
+      This word appears constantly in educational contexts because education is fundamentally about repetition with elevation. You learn a concept once. You practice it. You revisit it. Each time you <span class="german-word" data-speak="true">wiederholen</span>, you are not wasting time in futile duplication. You are climbing the spiral. You are incorporating the knowledge deeper into your being. The word <span class="german-word" data-speak="true">wiederholen</span> dignifies this process. It says: repetition is not failure. Repetition is the only path to mastery.
+    </p>
+
+    <div class="ety-card" id="card-wiederholen">
+      <div class="word-header">
+        <span class="word-main">wiederholen</span>
+        <span class="word-pron">/ˈviːdɐhoːlən/</span>
+      </div>
+      <div class="word-meaning">verb — to repeat, to fetch again, to retrieve; to do something again; to restore or revive</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kel- + *kʷel-</span>
+        <span class="bridge-note">— "to drive" (holen) + "to turn back" (wieder) — to drive back, to fetch back</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">again + haul</span>
+        <span class="bridge-note">— semantic parallel: "to haul again" carries similar retrieval sense</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wieder-holen</span>
+        <span class="bridge-note">— literally "again-fetch"; common verb in instruction and practice contexts; reveals teaching as retrieval</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">重复 / 重新</span>
+        <span class="bridge-note">— chóngfù / chóngxīn — "again-do" / "again-new" — both emphasize the circular return</span>
+      </div>
+      <div class="story">
+        The word <em>wiederholen</em> reveals an ancient understanding of repetition: not as mindless mechanical duplication, but as active retrieval. To repeat is to fetch back, to go to where something was and bring it forward again. This is why <em>wiederholen</em> is the verb used in teaching: when a student asks you to repeat, they are asking you to journey back to where you left the knowledge and bring it forward once more. The spiral image captures this perfectly—you return to the same point (the original teaching moment) but retrieve it at a higher level of understanding. A German speaker saying "Ich fange an zu wiederholen" (I'm beginning to repeat) is not admitting defeat. They are acknowledging that they are climbing the spiral of mastery.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight:</strong> <span class="german-word" data-speak="true">Wiederholen</span> means that when you repeat something, you are actively going back to fetch it. This is not passive rote memorization. This is conscious retrieval. Each time you <em>wiederholen</em>, you are demonstrating that you have the power to access what was, to call it back into the present, and to make it new again through fresh understanding.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wiedersehen">Wiedersehen</span> is "to see again," but in German culture and speech, it carries a weight that the English translation cannot fully convey. The phrase <span class="german-word" data-speak="true">Auf Wiedersehen!</span> (literally "To seeing again!") is the most common farewell in German. When you say goodbye to someone in German, you are not simply saying "goodbye" in the sense of "farewell forever." You are saying: "I am certain we will see each other again. This separation is temporary. Our reunion is inevitable."
+    </p>
+
+    <p class="narrative">
+      This is a fundamentally optimistic view of separation. Unlike "goodbye" (which comes from "God be with you" and has a valedictory, almost funeral quality), <span class="german-word" data-speak="true">Auf Wiedersehen</span> says: "Until we see each other again." The assumption is reunion. The expectation is return. The spiral turns once, separating the two people, but already the next loop is anticipated—the moment when they will see each other once more.
+    </p>
+
+    <p class="narrative">
+      In German literature and philosophy, <span class="german-word" data-speak="true">Wiedersehen</span> has even deeper resonance. Goethe and the Romantics used this word to describe not just the physical act of seeing someone again, but the spiritual reunion with a beloved, the recovery of what was lost, the recognition of a soul once known in a past life or a distant place. When two people recognize each other across time and distance—when they suddenly see the truth of their connection—they <span class="german-word" data-speak="true">sehen sich wieder</span> (see each other again) in a sense that goes far beyond mere vision. They recognize something eternal.
+    </p>
+
+    <p class="narrative">
+      The Chinese farewell <span class="german-word" data-speak="true">再见</span> (zàijiàn) uses the identical structure: 再 (zài) meaning "again" and 见 (jiàn) meaning "to see." This is not coincidence. It is a profound convergence of wisdom across cultures. Both languages, independently developing their primary farewell, arrived at the same image: goodbye is seeing-again, return is a new meeting, separation is only temporary because the spiral will bring us back around.
+    </p>
+
+    <div class="ety-card" id="card-wiedersehen">
+      <div class="word-header">
+        <span class="word-main">wiedersehen</span>
+        <span class="word-pron">/ˈviːdɐzeːən/</span>
+      </div>
+      <div class="word-meaning">verb — to see again, to encounter again, to be reunited; farewell phrase "Auf Wiedersehen!" (until we meet again)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kʷel- + *sekʷ-</span>
+        <span class="bridge-note">— "to turn back" (wieder) + "to see" (sehen) — to turn back to see, to look again</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">again + see</span>
+        <span class="bridge-note">— English "see you again" carries similar reunion sense but without the verb form</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wieder-sehen</span>
+        <span class="bridge-note">— "again-see"; transformed into the cultural farewell "Auf Wiedersehen!" — the most common German goodbye</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">再见 (zàijiàn)</span>
+        <span class="bridge-note">— literally "again-see" — IDENTICAL structure to wiedersehen! Chinese and German independently converged on this image for farewell.</span>
+      </div>
+      <div class="story">
+        The word <em>wiedersehen</em> is remarkable because it shows how language encodes cultural values and philosophical assumptions. In German, the farewell is not "goodbye" but "until we see each other again"—carrying with it the assumption that separation is temporary and reunion is certain. This optimistic spirit is embedded in the very grammar of the word. The Chinese farewell 再见 (zàijiàn) uses the identical structure: "again-see," demonstrating that this pattern of thought appears across cultures and languages, reflecting a deep human hope that what is separated will be reunited. When you say "Auf Wiedersehen," you are participating in thousands of years of human wisdom about how to part with grace and optimism.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight:</strong> <span class="german-word" data-speak="true">Wiedersehen</span> carries an assumption of inevitability. When you see someone again, it is not accidental. It is part of the great spiral of return. The verb speaks to recognition, to reunion, to the certainty that those who are meant to meet will meet again. Every goodbye is a temporary pause in the spiral, not an ending.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zuruckkommen">Zurückkommen</span> is "to come back," or more precisely, "to come-back." The word contains <span class="german-word" data-speak="true">zurück</span> (back) and <span class="german-word" data-speak="true">kommen</span> (to come). But unlike <span class="german-word" data-speak="true">wiederkommen</span> (to come again), which would suggest a return to the same cycle, <span class="german-word" data-speak="true">zurückkommen</span> emphasizes the physical, spatial return to a place that was left. It is about the journey itself, the traversal of distance in reverse.
+    </p>
+
+    <p class="narrative">
+      When a traveler who has been abroad for years <span class="german-word" data-speak="true">kommt zurück</span> (comes back), they are moving through space back to the place they left. The verb emphasizes the direction of return, the retracing of steps, the motion back toward the starting point. A thought that was lost in your mind <span class="german-word" data-speak="true">kommt zurück</span> (comes back) to you—it re-emerges, moves forward into consciousness again, reappears after a period of absence. A prisoner who is released <span class="german-word" data-speak="true">kommt</span> (comes) back to freedom. In every case, the verb emphasizes the spatial integrity of the return, the journey itself, the motion that carries you homeward.
+    </p>
+
+    <p class="narrative">
+      Unlike <span class="german-word" data-speak="true">wiedersehen</span> (which focuses on recognition and reunion), <span class="german-word" data-speak="true">zurückkommen</span> emphasizes the journey itself, the act of retracing steps, the motion back toward the starting point. The spiral's geometric precision—each loop must return to its origin before it can rise higher—is captured in this word. There is a mathematical accuracy to <span class="german-word" data-speak="true">zurückkommen</span>, a sense that paths can be retraced, that what was traveled forward can be traveled backward.
+    </p>
+
+    <div class="ety-card" id="card-zuruckkommen">
+      <div class="word-header">
+        <span class="word-main">zurückkommen</span>
+        <span class="word-pron">/ˈtsuːɐ̯ʏkˌkɔmən/</span>
+      </div>
+      <div class="word-meaning">verb — to come back, to return to a place; to come back to a topic; to recur or reappear; to return to consciousness</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*gʷem- + spatial back</span>
+        <span class="bridge-note">— "to come" + "back" — movement in reverse direction toward origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">come back</span>
+        <span class="bridge-note">— English phrase, not a single verb; German fuses them into unified concept of spatial return</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zurück-kommen</span>
+        <span class="bridge-note">— "back-come"; emphasizes spatial return and movement in reverse direction; common in travel, memory, and discourse</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">回来 (huílái)</span>
+        <span class="bridge-note">— "return-come" — similar spatial emphasis on directional movement back and homecoming</span>
+      </div>
+      <div class="story">
+        <em>Zurückkommen</em> differs from <em>wiedersehen</em> or <em>wiederkommen</em> in its emphasis on spatial return. While <em>wiedersehen</em> focuses on recognition and reunion with a person, <em>zurückkommen</em> focuses on the physical act of returning to a place. The word is especially common in discussions of travel, memory, and thought: "to come back to" a topic means to return to discussing it, to retrace your steps mentally through an argument. A person who has emigrated and <em>kommt zurück</em> is making a spatial and emotional journey home. The verb captures the integrity of the spiral—each loop must return to where it began before it can rise higher.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight:</strong> <span class="german-word" data-speak="true">Zurückkommen</span> emphasizes the spatial integrity of return. When you come back, you are retracing a path, closing a circle, preparing the ground for the next spiral upward. This word is about journey, about direction, about the physical or mental motion that carries you home.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zuruckgeben">Zurückgeben</span> is "to give back," or "to return something to its owner." The word combines <span class="german-word" data-speak="true">zurück</span> (back) with <span class="german-word" data-speak="true">geben</span> (to give). When you <span class="german-word" data-speak="true">gibst etwas zurück</span> (give something back), you are placing something that was borrowed or taken back into the hands of the one who originally possessed it. This is the verb of restoration and restitution.
+    </p>
+
+    <p class="narrative">
+      You borrow a book from a friend, you read it, and when you are finished, you <span class="german-word" data-speak="true">gibst es zurück</span> (give it back). The word contains no judgment, no sense of shame. It is simply the completion of the cycle: what was given is returned, the balance is restored, the relationship is honored. A player in a sport <span class="german-word" data-speak="true">gibt den Ball zurück</span> (gives the ball back), returning it to the game, returning it to its rightful place in the flow of play. A heart that has been broken by loss might ask for <span class="german-word" data-speak="true">Frieden zurückgeben</span> (to give back peace), asking for justice that will restore what was taken.
+    </p>
+
+    <p class="narrative">
+      In German education and culture, the concept of <span class="german-word" data-speak="true">zurückgeben</span> extends metaphorically. A writer who has been influenced by a teacher might <span class="german-word" data-speak="true">gibt etwas zurück</span> (give something back) to the community—not in the sense of returning it to its original state, but in the sense of contributing, of sharing what was learned, of continuing the cycle of knowledge and growth. The spiral continues because each person who receives gives back in turn. Your gift today becomes tomorrow's gift that someone else will pass on to another. This is the eternal spiral of human culture.
+    </p>
+
+    <div class="ety-card" id="card-zuruckgeben">
+      <div class="word-header">
+        <span class="word-main">zurückgeben</span>
+        <span class="word-pron">/ˈtsuːɐ̯ʏkˌɡeːbən/</span>
+      </div>
+      <div class="word-meaning">verb — to give back, to return something; to restore; to give in response (to answer); metaphorical: to contribute back to community</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*gʷem- + *gʰebʰ-</span>
+        <span class="bridge-note">— "to come/return" + "to give" — to give in the direction of return, to restore and rebalance</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">give back</span>
+        <span class="bridge-note">— English phrase; German verb form suggests unified concept of restoration</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zurück-geben</span>
+        <span class="bridge-note">— "back-give"; appears in legal, educational, and everyday contexts of restitution and reciprocity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">还给 (háigěi) / 归还</span>
+        <span class="bridge-note">— "return-give" / "restore-return" — both emphasize restitution and the continuation of cycles</span>
+      </div>
+      <div class="story">
+        <em>Zurückgeben</em> transforms the simple act of returning an object into a concept of cycle and reciprocity. When you give something back, you are not just completing a transaction—you are acknowledging that the object belongs to someone else and maintaining the social bonds of trust and community. In German culture, <em>zurückgeben</em> extends to the metaphorical realm: when someone has been given an opportunity or knowledge, they eventually <em>geben zurück</em> (give back) through their contributions to others. A teacher gives to a student; the student grows up and gives to new students. This captures the essence of the spiral: what goes around comes around, but each time it rises higher, enriched by what was learned in the cycle before.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight:</strong> <span class="german-word" data-speak="true">Zurückgeben</span> is about completing the circle while maintaining its integrity. Every gift, every loan, every opportunity carries within it the implicit obligation to give back. The spiral of giving and receiving sustains human community and culture. When you <em>give back</em>, you are not diminishing yourself. You are ensuring that the spiral continues to rise.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="weitermachen">Weitermachen</span> is "to continue," or more literally, "to make further." <span class="german-word" data-card="weitergehen">Weitergehen</span> is "to carry on," or "to go further." Both words use <span class="german-word" data-speak="true">weiter-</span> (further, onward) combined with verbs of motion and action. Together, they capture the paradoxical truth of the spiral: that moving forward sometimes means making the same motion again, that progress requires persistence, that advancement is often simply the continuation of what you have already begun.
+    </p>
+
+    <p class="narrative">
+      A teacher might say to a struggling student: <span class="german-word" data-speak="true">Mach weiter!</span> (Keep going!) or <span class="german-word" data-speak="true">Geh weiter!</span> (Carry on!) These commands are not asking the student to do something new, but to persist with what they have already started. There is something almost defiant in this combination of words—a refusal to stop, a commitment to keep moving, even when the path is difficult.
+    </p>
+
+    <p class="narrative">
+      In the context of German literature and philosophy, <span class="german-word" data-speak="true">weitermachen</span> has taken on additional significance. During the post-war period, German writers and philosophers grappled with the question of how to continue living and creating after catastrophe. The word <span class="german-word" data-speak="true">weitermachen</span>—simply continuing, making further, persisting—became almost a moral imperative. Not forgetting, not denying, but continuing. Not turning away from history, but walking through it and emerging on the other side. The spiral does not stop; it transforms the tragedy it has passed through into a higher level of consciousness and responsibility.
+    </p>
+
+    <div class="ety-card" id="card-weitermachen">
+      <div class="word-header">
+        <span class="word-main">weitermachen / weitergehen</span>
+        <span class="word-pron">/ˈvaɪ̯tɐˌmaːxən / ˈvaɪ̯tɐˌɡeːən/</span>
+      </div>
+      <div class="word-meaning">verb — to continue, to carry on, to keep going, to persist; to proceed further; to not give up</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wid- + *gʰedʰ-</span>
+        <span class="bridge-note">— "against, further" + "to go" — to go onward, to make forward progress despite resistance</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">further + go / make</span>
+        <span class="bridge-note">— English phrase construction; German combines into unified verbs of persistent forward motion</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">weiter-machen / weiter-gehen</span>
+        <span class="bridge-note">— "further-make/go"; common in motivation, instruction, narrative continuation, and philosophical discourse</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">继续 (jìxù) / 前进</span>
+        <span class="bridge-note">— "continue" / "go-forward" — both capture the relentless persistence of forward motion</span>
+      </div>
+      <div class="story">
+        <em>Weitermachen</em> and <em>weitergehen</em> capture something essential about the spiral: it does not stop at the top of each revolution. It must continue. Progress is not a destination but a perpetual motion, a commitment to keep moving forward. These verbs are deceptively simple, but they encode a philosophy of persistence. To say <em>Mach weiter!</em> (Keep going!) is to acknowledge that the journey continues, that difficulties will be overcome not by extraordinary effort but by ordinary persistence, that the spiral rises through the simple, daily commitment to move further. German thinkers and writers, confronting trauma and loss, chose this word—<em>weitermachen</em>—as an emblem of survival and moral responsibility.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight:</strong> <span class="german-word" data-speak="true">Weitermachen</span> and <span class="german-word" data-speak="true">weitergehen</span> teach that the spiral's elevation comes not from magical transformations but from persistence. Keep making. Keep going. The elevation will come through the continuation itself. You do not need extraordinary strength. You need only to refuse to stop.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wiedervereinigung">Wiedervereinigung</span> is "reunification," one of the most significant words in modern German history. The word breaks down into three components: <span class="german-word" data-speak="true">wieder-</span> (again), <span class="german-word" data-speak="true">ver-</span> (together, thoroughly), and <span class="german-word" data-speak="true">einigung</span> (unification, from "eins," one). To reunify is to make one again, to restore what was unified before, to bring together what was separated. It is the ultimate expression of the spiral metaphor.
+    </p>
+
+    <p class="narrative">
+      For German speakers, particularly those born before 1989, <span class="german-word" data-speak="true">Wiedervereinigung</span> is not merely a historical term. It is deeply personal. The word encompasses the experience of families divided by a wall for nearly three decades, separated by ideology, by geography, by the Cold War. Grandparents could not see grandchildren. Siblings grew up in different worlds under different regimes, speaking slightly different German, shaped by different histories. <span class="german-word" data-speak="true">Wiedervereinigung</span> is the moment when that wall fell, when families could embrace again, when a nation could reclaim its unity.
+    </p>
+
+    <p class="narrative">
+      But the word also points to something deeper about the German cultural consciousness. Germany has been unified and divided many times throughout history. The idea of <span class="german-word" data-speak="true">Wiedervereinigung</span>—reunion, reunification—speaks to a deep longing for integration, for the restoration of wholeness. It is the ultimate spiral: what was one, became two, and through the forward motion of history, becomes one again. But the spiral means that this new unity is not identical to the old. It is a higher revolution, carrying within it the memory of separation, transformed into a commitment to never allow such division again. The reunified nation is not the same as the divided nations before the wall; it is wiser, more careful, more conscious of what unity requires.
+    </p>
+
+    <div class="ety-card" id="card-wiedervereinigung">
+      <div class="word-header">
+        <span class="word-main">Wiedervereinigung</span>
+        <span class="word-pron">/ˈviːdɐfɛɐ̯ˌaɪ̯nɪɡʊŋ/</span>
+      </div>
+      <div class="word-meaning">noun — reunification, the act of making one again; restoration of unity; historically, the reunification of Germany (1990)</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kʷel- + *wer- + *h₁ey-</span>
+        <span class="bridge-note">— "again" + "together" + "one" — to make one again, to restore original unity at a higher level</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">re-unification</span>
+        <span class="bridge-note">— similar structure but German emphasizes both return and the act of unifying thoroughly</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wieder-ver-einigung</span>
+        <span class="bridge-note">— "again-together-oneness"; formal, historical, and emotionally charged term; the official term for Germany's 1990 reunification</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">统一 (tǒngyī) / 重聚</span>
+        <span class="bridge-note">— "unify" / "re-gather" — both address the restoration of original wholeness</span>
+      </div>
+      <div class="story">
+        <em>Wiedervereinigung</em> is perhaps the most emotionally charged word in this chapter. It is a historical term that carries within it human memory, family separation, ideological struggle, and ultimately hope and reconciliation. The word was used officially to describe Germany's reunification in 1990, but it resonates far beyond that specific historical moment. It speaks to the universal human longing to restore what was broken, to reunite what was divided, to make whole again what was separated. The spiral's metaphor is particularly powerful here: Germany's path was not a simple return to the pre-1945 state, but a spiral that incorporated the lessons of division, the experience of separation, and the commitment to prevent such fracture in the future. When the wall fell and Germans crossed from East to West and West to East, embracing strangers who were somehow family, they were experiencing the truth of the spiral: what returns is transformed forever by what came between.
+      </div>
+    </div>
+
+    <p class="narrative">
+      <strong>The key insight:</strong> <span class="german-word" data-speak="true">Wiedervereinigung</span> is the ultimate expression of the spiral's paradox. It means making one again, but the unity that emerges from separation is qualitatively different—deeper, more conscious, more precious—than the original unity could have been. The price of separation is paid with the currency of transformation. What returns is forever changed.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="integration">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      All seven words in this chapter share a common root: the image of return. Yet each approaches return from a different angle, revealing different facets of the same universal truth.
+    </p>
+
+    <p class="narrative small">
+      <strong>Wiederholen</strong> teaches that return is an act of retrieval. When you repeat, you fetch back. You do not create anew; you resurrect what was.
+    </p>
+
+    <p class="narrative small">
+      <strong>Wiedersehen</strong> teaches that return is reunion. When you see someone again, you recognize an eternal connection. Separation is temporary; reunion is inevitable.
+    </p>
+
+    <p class="narrative small">
+      <strong>Zurückkommen</strong> teaches that return is spatial journey. When you come back, you retrace paths, close circles, prepare the ground for the next spiral upward.
+    </p>
+
+    <p class="narrative small">
+      <strong>Zurückgeben</strong> teaches that return is restitution. When you give back, you honor obligations, maintain community, ensure that gifts continue to circulate.
+    </p>
+
+    <p class="narrative small">
+      <strong>Weitermachen</strong> teaches that forward progress requires persistent motion. You continue not because the destination is near, but because continuation is the only path that rises.
+    </p>
+
+    <p class="narrative small">
+      <strong>Weitergehen</strong> teaches that the journey has no final destination. There is always further to go. The spiral continues infinitely upward.
+    </p>
+
+    <p class="narrative small">
+      <strong>Wiedervereinigung</strong> teaches that the highest form of return is the restoration of unity at a higher level of consciousness. What was separated and then reunited is forever transformed.
+    </p>
+
+    <p class="narrative emphasis">
+      The spiral image unites them all. Each word speaks to a different facet of the same universal truth: that repetition is not mere duplication; it is transformation. That return is not regression; it is elevation. That the same action, done again, carries you higher.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="guess1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      Now that you have absorbed the patterns of this chapter, try these guesses. Use the spiral metaphor as your guide. What would these words mean if they all carry within them the image of return combined with elevation?
+    </p>
+
+    <aside class="aside-box">
+      <span class="aside-title">First Guess Section</span>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">1. Nachdenken</strong> — nach- (after) + denken (to think). What happens when you think after? What is the verb for thinking about something, turning it over in your mind, reconsidering it?</p>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">2. Rückkehr</strong> — rück- (back) + kehr (turn). What is the noun for the act of turning back? A journey back? A return?</p>
+      <p><strong style="color: var(--fire-glow);">3. Wieder aufbauen</strong> — wieder (again) + aufbauen (to build up). What does it mean to build up again? To reconstruct? To restore from ruins?</p>
+    </aside>
+
+    <p class="narrative small">
+      These words are not in our official collection for this chapter, but they follow the same patterns you are learning. As you make your guesses, you are training your German intuition—learning to recognize how the language builds meaning from small, repeating components. The spiral does not just repeat; it grows more complex with each revolution.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="scene" id="guess2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      Now that you have absorbed the patterns of this chapter, try these more challenging guesses. These words extend the concept of return and repetition into new semantic territory.
+    </p>
+
+    <aside class="aside-box">
+      <span class="aside-title">Advanced Guess Section</span>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">1. Wiederbelebung</strong> — wieder (again) + belebung (to vivify, to bring to life). What does it mean to bring to life again? Resuscitation? Revival of something dormant?</p>
+      <p style="margin-bottom: 12px;"><strong style="color: var(--fire-glow);">2. Zurückweisung</strong> — zurück (back) + weisung (direction, instruction). What is an act of turning something back? Rejection? Refusal? Repudiation?</p>
+      <p><strong style="color: var(--fire-glow);">3. Wiederaufnahme</strong> — wieder (again) + aufnahme (taking, recording). What does it mean to take something up again? Resumption? Reinstatement? Re-recording?</p>
+    </aside>
+
+    <p class="narrative small">
+      As you make these guesses, notice how the prefix patterns expand into domains you may not have considered. Return is not just physical or temporal. Return is legal (rejection of a lawsuit), medical (revival of a patient), emotional (resumption of a relationship), and technical (re-recording of a song). The spiral is everywhere—in every aspect of German thought and culture.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <div class="quiz-section" id="quizSection">
+    <div class="quiz-header">
+      <h2>Check Your Understanding</h2>
+      <p>Test your mastery of Die Wiederholung. Aim for 80% to demonstrate true comprehension of the spiral.</p>
+    </div>
+    <div id="quizContainer"></div>
+    <div class="quiz-nav">
+      <button id="quizPrev">← Previous</button>
+      <button id="quizNext">Next →</button>
+    </div>
+    <div class="quiz-score" id="quizScore"></div>
+    <div class="post-quiz-summary" id="postQuizSummary"></div>
+    <div class="quiz-reset">
+      <button id="resetQuiz">Reset Quiz</button>
+    </div>
+  </div>
+
+  <div class="word-collection" id="wordCollection">
+    <h3>Words from Die Wiederholung (The Repetition)</h3>
+    <div class="collected-words" id="collectedWords">
+      <div class="collected-word"><div class="cw-german">wiederholen</div><div class="cw-english">repeat, fetch again</div></div>
+      <div class="collected-word"><div class="cw-german">Wiedersehen</div><div class="cw-english">see again, reunion</div></div>
+      <div class="collected-word"><div class="cw-german">zurückkommen</div><div class="cw-english">come back</div></div>
+      <div class="collected-word"><div class="cw-german">zurückgeben</div><div class="cw-english">give back</div></div>
+      <div class="collected-word"><div class="cw-german">weitermachen</div><div class="cw-english">continue, persist</div></div>
+      <div class="collected-word"><div class="cw-german">weitergehen</div><div class="cw-english">carry on, go further</div></div>
+      <div class="collected-word"><div class="cw-german">Wiedervereinigung</div><div class="cw-english">reunification</div></div>
+    </div>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="chapter43.html" class="nav-button">← Chapter 43</a>
+    <span class="chapter-counter">44 / 100</span>
+    <a href="chapter45.html" class="nav-button">Chapter 45 →</a>
+  </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById('workshop-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function drawSpiral() {
+  const scrollProgress = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+  const time = Date.now() * 0.0005;
+
+  // Background
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.03)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Spiral particles
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const maxRadius = Math.hypot(centerX, centerY);
+
+  for (let i = 0; i < 200; i++) {
+    const angle = (i * 0.1 + time * 2) % (Math.PI * 2);
+    const radius = (maxRadius * (i / 200) + scrollProgress * 100) % maxRadius;
+    const x = centerX + Math.cos(angle) * radius;
+    const y = centerY + Math.sin(angle) * radius;
+
+    ctx.fillStyle = `rgba(232, 164, 74, ${0.3 * (1 - i / 200)})`;
+    ctx.fillRect(x, y, 1.5, 1.5);
+  }
+}
+
+function animate() {
+  drawSpiral();
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+      }
+    }
+  });
+});
+
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.german-word[data-speak]').forEach(word => {
+  word.addEventListener('click', () => speakGerman(word.textContent.trim()));
+});
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.textContent = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+const quizData = [
+  {
+    question: 'What does "Auf Wiedersehen" literally mean?',
+    options: ['Until we go back again', 'Until we see each other again', 'See you before', 'Go back now'],
+    correct: 1,
+    explanation: '"Auf Wiedersehen" is "until seeing-again." Both German and Chinese (再见, zàijiàn) independently built farewells from this image of reunion.'
+  },
+  {
+    question: 'How does "wieder-" differ from "zurück-"?',
+    options: [
+      '"Wieder-" is literal, "zurück-" is abstract',
+      '"Wieder-" spirals forward with repetition; "zurück-" reverses to the past',
+      'They mean the same thing',
+      '"Zurück-" is older than "wieder-"'
+    ],
+    correct: 1,
+    explanation: '"Wieder-" (again) suggests doing something anew from a new vantage; "zurück-" (back) suggests literal return or reversal.'
+  },
+  {
+    question: 'What does "Wiedervereinigung" encode about history?',
+    options: [
+      'That things can be perfectly restored',
+      'That division is permanent',
+      'That return is not return—what comes back is changed by separation',
+      'That German unity is impossible'
+    ],
+    correct: 2,
+    explanation: 'Reunification carries the spiral metaphor: Germany returned to unity but was forever shaped by division. Return is transformation.'
+  },
+  {
+    question: 'Which prefix suggests "moving forward without looking back"?',
+    options: ['wieder-', 'zurück-', 'weiter-', 'vor-'],
+    correct: 2,
+    explanation: '"Weiter-" (further) expresses pure forward motion and continuation without return or repetition.'
+  },
+  {
+    question: 'What is the literal meaning of "Wiederholen"?',
+    options: ['To hold again', 'To fetch again', 'To see again', 'To give again'],
+    correct: 1,
+    explanation: '"Wiederholen" is "wieder-" (again) + "holen" (to fetch/get). To fetch again means to try once more, to retrieve.'
+  },
+  {
+    question: 'In Chinese, 再见 (zàijiàn) is built from:',
+    options: ['Go-return', 'Again-see (identical to Wiedersehen)', 'Come-goodbye', 'Return-meeting'],
+    correct: 1,
+    explanation: '再 (zài) = again, 见 (jiàn) = see. This IDENTICAL structure shows how two unrelated languages converged on the same farewell logic.'
+  },
+  {
+    question: 'What is the fundamental metaphor of Chapter 44?',
+    options: ['Circle', 'Triangle', 'Spiral', 'Line'],
+    correct: 2,
+    explanation: 'The spiral shows how repetition returns to the same position but at a higher elevation. This is the essence of "wieder."'
+  },
+  {
+    question: 'What do "zurückkommen" and "zurückgeben" share?',
+    options: [
+      'Both are about moving forward',
+      'Both involve literal or conceptual reversal/return',
+      'Both are inseparable prefixes',
+      'Both are verbs of emotional action'
+    ],
+    correct: 1,
+    explanation: 'Both express reversal: "zurückkommen" (come back) returns spatially; "zurückgeben" (give back) reverses possession.'
+  },
+  {
+    question: 'What does "Weitermachen" suggest about facing difficulty?',
+    options: [
+      'Stop and give up',
+      'Create something completely new',
+      'Simply persist; continuation itself is elevation',
+      'Forget what came before'
+    ],
+    correct: 2,
+    explanation: 'German post-war philosophy chose "weitermachen" (keep going) as a moral stance: persist, transform trauma into consciousness.'
+  },
+  {
+    question: 'In the spiral metaphor, what moves upward with each repetition?',
+    options: ['The person making the motion', 'Your understanding', 'Your position relative to where you started', 'All of the above'],
+    correct: 3,
+    explanation: 'Each revolution of the spiral lifts you higher—not just physically, but in consciousness, understanding, and mastery.'
+  },
+  {
+    question: 'What does "Zurückgeben" mean metaphorically in German culture?',
+    options: [
+      'To refuse something',
+      'To contribute back to the community what you have learned',
+      'To reverse a decision',
+      'To physically return home'
+    ],
+    correct: 1,
+    explanation: 'A student who learns eventually "gives back" through their contributions. This ensures the spiral of knowledge continues to rise.'
+  },
+  {
+    question: 'Which word best represents the highest expression of the spiral metaphor?',
+    options: ['Wiederholen', 'Zurückkommen', 'Weitermachen', 'Wiedervereinigung'],
+    correct: 3,
+    explanation: '"Wiedervereinigung" represents the spiral's ultimate truth: what was separated and reunited is forever transformed at a higher level of consciousness.'
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let answered = new Array(quizData.length).fill(false);
+
+function displayQuestion() {
+  const question = quizData[currentQuestion];
+  const container = document.getElementById('quizContainer');
+
+  container.innerHTML = `
+    <div class="quiz-item ${answered[currentQuestion] ? (answers[currentQuestion] === question.correct ? 'correct' : 'incorrect') : ''}">
+      <div class="quiz-question">${currentQuestion + 1}. ${question.question}</div>
+      <div class="quiz-options">
+        ${question.options.map((option, i) => `
+          <label class="quiz-option ${answers[currentQuestion] === i ? 'selected' : ''} ${answered[currentQuestion] ? (i === question.correct ? 'correct' : (i === answers[currentQuestion] ? 'incorrect' : '')) : ''}">
+            <input type="radio" name="answer" value="${i}" ${answers[currentQuestion] === i ? 'checked' : ''} ${answered[currentQuestion] ? 'disabled' : ''}>
+            ${option}
+          </label>
+        `).join('')}
+      </div>
+      ${answered[currentQuestion] ? `<p style="margin-top: 16px; color: rgba(212, 202, 187, 0.7); font-size: 0.95rem; line-height: 1.6;">${question.explanation}</p>` : ''}
+    </div>
+  `;
+
+  if (!answered[currentQuestion]) {
+    container.querySelectorAll('.quiz-option').forEach((label, i) => {
+      label.addEventListener('click', () => {
+        answers[currentQuestion] = i;
+        answered[currentQuestion] = true;
+        displayQuestion();
+        updateNav();
+        checkQuizCompletion();
+      });
+    });
+  }
+
+  updateNav();
+}
+
+function updateNav() {
+  document.getElementById('quizPrev').disabled = currentQuestion === 0;
+  document.getElementById('quizNext').disabled = currentQuestion === quizData.length - 1;
+}
+
+document.getElementById('quizPrev').addEventListener('click', () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    displayQuestion();
+  }
+});
+
+document.getElementById('quizNext').addEventListener('click', () => {
+  if (currentQuestion < quizData.length - 1) {
+    currentQuestion++;
+    displayQuestion();
+  }
+});
+
+function checkQuizCompletion() {
+  if (answered.every(a => a)) {
+    const correct = answers.reduce((count, ans, i) => count + (ans === quizData[i].correct ? 1 : 0), 0);
+    const percentage = Math.round((correct / quizData.length) * 100);
+
+    document.getElementById('quizScore').textContent = `Score: ${correct}/${quizData.length} (${percentage}%)`;
+
+    if (percentage >= 80) {
+      document.getElementById('postQuizSummary').classList.add('show');
+      document.getElementById('postQuizSummary').innerHTML = `<strong>Excellent!</strong> You understand the spiral of repetition, the reversal of return, and the forward march of continuation. You have integrated the seven words of Chapter 44. The spiral has risen. Phase 2 is nearly complete.`;
+      setTimeout(() => {
+        document.getElementById('wordCollection').classList.add('show');
+        document.querySelectorAll('.collected-word').forEach((w, i) => setTimeout(() => w.classList.add('show'), i * 100));
+      }, 500);
+    } else {
+      document.getElementById('postQuizSummary').classList.add('show');
+      document.getElementById('postQuizSummary').innerHTML = `<strong>Keep studying.</strong> You scored ${percentage}%. Review the spiral metaphor and how each word approaches return from a different angle. The wisdom is in the patterns, not the individual words.`;
+    }
+  }
+}
+
+document.getElementById('resetQuiz').addEventListener('click', () => {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  answered = new Array(quizData.length).fill(false);
+  document.getElementById('quizScore').textContent = '';
+  document.getElementById('postQuizSummary').classList.remove('show');
+  document.getElementById('wordCollection').classList.remove('show');
+  displayQuestion();
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('quizSection').classList.add('show');
+    displayQuestion();
+  }, 500);
+});
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">404 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(47%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:47%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 404 words across 44 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">91 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(62%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:62%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 91 patterns across 44 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

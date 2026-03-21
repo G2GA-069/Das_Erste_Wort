@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 52: Dürfen, Sollen, Mögen</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --modal: #a8d5ba;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #scale-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .scene { margin-bottom: 60px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="scale-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Fifty-Two</div>
+    <h1>Dürfen, Sollen, Mögen</h1>
+    <div class="subtitle">Permission, Obligation, and Preference</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE OTHER THREE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a scale. On one side, permission. On the other, obligation. In the center, preference. Three more modal verbs complete the full system of human interaction with the world. Where wollen, können, and müssen describe the pure forces of desire, ability, and necessity, these three new verbs describe the social, cultural, and aesthetic dimensions of how we navigate existence.
+    </p>
+
+    <p class="narrative">
+      These are the modals that mark us as social creatures. Wollen is pure desire — what you want. Können is pure ability — what you can do. Müssen is pure necessity — what you must do. But dürfen, sollen, and mögen layer on top of these the complex negotiations of living with others: permission, expectation, and preference.
+    </p>
+
+    <p class="narrative">
+      German, with its characteristic precision and its love of systematic classification, makes these distinctions visible. Three more keys. Three more rooms in the great house of language.
+    </p>
+
+    <p class="narrative emphasis">
+      The complete system of modals is six verbs. Three describe raw force. Three describe social negotiation.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: DÜRFEN - PERMISSION ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Begin with <span class="german-word" data-card="durfen">dürfen</span>. To be allowed. To have permission. It is the social boundary marker — the word that negotiates between what you want and what society permits.
+    </p>
+
+    <p class="narrative">
+      The conjugation: ich darf, du darfst, er darf, wir dürfen, ihr dürft, sie dürfen. It follows the pattern of können: irregular in the singular, regular in the plural. The stem changes from "darf-" to "dürf-". Notice the umlaut — the German "ü" — marking this as an ancient, Germanic word.
+    </p>
+
+    <p class="narrative">
+      The meaning is deceptively simple on the surface. "Ich darf das nicht tun" — I am not allowed to do that. But beneath this surface lies something profound: the recognition that human beings do not exist in isolation. What you are allowed to do is defined by the collective, by the law, by custom, by the agreement of the group. Dürfen is the word that encodes this social reality into language.
+    </p>
+
+    <p class="narrative">
+      Contrast dürfen with können. "Ich kann das tun" — I am able to do that. It might be dangerous, illegal, or cruel, but I have the capacity. "Ich darf das tun" — I am allowed to do that. Society has given me permission. The law permits it. Custom accepts it. These are two entirely different claims, and the German language keeps them linguistically distinct.
+    </p>
+
+    <!-- DÜRFEN card -->
+    <div class="ety-card" id="card-durfen">
+      <div class="word-header">
+        <span class="word-main">Dürfen</span>
+        <span class="word-pron">/ˈdʏrfən/</span>
+      </div>
+      <div class="word-meaning">to be allowed — to have permission, to be permitted by authority or custom</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*thwergh-</span>
+        <span class="bridge-note">— to twist, to turn — possibly related to concepts of force or directional movement</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">dare</span>
+        <span class="bridge-note">— expressing willingness to face risk, from the same root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Dürfen</span>
+        <span class="bridge-note">— permission, allowance, the marking of social boundaries</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">许可</span>
+        <span class="bridge-note">— xǔkě (allow + permit) — two characters expressing bilateral permission</span>
+      </div>
+      <div class="story">
+        <em>Dürfen</em> comes from a root meaning to twist or turn — possibly indicating the turning away from one's pure desires in order to accommodate the demands of others. In English, the same root gave us "dare" — but English uses "dare" to mean "to venture despite risk," which carries a subtle difference. In German, <em>dürfen</em> is explicitly about permission, about the social boundary between what you want and what you are allowed. It marks the frontier between desire and acceptability. When you ask "Darf ich?" (Am I allowed?), you are not just asking about your ability. You are asking about social permission, about the rules that govern collective life.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: SOLLEN - OBLIGATION & EXPECTATION ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now turn to <span class="german-word" data-card="sollen">sollen</span>. To should. To be supposed to. To be obliged by duty or expectation rather than by absolute necessity. This is the modal of conscience, of social obligation, of what one ought to do.
+    </p>
+
+    <p class="narrative">
+      The conjugation: ich soll, du sollst, er soll, wir sollen, ihr sollt, sie sollen. Notice: this modal does not change its stem. It is regular throughout. Ich soll = du sollst = er soll. The same form in singular and plural, with only minor additions for person and number. This regularity is unusual among German modals, and it suggests that sollen might be younger, less subject to the ancient sound changes that affected the other modals.
+    </p>
+
+    <p class="narrative">
+      The distinction between müssen and sollen is crucial, and it is one of the finest discriminations in German. "Ich muss arbeiten" — I must work. The obligation is absolute, external, inescapable. Perhaps the law requires it. Perhaps nature demands it. Perhaps my body's need for food drives it. "Ich soll arbeiten" — I should work. I am expected to work. Someone has told me this is what I ought to do. But the obligation is not absolute. I could refuse. There is still, theoretically, choice.
+    </p>
+
+    <p class="narrative">
+      Sollen is the word of expectation, of duty, of what society thinks you should do. It is gentler than müssen, but in its own way, it is more insidious. Müssen allows you to resist it as a force beyond yourself. Sollen places the obligation inside your conscience. It makes you responsible. It says: <em>You know what you should do. Now you have to decide whether to do it.</em>
+    </p>
+
+    <!-- SOLLEN card -->
+    <div class="ety-card" id="card-sollen">
+      <div class="word-header">
+        <span class="word-main">Sollen</span>
+        <span class="word-pron">/ˈzɔlən/</span>
+      </div>
+      <div class="word-meaning">to should — to be obliged by duty or expectation, to be supposed to</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*skel-</span>
+        <span class="bridge-note">— to be indebted, to owe — the root of duty and moral obligation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">shall</span>
+        <span class="bridge-note">— the archaic modal of obligation, now mostly replaced by "should"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Sollen</span>
+        <span class="bridge-note">— duty, expectation, what one ought to do</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">应该</span>
+        <span class="bridge-note">— yīnggāi (should + ought) — necessity tempered with expectation</span>
+      </div>
+      <div class="story">
+        <em>Sollen</em> comes from a root meaning to be indebted, to owe — the fundamental sense of obligation. You "owe" someone your compliance with an expectation. But notice: this is not the same as absolute necessity. You could theoretically refuse to repay a debt (though the social consequences would be severe). Sollen operates in the realm of conscience, of social expectation, of duty. When someone says "Du solltest das nicht tun" (You should not do that), they are appealing to your sense of what is right, not to external force. This is why sollen is the modal of morality, of ethics, of what we believe we ought to do.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: MÖGEN & MÖCHTEN - PREFERENCE & DESIRE ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Finally, <span class="german-word" data-card="mogen">mögen</span>. To like. To prefer. To find pleasant. And its closely related form, <span class="german-word" data-card="mochten">möchten</span>. The conditional form meaning "would like."
+    </p>
+
+    <p class="narrative">
+      The conjugation of mögen: ich mag, du magst, er mag, wir mögen, ihr mögt, sie mögen. Again the umlaut, again the irregular singular. But notice: mögen is unusual among modals. It can appear as a main verb, not just a modal. You can say "Ich mag Kaffee" (I like coffee) — where mögen is the main verb, expressing preference. Or you can say "Ich mag arbeiten" (I like to work, I prefer to work) — where mögen is a modal, modified by an infinitive.
+    </p>
+
+    <p class="narrative">
+      And then there is möchten. This is the conditional or subjunctive form of mögen, and it has become, in modern German, nearly a separate modal verb. "Ich möchte Kaffee" — I would like coffee. "Ich möchte arbeiten" — I would like to work. It is more polite, more tentative than the simple "ich mag." It expresses a desire that is not assertive, not demanding, but rather wistful, conditional, open to being overridden.
+    </p>
+
+    <p class="narrative">
+      Here is what makes mögen and möchten philosophically interesting: they are the only modals that do not constrain or obligate. Wollen constrains by expressing pure desire. Können constrains by showing limits. Müssen and sollen constrain by imposing obligation. Dürfen constrains by marking permission's boundaries. But mögen — mögen is about pleasure, about aesthetic preference, about what appeals to you. It is the modal of joy, of preference without pressure, of "I like this" rather than "I must do this."
+    </p>
+
+    <!-- MÖGEN card -->
+    <div class="ety-card" id="card-mogen">
+      <div class="word-header">
+        <span class="word-main">Mögen</span>
+        <span class="word-pron">/ˈmøːɡən/</span>
+      </div>
+      <div class="word-meaning">to like — to prefer, to find pleasant, to enjoy</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*magh-</span>
+        <span class="bridge-note">— to be able, to have power — shifted in meaning to express personal liking</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">may</span>
+        <span class="bridge-note">— the English modal of permission and possibility, from the same root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Mögen</span>
+        <span class="bridge-note">— preference, liking, pleasure — a modal about aesthetics, not force</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">喜欢</span>
+        <span class="bridge-note">— xǐhuān (like + happy) — liking as a kind of happiness</span>
+      </div>
+      <div class="story">
+        <em>Mögen</em> is unusual. It comes from a root meaning "to be able" — the same root as may in English. But over time, it shifted in meaning from "to have power" to "to be inclined toward," to "to like." This is a beautiful example of how language evolves: the concept of being able to do something, if repeated enough times with something you enjoy, gradually becomes the concept of liking that thing. If you are able to do something repeatedly, it is because you like it. The ability and the pleasure become fused. <em>Möchten</em>, the conditional form, adds a layer of politeness, of tentative desire. "Ich möchte" is not assertive. It is open, inviting, asking rather than demanding.
+      </div>
+    </div>
+
+    <!-- MÖCHTEN card -->
+    <div class="ety-card" id="card-mochten">
+      <div class="word-header">
+        <span class="word-main">Möchten</span>
+        <span class="word-pron">/ˈmœçtən/</span>
+      </div>
+      <div class="word-meaning">would like — the polite, conditional form of mögen</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*magh-</span>
+        <span class="bridge-note">— the same root as mögen, expressed conditionally</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">might</span>
+        <span class="bridge-note">— the conditional form of may, expressing possibility rather than certainty</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Möchten</span>
+        <span class="bridge-note">— the polite, conditional form of liking — a request rather than a statement</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">想要</span>
+        <span class="bridge-note">— xiǎngyào (think + want) — desire expressed as thought rather than command</span>
+      </div>
+      <div class="story">
+        <em>Möchten</em> is the conditional form of mögen, and it has become nearly a separate modal in modern German. While <em>mögen</em> can feel quite direct ("Ich mag das"), <em>möchten</em> is softer, more polite: "Ich möchte das" (I would like that). In restaurants, you say "Ich möchte einen Kaffee, bitte" — not "Ich will einen Kaffee" (which would sound demanding) or "Ich mag einen Kaffee" (which would mean you generally like coffee, not that you want one right now). The conditional form adds a layer of politeness, of deference, of openness to refusal. This is language encoding social grace.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE COMPLETE SYSTEM ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Step back and observe the complete system of German modals. Six verbs. Two groups of three.
+    </p>
+
+    <p class="narrative small">
+      <strong>The Raw Forces:</strong><br>
+      Wollen — what you desire (pure will)<br>
+      Können — what you are able to do (capacity)<br>
+      Müssen — what you must do (absolute necessity)<br>
+    </p>
+
+    <p class="narrative small">
+      <strong>The Social Negotiations:</strong><br>
+      Dürfen — what you are allowed to do (permission)<br>
+      Sollen — what you should do (expectation and duty)<br>
+      Mögen/Möchten — what you like or would like (preference and politeness)<br>
+    </p>
+
+    <p class="narrative">
+      Together, they create a map of human existence. The first three are about the individual: your desire, your capacity, your constraints. The second three are about society: permission, obligation, preference in a social context. Every human action navigates between these forces.
+    </p>
+
+    <p class="narrative">
+      And notice: in German, all six are distinguished, all six are kept linguistically separate. English has collapsed several of these into a single form. English "can" covers both "können" and "dürfen." English "should" covers both "sollen" and "müssen." English "like" and "want" fail to make the distinctions that "mögen," "möchten," and "wollen" preserve. The German language, through its modal system, shows a finer-grained understanding of human motivation than English does.
+    </p>
+
+    <p class="narrative emphasis">
+      Six modals. Six rooms. A complete architecture of human will and desire, of capacity and constraint, of desire and duty.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: NUANCE AND MEANING ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative small">
+      <strong>Compare these sentences:</strong><br>
+      "Ich will arbeiten" — I want to work (pure desire)<br>
+      "Ich kann arbeiten" — I am able to work (capacity)<br>
+      "Ich muss arbeiten" — I must work (absolute necessity)<br>
+      "Ich darf arbeiten" — I am allowed to work (permission)<br>
+      "Ich soll arbeiten" — I should work (expectation and duty)<br>
+      "Ich möchte arbeiten" — I would like to work (polite preference)<br>
+    </p>
+
+    <p class="narrative">
+      Six sentences. Six different relationships to the same action — working. In the first, it is desire. In the second, it is possibility. In the third, it is inescapable obligation. In the fourth, it is socially sanctioned. In the fifth, it is morally expected. In the sixth, it is a polite, tentative wish.
+    </p>
+
+    <p class="narrative">
+      A person might say all six of these sentences at different moments, depending on the situation. Monday morning: "Ich muss arbeiten" (the necessity of paying bills). Wednesday: "Ich kann arbeiten" (demonstrating that I have the skills). Friday evening: "Ich möchte arbeiten" (a tentative suggestion, or talking about working on a hobby). Saturday: "Ich will nicht arbeiten" (pure resistance to desire). Sunday: "Ich soll arbeiten" (remembering obligations). And in a meeting: "Ich darf hier arbeiten" (asserting permission in a space where it was questioned).
+    </p>
+
+    <p class="narrative">
+      The German language gives you six distinct ways to express your relationship to an action. This is not pedantry. This is linguistic precision in the service of human authenticity. Each modal carries a different emotional weight, a different relationship to self and society.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">468 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(55%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:55%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 468 words across 52 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">101 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(69%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:69%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 101 patterns and grammar rules across 52 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words and Concepts from Chapter 52</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Dürfen</span><span class="cw-english">to be allowed</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Sollen</span><span class="cw-english">to should</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Mögen</span><span class="cw-english">to like</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Möchten</span><span class="cw-english">would like</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">The Six Modal System</div>
+      <strong style="color: var(--text-bright);">Raw Forces (Individual):</strong> Wollen (desire), Können (ability), Müssen (necessity)<br><br>
+      <strong style="color: var(--text-bright);">Social Negotiations:</strong> Dürfen (permission), Sollen (expectation/duty), Mögen/Möchten (preference/politeness)<br><br>
+      <strong style="color: var(--text-bright);">Sollen vs. Müssen:</strong> Müssen is absolute necessity (physical law, biological need). Sollen is expectation and duty (moral obligation, social expectation).<br><br>
+      <strong style="color: var(--text-bright);">Dürfen vs. Können:</strong> Können is ability (you have the capacity). Dürfen is permission (you have social/legal right).<br><br>
+      <strong style="color: var(--text-bright);">Mögen vs. Möchten:</strong> Mögen can be a main verb (I like X) or a modal. Möchten is the polite conditional form, used for requests.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Fifty-Two
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Three more keys. Permission, duty, and preference. The complete modal system of German grammar is now visible. Six verbs encoding six different relationships to action: what you want, what you can do, what you must do, what you are allowed, what you should do, and what you like.<br>
+        Together, they form a grammar of the human condition.
+      </p>
+      <div class="next-chapter">
+        Chapter Fifty-Three: Den Mann — The Accusative Case
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter51.html" class="nav-btn">← Chapter 51</a>
+    <a href="chapter53.html" class="nav-btn next">Chapter 53 →</a>
+  </div>
+
+</div>
+
+<script>
+
+const canvas = document.getElementById('scale-canvas');
+const ctx = canvas.getContext('2d');
+let scaleElements = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createScale();
+}
+
+function createScale() {
+  scaleElements = [];
+  // Left and right balance scale indicators
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height * 0.3;
+
+  scaleElements.push({
+    x: centerX - 100,
+    y: centerY,
+    label: 'Permission',
+    weight: 0.4,
+    color: '#a8d5ba',
+    offset: 0
+  });
+
+  scaleElements.push({
+    x: centerX,
+    y: centerY - 20,
+    label: 'Duty',
+    weight: 0.6,
+    color: '#e8a44a',
+    offset: 0
+  });
+
+  scaleElements.push({
+    x: centerX + 100,
+    y: centerY,
+    label: 'Preference',
+    weight: 0.3,
+    color: '#a8d5ba',
+    color2: '#c9b4ff',
+    offset: 0
+  });
+}
+
+function drawScale(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Draw balance beam
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height * 0.3;
+
+  ctx.strokeStyle = 'rgba(232, 164, 74, 0.3)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(centerX - 200, centerY - 10);
+  ctx.lineTo(centerX + 200, centerY - 10);
+  ctx.stroke();
+
+  // Draw fulcrum
+  ctx.fillStyle = 'rgba(196, 154, 108, 0.4)';
+  ctx.beginPath();
+  ctx.moveTo(centerX - 20, centerY);
+  ctx.lineTo(centerX + 20, centerY);
+  ctx.lineTo(centerX, centerY + 40);
+  ctx.closePath();
+  ctx.fill();
+
+  scaleElements.forEach((elem, idx) => {
+    // Oscillate slightly
+    const wobble = Math.sin(time * 0.001 + idx) * 3;
+    const yPos = elem.y + wobble;
+
+    // Draw pan
+    ctx.fillStyle = elem.color;
+    ctx.globalAlpha = 0.3 + scroll * 0.4;
+    ctx.fillRect(elem.x - 30, yPos, 60, 40);
+    ctx.globalAlpha = 1;
+
+    // Draw weight indicator
+    ctx.fillStyle = elem.color;
+    const weightHeight = elem.weight * 40;
+    ctx.fillRect(elem.x - 10, yPos + 40, 20, weightHeight);
+
+    // Label
+    ctx.fillStyle = elem.color;
+    ctx.font = '14px "Cormorant Garamond"';
+    ctx.textAlign = 'center';
+    ctx.fillText(elem.label, elem.x, yPos - 20);
+
+    // Glow
+    ctx.fillStyle = `rgba(232, 164, 74, ${0.1 * (0.5 + 0.5 * Math.sin(time * 0.002 + idx))})`;
+    ctx.beginPath();
+    ctx.arc(elem.x, yPos, 50, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawScale);
+}
+
+resizeCanvas();
+createScale();
+requestAnimationFrame(drawScale);
+window.addEventListener('resize', () => { resizeCanvas(); createScale(); });
+
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+const quizData = [
+  {
+    question: "What does 'dürfen' express?",
+    options: ["ability", "permission", "necessity", "preference"],
+    correct: 1,
+    explanation: "Dürfen expresses permission or allowance — what you are allowed to do."
+  },
+  {
+    question: "How does 'sollen' differ from 'müssen'?",
+    options: ["sollen is more absolute", "sollen is expectation/duty while müssen is absolute necessity", "they mean exactly the same thing", "sollen is never used"],
+    correct: 1,
+    explanation: "Müssen is absolute necessity (external force). Sollen is expectation and duty (moral obligation or social expectation)."
+  },
+  {
+    question: "What is the primary meaning of 'mögen'?",
+    options: ["to must", "to be able", "to like or prefer", "to go"],
+    correct: 2,
+    explanation: "Mögen means to like, to prefer, to find pleasant — it can be used as both a main verb and a modal."
+  },
+  {
+    question: "What is 'möchten'?",
+    options: ["a completely different verb from mögen", "the past tense of mögen", "the conditional/polite form of mögen", "a noun"],
+    correct: 2,
+    explanation: "Möchten is the conditional form of mögen, used for polite requests: 'Ich möchte Kaffee' (I would like coffee)."
+  },
+  {
+    question: "Which sentence expresses absolute necessity?",
+    options: ["Ich soll arbeiten", "Ich darf arbeiten", "Ich muss arbeiten", "Ich möchte arbeiten"],
+    correct: 2,
+    explanation: "Müssen expresses absolute necessity. Sollen is milder (expectation), dürfen is permission, and möchte is a polite wish."
+  },
+  {
+    question: "In German, how many main modal verbs are there?",
+    options: ["three", "four", "five", "six"],
+    correct: 3,
+    explanation: "The six main German modals are: wollen, können, müssen, dürfen, sollen, and mögen/möchten."
+  },
+  {
+    question: "What does the root of 'sollen' refer to?",
+    options: ["to press", "to be able", "to owe or be indebted", "to know"],
+    correct: 2,
+    explanation: "Sollen comes from *skel-, meaning 'to owe' or 'to be indebted,' which is the root of duty and obligation."
+  },
+  {
+    question: "How does 'dürfen' differ from 'können'?",
+    options: ["dürfen means ability, können means permission", "können means ability, dürfen means permission", "they are the same", "dürfen is never used"],
+    correct: 1,
+    explanation: "Können is ability (you have the capacity). Dürfen is permission (you have the social/legal right)."
+  },
+  {
+    question: "Which modal is used for polite requests or expressions of desire?",
+    options: ["wollen", "müssen", "möchten", "sollen"],
+    correct: 2,
+    explanation: "'Möchte' (I would like) is the polite form, often used in requests. 'Will' (I want) would sound too demanding."
+  },
+  {
+    question: "What philosophical concept is embedded in the dürfen?",
+    options: ["individual freedom", "social boundaries and permission", "natural necessity", "pure desire"],
+    correct: 1,
+    explanation: "Dürfen encodes the social reality that humans do not exist in isolation. What you are allowed is defined by collective agreement."
+  },
+  {
+    question: "Can 'mögen' be used as a main verb?",
+    options: ["no, it's only a modal", "yes, 'Ich mag Kaffee' means 'I like coffee'", "only in the past tense", "only with negation"],
+    correct: 1,
+    explanation: "Mögen can function as a main verb: 'Ich mag Kaffee' (I like coffee), or as a modal: 'Ich mag arbeiten' (I like to work)."
+  },
+  {
+    question: "What is the philosophical difference between the first three modals and the last three?",
+    options: ["there is no difference", "the first three are about raw forces (desire, ability, necessity); the last three are about social negotiation", "the last three are older", "the first three are never used"],
+    correct: 1,
+    explanation: "Wollen, können, müssen express individual forces. Dürfen, sollen, mögen express social dimensions of how we navigate existence."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">The Complete Modal System</strong>
+      <p style="margin-top: 8px;">You have mastered the complete system of German modal verbs. You understand how six distinct modals express every dimension of human will and obligation: wollen (desire), können (ability), müssen (necessity), dürfen (permission), sollen (expectation), and mögen/möchten (preference). This system is one of the most sophisticated grammatical structures for expressing the nuances of human intention in any language.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+document.querySelectorAll('.german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

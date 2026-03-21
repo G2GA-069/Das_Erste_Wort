@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 66: Es wird gemacht</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --english: #8a9bae;
+    --passive: #7a9bb8;
+    --industrial: #4a5a6a;
+    --clinical-white: #f0ede8;
+  }
+
+  html { scroll-behavior: smooth; background: #0a0e1a; }
+  body {
+    background: linear-gradient(to bottom, var(--industrial) 0%, #2a3a4a 30%, #1a2a3a 60%, var(--clinical-white) 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #assembly-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 28px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+  }
+
+  .ety-card.open {
+    max-height: 1200px;
+    opacity: 1;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .grammar-box {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 28px 0;
+    font-size: 1rem;
+    color: var(--text-bright);
+    line-height: 1.8;
+  }
+
+  .grammar-box .rule-title {
+    font-size: 1.2rem;
+    color: var(--fire-glow);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .example-pair {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 2px solid var(--fire);
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .example-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--fire);
+    margin-bottom: 4px;
+  }
+
+  .example-text {
+    color: var(--text-bright);
+  }
+
+  .aside-box {
+    background: rgba(212, 165, 116, 0.06);
+    border-left: 2px solid rgba(212, 165, 116, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--fire);
+    margin-bottom: 8px;
+  }
+
+  .comprehensive-table {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 28px 0;
+    font-size: 0.95rem;
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 6px;
+  }
+
+  .table-row.three-col {
+    grid-template-columns: 0.8fr 1.1fr 1.1fr;
+  }
+
+  .table-row.header {
+    background: rgba(232, 164, 74, 0.12);
+    font-weight: 600;
+    color: var(--fire);
+  }
+
+  .table-cell {
+    color: var(--text-bright);
+  }
+
+  .table-cell.label {
+    color: var(--fire);
+    font-weight: 500;
+  }
+
+  .comparison-box {
+    background: rgba(122, 155, 184, 0.06);
+    border-left: 3px solid rgba(122, 155, 184, 0.4);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .comparison-box .comp-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(122, 155, 184, 0.7);
+    margin-bottom: 12px;
+  }
+
+  .comparison-pair {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 2px solid rgba(122, 155, 184, 0.5);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+
+  .comparison-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(122, 155, 184, 0.6);
+    margin-bottom: 4px;
+  }
+
+  .comparison-text {
+    color: var(--text-bright);
+  }
+
+  .chinese-bridge {
+    background: rgba(100, 140, 200, 0.08);
+    border-left: 3px solid rgba(100, 140, 200, 0.4);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.85);
+  }
+
+  .chinese-bridge .bridge-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(100, 140, 200, 0.7);
+    margin-bottom: 12px;
+  }
+
+  .chinese-example {
+    background: rgba(10, 14, 26, 0.5);
+    border-left: 2px solid rgba(100, 140, 200, 0.5);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden { display: none; }
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(212, 165, 116, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show { display: block; }
+
+  .nav-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin: 60px 0 0 0;
+    padding-top: 40px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .nav-link {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .nav-link:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  @media (max-width: 600px) {
+    .title-screen h1 { font-size: 2.5rem; }
+    .table-row { grid-template-columns: 1fr; }
+    .table-row.three-col { grid-template-columns: 1fr; }
+    .content { padding: 40px 16px 100px; }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="assembly-canvas"></canvas>
+
+<div class="content">
+
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 66</div>
+    <h1 data-speak="true">Es wird gemacht</h1>
+    <p class="subtitle" data-speak="true">Passive Voice: The Voice of Transformation</p>
+    <p class="scroll-hint" data-speak="true">When Objects Become Subjects<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">
+      Imagine a factory floor. Imagine objects moving along a conveyor belt, transformed at each station. The spotlight is on the object, not the worker. No one cares who built the house—only that the house is built. No one asks who wrote the report—only that the report was written. This is the passive voice.
+    </p>
+    <p class="narrative" data-speak="true">
+      In the active voice, the agent (the person doing the action) is the subject: <span class="german-word" data-card="bauen">Der Handwerker baut das Haus</span> (The worker builds the house). In the passive voice, the object becomes the subject, and the agent fades into the background or disappears entirely: <span class="german-word" data-card="wird">Das Haus wird gebaut</span> (The house is being built). Who builds it? The passive doesn't say. And often, it doesn't matter.
+    </p>
+    <p class="narrative" data-speak="true">
+      German passive is distinctly German. While English has one passive construction, German has two: the <span class="german-word" data-card="Vorgangspassiv">Vorgangspassiv</span> (process passive), which describes an ongoing action, and the <span class="german-word" data-card="Zustandspassiv">Zustandspassiv</span> (state passive), which describes the result. This distinction is powerful and subtle. Understanding it separates learners from speakers.
+    </p>
+  </div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      What Is Passive Voice? The Shift of Focus
+    </p>
+
+    <p class="narrative" data-speak="true">
+      Passive voice is a grammatical construction that shifts the focus from the agent (the one performing the action) to the patient (the one receiving the action). The object of the active sentence becomes the subject of the passive sentence. The agent may be expressed with the prepositions <span class="german-word" data-card="von">von</span> (by, for living agents) or <span class="german-word" data-card="durch">durch</span> (through, by means of, for inanimate causes), or the agent may be omitted entirely.
+    </p>
+
+    <div class="ety-card">
+      <div class="word-header">
+        <div class="word-main" data-speak="true">Passiv</div>
+      </div>
+      <div class="word-meaning" data-speak="true">passive voice; a grammatical form that centers on the action's receiver rather than its agent</div>
+
+      <div class="story" data-speak="true">
+        The term "Passiv" comes from Latin <em>passivus</em>, meaning "capable of suffering" or "receptive." In grammar, passive refers to the voice where the subject undergoes the action rather than performing it. The passive is the voice of institutions, bureaucracy, and distance—it distances the speaker from responsibility and centers on what is done. In German courts, laboratories, and government offices, passive constructions dominate because they sound objective and authoritative.
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Transformation: Active to Passive</div>
+
+      <div class="example-pair">
+        <div class="example-label">Active Voice (Agent as Subject)</div>
+        <div class="example-text" data-speak="true">Der Schüler schreibt den Aufsatz.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The student writes the essay. (Focus: the student, the agent)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Passive Voice (Object as Subject)</div>
+        <div class="example-text" data-speak="true">Der Aufsatz wird (von dem Schüler) geschrieben.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The essay is (by the student) written. (Focus: the essay, what is done)</div>
+      </div>
+
+      <p style="margin-top: 16px; font-size: 0.95rem; color: rgba(212,202,187,0.8);">
+        Notice: The direct object "den Aufsatz" (accusative) becomes the subject "der Aufsatz" (nominative). The verb changes to <span class="german-word" data-card="werden">werden</span> + past participle. The agent is optional and introduced by <span class="german-word" data-card="von">von</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Two Types of German Passive: Process vs. State
+    </p>
+
+    <p class="narrative" data-speak="true">
+      This is where German becomes sophisticated. English has one passive form. German has two, and they mean different things:
+    </p>
+
+    <div class="aside-box">
+      <div class="aside-title">The Two Passives</div>
+      <p data-speak="true">
+        <strong>Vorgangspassiv (Process Passive):</strong> Describes an ongoing action or process. Uses <span class="german-word" data-card="werden">werden</span> + past participle. "Das Haus wird gebaut" = The house is being built (right now, the process is happening).<br><br>
+        <strong>Zustandspassiv (State Passive):</strong> Describes the result or state of a completed action. Uses <span class="german-word" data-card="sein">sein</span> + past participle. "Das Haus ist gebaut" = The house is built (the state of completion).
+      </p>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Vorgangspassiv: The Process Passive (werden)</div>
+      <p style="margin-bottom: 16px;">Used to describe an action in progress or a single event:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Present: Action in Progress</div>
+        <div class="example-text" data-speak="true">Das Haus wird gebaut.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The house is being built. (Right now, construction is happening)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Past: A Completed Action</div>
+        <div class="example-text" data-speak="true">Das Haus wurde gebaut.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The house was built. (The action happened and finished)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Perfect: Recent Completion with Relevance</div>
+        <div class="example-text" data-speak="true">Das Haus ist gebaut worden.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The house has been built. (Emphasis on recent completion and relevance to the present)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Real-World Example</div>
+        <div class="example-text" data-speak="true">Der Bericht wird von der Abteilung geschrieben.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The report is being written by the department. (Process in progress)</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Zustandspassiv: The State Passive (sein)</div>
+      <p style="margin-bottom: 16px;">Used to describe the condition or state resulting from a completed action:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Condition of Completion</div>
+        <div class="example-text" data-speak="true">Das Haus ist gebaut.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The house is built. (State: it's done, standing, complete)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Past State (Was Previously Built)</div>
+        <div class="example-text" data-speak="true">Das Haus war gebaut worden.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The house was built. (Historical state of completion)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Real-World Example</div>
+        <div class="example-text" data-speak="true">Das Fenster ist offen. Die Tür ist geschlossen.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The window is open. The door is closed. (States of objects, resulting from prior actions)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Critical Note</div>
+        <div class="example-text" style="color: var(--fire);" data-speak="true">Zustandspassiv uses <span class="german-word" data-card="sein">sein</span>, not <span class="german-word" data-card="werden">werden</span>. Do not confuse "Das Haus ist gebaut" (state passive, completion) with the perfect active "Das Haus hat gebaut..." (which doesn't make sense).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Formation Tables: Building the Passive in All Tenses
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Vorgangspassiv (Process) Formation: werden + Past Participle</div>
+
+      <div class="comprehensive-table">
+        <div class="table-row header three-col">
+          <div class="table-cell label">Tense</div>
+          <div class="table-cell label">Structure</div>
+          <div class="table-cell label">Example: "Das Haus wird gebaut"</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Present</div>
+          <div class="table-cell">werden + participle</div>
+          <div class="table-cell" data-speak="true">wird gebaut (is being built)</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Präteritum</div>
+          <div class="table-cell">wurde + participle</div>
+          <div class="table-cell" data-speak="true">wurde gebaut (was being built)</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Perfect</div>
+          <div class="table-cell">ist/sind + participle + worden</div>
+          <div class="table-cell" data-speak="true">ist gebaut worden (has been built)</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Pluperfect</div>
+          <div class="table-cell">war/waren + participle + worden</div>
+          <div class="table-cell" data-speak="true">war gebaut worden (had been built)</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Future</div>
+          <div class="table-cell">wird + participle + werden</div>
+          <div class="table-cell" data-speak="true">wird gebaut werden (will be built)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Zustandspassiv (State) Formation: sein + Past Participle</div>
+
+      <div class="comprehensive-table">
+        <div class="table-row header three-col">
+          <div class="table-cell label">Tense</div>
+          <div class="table-cell label">Structure</div>
+          <div class="table-cell label">Example: "Das Haus ist gebaut"</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Present</div>
+          <div class="table-cell">ist/sind + participle</div>
+          <div class="table-cell" data-speak="true">ist gebaut (is built)</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Präteritum</div>
+          <div class="table-cell">war/waren + participle</div>
+          <div class="table-cell" data-speak="true">war gebaut (was built)</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Perfect</div>
+          <div class="table-cell">ist/sind + participle + gewesen</div>
+          <div class="table-cell" data-speak="true">ist gebaut gewesen (has been built)</div>
+        </div>
+        <div class="table-row three-col">
+          <div class="table-cell label">Pluperfect</div>
+          <div class="table-cell">war/waren + participle + gewesen</div>
+          <div class="table-cell" data-speak="true">war gebaut gewesen (had been built)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Active vs. Passive: Complete Comparisons
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Five Sentence Pairs: Active and Passive Side-by-Side</div>
+
+      <div class="comparison-box">
+        <div class="comp-title">Pair 1: Simple Action</div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Active</div>
+          <div class="comparison-text" data-speak="true">Der Arzt untersucht den Patienten.</div>
+        </div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Passive (Vorgangspassiv)</div>
+          <div class="comparison-text" data-speak="true">Der Patient wird (von dem Arzt) untersucht.</div>
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.6); padding: 12px; margin-top: 8px;">Focus shifts from the doctor to the patient. The agent (von dem Arzt) is optional.</div>
+      </div>
+
+      <div class="comparison-box">
+        <div class="comp-title">Pair 2: Writing/Communication</div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Active</div>
+          <div class="comparison-text" data-speak="true">Die Zeitung veröffentlicht den Artikel.</div>
+        </div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Passive (Vorgangspassiv)</div>
+          <div class="comparison-text" data-speak="true">Der Artikel wird (von der Zeitung) veröffentlicht.</div>
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.6); padding: 12px; margin-top: 8px;">In journalism, passive is common because the focus is on the news, not the publisher.</div>
+      </div>
+
+      <div class="comparison-box">
+        <div class="comp-title">Pair 3: Creation</div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Active</div>
+          <div class="comparison-text" data-speak="true">Der Handwerker baut die Brücke.</div>
+        </div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Passive (Zustandspassiv)</div>
+          <div class="comparison-text" data-speak="true">Die Brücke ist (von dem Handwerker) gebaut.</div>
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.6); padding: 12px; margin-top: 8px;">When emphasizing the completed state, Zustandspassiv conveys "the bridge stands, completed."</div>
+      </div>
+
+      <div class="comparison-box">
+        <div class="comp-title">Pair 4: Investigation (Institutional Use)</div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Active</div>
+          <div class="comparison-text" data-speak="true">Die Polizei verhaftet den Verdächtigen.</div>
+        </div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Passive (Vorgangspassiv, News)</div>
+          <div class="comparison-text" data-speak="true">Der Verdächtige wird verhaftet.</div>
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.6); padding: 12px; margin-top: 8px;">News reports and police bulletins favor passive because the focus is on the suspect, not the police.</div>
+      </div>
+
+      <div class="comparison-box">
+        <div class="comp-title">Pair 5: Agent Completely Omitted</div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Active (With Implicit Agent)</div>
+          <div class="comparison-text" data-speak="true">Man öffnet die Fenster um 8 Uhr.</div>
+        </div>
+        <div class="comparison-pair">
+          <div class="comparison-label">Passive (Agent Unnecessary)</div>
+          <div class="comparison-text" data-speak="true">Die Fenster werden um 8 Uhr geöffnet.</div>
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.6); padding: 12px; margin-top: 8px;">Often, the agent is irrelevant. Who opens the windows? Does it matter? The passive makes the action universal and impersonal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-6">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      von vs. durch: Two Ways to Express the Agent
+    </p>
+
+    <p class="narrative" data-speak="true">
+      When you do express the agent in a passive sentence, you have two options: <span class="german-word" data-card="von">von</span> (by, with) or <span class="german-word" data-card="durch">durch</span> (through, by means of). The choice depends on the type of agent.
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">von: For the Direct, Living Agent</div>
+      <p style="margin-bottom: 16px;">Use <span class="german-word" data-card="von">von</span> + dative when the agent is a person or the direct performer of the action:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Agent: A Person</div>
+        <div class="example-text" data-speak="true">Das Lied wird von der Sängerin gesungen.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The song is sung by the singer. (The agent is the direct performer)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Agent: An Institution</div>
+        <div class="example-text" data-speak="true">Das Projekt wird von der Universität durchgeführt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The project is conducted by the university.</div>
+      </div>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">durch: For the Means, Instrument, or Indirect Cause</div>
+      <p style="margin-bottom: 16px;">Use <span class="german-word" data-card="durch">durch</span> + accusative when the agent is a means, tool, or indirect cause:</p>
+
+      <div class="example-pair">
+        <div class="example-label">Instrument/Means</div>
+        <div class="example-text" data-speak="true">Das Haus wurde durch ein Erdbeben zerstört.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The house was destroyed by (means of) an earthquake. (Not: by the earthquake as a person, but by the earthquake as a force)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Indirect Cause</div>
+        <div class="example-text" data-speak="true">Die Arznei wirkt durch die heilenden Stoffe.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The medicine works through the healing substances. (The substances are the mechanism, not the direct agent)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Another Example</div>
+        <div class="example-text" data-speak="true">Wir wurden durch die Nachrichten informiert.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">We were informed through the news. (The news is the means of information)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-7">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Why German Loves Passive: Context and Culture
+    </p>
+
+    <p class="narrative" data-speak="true">
+      German passive is not just grammar—it's a cultural and institutional preference. In English, passives are often seen as weak or evasive. In German, they're authoritative. Bureaucrats, scientists, journalists, and academics use passive to sound objective, professional, and distanced from personal responsibility.
+    </p>
+
+    <div class="aside-box">
+      <div class="aside-title">Institutional Passive: The Voice of Authority</div>
+      <p data-speak="true">
+        <strong>Bureaucracy:</strong> "Es wird darauf hingewiesen, dass..." (It is pointed out that...) — passive masks the speaker's identity.<br><br>
+        <strong>Science:</strong> "Es wurde festgestellt, dass..." (It was determined that...) — passive sounds objective and universal.<br><br>
+        <strong>News:</strong> "Der Verdächtige wurde festgenommen" (The suspect was arrested) — focus on the action and object, not the police.<br><br>
+        <strong>Academia:</strong> "Es ist anerkannt, dass..." (It is recognized that...) — passive creates scholarly distance.
+      </p>
+    </div>
+
+    <div class="grammar-box">
+      <div class="rule-title">Real Examples from German Media and Institutions</div>
+
+      <div class="example-pair">
+        <div class="example-label">News Headline</div>
+        <div class="example-text" data-speak="true">Neue Richtlinien werden von der Regierung eingeführt.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">New guidelines are introduced by the government. (Agent is secondary; focus is on the guidelines)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Academic Citation</div>
+        <div class="example-text" data-speak="true">Es wurde gezeigt, dass die Theorie korrekt ist.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">It has been shown that the theory is correct. (No personal agent; sounds universal)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">Instruction Manual</div>
+        <div class="example-text" data-speak="true">Der Schalter wird nach links gedreht.</div>
+        <div style="font-size: 0.9rem; color: rgba(212,202,187,0.5); margin-top: 4px;">The switch is turned to the left. (Impersonal instruction)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene scene-8">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Language Bridge: How Passive Works in Chinese
+    </p>
+
+    <div class="chinese-bridge">
+      <div class="bridge-title">Comparing Passive Strategies: German vs. Chinese</div>
+
+      <p style="margin-bottom: 16px;">Both German and Chinese have passive constructions, but they deploy them for different cultural reasons. German passive is formal and authoritative. Chinese passive often appears in literary contexts and with negative connotations.</p>
+
+      <div class="chinese-example">
+        <strong>German Passive (Neutral, Formal):</strong><br data-speak="true">
+        <span data-speak="true">Das Buch wird von mir gelesen.</span> (The book is read by me.)
+      </div>
+
+      <div class="chinese-example">
+        <strong>Chinese Passive with 被 (bèi):</strong><br>
+        <span style="font-family: 'Noto Sans SC', sans-serif;">这本书被我读了。</span> (This-CL book BEI me read-ASP.)<br>
+        <span data-speak="true">Literally: "This book by-means-of me read." The particle 被 marks the passive relationship.</span>
+      </div>
+
+      <p style="margin-top: 16px; font-size: 1rem; color: rgba(212,202,187,0.8);">
+        <strong>Key Difference:</strong> German restructures the entire sentence and uses an auxiliary verb (werden/sein). Chinese inserts a single particle (被) and preserves most of the word order. German's restructuring is more profound; Chinese's is more economical.
+      </p>
+
+      <div class="chinese-example" style="margin-top: 20px;">
+        <strong>Comparison: Vorgangspassiv vs. Zustandspassiv</strong><br data-speak="true">
+        <span data-speak="true">German Process: "Das Fenster wird geöffnet" (is being opened)</span><br>
+        <span data-speak="true">German State: "Das Fenster ist geöffnet" (is open)</span>
+      </div>
+
+      <div class="chinese-example">
+        <strong>Chinese Only Has One Passive Form:</strong><br>
+        <span style="font-family: 'Noto Sans SC', sans-serif;">窗户被打开了。</span> (Window BEI open-ASP.)<br>
+        <span data-speak="true">This covers both process and state; context determines the meaning. German's two-passive system is more grammatically explicit.</span>
+      </div>
+
+      <p style="margin-top: 16px; font-size: 1rem; color: rgba(212,202,187,0.8);">
+        <strong>Learning Insight:</strong> If you speak Chinese, the German passive requires you to master two distinct forms (werden vs. sein) and a fuller restructuring of the sentence. Chinese is more economical; German is more explicit. Both achieve the same communicative goal—centering the object—but with different grammatical tools.
+      </p>
+    </div>
+  </div>
+
+  <div class="scene scene-9">
+    <span class="scene-marker"></span>
+    <p class="narrative emphasis" data-speak="true">
+      Practical Mastery: Passive in Real Contexts
+    </p>
+
+    <div class="grammar-box">
+      <div class="rule-title">Common Passive Expressions in Everyday German</div>
+
+      <div class="example-pair">
+        <div class="example-label">At Work</div>
+        <div class="example-text" data-speak="true">Das Projekt wird nächste Woche abgeschlossen. (The project will be completed next week.)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">In School</div>
+        <div class="example-text" data-speak="true">Der Aufsatz muss bis Freitag eingereicht werden. (The essay must be submitted by Friday.)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">In the Kitchen</div>
+        <div class="example-text" data-speak="true">Das Essen wird um 19 Uhr serviert. (Dinner is served at 7 PM.)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">In the Hospital</div>
+        <div class="example-text" data-speak="true">Der Patient wird von einem Facharzt untersucht. (The patient is examined by a specialist.)</div>
+      </div>
+
+      <div class="example-pair">
+        <div class="example-label">In the News</div>
+        <div class="example-text" data-speak="true">Es wird berichtet, dass neue Maßnahmen geplant sind. (It is reported that new measures are planned.)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-container">
+    <h3 data-speak="true">Chapter 66 Quiz: Passive Voice — Test Your Understanding (80% Pass Required)</h3>
+
+    <div id="quiz-questions"></div>
+
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+
+    <div class="quiz-score" id="quiz-score"></div>
+
+    <div class="quiz-reset">
+      <button onclick="resetQuiz()">Start Over</button>
+    </div>
+
+    <div class="post-quiz-summary" id="quiz-summary"></div>
+  </div>
+
+  <div class="nav-buttons">
+    <a href="chapter65.html" class="nav-link" data-speak="true">← Chapter 65: Der Mann, der...</a>
+    <a href="chapter67.html" class="nav-link" data-speak="true">Chapter 67: Konjunktiv →</a>
+  </div>
+
+</div>
+
+<script data-speak="true">
+const quizData = [
+  {
+    question: "What is the primary function of passive voice?",
+    options: [
+      "To emphasize the agent performing the action",
+      "To shift focus from the agent to the object receiving the action",
+      "To make sentences shorter",
+      "To express uncertainty"
+    ],
+    correct: 1,
+    explanation: "Passive voice centers on what is done, not who does it. The object of the active sentence becomes the subject of the passive sentence."
+  },
+  {
+    question: "What is the main difference between Vorgangspassiv and Zustandspassiv?",
+    options: [
+      "Vorgangspassiv is present tense; Zustandspassiv is past tense",
+      "Vorgangspassiv describes an ongoing process; Zustandspassiv describes the result or state",
+      "Vorgangspassiv uses sein; Zustandspassiv uses werden",
+      "They are interchangeable"
+    ],
+    correct: 1,
+    explanation: "Vorgangspassiv (werden + participle) emphasizes the action process. Zustandspassiv (sein + participle) emphasizes the completed state or condition."
+  },
+  {
+    question: "Identify the passive form: 'Das Buch wird gelesen.'",
+    options: [
+      "Zustandspassiv (state passive)",
+      "Vorgangspassiv (process passive)",
+      "Active voice",
+      "Conditional"
+    ],
+    correct: 1,
+    explanation: "This uses werden + participle, which is Vorgangspassiv. It describes the action of reading in progress."
+  },
+  {
+    question: "Complete the sentence: 'Das Fenster ist __________.' (in the context of a completed state)",
+    options: ["offnen", "geöffnet", "wird geöffnet", "zu öffnen"],
+    correct: 1,
+    explanation: "Zustandspassiv is sein + participle. 'Das Fenster ist geöffnet' = The window is open (state of completion)."
+  },
+  {
+    question: "How do you form the Vorgangspassiv in present tense?",
+    options: [
+      "sein + past participle",
+      "werden + infinitive",
+      "werden + past participle",
+      "bin/bist/ist + participle"
+    ],
+    correct: 2,
+    explanation: "Vorgangspassiv = werden + past participle. E.g., 'wird gebaut' (is being built)."
+  },
+  {
+    question: "How do you form the perfect tense of Vorgangspassiv?",
+    options: [
+      "ist/sind + participle + worden",
+      "ist/sind + participle + gewesen",
+      "hat/haben + participle + werden",
+      "war/waren + participle"
+    ],
+    correct: 0,
+    explanation: "Perfect Vorgangspassiv: ist/sind + participle + worden. E.g., 'ist gebaut worden' (has been built)."
+  },
+  {
+    question: "Which preposition expresses the direct agent (a person)?",
+    options: ["durch", "von", "mit", "bei"],
+    correct: 1,
+    explanation: "'Von' + dative expresses the direct agent. E.g., 'von dem Arzt' (by the doctor)."
+  },
+  {
+    question: "Which preposition expresses the means or instrument?",
+    options: ["von", "durch", "an", "für"],
+    correct: 1,
+    explanation: "'Durch' + accusative expresses means or indirect cause. E.g., 'durch ein Erdbeben' (by an earthquake, i.e., means)."
+  },
+  {
+    question: "Transform to passive: 'Der Schüler schreibt die Hausaufgaben.'",
+    options: [
+      "Die Hausaufgaben schreiben von dem Schüler.",
+      "Die Hausaufgaben werden von dem Schüler geschrieben.",
+      "Die Hausaufgaben sind von dem Schüler geschrieben.",
+      "Die Hausaufgaben werden schreiben vom Schüler."
+    ],
+    correct: 1,
+    explanation: "Correct passive formation: nominative subject (Die Hausaufgaben) + werden + past participle (geschrieben) + optional agent (von dem Schüler)."
+  },
+  {
+    question: "In 'Das Haus ist gebaut,' what does 'ist' indicate?",
+    options: [
+      "An ongoing process",
+      "A completed state or condition",
+      "Past tense active",
+      "Future intention"
+    ],
+    correct: 1,
+    explanation: "Sein + participle indicates Zustandspassiv—a state or condition. 'Das Haus ist gebaut' = The house is built (the state of completion)."
+  },
+  {
+    question: "Which sentence uses the institutional passive correctly?",
+    options: [
+      "Es wird berichtet, dass neue Maßnahmen geplant sind.",
+      "Man berichtet, dass neue Maßnahmen sind geplant.",
+      "Neue Maßnahmen werden ist geplant.",
+      "Der Bericht ist worden gemacht."
+    ],
+    correct: 0,
+    explanation: "This correctly uses institutional passive with 'es wird berichtet' (it is reported—impersonal construction)."
+  },
+  {
+    question: "What is the key difference between German and Chinese passive structures?",
+    options: [
+      "German uses a particle; Chinese uses an auxiliary verb",
+      "German restructures the sentence deeply; Chinese inserts a particle like 被 (bèi)",
+      "German has three passive types; Chinese has one",
+      "German omits the agent; Chinese requires it"
+    ],
+    correct: 1,
+    explanation: "German uses werden/sein + restructured word order; Chinese uses a particle (被) with less restructuring. German is more explicit; Chinese is more economical."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = {};
+
+function displayQuestion() {
+  const quiz = document.getElementById('quiz-questions');
+  quiz.innerHTML = '';
+
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+
+  const html = `
+    <div class="quiz-question ${isAnswered ? 'answered' : ''}">
+      <div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '') : ''}"
+               onclick="selectAnswer(${i})" data-speak="true">
+            ${opt}
+          </div>
+        `).join('')}
+      </div>
+      ${isAnswered ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(232,164,74,0.1); font-size: 0.95rem; color: rgba(212,202,187,0.8);" data-speak="true">${q.explanation}</div>` : ''}
+    </div>
+  `;
+
+  quiz.innerHTML = html;
+  updateNavButtons();
+}
+
+function selectAnswer(index) {
+  if (answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = index;
+  if (index === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    currentQuestion++;
+    displayQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    displayQuestion();
+  }
+}
+
+function updateNavButtons() {
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function showScore() {
+  const percentage = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${percentage}%)`;
+  const summary = document.getElementById('quiz-summary');
+  summary.classList.add('show');
+  if (percentage >= 80) {
+    summary.innerHTML = `<p data-speak="true"><strong>Quiz Complete! You've achieved 80%+ mastery!</strong></p><p style="margin-top: 12px;" data-speak="true">You've grasped the distinction between Vorgangspassiv and Zustandspassiv—a sophisticated understanding that separates learners from speakers. The passive is German's institutional voice, and you're ready to use it.</p>`;
+  } else {
+    summary.innerHTML = `<p data-speak="true"><strong>Quiz Complete.</strong></p><p style="margin-top: 12px;" data-speak="true">Score: ${percentage}%. Passive voice takes practice. Focus on the werden/sein distinction and review the formation tables.</p>`;
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  answered = {};
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-summary').classList.remove('show');
+  displayQuestion();
+}
+
+// Canvas: Assembly line animation with objects flowing and being transformed
+const canvas = document.getElementById('assembly-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawAssemblyLine() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const time = Date.now() / 1000;
+
+  // Draw conveyor belt lines
+  ctx.strokeStyle = 'rgba(122, 155, 184, 0.15)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([10, 10]);
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height / 3);
+  ctx.lineTo(canvas.width, canvas.height / 3);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height * 2 / 3);
+  ctx.lineTo(canvas.width, canvas.height * 2 / 3);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw moving particles/objects on the assembly line
+  const particleCount = 8;
+  for (let i = 0; i < particleCount; i++) {
+    const x = ((time * 100 + i * 80) % canvas.width);
+    const y = canvas.height / 2;
+
+    // Main particle
+    ctx.fillStyle = 'rgba(232, 164, 74, 0.3)';
+    ctx.beginPath();
+    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Glow effect
+    ctx.fillStyle = 'rgba(232, 164, 74, 0.1)';
+    ctx.beginPath();
+    ctx.arc(x, y, 30, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Draw transformation stations
+  const stations = [canvas.width / 4, canvas.width / 2, canvas.width * 3 / 4];
+  stations.forEach((stationX, idx) => {
+    ctx.strokeStyle = 'rgba(122, 155, 184, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(stationX, canvas.height / 4);
+    ctx.lineTo(stationX, canvas.height * 3 / 4);
+    ctx.stroke();
+
+    // Highlight effect
+    ctx.fillStyle = 'rgba(232, 164, 74, 0.08)';
+    ctx.fillRect(stationX - 10, canvas.height / 3, 20, canvas.height / 3);
+  });
+
+  requestAnimationFrame(drawAssemblyLine);
+}
+
+drawAssemblyLine();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(scene => observer.observe(scene));
+
+displayQuestion();
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">580 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(68%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:68%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 580 words across 66 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">115 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(79%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:79%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 115 patterns across 66 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>

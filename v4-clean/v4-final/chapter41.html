@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 41: Der Zerfall</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --decay: #d4a574;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #decay-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+    .german-word { padding: 2px 0; }
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn { padding: 12px 20px; font-size: 1.1rem; min-height: 44px; -webkit-tap-highlight-color: transparent; }
+    .guess-feedback { font-size: 0.95rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="decay-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Forty-One</div>
+    <h1>Der Zerfall</h1>
+    <div class="subtitle">The Decay</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: BREAKING ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine glass. Perfect, transparent glass. Whole. Unbroken. And then: the moment of impact. The moment when force meets fragility. The glass does not crumble. It shatters. It breaks into pieces. It falls apart. The sound of breaking is unmistakable: a crack, a fracture, an explosion of fragments.
+    </p>
+
+    <p class="narrative">
+      This is the world of the German <em>zer-</em> prefix. Not removal, like <em>ent-</em>. Not reversal. But destruction. Breaking into pieces. Shattering. Falling to fragments. The <em>zer-</em> prefix marks not the careful uncovering of something hidden, but the violent breaking of something whole.
+    </p>
+
+    <p class="narrative">
+      And here is the remarkable fact: English has no prefix like this. We have "dis-" and "un-" and "de-", but none of them capture the sense of violent fragmentation that <em>zer-</em> conveys. It is uniquely Germanic. A German innovation. A way of speaking about destruction that has no direct translation.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the grammar of breaking. Of shattering. Of falling to pieces.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: DESTRUCTION ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The verb <span class="german-word" data-card="zerstoeren">zerstören</span> — to destroy. Literally: <em>zer-</em> (to pieces) + <em>stören</em> (to disturb, to disrupt). To destroy something is to break it into pieces, to scatter it, to render it non-functional. <em>Zerstörung</em> — destruction — marks the process of being broken to pieces.
+    </p>
+
+    <p class="narrative">
+      Then there is <span class="german-word" data-card="zerbrechen">zerbrechen</span> — to break, to shatter. <em>Zer-</em> (to pieces) + <em>brechen</em> (to break). The word is almost redundant because <em>brechen</em> already means "to break," but adding <em>zer-</em> emphasizes the shattering, the fragmentation, the complete breaking apart. When glass <em>zerbricht</em>, it does not bend or crack slightly. It shatters into fragments.
+    </p>
+
+    <p class="narrative">
+      The verb <span class="german-word" data-card="zerfallen">zerfallen</span> — to decay, to crumble, to fall to pieces. <em>Zer-</em> (to pieces) + <em>fallen</em> (to fall). Something that <em>zerfällt</em> is literally falling to pieces. An empire can <em>zerfallen</em> — it crumbles, it disintegrates into smaller units. A body can <em>zerfallen</em> — it decays, the organism breaks down into its constituent parts. Time itself causes <em>Zerfall</em> — the decay that turns all things to dust.
+    </p>
+
+    <!-- ZERSTOEREN card -->
+    <div class="ety-card" id="card-zerstoeren">
+      <div class="word-header">
+        <span class="word-main">Zerstören</span>
+        <span class="word-pron">/tserˈʃtøːʁən/</span>
+      </div>
+      <div class="word-meaning">to destroy — to break or ruin completely</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ster-</span>
+        <span class="bridge-note">— to disturb, to scatter, to scatter apart</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stern</span>
+        <span class="bridge-note">— Old English "steorra," to scatter (originally a scattered group)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zerstören</span>
+        <span class="bridge-note">— zer- (to pieces) + stören (to disturb) = to break into pieces</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">破坏</span>
+        <span class="bridge-note">— pòhuài (break + harm) — to break and damage</span>
+      </div>
+      <div class="story">
+        The verb <em>zerstören</em> comes from <em>stören</em>, which means "to disturb" or "to disrupt." When you add <em>zer-</em>, you move from disruption to complete destruction. <em>Zerstörung</em> (destruction) is the noun form, and it appears frequently in German historical and political discourse: <em>Zerstörung von Dresden</em> (the destruction of Dresden), <em>Zerstörung der Umwelt</em> (the destruction of the environment). The word carries weight — it is not mild destruction but total, fragmenting destruction. The Chinese 破坏 combines 破 (to break, to split, to crack) with 害 (to harm, to damage) — both gestures toward damage but neither quite captures the fragmenting violence of <em>zerstören</em>.
+      </div>
+    </div>
+
+    <!-- ZERBRECHEN card -->
+    <div class="ety-card" id="card-zerbrechen">
+      <div class="word-header">
+        <span class="word-main">Zerbrechen</span>
+        <span class="word-pron">/tserˈbʁɛçən/</span>
+      </div>
+      <div class="word-meaning">to break — to shatter into pieces</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*bhreg-</span>
+        <span class="bridge-note">— to break, to fracture, to fragment</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">break</span>
+        <span class="bridge-note">— Old English "brecan," from the same PIE root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zerbrechen</span>
+        <span class="bridge-note">— zer- (to pieces) + brechen (to break) = to shatter</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">破裂</span>
+        <span class="bridge-note">— pòliè (break + split/crack) — emphasizes the splitting apart</span>
+      </div>
+      <div class="story">
+        <em>Zerbrechen</em> means "to shatter" or "to break to pieces," and it combines <em>zer-</em> with <em>brechen</em> (to break). The <em>zer-</em> prefix intensifies the sense of breaking, emphasizing complete shattering rather than mere cracking. When porcelain <em>zerbricht</em>, it does not chip — it shatters into fragments. The word is used metaphorically as well: a marriage can <em>zerbrechen</em> (shatter, fall apart), a dream can <em>zerbrechen</em>, a person's spirit can <em>zerbrechen</em> under pressure. The metaphorical extension is powerful: what breaks psychologically is imagined as shattering like glass. The Chinese 破裂 emphasizes the cracking and splitting apart, capturing the fragmentation but not quite the finality of shattering that <em>zerbrechen</em> conveys.
+      </div>
+    </div>
+
+    <!-- ZERFALLEN card -->
+    <div class="ety-card" id="card-zerfallen">
+      <div class="word-header">
+        <span class="word-main">Zerfallen</span>
+        <span class="word-pron">/tserˈfalən/</span>
+      </div>
+      <div class="word-meaning">to decay — to fall to pieces, to disintegrate</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*phal-</span>
+        <span class="bridge-note">— to fall, to drop, the root of "fall"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">fall</span>
+        <span class="bridge-note">— Old English "feallan," to fall, to descend</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zerfallen</span>
+        <span class="bridge-note">— zer- (to pieces) + fallen (to fall) = to fall to pieces</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">衰落</span>
+        <span class="bridge-note">— shuāiluò (decline + fall) — emphasizes decline and falling</span>
+      </div>
+      <div class="story">
+        <em>Zerfallen</em> means "to decay" or "to fall to pieces," combining <em>zer-</em> with <em>fallen</em> (to fall). Something that <em>zerfällt</em> is literally falling to pieces, crumbling, disintegrating. An old building <em>zerfällt</em> — it decays, its structure breaks down. An empire <em>zerfällt</em> — it falls apart, fragments into smaller units. The word captures the process of gradual dissolution, of falling apart over time. Unlike <em>zerbrechen</em> which suggests violent shattering, <em>zerfallen</em> suggests slow decay, entropy, the inevitable passage of time turning solidity into fragments. <em>Zerfall</em> (decay) is the noun form, and in physics it appears as "radioaktiver Zerfall" (radioactive decay) — the process by which unstable nuclei break down. The Chinese 衰落 (shuāiluò) captures decline and falling but focuses more on the metaphorical sense of decline rather than the literal falling-to-pieces that <em>zerfallen</em> emphasizes.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: MORE FRAGMENTATIONS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      There is <span class="german-word" data-card="zerreissen">zerreissen</span> — to tear to shreds, to rip apart. <em>Zer-</em> (to pieces) + <em>reissen</em> (to tear, to pull). When cloth <em>zerreisst</em>, it tears into rags. When a relationship is <em>zerrissen</em>, it is torn apart, shredded.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zerschlagen">Zerschlagen</span> — to smash, to beat to pieces. <em>Zer-</em> (to pieces) + <em>schlagen</em> (to strike, to hit). To smash something to pieces by beating it.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zerstreuen">Zerstreuen</span> — to scatter, to disperse, to spread about. <em>Zer-</em> (to pieces) + <em>streuen</em> (to scatter, to spread). When people <em>zerstreuen</em>, they scatter in different directions. When doubt <em>zerstreut</em> your confidence, it scatters your certainty to the winds.
+    </p>
+
+    <p class="narrative">
+      And finally, <span class="german-word" data-card="zerlegen">zerlegen</span> — to take apart, to disassemble. <em>Zer-</em> (to pieces) + <em>legen</em> (to lay, to place). To take something apart piece by piece, systematically breaking it down into components. A hunter <em>zerlegt</em> an animal — butchers it into parts. A mechanic <em>zerlegt</em> an engine — takes it apart to see how it works.
+    </p>
+
+    <!-- ZERREISSEN card -->
+    <div class="ety-card" id="card-zerreissen">
+      <div class="word-header">
+        <span class="word-main">Zerreissen</span>
+        <span class="word-pron">/tserˈraɪ̯sən/</span>
+      </div>
+      <div class="word-meaning">to tear — to rip to shreds or apart</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*res-</span>
+        <span class="bridge-note">— to scratch, to scrape, to tear</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (lost in English)</span>
+        <span class="bridge-note">— appears in Old English "rasen," but archaic now</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zerreissen</span>
+        <span class="bridge-note">— zer- (to pieces) + reissen (to tear/pull) = to tear to shreds</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">撕裂</span>
+        <span class="bridge-note">— sīliè (tear + split) — emphasizes the tearing and splitting</span>
+      </div>
+      <div class="story">
+        <em>Zerreissen</em> means "to tear" or "to rip to shreds," and it represents a specific kind of destruction through tearing. Cloth <em>zerreisst</em>, paper <em>zerreisst</em>, and metaphorically, hearts and relationships can be <em>zerrissen</em> (torn, rent asunder). The word is emotionally loaded: to be <em>zerrissen</em> by conflicting desires means to be torn apart by them. <em>Zerrissene Gefühle</em> (torn feelings) describes internal conflict. The Chinese 撕裂 combines 撕 (to tear) with 裂 (to split, to crack), emphasizing both the tearing action and the resulting splitting apart. Both languages mark the violence of the action — tearing is not careful separation but forceful rending.
+      </div>
+    </div>
+
+    <!-- ZERSCHLAGEN card -->
+    <div class="ety-card" id="card-zerschlagen">
+      <div class="word-header">
+        <span class="word-main">Zerschlagen</span>
+        <span class="word-pron">/tserˈʃlaːɡən/</span>
+      </div>
+      <div class="word-meaning">to smash — to beat or strike into pieces</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sleg-</span>
+        <span class="bridge-note">— to strike, to hit, to beat</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">slay</span>
+        <span class="bridge-note">— Old English "slēan," to strike or hit, originally to slay</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zerschlagen</span>
+        <span class="bridge-note">— zer- (to pieces) + schlagen (to strike) = to smash to pieces</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">砸碎</span>
+        <span class="bridge-note">— záshuì (smash + break) — to smash and break into fragments</span>
+      </div>
+      <div class="story">
+        <em>Zerschlagen</em> combines <em>zer-</em> with <em>schlagen</em> (to strike or hit), creating the sense of smashing something to pieces through repeated blows. The word implies violence: you smash something to get it to break into pieces. In politics, a government can <em>zerschlagen</em> opposition groups — crush them, dismantle them through force. <em>Zerschlagung</em> (smashing to pieces, dismantling) appears in historical contexts. The Chinese 砸碎 emphasizes the smashing (砸) and breaking (碎) without quite capturing the <em>zer-</em> prefix's sense of scattering to multiple pieces.
+      </div>
+    </div>
+
+    <!-- ZERSTREUEN card -->
+    <div class="ety-card" id="card-zerstreuen">
+      <div class="word-header">
+        <span class="word-main">Zerstreuen</span>
+        <span class="word-pron">/tserˈʃtʁɔɪ̯ən/</span>
+      </div>
+      <div class="word-meaning">to scatter — to disperse, to spread in different directions</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ster-</span>
+        <span class="bridge-note">— to scatter, to strew, to spread</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">strew</span>
+        <span class="bridge-note">— Old English "streowian," to scatter or spread</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zerstreuen</span>
+        <span class="bridge-note">— zer- (to pieces) + streuen (to scatter) = to scatter widely</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">分散</span>
+        <span class="bridge-note">— fēnsàn (divide + scatter) — to divide and scatter</span>
+      </div>
+      <div class="story">
+        <em>Zerstreuen</em> means "to scatter" or "to disperse," and it emphasizes spreading in multiple directions. A crowd <em>zerstreut</em> — it scatters, people go in different directions. Doubts <em>zerstreuen</em> your confidence — they scatter and disperse your certainty. Related is the adjective <em>zerstreut</em> (scattered-minded, absent-minded) — a person whose attention is scattered in many directions at once. The word captures the sense of coming apart and going in separate directions, not through violence but through natural dispersal. The Chinese 分散 emphasizes dividing and scattering, which is similar but less poetic than the German word's implication of active dispersal.
+      </div>
+    </div>
+
+    <!-- ZERLEGEN card -->
+    <div class="ety-card" id="card-zerlegen">
+      <div class="word-header">
+        <span class="word-main">Zerlegen</span>
+        <span class="word-pron">/tserˈleːɡən/</span>
+      </div>
+      <div class="word-meaning">to disassemble — to take apart into components</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*leǵh-</span>
+        <span class="bridge-note">— to lay down, to place, to position</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">lay</span>
+        <span class="bridge-note">— Old English "lecgan," to lay or place</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zerlegen</span>
+        <span class="bridge-note">— zer- (to pieces) + legen (to lay/place) = to take apart piece by piece</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">分解</span>
+        <span class="bridge-note">— fēnjiě (divide + dissolve) — to break down and dissolve</span>
+      </div>
+      <div class="story">
+        <em>Zerlegen</em> means "to disassemble" or "to take apart," and it suggests systematic breaking down into components. Unlike <em>zerbrechen</em> (violent shattering) or <em>zerreissen</em> (ripping), <em>zerlegen</em> implies methodical disassembly. A butcher <em>zerlegt</em> an animal into cuts of meat. A mechanic <em>zerlegt</em> an engine into parts. An analyst <em>zerlegt</em> a text into its components for study. <em>Zerlegung</em> (disassembly, decomposition) appears in scientific contexts: <em>Kernzerlegung</em> (nuclear fission). The <em>zer-</em> prefix marks the ultimate result — pieces — while the <em>legen</em> root emphasizes the orderly placement of those pieces. The Chinese 分解 emphasizes breaking down and dissolving, which is conceptually similar but less precise about the systematic nature of disassembly.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE VIOLENCE OF FRAGMENTS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      What unites all these <em>zer-</em> verbs is their focus on fragmentation. Not removal (like <em>ent-</em>), not reversal, not change — but breaking into pieces. Scattering. Dispersing. The wholeness is shattered. The unified becomes multiple. The structured becomes chaotic.
+    </p>
+
+    <p class="narrative">
+      And here is the profound fact: like the <em>ent-</em> prefix, the <em>zer-</em> prefix is <em>inseparable</em>. It cannot be separated from the verb stem. The destruction, the fragmentation, the shattering is so integral to the meaning that it cannot be torn away (if we may use that metaphor). The prefix is bound to the verb eternally. The two cannot be separated, just as the shattering cannot be undone.
+    </p>
+
+    <p class="narrative">
+      There is something poetic about this: German has built into its very grammar a linguistic reminder of violence, fragmentation, and the way that wholeness can be shattered into pieces. The grammar itself embodies the meaning — just as the structure of language has these inseparable bonds, so too do the realities described by these words have a kind of permanence. Once something is <em>zerstört</em>, it is gone. Once something is <em>zerbrochen</em>, it cannot easily be made whole again.
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <h3>Test Your Knowledge</h3>
+    <div id="quizContent"></div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">380 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(44%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:44%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 380 words across 41 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">85 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(58%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:58%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 85 patterns and grammar rules across 41 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="word-collection" id="wordCollection">
+    <h3>Words from Chapter 41</h3>
+    <div class="collected-words" id="collectedWords"></div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+    <p class="narrative" style="text-align: center; color: rgba(212, 202, 187, 0.6);">End of Chapter 41</p>
+    <div class="next-chapter">← Chapter 40 | Chapter 42 →</div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter40.html" class="nav-btn">← Chapter 40</a>
+    <a href="chapter42.html" class="nav-btn next">Chapter 42 →</a>
+  </div>
+
+</div>
+
+<script>
+// ========== CANVAS ANIMATION ==========
+const canvas = document.getElementById('decay-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let shards = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 1.2;
+    this.vy = (Math.random() - 0.5) * 1.2;
+    this.life = 1;
+    this.size = Math.random() * 2 + 0.5;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += 0.05;
+    this.life -= 0.004;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -0.8;
+    if (this.y > canvas.height) this.life = 0;
+  }
+  draw() {
+    ctx.fillStyle = `rgba(212, 165, 116, ${this.life * 0.5})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function animateCanvas() {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.15)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (Math.random() < 0.04) particles.push(new Particle());
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+
+// ========== CARD SYSTEM ==========
+const cards = {
+  zerstoeren: {
+    german: 'Zerstören',
+    pronunciation: '/tserˈʃtøːʁən/',
+    meaning: 'to destroy',
+    pie: '*ster-',
+    eng: 'stern',
+    deu: 'stören',
+    chinese: '破坏'
+  },
+  zerbrechen: {
+    german: 'Zerbrechen',
+    pronunciation: '/tserˈbʁɛçən/',
+    meaning: 'to break/shatter',
+    pie: '*bhreg-',
+    eng: 'break',
+    deu: 'brechen',
+    chinese: '破裂'
+  },
+  zerfallen: {
+    german: 'Zerfallen',
+    pronunciation: '/tserˈfalən/',
+    meaning: 'to decay',
+    pie: '*phal-',
+    eng: 'fall',
+    deu: 'fallen',
+    chinese: '衰落'
+  },
+  zerreissen: {
+    german: 'Zerreissen',
+    pronunciation: '/tserˈraɪ̯sən/',
+    meaning: 'to tear',
+    pie: '*res-',
+    eng: 'raze',
+    deu: 'reissen',
+    chinese: '撕裂'
+  },
+  zerschlagen: {
+    german: 'Zerschlagen',
+    pronunciation: '/tserˈʃlaːɡən/',
+    meaning: 'to smash',
+    pie: '*sleg-',
+    eng: 'slay',
+    deu: 'schlagen',
+    chinese: '砸碎'
+  },
+  zerstreuen: {
+    german: 'Zerstreuen',
+    pronunciation: '/tserˈʃtʁɔɪ̯ən/',
+    meaning: 'to scatter',
+    pie: '*ster-',
+    eng: 'strew',
+    deu: 'streuen',
+    chinese: '分散'
+  },
+  zerlegen: {
+    german: 'Zerlegen',
+    pronunciation: '/tserˈleːɡən/',
+    meaning: 'to disassemble',
+    pie: '*leǵh-',
+    eng: 'lay',
+    deu: 'legen',
+    chinese: '分解'
+  }
+};
+
+// Expand/collapse cards on click
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const cardId = this.getAttribute('data-card');
+    const card = document.getElementById(`card-${cardId}`);
+    if (card) {
+      card.classList.toggle('open');
+      if (card.classList.contains('open')) {
+        this.classList.add('revealed');
+        setTimeout(() => card.scrollIntoView({behavior: 'smooth', block: 'nearest'}), 100);
+      }
+    }
+  });
+});
+
+// ========== QUIZ SYSTEM ==========
+const quizData = [
+  {
+    question: 'What does the zer- prefix generally convey?',
+    options: ['to reverse', 'to remove', 'to break into pieces', 'to scatter'],
+    correct: 2
+  },
+  {
+    question: 'Does English have a direct equivalent to the zer- prefix?',
+    options: ['yes, "dis-"', 'yes, "un-"', 'no, it is uniquely Germanic', 'no, but "de-" is close'],
+    correct: 2
+  },
+  {
+    question: 'What does "zerstören" mean?',
+    options: ['to disturb', 'to destroy', 'to scatter', 'to break'],
+    correct: 1
+  },
+  {
+    question: 'How does "zerbrechen" differ from "brechen"?',
+    options: ['it means nothing different', 'zer- emphasizes complete shattering', 'it only means "to crumble"', 'it means "to break slowly"'],
+    correct: 1
+  },
+  {
+    question: 'What is the literal meaning of "zerfallen"?',
+    options: ['to fail', 'to fall down', 'to fall to pieces', 'to deteriorate'],
+    correct: 2
+  },
+  {
+    question: 'What does "zerreissen" mean?',
+    options: ['to scrape', 'to tear to shreds', 'to pull', 'to scratch'],
+    correct: 1
+  },
+  {
+    question: 'How does "zerschlagen" break something?',
+    options: ['slowly over time', 'by tearing', 'through repeated strikes/blows', 'by decomposition'],
+    correct: 2
+  },
+  {
+    question: 'What does "zerstreuen" mean?',
+    options: ['to destroy', 'to scatter/disperse', 'to confuse', 'to disturb'],
+    correct: 1
+  },
+  {
+    question: 'How does "zerlegen" differ from other zer- verbs?',
+    options: ['it is violent', 'it implies systematic disassembly', 'it is metaphorical only', 'it has no difference'],
+    correct: 1
+  },
+  {
+    question: 'Is the zer- prefix separable or inseparable?',
+    options: ['separable like auf-', 'inseparable from the verb', 'sometimes both', 'depends on context'],
+    correct: 1
+  },
+  {
+    question: 'Which zer- verb means to decay or crumble over time?',
+    options: ['zerbrechen', 'zerreissen', 'zerfallen', 'zerschlagen'],
+    correct: 2
+  },
+  {
+    question: 'What does Zerfall mean?',
+    options: ['breaking', 'destruction', 'decay/disintegration', 'falling'],
+    correct: 2
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = new Set();
+
+function renderQuiz() {
+  const quizContent = document.getElementById('quizContent');
+  quizContent.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const questionDiv = document.createElement('div');
+    questionDiv.className = `quiz-question ${idx !== currentQuestion ? 'hidden' : ''}`;
+
+    const questionText = document.createElement('div');
+    questionText.className = 'q-text';
+    questionText.textContent = q.question;
+    questionDiv.appendChild(questionText);
+
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'quiz-options';
+
+    q.options.forEach((opt, optIdx) => {
+      const button = document.createElement('button');
+      button.className = 'quiz-option';
+      button.textContent = opt;
+      button.dataset.questionIdx = idx;
+      button.dataset.optionIdx = optIdx;
+
+      if (answered.has(idx)) {
+        button.disabled = true;
+        if (optIdx === q.correct) button.classList.add('selected');
+        else if (optIdx !== q.correct) button.classList.add('incorrect');
+      }
+
+      button.addEventListener('click', () => selectAnswer(idx, optIdx, button, q.correct));
+      optionsDiv.appendChild(button);
+    });
+
+    questionDiv.appendChild(optionsDiv);
+    quizContent.appendChild(questionDiv);
+  });
+
+  const navDiv = document.createElement('div');
+  navDiv.className = 'quiz-nav';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.textContent = '← Previous';
+  prevBtn.disabled = currentQuestion === 0;
+  prevBtn.addEventListener('click', () => {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      renderQuiz();
+    }
+  });
+  navDiv.appendChild(prevBtn);
+
+  const scoreSpan = document.createElement('span');
+  scoreSpan.className = 'quiz-score';
+  scoreSpan.textContent = `${score} / ${quizData.length}`;
+  navDiv.appendChild(scoreSpan);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.textContent = 'Next →';
+  nextBtn.disabled = currentQuestion === quizData.length - 1;
+  nextBtn.addEventListener('click', () => {
+    if (currentQuestion < quizData.length - 1) {
+      currentQuestion++;
+      renderQuiz();
+    }
+  });
+  navDiv.appendChild(nextBtn);
+
+  const quizContainer = document.querySelector('.quiz-container');
+  const existingNav = quizContainer.querySelector('.quiz-nav');
+  if (existingNav) existingNav.remove();
+  quizContainer.appendChild(navDiv);
+}
+
+function selectAnswer(qIdx, optIdx, button, correctIdx) {
+  answered.add(qIdx);
+
+  if (optIdx === correctIdx) {
+    button.classList.add('selected');
+    if (!answered.has(qIdx) || score === qIdx) score++;
+  } else {
+    button.classList.add('incorrect');
+  }
+
+  document.querySelectorAll(`[data-question-idx="${qIdx}"]`).forEach(btn => btn.disabled = true);
+  renderQuiz();
+}
+
+// Initialize
+renderQuiz();
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  document.getElementById('progressBar').style.width = scrollPercent + '%';
+});
+
+// Lazy scene visibility
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+});
+
+document.querySelectorAll('.scene').forEach(scene => observer.observe(scene));
+
+// Audio pronunciation
+document.querySelectorAll('[data-speak="true"]').forEach(el => {
+  const speakBtn = document.createElement('button');
+  speakBtn.className = 'speak-btn';
+  speakBtn.textContent = '🔊';
+  speakBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const text = el.textContent;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    speechSynthesis.speak(utterance);
+    speakBtn.classList.add('speaking');
+    setTimeout(() => speakBtn.classList.remove('speaking'), 1000);
+  });
+  el.parentNode.insertBefore(speakBtn, el.nextSibling);
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

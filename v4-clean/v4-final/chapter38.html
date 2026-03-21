@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 38: Das Wunderbare</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --wonder: #e8c47a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- KALEIDOSCOPE CANVAS --- */
+  #kaleidoscope-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHINESE CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--chinese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="kaleidoscope-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Thirty-Eight</div>
+    <h1>Das Wunderbare</h1>
+    <div class="subtitle">The Wonderful</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: ADJECTIVES AS THE FINAL KEY ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      We have journeyed far. We have learned how verbs become nouns, how qualities become abstractions, how individuals merge into collectives. But there is one more door, one more pathway through which German creates meaning. This is the door of modification — how adjectives describe, how they change, how they bend meaning to fit new shapes.
+    </p>
+
+    <p class="narrative">
+      Adjectives are the words that modify, that add color and nuance. And in German, there are three primary suffixes that create adjectives from other words: <strong>-lich</strong>, <strong>-bar</strong>, and <strong>-ig</strong>. These three keys unlock the ability to create hundreds of adjectives from scratch.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="moglich">Möglich.</span> Possible. The quality of being capable of happening. From <span class="german-word" data-speak="true">mögen</span> — to like, to be able. Add -lich and you create the adjective meaning "possible."
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wunderbar">Wunderbar.</span> Wonderful. Marvelous. From <span class="german-word" data-speak="true">Wunder</span> — wonder, miracle. Add -bar and you create an adjective meaning "full of wonder" — wonderful.
+    </p>
+
+    <p class="narrative emphasis">
+      These suffixes do not always create feminine nouns like -ung or -schaft. These create adjectives. They modify. They add depth and nuance to meaning. And together with the nouns you have learned, they give you the power to understand and create millions of German expressions.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE -LICH SUFFIX ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="freundlich">Freundlich.</span> Friendly. From <span class="german-word" data-speak="true">Freund</span> — friend. -lich turns it into an adjective: friendly, in a friendly manner.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gefaehrlich">Gefährlich.</span> Dangerous. From <span class="german-word" data-speak="true">Gefahr</span> — danger. -lich creates the adjective: dangerous.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wichtig">Wichtig.</span> Important. From <span class="german-word" data-speak="true">Wicht</span> — a creature, a being (old usage). The root is obscure, but -lich creates the adjective. However, <em>wichtig</em> uses -ig instead of -lich. The boundary between suffixes is sometimes blurred.
+    </p>
+
+    <p class="narrative">
+      The -lich suffix is pervasive in German. It appears in hundreds of adjectives: natürlich (natural), persönlich (personal), beruflich (professional), monatlich (monthly), jährlich (yearly). -lich can even turn nouns into adjectives describing quality or manner.
+    </p>
+
+    <!-- MOGLICH card -->
+    <div class="ety-card" id="card-moglich">
+      <div class="word-header">
+        <span class="word-main">Möglich</span>
+        <span class="word-pron">/ˈmœklɪç/</span>
+      </div>
+      <div class="word-meaning">possible — capable of existing, happening, or being true</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">mögen</span>
+        <span class="bridge-note">— to like, to be able; -lich creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">possible</span>
+        <span class="bridge-note">— from Latin possibilis; German uses its own suffix system</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">可能</span>
+        <span class="bridge-note">— kěnéng (able + can) — the ability to be or exist</span>
+      </div>
+      <div class="story">
+        <em>Möglich</em> is the fundamental adjective of possibility. It appears everywhere: Es ist möglich (it is possible). Unmöglich (impossible — un- prefix negates it). The -lich suffix transforms the verb mögen into an adjective describing what is capable.
+      </div>
+    </div>
+
+    <!-- FREUNDLICH card -->
+    <div class="ety-card" id="card-freundlich">
+      <div class="word-header">
+        <span class="word-main">Freundlich</span>
+        <span class="word-pron">/ˈfʁɔɪntlɪç/</span>
+      </div>
+      <div class="word-meaning">friendly — showing warmth and kindness toward others</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Freund</span>
+        <span class="bridge-note">— friend; -lich creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">friendly</span>
+        <span class="bridge-note">— from friend + -ly; parallel construction to German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">友好</span>
+        <span class="bridge-note">— yǒuhǎo (friend + good) — good like a friend</span>
+      </div>
+      <div class="story">
+        <em>Freundlich</em> is warmth. A freundliche Person is a friendly person. Eine freundliche Stimme is a friendly voice. The -lich suffix transforms the noun Freund (friend) into the adjective freundlich, describing the quality of being like a friend.
+      </div>
+    </div>
+
+    <!-- GEFÄHRLICH card -->
+    <div class="ety-card" id="card-gefaehrlich">
+      <div class="word-header">
+        <span class="word-main">Gefährlich</span>
+        <span class="word-pron">/ɡəˈfɛːrlɪç/</span>
+      </div>
+      <div class="word-meaning">dangerous — capable of causing harm or injury</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gefahr</span>
+        <span class="bridge-note">— danger; -lich creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">dangerous</span>
+        <span class="bridge-note">— from Old French danger, unrelated to German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">危险</span>
+        <span class="bridge-note">— wēixiǎn (dangerous + risky) — full of risk</span>
+      </div>
+      <div class="story">
+        <em>Gefährlich</em> warns of harm. A gefährliche Straße is a dangerous street. Ein gefährlicher Mensch is a dangerous person. The -lich suffix describes the quality of embodying danger.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE -BAR AND -IG SUFFIXES ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wunderbar">Wunderbar.</span> Wonderful. Marvelous. This adjective uses the -bar suffix, which means "capable of," "worthy of," or "full of." From <span class="german-word" data-speak="true">Wunder</span> — miracle, wonder. Wunderbar means "full of wonder" — wonderful.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="dankbar">Dankbar.</span> Grateful. Thankful. From <span class="german-word" data-speak="true">Dank</span> — thanks, gratitude. -bar creates the adjective: capable of gratitude, worthy of thanks.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="furchtbar">Furchtbar.</span> Terrible. Dreadful. From <span class="german-word" data-speak="true">Furcht</span> — fear, dread. -bar creates the adjective: full of fear, terrible.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wichtig">Wichtig.</span> Important. From an old root meaning "creature" or "creature of weight." -ig transforms it into the adjective.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="ruhig">Ruhig.</span> Calm. Quiet. Peaceful. From <span class="german-word" data-speak="true">Ruhe</span> — rest, peace. -ig creates the adjective: peaceful, quiet.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="lustig">Lustig.</span> Funny. Amusing. Cheerful. From <span class="german-word" data-speak="true">Lust</span> — desire, pleasure. -ig transforms it: full of pleasure, amusing, funny.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="traurig">Traurig.</span> Sad. Sorrowful. From <span class="german-word" data-speak="true">Trauer</span> — sorrow, mourning. -ig creates the adjective: full of sorrow, sad.
+    </p>
+
+    <!-- WUNDERBAR card -->
+    <div class="ety-card" id="card-wunderbar">
+      <div class="word-header">
+        <span class="word-main">Wunderbar</span>
+        <span class="word-pron">/ˈvʊndɐbaːr/</span>
+      </div>
+      <div class="word-meaning">wonderful — full of wonder; marvelous; excellent</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wunder</span>
+        <span class="bridge-note">— wonder, miracle; -bar means "full of" or "capable of"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wonder + -able</span>
+        <span class="bridge-note">— similar suffix structure, though with different nuance</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">奇妙</span>
+        <span class="bridge-note">— qīmiào (strange + subtle) — strange and marvelous</span>
+      </div>
+      <div class="story">
+        <em>Wunderbar</em> is one of the most joyful words in German. It means wonderful, marvelous, excellent. The -bar suffix means "full of" or "worthy of" — so wunderbar literally means "full of wonder." Es ist wunderbar! — It is wonderful!
+      </div>
+    </div>
+
+    <!-- DANKBAR card -->
+    <div class="ety-card" id="card-dankbar">
+      <div class="word-header">
+        <span class="word-main">Dankbar</span>
+        <span class="word-pron">/ˈdaŋkbaːr/</span>
+      </div>
+      <div class="word-meaning">grateful — feeling or showing thanks; thankful</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Dank</span>
+        <span class="bridge-note">— thanks, gratitude; -bar creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">thankful</span>
+        <span class="bridge-note">— from thank + -ful; parallel meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">感谢</span>
+        <span class="bridge-note">— gǎnxiè (feel + thanks) — to feel gratitude</span>
+      </div>
+      <div class="story">
+        <em>Dankbar</em> is gratitude made manifest as an adjective. Ich bin dir dankbar — I am grateful to you. The -bar suffix makes it possible to describe someone as "capable of thanks," deserving of gratitude.
+      </div>
+    </div>
+
+    <!-- FURCHTBAR card -->
+    <div class="ety-card" id="card-furchtbar">
+      <div class="word-header">
+        <span class="word-main">Furchtbar</span>
+        <span class="word-pron">/ˈfʊrçtbaːr/</span>
+      </div>
+      <div class="word-meaning">terrible — extremely bad, dreadful, causing fear</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Furcht</span>
+        <span class="bridge-note">— fear, dread; -bar creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">fearful</span>
+        <span class="bridge-note">— from fear + -ful; similar construction</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">可怕</span>
+        <span class="bridge-note">— kěpà (able + fear) — able to cause fear</span>
+      </div>
+      <div class="story">
+        <em>Furchtbar</em> is "full of dread" — terrible, awful, causing fear. Das ist furchtbar! — That is terrible! The -bar suffix emphasizes the quality of inspiring fear, of being worthy of dread.
+      </div>
+    </div>
+
+    <!-- RUHIG card -->
+    <div class="ety-card" id="card-ruhig">
+      <div class="word-header">
+        <span class="word-main">Ruhig</span>
+        <span class="word-pron">/ˈruːɪç/</span>
+      </div>
+      <div class="word-meaning">calm — peaceful, quiet, not agitated or disturbed</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Ruhe</span>
+        <span class="bridge-note">— rest, peace, quiet; -ig creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— English uses "calm" or "quiet," both from different roots</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">安静</span>
+        <span class="bridge-note">— ānjìng (peaceful + still) — peaceful stillness</span>
+      </div>
+      <div class="story">
+        <em>Ruhig</em> is peace. A ruhige Nacht is a peaceful night. Eine ruhige Person is a calm person. The -ig suffix transforms the noun Ruhe (peace) into the adjective describing the quality of being peaceful.
+      </div>
+    </div>
+
+    <!-- LUSTIG card -->
+    <div class="ety-card" id="card-lustig">
+      <div class="word-header">
+        <span class="word-main">Lustig</span>
+        <span class="word-pron">/ˈlʊstɪç/</span>
+      </div>
+      <div class="word-meaning">funny — amusing, entertaining, causing laughter or good humor</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Lust</span>
+        <span class="bridge-note">— desire, pleasure, appetite; -ig creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">lust</span>
+        <span class="bridge-note">— same root, but meaning has narrowed in English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">有趣</span>
+        <span class="bridge-note">— yǒuqù (have + interest) — having interest and amusement</span>
+      </div>
+      <div class="story">
+        <em>Lustig</em> is joy. A lustige Geschichte is a funny story. Ein lustiger Kerl is a funny fellow. The -ig suffix creates an adjective from Lust (desire, pleasure), describing something full of pleasure and amusement.
+      </div>
+    </div>
+
+    <!-- TRAURIG card -->
+    <div class="ety-card" id="card-traurig">
+      <div class="word-header">
+        <span class="word-main">Traurig</span>
+        <span class="word-pron">/ˈtʁaʊrɪç/</span>
+      </div>
+      <div class="word-meaning">sad — feeling or expressing sorrow, melancholy</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Trauer</span>
+        <span class="bridge-note">— sorrow, mourning, grief; -ig creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— "sad" comes from Old English; different root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">悲伤</span>
+        <span class="bridge-note">— bēishāng (sorrow + wound) — sorrow that wounds</span>
+      </div>
+      <div class="story">
+        <em>Traurig</em> is sorrow. Es ist sehr traurig — it is very sad. Ein trauriges Gesicht is a sad face. The -ig suffix transforms Trauer (mourning) into the adjective traurig, describing something full of sorrow.
+      </div>
+    </div>
+
+    <!-- WICHTIG card -->
+    <div class="ety-card" id="card-wichtig">
+      <div class="word-header">
+        <span class="word-main">Wichtig</span>
+        <span class="word-pron">/ˈvɪçtɪç/</span>
+      </div>
+      <div class="word-meaning">important — of great significance or value; mattering greatly</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— origin obscure; -ig suffix creates the adjective</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">important</span>
+        <span class="bridge-note">— from Latin importantis; different root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">重要</span>
+        <span class="bridge-note">— zhònyào (heavy + necessary) — weighs heavily, is necessary</span>
+      </div>
+      <div class="story">
+        <em>Wichtig</em> is fundamental. Das ist wichtig — that is important. Die wichtigsten Dinge — the most important things. The -ig suffix creates one of the most essential adjectives in German, though its original root is mysterious.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE PATTERN OF MEANING ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      You have now journeyed through 38 chapters and learned over 100 core German words. But more importantly, you have learned the patterns. You have learned how German builds meaning. Verbs become nouns with -ung. Adjectives become abstract nouns with -heit or -keit. Collections and relationships use -schaft. And adjectives themselves come from three primary suffixes: -lich, -bar, and -ig.
+    </p>
+
+    <p class="narrative">
+      These patterns are not random. They are not arbitrary. They are the DNA of German meaning-making. Once you understand them, you can create and recognize thousands upon thousands of German words. You can understand constructions you have never seen before. The language opens itself to you.
+    </p>
+
+    <p class="narrative emphasis">
+      This is what it means to truly learn a language: not to memorize words, but to understand the patterns beneath the words. To see how meaning is constructed. To recognize that the system is elegant, reliable, and understandable.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        If you see the word <strong style="color: var(--german);">essbar</strong> — from <strong style="color: var(--english);">essen</strong> (to eat) with the -bar suffix — what would it mean?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(The -bar suffix means "full of" or "capable of".)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">something that eats</button>
+        <button class="guess-btn" onclick="guess(this, true)">edible; capable of being eaten</button>
+        <button class="guess-btn" onclick="guess(this, false)">a place to eat</button>
+        <button class="guess-btn" onclick="guess(this, false)">food for eating</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        How many major suffix patterns have you learned that help you understand and create German words?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Think about -ung, -heit/-keit, -schaft, -lich, -bar, and -ig.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">two</button>
+        <button class="guess-btn" onclick="guess(this, false)">three</button>
+        <button class="guess-btn" onclick="guess(this, false)">four</button>
+        <button class="guess-btn" onclick="guess(this, true)">six major patterns</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">356 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(41%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:41%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 356 words across 38 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">79 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(54%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:54%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 79 patterns and grammar rules across 38 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Thirty-Eight</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Möglich</span><span class="cw-english">possible</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Freundlich</span><span class="cw-english">friendly</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Gefährlich</span><span class="cw-english">dangerous</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Wunderbar</span><span class="cw-english">wonderful</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Dankbar</span><span class="cw-english">grateful</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Furchtbar</span><span class="cw-english">terrible</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Wichtig</span><span class="cw-english">important</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Ruhig</span><span class="cw-english">calm</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Lustig</span><span class="cw-english">funny</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Traurig</span><span class="cw-english">sad</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Adjective Suffixes: The Final Keys</div>
+      <strong style="color: var(--text-bright);">The -lich Suffix</strong> — Creates adjectives from nouns and verbs. Freund → freundlich (friendly). Gefahr → gefährlich (dangerous). Möglich (possible) follows this pattern.<br><br>
+      <strong style="color: var(--text-bright);">The -bar Suffix</strong> — Means "full of," "worthy of," or "capable of." Wunder → wunderbar (wonderful). Dank → dankbar (grateful). Furcht → furchtbar (terrible).<br><br>
+      <strong style="color: var(--text-bright);">The -ig Suffix</strong> — Transforms nouns into adjectives describing quality or state. Ruhe → ruhig (calm). Lust → lustig (funny). Trauer → traurig (sad).<br><br>
+      <strong style="color: var(--text-bright);">The Complete System</strong> — Six major suffix patterns (-ung, -heit/-keit, -schaft, -lich, -bar, -ig) give you the keys to understanding and creating thousands of German words.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Thirty-Eight
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        The journey from fire to wonder. From the first word to the wunderbar.<br>
+        You have learned over 100 words. You have learned six major suffix patterns. You have learned how verbs become nouns, how qualities become abstractions, how collectives emerge, and how adjectives modify and deepen meaning.<br>
+        The system is not random. The system is elegant. The system is German.<br>
+        And now, the door to infinite expression stands open before you.
+      </p>
+      <div class="next-chapter">
+        The journey continues. The first word was fire. But there are always more words. Always more patterns to discover. Always more depth to explore.
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter37.html" class="nav-btn">← Chapter 37</a>
+    <a href="chapter39.html" class="nav-btn next">Chapter 39 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 38: KALEIDOSCOPE CANVAS ---
+const canvas = document.getElementById('kaleidoscope-canvas');
+const ctx = canvas.getContext('2d');
+let shapes = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createShapes();
+}
+
+function createShapes() {
+  shapes = [];
+  const count = Math.floor((canvas.width * canvas.height) / 10000);
+  for (let i = 0; i < count; i++) {
+    shapes.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 50 + 20,
+      angle: Math.random() * Math.PI * 2,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.03,
+      colorPhase: Math.random() * Math.PI * 2,
+      colorSpeed: Math.random() * 0.005 + 0.002
+    });
+  }
+}
+
+function drawShapes(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.12)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  shapes.forEach((s, idx) => {
+    s.rotation += s.rotationSpeed;
+    s.colorPhase += s.colorSpeed;
+
+    const hueShift = Math.sin(s.colorPhase) * 40;
+    const opacity = 0.2 + scroll * 0.4;
+
+    ctx.save();
+    ctx.translate(s.x, s.y);
+    ctx.rotate(s.rotation);
+
+    // Draw polygon
+    ctx.beginPath();
+    const sides = 6;
+    for (let i = 0; i < sides; i++) {
+      const angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
+      const px = Math.cos(angle) * s.size / 2;
+      const py = Math.sin(angle) * s.size / 2;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+
+    ctx.fillStyle = `hsla(${212 + hueShift}, 70%, 60%, ${opacity})`;
+    ctx.fill();
+
+    ctx.strokeStyle = `rgba(232, 164, 74, ${opacity * 0.8})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.restore();
+  });
+
+  requestAnimationFrame(drawShapes);
+}
+
+resizeCanvas();
+createShapes();
+requestAnimationFrame(drawShapes);
+window.addEventListener('resize', () => { resizeCanvas(); createShapes(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Perfect! You see how adjectives are built from suffixes.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about what -bar means.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What does the -lich suffix do?",
+    options: ["marks plural nouns", "creates adjectives from nouns and verbs", "indicates past tense", "marks feminine nouns"],
+    correct: 1,
+    explanation: "-lich creates adjectives that describe quality or manner: Freund → freundlich (friendly)."
+  },
+  {
+    question: "What does the -bar suffix mean?",
+    options: ["a place to drink", "full of, worthy of, or capable of", "very much", "without"],
+    correct: 1,
+    explanation: "-bar means 'full of' or 'capable of': Wunder → wunderbar (wonderful, full of wonder)."
+  },
+  {
+    question: "What does the -ig suffix create?",
+    options: ["plural forms", "adjectives from nouns describing quality or state", "past participles", "comparative forms"],
+    correct: 1,
+    explanation: "-ig transforms nouns into adjectives: Ruhe → ruhig (calm), Trauer → traurig (sad)."
+  },
+  {
+    question: "What does 'wunderbar' mean?",
+    options: ["a good bar", "wonderful; marvelous", "a strange bar", "a room of wonders"],
+    correct: 1,
+    explanation: "Wunderbar means wonderful—full of wonder. It is one of the most positive adjectives in German."
+  },
+  {
+    question: "How many major suffix patterns have you learned across all 38 chapters?",
+    options: ["three", "four", "five", "six"],
+    correct: 3,
+    explanation: "You've learned six: -ung, -heit/-keit, -schaft, -lich, -bar, and -ig."
+  },
+  {
+    question: "What does 'gefährlich' mean?",
+    options: ["friendly like fahren (to drive)", "dangerous", "a path", "fearless"],
+    correct: 1,
+    explanation: "Gefährlich means dangerous—from Gefahr (danger) with the -lich suffix."
+  },
+  {
+    question: "What does 'dankbar' mean?",
+    options: ["like a tank", "grateful; thankful", "deserving of thanks", "full of gratitude"],
+    correct: 1,
+    explanation: "Dankbar means grateful—from Dank (thanks) with the -bar suffix meaning 'full of thanks.'"
+  },
+  {
+    question: "What does 'lustig' mean?",
+    options: ["related to lust/desire", "funny; amusing; cheerful", "lustful", "full of desire"],
+    correct: 1,
+    explanation: "Lustig means funny or amusing—from Lust (pleasure, desire) with -ig, creating 'full of pleasure.'"
+  },
+  {
+    question: "Which adjective pattern describes a quality using -lich?",
+    options: ["freundlich (friendly)", "möglich (possible)", "Freund → freundlich", "all of the above"],
+    correct: 3,
+    explanation: "All examples show -lich creating adjectives from nouns and verbs."
+  },
+  {
+    question: "What would 'lesbar' mean based on the suffix pattern?",
+    options: ["a reading bar", "readable; able to be read", "a place to read", "beautiful reading"],
+    correct: 1,
+    explanation: "Lesbar (readable) comes from lesen (to read) + -bar (capable of). You can now create new words!"
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">The Journey Complete</strong>
+      <p style="margin-top: 8px;">You have learned <strong>105+ words and mastered 6 major suffix patterns</strong>. You have journeyed from the elemental fire to the wunderbar — the wonderful. You understand how German builds meaning through systematic patterns. You can recognize the gender of thousands of words. You can create and understand new words based on the rules you have learned.</p>
+      <p style="margin-top: 8px;">The first word was fire. But the true first word is the pattern. The system. The elegant structure underneath that makes all other words possible. You have learned that structure. The German language now stands open to you.</p>
+      <p style="margin-top: 8px;">Keep reading. Keep listening. The journey does not end here. It has only begun.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- SPEAK GERMAN WORDS INLINE ---
+document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

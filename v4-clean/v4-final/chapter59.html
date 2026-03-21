@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 59: Ich machte</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --fire: #e8a44a;
+  --fire-glow: #f4c67a;
+  --ember: #c45d2c;
+  --night: #0a0e1a;
+  --night-mid: #131a2e;
+  --night-light: #1c2640;
+  --star: #e8dcc8;
+  --text: #d4cabb;
+  --text-bright: #efe8db;
+  --german: #e8a44a;
+  --chinese: #c49a6c;
+  --english: #8a9bae;
+  --pie: #9b8ec4;
+  --praeteritum: #d4a574;
+}
+html { scroll-behavior: smooth; background: #0a0e1a; }
+body {
+  background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+  background-attachment: fixed;
+  color: #d4cabb;
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+  font-size: 20px;
+  font-size: 1.25rem;
+  line-height: 1.85;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+#canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 24px 120px;
+}
+.title-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+.title-screen h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: var(--text-bright);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3em;
+  opacity: 0;
+  animation: fadeUp 2s ease 0.5s forwards;
+}
+.title-screen .subtitle {
+  font-size: 1.3rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--fire);
+  opacity: 0;
+  animation: fadeUp 2s ease 1.2s forwards;
+  margin-bottom: 2em;
+}
+.title-screen .chapter-label {
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(212, 202, 187, 0.4);
+  opacity: 0;
+  animation: fadeUp 2s ease 0.2s forwards;
+  margin-bottom: 0.5em;
+}
+.scroll-hint {
+  opacity: 0;
+  animation: fadeUp 2s ease 2s forwards;
+  color: rgba(212, 202, 187, 0.3);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  margin-top: 3em;
+}
+.scroll-hint span {
+  display: inline-block;
+  animation: bob 2s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.scene {
+  margin-bottom: 80px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+.scene.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scene-marker {
+  display: block;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+  margin: 0 auto 40px;
+}
+.narrative {
+  font-size: 1.25rem;
+  line-height: 1.9;
+  margin-bottom: 1.5em;
+  color: var(--text);
+}
+.narrative.emphasis {
+  font-size: 1.35rem;
+  color: var(--text-bright);
+  text-align: center;
+  font-style: italic;
+  margin: 2em 0;
+}
+.narrative.small {
+  font-size: 1.05rem;
+  color: rgba(212, 202, 187, 0.6);
+  line-height: 1.7;
+}
+.german-word {
+  color: var(--german);
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+}
+.german-word:hover {
+  color: var(--fire-glow);
+  border-bottom-color: var(--fire-glow);
+}
+.ety-card {
+  background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin: 24px 0 32px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+}
+.ety-card.open {
+  max-height: 1000px;
+  opacity: 1;
+  padding: 28px 32px;
+  margin: 24px 0 32px;
+}
+.ety-card .word-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.ety-card .word-main {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--german);
+}
+.ety-card .word-pron {
+  font-size: 1rem;
+  color: rgba(212, 202, 187, 0.5);
+  font-style: italic;
+}
+.ety-card .word-meaning {
+  font-size: 1.1rem;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+}
+.ety-card .bridge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+  font-size: 1rem;
+  flex-wrap: wrap;
+}
+.bridge-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Noto Serif', serif;
+  min-width: 55px;
+  text-align: center;
+}
+.bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+.bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+.bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+.bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+.bridge-word {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-bright);
+}
+.bridge-word.zh {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 1.5rem;
+}
+.bridge-note {
+  font-size: 0.9rem;
+  color: rgba(212, 202, 187, 0.5);
+  font-style: italic;
+}
+.ety-card .story {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(232, 164, 74, 0.1);
+  font-size: 1rem;
+  color: rgba(212, 202, 187, 0.75);
+  line-height: 1.7;
+}
+.grammar-table {
+  background: rgba(26, 35, 55, 0.6);
+  border: 1px solid rgba(232, 164, 74, 0.15);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 32px 0;
+  overflow-x: auto;
+}
+.grammar-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.grammar-table th, .grammar-table td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  color: var(--text);
+}
+.grammar-table th {
+  background: rgba(232, 164, 74, 0.08);
+  color: var(--fire);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+.divider {
+  text-align: center;
+  margin: 60px 0;
+  color: rgba(232, 164, 74, 0.3);
+  font-size: 1.5rem;
+  letter-spacing: 0.5em;
+}
+.aside-box {
+  background: rgba(155, 142, 196, 0.06);
+  border-left: 2px solid rgba(155, 142, 196, 0.3);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(212, 202, 187, 0.8);
+}
+.aside-box .aside-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--pie);
+  margin-bottom: 8px;
+}
+.quiz-container {
+  background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+  border: 1px solid rgba(232, 164, 74, 0.12);
+  border-radius: 16px;
+  padding: 40px 32px;
+  margin: 60px 0;
+}
+.quiz-container h3 {
+  font-size: 1.3rem;
+  color: var(--text-bright);
+  text-align: center;
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+.quiz-question {
+  background: rgba(26, 35, 55, 0.6);
+  border: 1px solid rgba(232, 164, 74, 0.08);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.quiz-question.hidden {
+  display: none;
+}
+.quiz-question .q-text {
+  font-size: 1.1rem;
+  color: var(--text-bright);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.quiz-option {
+  background: rgba(232, 164, 74, 0.08);
+  border: 1px solid rgba(232, 164, 74, 0.2);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  text-align: left;
+}
+.quiz-option:hover {
+  background: rgba(232, 164, 74, 0.15);
+  border-color: var(--fire);
+}
+.quiz-option.selected {
+  background: rgba(74, 180, 100, 0.15);
+  border-color: #4ab464;
+  color: #8ed69e;
+}
+.quiz-option.incorrect {
+  background: rgba(180, 74, 74, 0.1);
+  border-color: rgba(180, 74, 74, 0.3);
+  color: rgba(212, 202, 187, 0.3);
+}
+.quiz-nav {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.quiz-nav button {
+  background: rgba(232, 164, 74, 0.08);
+  border: 1px solid rgba(232, 164, 74, 0.25);
+  color: var(--text-bright);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  padding: 12px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.quiz-nav button:hover {
+  background: rgba(232, 164, 74, 0.15);
+  border-color: var(--fire);
+}
+.quiz-nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.quiz-score {
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--fire-glow);
+  margin: 24px 0;
+  font-weight: 500;
+}
+.quiz-reset {
+  text-align: center;
+}
+.quiz-reset button {
+  background: rgba(232, 164, 74, 0.08);
+  border: 1px solid rgba(232, 164, 74, 0.25);
+  color: var(--text-bright);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  padding: 12px 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.quiz-reset button:hover {
+  background: rgba(232, 164, 74, 0.15);
+  border-color: var(--fire);
+}
+.post-quiz-summary {
+  background: rgba(155, 142, 196, 0.06);
+  border-left: 2px solid rgba(232, 164, 74, 0.3);
+  padding: 24px 28px;
+  margin: 24px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(212, 202, 187, 0.8);
+  display: none;
+}
+.post-quiz-summary.show {
+  display: block;
+}
+.chapter-end {
+  text-align: center;
+  padding: 60px 0;
+}
+.chapter-end .end-line {
+  width: 60px;
+  height: 1px;
+  background: var(--fire);
+  margin: 0 auto 30px;
+  opacity: 0.4;
+}
+.chapter-end .next-chapter {
+  font-size: 1rem;
+  color: rgba(212, 202, 187, 0.4);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 40px;
+}
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+  z-index: 100;
+  transition: width 0.1s linear;
+  width: 0%;
+}
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(232, 164, 74, 0.25);
+  border-radius: 50%;
+  background: rgba(232, 164, 74, 0.08);
+  color: var(--fire, #e8a44a);
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 8px;
+  vertical-align: middle;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.speak-btn:hover {
+  background: rgba(232, 164, 74, 0.2);
+  border-color: rgba(232, 164, 74, 0.5);
+}
+.speak-btn:active {
+  transform: scale(0.9);
+}
+.speak-btn.speaking {
+  background: rgba(232, 164, 74, 0.3);
+  border-color: #e8a44a;
+}
+@media (max-width: 768px) {
+  html { font-size: 16px !important; }
+  body { font-size: 18px !important; }
+  .content { max-width: 100% !important; width: 100% !important; }
+}
+@media (max-width: 600px) {
+  body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+  .content { padding: 40px 16px 100px; }
+  .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+  .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+  .title-screen .subtitle { font-size: 1.15rem; }
+  .narrative { font-size: 1.1rem; line-height: 1.8; }
+  .narrative.emphasis { font-size: 1.2rem; }
+  .ety-card { padding: 20px 16px; border-radius: 10px; }
+  .ety-card .word-main { font-size: 1.6rem; }
+  .grammar-table { padding: 16px; overflow-x: auto; }
+  .grammar-table table { font-size: 0.85rem; }
+  .grammar-table th, .grammar-table td { padding: 10px 8px; }
+}
+@supports (padding: env(safe-area-inset-bottom)) {
+  .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+}
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+<!-- TITLE SCREEN -->
+<div class="title-screen">
+  <div class="chapter-label">Chapter Fifty-Nine</div>
+  <h1>Ich machte</h1>
+  <div class="subtitle">Präteritum — The Simple Past</div>
+  <div class="scroll-hint"><span>↓</span></div>
+</div>
+
+<!-- SCENE 1 -->
+<div class="scene" id="scene1">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    Imagine you are standing in a library at dusk. Around you are shelves of books — hundreds of them, thousands. Some are worn with age, their spines cracked from countless readings. Others are newer, their pages still crisp. You pick up a novel and open it to the first page. What language greets you? What tense tells the story?
+  </p>
+
+  <p class="narrative">
+    In German, when an author opens a narrative, they begin with a single, crucial word that announces: <em>this is a story from the past, being told to you from a distance</em>. That word is the Präteritum — not the Perfekt, which is the tense of conversation, of immediate experience. But the Präteritum, which creates what we might call <span class="german-word" data-speak="true">narrative distance</span> — the sense that what you are reading happened, has finished happening, and is now being told.
+  </p>
+
+  <p class="narrative">
+    Listen to how a German fairy tale begins: <span class="german-word" data-speak="true">Es war einmal ein König, und er hatte drei Töchter</span>. Once upon a time, there was a king, and he had three daughters. The verb here is not the Perfekt — <em>Es ist einmal ein König gewesen</em> — which would sound like gossiping about someone's family. Instead, it is the Präteritum: <span class="german-word" data-speak="true">war</span>, the past tense form of <span class="german-word" data-speak="true">sein</span>. This choice of tense is not accidental. It is the foundation of storytelling in German.
+  </p>
+
+  <p class="narrative emphasis">
+    The Präteritum is the language of stories. It is how German transports you backward in time, how it says: sit down, and let me tell you what happened.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 2: THE FORMATION -->
+<div class="scene" id="scene2">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    The Präteritum is formed with elegant simplicity for regular verbs. You take the verb stem — the infinite form without the <span class="german-word" data-speak="true">-en</span> ending — and you add a tense marker directly to it. This tense marker is almost always <span class="german-word" data-speak="true">-te</span>. So:
+  </p>
+
+  <p class="narrative small" style="margin: 1.5em 0; text-align: center;">
+    <span class="german-word" data-speak="true">spielen</span> (to play) → <span class="german-word" data-speak="true">spiel</span> + <span class="german-word" data-speak="true">-te</span> → <span class="german-word" data-speak="true">spielte</span> (played)
+  </p>
+
+  <p class="narrative">
+    <span class="german-word" data-speak="true">Ich spielte</span> — I played. <span class="german-word" data-speak="true">Du spieltest</span> — you played. <span class="german-word" data-speak="true">Er spielte</span> — he played. The conjugation follows the regular pattern, with different endings for different persons and numbers.
+  </p>
+
+  <p class="narrative">
+    But here is the crucial detail: if the verb stem ends in certain consonant combinations — <span class="german-word" data-speak="true">t, d, s, ß, x, z</span>, or ends with <span class="german-word" data-speak="true">-m</span> or <span class="german-word" data-speak="true">-n</span> preceded by another consonant — then the suffix becomes <span class="german-word" data-speak="true">-ete</span> instead of just <span class="german-word" data-speak="true">-te</span>. This is purely for pronunciation: you cannot easily say <em>spricht-te</em>, so German inserts a vowel, making it <span class="german-word" data-speak="true">sprach-te</span>. Wait — that's irregular. Let me correct myself: <span class="german-word" data-speak="true">arbeitete</span> — worked. The <span class="german-word" data-speak="true">-ete</span> makes it pronounceable.
+  </p>
+
+  <p class="narrative">
+    Look at the pattern with regular verbs:
+  </p>
+
+  <div class="grammar-table">
+    <table>
+      <tr>
+        <th>Infinitiv</th>
+        <th>Präsens</th>
+        <th>Präteritum</th>
+        <th>Meaning</th>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">machen</span></td>
+        <td><span class="german-word" data-speak="true">ich mache</span></td>
+        <td><span class="german-word" data-speak="true">ich machte</span></td>
+        <td>I do/make</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">spielen</span></td>
+        <td><span class="german-word" data-speak="true">ich spiele</span></td>
+        <td><span class="german-word" data-speak="true">ich spielte</span></td>
+        <td>I play</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">arbeiten</span></td>
+        <td><span class="german-word" data-speak="true">ich arbeite</span></td>
+        <td><span class="german-word" data-speak="true">ich arbeitete</span></td>
+        <td>I work</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">kaufen</span></td>
+        <td><span class="german-word" data-speak="true">ich kaufe</span></td>
+        <td><span class="german-word" data-speak="true">ich kaufte</span></td>
+        <td>I buy</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">wünschen</span></td>
+        <td><span class="german-word" data-speak="true">ich wünsche</span></td>
+        <td><span class="german-word" data-speak="true">ich wünschte</span></td>
+        <td>I wish</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">tanzen</span></td>
+        <td><span class="german-word" data-speak="true">ich tanze</span></td>
+        <td><span class="german-word" data-speak="true">ich tanzte</span></td>
+        <td>I dance</td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="narrative">
+    The pattern is absolutely regular. You do not need to memorize these forms — if you know the rule, you can form the Präteritum of any regular verb instantly. This is the gift of regular verbs. They are predictable, systematic, learnable.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 3: IRREGULAR VERBS -->
+<div class="scene" id="scene3">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    But the Präteritum of irregular verbs is another matter entirely. These verbs do not add a tense marker. Instead, they <em>change the vowel in their stem</em>. This is the ablaut system, the same ancient pattern that gives English its strong verbs: sing, sang, sung. Drink, drank, drunk.
+  </p>
+
+  <p class="narrative">
+    German does the same thing. <span class="german-word" data-speak="true">Gehen</span> — to go — becomes <span class="german-word" data-speak="true">ging</span> in the Präteritum. <span class="german-word" data-speak="true">Kommen</span> becomes <span class="german-word" data-speak="true">kam</span>. <span class="german-word" data-speak="true">Sehen</span> becomes <span class="german-word" data-speak="true">sah</span>. <span class="german-word" data-speak="true">Finden</span> becomes <span class="german-word" data-speak="true">fand</span>. The vowel shifts, often with a consonant change as well, and the past tense emerges.
+  </p>
+
+  <p class="narrative">
+    Why does this happen? Why does German preserve this ancient pattern? The answer lies in the deepest history of Indo-European. Thousands of years ago, before Latin split off from Germanic, before Germanic split into its hundred dialects, there was a single language — Proto-Indo-European. In that language, the way you marked tense was often not by adding a suffix, but by changing the vowel in the root. That pattern is so ancient, so fundamental, that it has survived for over four thousand years, even as languages around it have changed dramatically.
+  </p>
+
+  <p class="narrative">
+    Some of the most important irregular verbs and their Präteritum forms:
+  </p>
+
+  <div class="grammar-table">
+    <table>
+      <tr>
+        <th>Infinitiv</th>
+        <th>Präsens</th>
+        <th>Präteritum</th>
+        <th>English</th>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">sein</span></td>
+        <td><span class="german-word" data-speak="true">ich bin</span></td>
+        <td><span class="german-word" data-speak="true">ich war</span></td>
+        <td>to be</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">haben</span></td>
+        <td><span class="german-word" data-speak="true">ich habe</span></td>
+        <td><span class="german-word" data-speak="true">ich hatte</span></td>
+        <td>to have</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">gehen</span></td>
+        <td><span class="german-word" data-speak="true">ich gehe</span></td>
+        <td><span class="german-word" data-speak="true">ich ging</span></td>
+        <td>to go</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">kommen</span></td>
+        <td><span class="german-word" data-speak="true">ich komme</span></td>
+        <td><span class="german-word" data-speak="true">ich kam</span></td>
+        <td>to come</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">sehen</span></td>
+        <td><span class="german-word" data-speak="true">ich sehe</span></td>
+        <td><span class="german-word" data-speak="true">ich sah</span></td>
+        <td>to see</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">nehmen</span></td>
+        <td><span class="german-word" data-speak="true">ich nehme</span></td>
+        <td><span class="german-word" data-speak="true">ich nahm</span></td>
+        <td>to take</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">geben</span></td>
+        <td><span class="german-word" data-speak="true">ich gebe</span></td>
+        <td><span class="german-word" data-speak="true">ich gab</span></td>
+        <td>to give</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">sprechen</span></td>
+        <td><span class="german-word" data-speak="true">ich spreche</span></td>
+        <td><span class="german-word" data-speak="true">ich sprach</span></td>
+        <td>to speak</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">schreiben</span></td>
+        <td><span class="german-word" data-speak="true">ich schreibe</span></td>
+        <td><span class="german-word" data-speak="true">ich schrieb</span></td>
+        <td>to write</td>
+      </tr>
+      <tr>
+        <td><span class="german-word" data-speak="true">wissen</span></td>
+        <td><span class="german-word" data-speak="true">ich weiß</span></td>
+        <td><span class="german-word" data-speak="true">ich wusste</span></td>
+        <td>to know</td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="narrative">
+    Notice something striking: <span class="german-word" data-speak="true">sein</span> — to be — becomes <span class="german-word" data-speak="true">war</span> in the Präteritum. And <span class="german-word" data-speak="true">haben</span> becomes <span class="german-word" data-speak="true">hatte</span>. These two verbs are perhaps the most important in German, because they are used as auxiliaries to form the Perfekt (which you already understand). When you read a German novel and see <span class="german-word" data-speak="true">war</span>, you are looking at one of the oldest words in the language — a word so old that it has survived four thousand years of language change, and it will be the first word you encounter in almost every fairy tale ever told in German.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 4: WHY TWO PAST TENSES? -->
+<div class="scene" id="scene4">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    Here is a question that has puzzled many learners of German: why does the language have two past tenses? Why Perfekt <em>and</em> Präteritum? Why not just one?
+  </p>
+
+  <p class="narrative">
+    The answer reveals something deep about how German speakers think about the past. The Perfekt is the tense of the <em>result</em>. When you say <span class="german-word" data-speak="true">Ich habe das Fenster geöffnet</span> — I have opened the window (or simply: I opened the window) — the emphasis is on the fact that the action is finished, and its result matters in the present. The window is now open. The Perfekt emphasizes the connection between past action and present state.
+  </p>
+
+  <p class="narrative">
+    The Präteritum, by contrast, is the tense of the <em>event itself</em>. When you write <span class="german-word" data-speak="true">Ich öffnete das Fenster</span> — I opened the window — there is no emphasis on the current state of the window. There is only emphasis on the fact that the opening happened, as one event among many events in a narrative sequence. The Präteritum is the tense that moves a story forward. It is the tense of "and then what happened?"
+  </p>
+
+  <p class="narrative">
+    In conversation, Germans almost always use the Perfekt. When you ask someone <span class="german-word" data-speak="true">Was hast du heute gemacht?</span> — What did you do today? — they answer in the Perfekt. But when that same person sits down to write — to write a novel, to write a formal letter, to write a narrative email — they shift to the Präteritum. The shift in tense is a shift in register, from the personal and immediate to the formal and distanced.
+  </p>
+
+  <p class="narrative">
+    This is not a quirk. This is a principle. German has preserved this distinction for centuries, and it allows German speakers to express subtle differences in meaning and intention that other languages sometimes struggle to convey. The Perfekt is immediate and personal. The Präteritum is formal and narrative.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 5: THE NARRATIVE POWER -->
+<div class="scene" id="scene5">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    When you open a German novel, almost every sentence uses the Präteritum. Listen to the opening of <em>Die Leiden des jungen Werthers</em> — The Sorrows of Young Werther — by Goethe:
+  </p>
+
+  <p class="narrative small" style="font-style: italic; margin: 1.5em 0; border-left: 2px solid rgba(232, 164, 74, 0.3); padding-left: 20px;">
+    <span class="german-word" data-speak="true">Am 4. Mai 1771 kam ich hierher</span>... On May 4, 1771, I came here... The verb here is <span class="german-word" data-speak="true">kam</span> — the Präteritum of <span class="german-word" data-speak="true">kommen</span>.
+  </p>
+
+  <p class="narrative">
+    Why not use the Perfekt? Because the author is establishing a narrative voice, a distance. He is saying: this story is being told, not lived. It is history, not experience. The Präteritum creates that necessary distance, that sense of formality and authority that makes a story feel like a <em>story</em> rather than a personal anecdote.
+  </p>
+
+  <p class="narrative">
+    Consider the difference in English. English no longer has this distinction — it lost the strong verb forms centuries ago. When an English novelist writes "I came here," we cannot tell from the tense alone whether this is a personal memory or a narrative account. The meaning depends entirely on context. But in German, the choice of Präteritum vs. Perfekt is itself a signal to the reader: this is a formal narrative, not a personal account.
+  </p>
+
+  <p class="narrative">
+    There is regional variation in Germany, Austria, and Switzerland. In Bavaria and Austria, speakers often use the Perfekt even in narrative contexts, where a northern German speaker would use the Präteritum. But in formal written German, in literature, in newspapers, in official accounts, the Präteritum is still the standard. It is preserved in the written word, even as it slowly retreats in everyday speech.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 6: CHINESE COMPARISON -->
+<div class="scene" id="scene6">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    Now, compare this to Chinese. In Mandarin Chinese, there are no verb conjugations at all. The verb does not change form based on tense or person or number. When you say <span class="german-word" data-speak="true">我</span> (I), the verb that follows does not change. When you say <span class="german-word" data-speak="true">他</span> (he), the verb does not change.
+  </p>
+
+  <p class="narrative">
+    Instead, Chinese uses time words to indicate tense. <span class="german-word" data-speak="true">昨天我看了一个电影</span> — "yesterday I watched a movie." The word <span class="german-word" data-speak="true">昨天</span> (yesterday) tells you it is in the past. The particle <span class="german-word" data-speak="true">了</span> (le) marks completion, but it is not a tense marker in the Western sense. It simply indicates that an action has been completed.
+  </p>
+
+  <p class="narrative">
+    This is a fundamentally different way of organizing language. In German, tense is embedded in the verb itself — the verb form announces whether something is past, present, or future. In Chinese, tense is external to the verb — it is conveyed through time words and particles that surround the verb. Neither system is better or worse. They are simply different solutions to the same problem: how to locate events in time.
+  </p>
+
+  <p class="narrative">
+    This difference reflects how different cultures relate to time. German preserves a system that distinguishes not just past from present, but different kinds of past — the immediate past (Perfekt) versus the narrative past (Präteritum). Chinese takes a more minimalist approach: the verb itself tells you what happened, and context tells you when.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 7: THE REGIONAL STORY -->
+<div class="scene" id="scene7">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    There is a fascinating story hidden in the regional differences in how Germans use the Präteritum. If you travel from northern Germany south to Bavaria and Austria, you will notice a gradual shift. In Hamburg or Berlin, the Präteritum is everywhere — in speech, in writing, in everyday communication. But as you move south, the Perfekt grows stronger. In Vienna and Munich, even in formal speech, the Perfekt has largely replaced the Präteritum in everyday contexts.
+  </p>
+
+  <p class="narrative">
+    This is language change happening in real time. Over the past few centuries, the Perfekt has been gradually replacing the Präteritum in spoken German. But written German has been more conservative. Literature, newspapers, and formal documents still use the Präteritum extensively. This creates an interesting situation: if you want to read German literature, you must learn the Präteritum. But if you want to speak like a Bavarian or an Austrian, you can largely ignore it.
+  </p>
+
+  <p class="narrative">
+    This is also a reminder that languages are not static. They are always changing, always evolving. The Präteritum is slowly losing ground in spoken German, but it is not dead. It is preserved in the halls of universities, in the pages of books, in the traditions of formal speech. And so a serious student of German must learn both: the Perfekt for conversation, the Präteritum for literature and formal written German.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 8: DEEPER INTO IRREGULAR VERBS -->
+<div class="scene" id="scene8">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    The irregular verbs deserve deeper attention, because they reveal the history of German. When you learn <span class="german-word" data-speak="true">finden</span> → <span class="german-word" data-speak="true">fand</span>, you are learning a vowel change pattern that has existed since before the Romans conquered Britain. This is not a random rule — it is a systematic pattern that applies to hundreds of verbs.
+  </p>
+
+  <p class="narrative">
+    The ablaut system works in classes. Certain verbs follow the same pattern of vowel change. For example, verbs like <span class="german-word" data-speak="true">singen</span> (to sing) follow the pattern: <span class="german-word" data-speak="true">i → a → u</span>. So <span class="german-word" data-speak="true">singen</span> becomes <span class="german-word" data-speak="true">sang</span> in the Präteritum, and <span class="german-word" data-speak="true">gesungen</span> in the Partizip Perfekt (past participle). Similarly, <span class="german-word" data-speak="true">trinken</span> (to drink) becomes <span class="german-word" data-speak="true">trank</span>, with the same vowel pattern.
+  </p>
+
+  <p class="narrative">
+    Compare this to English. English has the same pattern: "sing, sang, sung" and "drink, drank, drunk." These are not coincidences. English and German share this ancient pattern because both languages descended from Germanic, which descended from Indo-European. The pattern is so old that it appears in languages separated by thousands of miles: English, German, and Scandinavian languages all preserve it.
+  </p>
+
+  <p class="narrative">
+    But notice something striking: many irregular verbs in the Präteritum actually add a suffix as well as changing the vowel. For example, <span class="german-word" data-speak="true">wissen</span> (to know) becomes <span class="german-word" data-speak="true">wusste</span> in the Präteritum. This looks like it is adding the -te ending, which makes it look almost like a regular verb. But historically, this is the combination of two things: the vowel change (from <span class="german-word" data-speak="true">i</span> to <span class="german-word" data-speak="true">u</span>) plus the addition of a suffix. This happens with a whole class of verbs called preterite-present verbs, which have a complex history in Germanic languages.
+  </p>
+
+  <p class="narrative">
+    This is why learning irregular verbs is not a burden — it is an education in history. Each irregular verb tells a story about the deep structure of the language, about patterns that have survived for millennia.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 9: MASTERY -->
+<div class="scene" id="scene9">
+  <div class="scene-marker"></div>
+
+  <p class="narrative emphasis">
+    Mastering the Präteritum is mastering the language of German literature. It is the tense that opens the door to novels, to stories, to the written traditions that preserve the German language and culture. When you can read the Präteritum fluently, you can read Goethe, you can read Kafka, you can read contemporary German newspapers and historical accounts. The Präteritum is not a luxury — it is essential to understanding German in its fullness.
+  </p>
+
+  <p class="narrative">
+    Picture yourself reading the opening of a German detective novel. Every verb is in the Präteritum. <span class="german-word" data-speak="true">Der Inspektor betrat das Zimmer. Er sah den Körper auf dem Boden. Er nahm sein Notizbuch heraus</span> — The inspector entered the room. He saw the body on the floor. He took out his notebook. Each verb propels the narrative forward. Each verb is a step in a carefully constructed sequence. This is the power of the Präteritum: it is the tense of plot, of events moving inexorably forward, of stories that must be told.
+  </p>
+
+  <p class="narrative">
+    When you are learning German at the intermediate level, the Präteritum becomes your gateway to authentic material. It is the tense that appears in newspapers, in news reports, in historical accounts, in any formal written German. If you want to read German news, if you want to understand German history, if you want to engage with German culture at its deepest level, you must master the Präteritum.
+  </p>
+
+  <p class="narrative">
+    The regular verbs teach you the system: add <span class="german-word" data-speak="true">-te</span>, conjugate. The irregular verbs teach you the history: these vowel changes are ancient, preserved from the time when Germanic and Latin were still a single family of languages. Together, they form a complete picture of how German marks the passage of time and tells its stories.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- SCENE 10: CONJUGATION PATTERNS -->
+<div class="scene" id="scene10">
+  <div class="scene-marker"></div>
+
+  <p class="narrative">
+    Let us examine the conjugation of regular and irregular verbs in detail. Understanding the patterns will unlock your ability to recognize and form the Präteritum in any context. Take <span class="german-word" data-speak="true">spielen</span> (to play), a regular verb:
+  </p>
+
+  <div class="grammar-table">
+    <table>
+      <tr>
+        <th>Person</th>
+        <th>Präsens</th>
+        <th>Präteritum</th>
+      </tr>
+      <tr>
+        <td>ich (I)</td>
+        <td><span class="german-word" data-speak="true">spiele</span></td>
+        <td><span class="german-word" data-speak="true">spielte</span></td>
+      </tr>
+      <tr>
+        <td>du (you sg.)</td>
+        <td><span class="german-word" data-speak="true">spielst</span></td>
+        <td><span class="german-word" data-speak="true">spieltest</span></td>
+      </tr>
+      <tr>
+        <td>er/sie/es</td>
+        <td><span class="german-word" data-speak="true">spielt</span></td>
+        <td><span class="german-word" data-speak="true">spielte</span></td>
+      </tr>
+      <tr>
+        <td>wir (we)</td>
+        <td><span class="german-word" data-speak="true">spielen</span></td>
+        <td><span class="german-word" data-speak="true">spielten</span></td>
+      </tr>
+      <tr>
+        <td>ihr (you pl.)</td>
+        <td><span class="german-word" data-speak="true">spielt</span></td>
+        <td><span class="german-word" data-speak="true">spieltet</span></td>
+      </tr>
+      <tr>
+        <td>sie/Sie</td>
+        <td><span class="german-word" data-speak="true">spielen</span></td>
+        <td><span class="german-word" data-speak="true">spielten</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="narrative">
+    The pattern is absolute and predictable. The stem stays <span class="german-word" data-speak="true">spiel-</span>, the -te marker is consistent, and personal endings follow standard rules. For regular verbs, knowing the infinitive is knowing the entire conjugation.
+  </p>
+
+  <p class="narrative">
+    Now, compare to <span class="german-word" data-speak="true">geben</span> (to give), an irregular verb:
+  </p>
+
+  <div class="grammar-table">
+    <table>
+      <tr>
+        <th>Person</th>
+        <th>Präsens</th>
+        <th>Präteritum</th>
+      </tr>
+      <tr>
+        <td>ich (I)</td>
+        <td><span class="german-word" data-speak="true">gebe</span></td>
+        <td><span class="german-word" data-speak="true">gab</span></td>
+      </tr>
+      <tr>
+        <td>du (you sg.)</td>
+        <td><span class="german-word" data-speak="true">gibst</span></td>
+        <td><span class="german-word" data-speak="true">gabst</span></td>
+      </tr>
+      <tr>
+        <td>er/sie/es</td>
+        <td><span class="german-word" data-speak="true">gibt</span></td>
+        <td><span class="german-word" data-speak="true">gab</span></td>
+      </tr>
+      <tr>
+        <td>wir (we)</td>
+        <td><span class="german-word" data-speak="true">geben</span></td>
+        <td><span class="german-word" data-speak="true">gaben</span></td>
+      </tr>
+      <tr>
+        <td>ihr (you pl.)</td>
+        <td><span class="german-word" data-speak="true">gebt</span></td>
+        <td><span class="german-word" data-speak="true">gabt</span></td>
+      </tr>
+      <tr>
+        <td>sie/Sie</td>
+        <td><span class="german-word" data-speak="true">geben</span></td>
+        <td><span class="german-word" data-speak="true">gaben</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="narrative">
+    The vowel change — from <span class="german-word" data-speak="true">e</span> to <span class="german-word" data-speak="true">a</span> — is the only irregularity. Once you know the stem is <span class="german-word" data-speak="true">gab-</span>, conjugation follows predictably. This reveals an important principle: many so-called "irregular" verbs are irregular only in the stem. The conjugation itself follows the regular pattern. The burden is not as heavy as it might first appear.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- QUIZ -->
+<div class="quiz-container">
+  <h3>Test Your Understanding: Präteritum</h3>
+
+  <div class="quiz-question">
+    <div class="q-text">1. What is the primary context in which the Präteritum is used?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">casual spoken conversation with friends</div>
+      <div class="quiz-option" data-answer="correct">formal narratives, literature, and written accounts</div>
+      <div class="quiz-option">only with irregular verbs</div>
+      <div class="quiz-option">to describe current actions</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">2. How is the Präteritum formed for regular verbs like "spielen"?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">change the initial consonant</div>
+      <div class="quiz-option" data-answer="correct">add -te or -ete to the verb stem</div>
+      <div class="quiz-option">remove the infinitive ending</div>
+      <div class="quiz-option">add a prefix to the root</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">3. What pattern do irregular verbs follow in the Präteritum?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">they always use the -te suffix</div>
+      <div class="quiz-option" data-answer="correct">they change the vowel in the stem (ablaut)</div>
+      <div class="quiz-option">they add a suffix after a prefix</div>
+      <div class="quiz-option">they remain unchanged</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">4. What is the Präteritum form of "sein"?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">ist</div>
+      <div class="quiz-option" data-answer="correct">war</div>
+      <div class="quiz-option">wurde</div>
+      <div class="quiz-option">gewesen</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">5. Which statement best describes the difference between Perfekt and Präteritum?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">Perfekt is used in writing, Präteritum in speech</div>
+      <div class="quiz-option" data-answer="correct">Perfekt emphasizes the result, Präteritum emphasizes the event</div>
+      <div class="quiz-option">they mean exactly the same thing</div>
+      <div class="quiz-option">Präteritum is never used in modern German</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">6. What is the Präteritum form of "gehen"?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">gehe</div>
+      <div class="quiz-option" data-answer="correct">ging</div>
+      <div class="quiz-option">gegangen</div>
+      <div class="quiz-option">gehte</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">7. In fairy tales and traditional German narratives, which tense is typically used?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">Perfekt only</div>
+      <div class="quiz-option" data-answer="correct">Präteritum</div>
+      <div class="quiz-option">Futur</div>
+      <div class="quiz-option">Präsens</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">8. How does usage of Präteritum differ between northern and southern Germany?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">southern Germany uses it much more frequently</div>
+      <div class="quiz-option" data-answer="correct">northern Germany preserves it more; southern regions rely more on Perfekt</div>
+      <div class="quiz-option">there is no regional difference</div>
+      <div class="quiz-option">it is completely absent in southern Germany</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">9. What is the origin of the ablaut (vowel-changing) pattern in irregular verbs?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">it was invented by German grammarians in the 18th century</div>
+      <div class="quiz-option" data-answer="correct">it dates to Proto-Indo-European and is thousands of years old</div>
+      <div class="quiz-option">it was borrowed from Romance languages</div>
+      <div class="quiz-option">it is unique to German among modern languages</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">10. Which tense creates "narrative distance" from the reader?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">Perfekt</div>
+      <div class="quiz-option" data-answer="correct">Präteritum</div>
+      <div class="quiz-option">Präsens</div>
+      <div class="quiz-option">Konjunktiv</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">11. What is the Präteritum form of "kommen"?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">kommte</div>
+      <div class="quiz-option" data-answer="correct">kam</div>
+      <div class="quiz-option">gekommen</div>
+      <div class="quiz-option">komme</div>
+    </div>
+  </div>
+
+  <div class="quiz-question">
+    <div class="q-text">12. In which context is mastery of the Präteritum MOST essential?</div>
+    <div class="quiz-options">
+      <div class="quiz-option">ordering food at restaurants</div>
+      <div class="quiz-option">casual daily conversation</div>
+      <div class="quiz-option" data-answer="correct">reading German literature, novels, and historical texts</div>
+      <div class="quiz-option">asking for directions</div>
+    </div>
+  </div>
+
+  <div class="quiz-nav">
+    <button id="prevBtn" onclick="previousQuestion()">← Previous</button>
+    <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+  </div>
+  <div class="quiz-score" id="score"></div>
+  <div class="quiz-reset"><button onclick="resetQuiz()">Reset Quiz</button></div>
+  <div class="post-quiz-summary" id="postQuizSummary"></div>
+</div>
+
+<!-- CHAPTER END -->
+<div class="chapter-end">
+  <div class="end-line"></div>
+  <p style="color: rgba(212, 202, 187, 0.6); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5em;">
+    The Präteritum is the gateway to German literature. It is the tense that opens the doors to Goethe, to Kafka, to Thomas Mann, to the entire written tradition of the German language. When you understand the Präteritum, you understand not just a grammatical form, but a way of thinking about time, narrative, and the relationship between speaker and story. Master this tense, and you will find yourself able to read German prose with fluency and understanding. The Präteritum is not a relic of the past — it is the foundation of the present written word.
+  </p>
+  <div class="next-chapter">Chapter 60: Ich hatte gemacht →</div>
+</div>
+
+
+  <div class="nav-section">
+    <a href="chapter58.html" class="nav-btn">← Chapter 58</a>
+    <a href="chapter60.html" class="nav-btn next">Chapter 60 →</a>
+  </div>
+
+</div>
+
+<script>
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+scenes.forEach(scene => observer.observe(scene));
+
+window.addEventListener('scroll', () => {
+  const progress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+});
+
+document.querySelectorAll('[data-speak="true"]').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'speak-btn';
+  btn.textContent = '🔊';
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const utterance = new SpeechSynthesisUtterance(el.textContent);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    btn.classList.add('speaking');
+    utterance.onend = () => btn.classList.remove('speaking');
+  });
+  el.appendChild(btn);
+});
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function drawSepiaPhotograph() {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.2)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const time = Date.now() * 0.0001;
+  const particles = 150;
+
+  for (let i = 0; i < particles; i++) {
+    const angle = (i / particles) * Math.PI * 2 + time;
+    const distance = Math.sin(time + i * 0.1) * 80 + 100;
+    const x = canvas.width / 2 + Math.cos(angle) * distance;
+    const y = canvas.height / 2 + Math.sin(angle) * distance;
+
+    const blurAmount = Math.abs(Math.sin(time + i * 0.05));
+    const size = 3 + blurAmount * 4;
+    const opacity = 0.3 + blurAmount * 0.4;
+
+    ctx.fillStyle = `rgba(212, 170, 116, ${opacity * 0.6})`;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  requestAnimationFrame(drawSepiaPhotograph);
+}
+
+drawSepiaPhotograph();
+
+let currentQuestion = 0;
+let answers = {};
+
+function showQuestion(n) {
+  const questions = document.querySelectorAll('.quiz-question');
+  if (n >= questions.length) n = questions.length - 1;
+  if (n < 0) n = 0;
+  currentQuestion = n;
+  questions.forEach((q, i) => q.classList.toggle('hidden', i !== n));
+  document.getElementById('prevBtn').disabled = n === 0;
+  document.getElementById('nextBtn').disabled = n === questions.length - 1;
+  updateScore();
+}
+
+function selectAnswer(btn) {
+  const question = btn.closest('.quiz-question');
+  const options = question.querySelectorAll('.quiz-option');
+  const isCorrect = btn.dataset.answer === 'correct';
+  options.forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+    if (opt === btn) {
+      opt.classList.add(isCorrect ? 'selected' : 'incorrect');
+    }
+  });
+  answers[currentQuestion] = isCorrect;
+}
+
+function updateScore() {
+  const correct = Object.values(answers).filter(v => v === true).length;
+  if (Object.keys(answers).length === 12) {
+    document.getElementById('score').textContent = `Score: ${correct}/12`;
+    if (correct >= 10) {
+      document.getElementById('postQuizSummary').textContent = 'Excellent! You have mastered the Präteritum.';
+      document.getElementById('postQuizSummary').classList.add('show');
+    }
+  }
+}
+
+document.querySelectorAll('.quiz-option').forEach(opt => {
+  opt.addEventListener('click', (e) => selectAnswer(e.target));
+});
+
+function nextQuestion() {
+  showQuestion(currentQuestion + 1);
+}
+
+function previousQuestion() {
+  showQuestion(currentQuestion - 1);
+}
+
+function resetQuiz() {
+  answers = {};
+  currentQuestion = 0;
+  showQuestion(0);
+  document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected', 'incorrect'));
+  document.getElementById('postQuizSummary').classList.remove('show');
+}
+
+showQuestion(0);
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">524 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(61%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:61%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 524 words across 59 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">108 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(74%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:74%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 108 patterns and grammar rules across 59 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+

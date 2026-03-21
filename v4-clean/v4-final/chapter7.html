@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 7: The Franks</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --forge: #8b5a2b;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #2a2020 0%, #1a1010 40%, #5a3a2a 70%, #8a5a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- FORGE CANVAS --- */
+  #forge-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- QUIZ SYSTEM --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .quiz-container h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .quiz-question {
+    margin-bottom: 24px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    background: rgba(232, 164, 74, 0.04);
+    border-color: rgba(232, 164, 74, 0.1);
+    color: rgba(212, 202, 187, 0.3);
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--fire-glow);
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.8);
+    line-height: 1.7;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+  }
+
+  .post-quiz-summary.show {
+    max-height: 400px;
+    opacity: 1;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 40px 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .word-collection.show {
+    max-height: 600px;
+    opacity: 1;
+  }
+
+  .word-collection h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+  }
+
+  .collected-words {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .collected-word {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    padding: 12px 16px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+  }
+
+  .cw-german {
+    display: block;
+    color: var(--german);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .cw-english {
+    display: block;
+    color: rgba(212, 202, 187, 0.6);
+    font-size: 0.95rem;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 4px;
+  }
+
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 60px;
+  }
+
+  .end-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .next-chapter {
+    margin-top: 24px;
+    font-size: 1.1rem;
+    color: var(--fire);
+    font-style: italic;
+  }
+
+  /* --- PROGRESS BAR --- */
+  #progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--fire), var(--fire-glow));
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.1s ease;
+  }
+
+  /* --- SPEAK BUTTON --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
+    .title-screen h1 { font-size: 2.5rem; }
+    .title-screen .subtitle { font-size: 1.1rem; }
+    .narrative { font-size: 1.1rem; }
+    .ety-card { padding: 20px 16px; }
+    .guess-section { padding: 20px 16px; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { grid-template-columns: 1fr; }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div id="progressBar"></div>
+<canvas id="forge-canvas"></canvas>
+
+<div class="content">
+
+  <!-- ==================== TITLE SCREEN ==================== -->
+  <div class="scene" id="scene-title" style="opacity: 1; transform: translateY(0);">
+    <div class="title-screen">
+      <span class="chapter-label">Chapter Seven</span>
+      <h1>Die Franken</h1>
+      <span class="subtitle">The Franks and the Forge of a New Language</span>
+      <p class="scroll-hint">
+        <span>↓</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE FORGE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Picture the year 500 CE. In a smithy somewhere in the Rhineland, a blacksmith fans embers of a forge. Orange sparks rise upward, cooling as they climb, fading from brilliant orange to dull red to ash-grey before disappearing into the darkness above. It is the perfect image for what is happening to the Germanic languages.
+    </p>
+
+    <p class="narrative">
+      For centuries, the Germanic peoples have been scattered. The great migrations have already sent tribes in every direction — south into Italy and Spain, north into Scandinavia, west toward the Atlantic. In each region, the language is slowly changing. A sound here, a vowel there. Nothing dramatic. Nothing that would make a speaker from the Roman Empire notice. But after generations, the changes accumulate.
+    </p>
+
+    <p class="narrative">
+      And in the south — in what is now southern Germany, Austria, Switzerland — something extraordinary is happening to the language. The very consonants themselves are shifting, transforming, becoming something new. The bright spark is rising. The language is changing shape in the heat.
+    </p>
+
+    <p class="narrative">
+      This is the moment we must understand, because what happens now — in these heated valleys, in these monastery scriptoriums, in the courts of kings — will determine why German sounds so alien to English speakers today. After five thousand years of being the same language, English and German are about to diverge more radically than ever before.
+    </p>
+
+    <p class="narrative">
+      The cause is a single, gradual, systematic shift in how the mouth produces consonants. It will be called the <em>Second Germanic Consonant Shift</em> — or in German, the <em>Hochdeutsche Lautverschiebung</em> (High German Sound Shift). And it will explain, once and for all, why German seems so fundamentally different from English, despite both being Germanic languages born from the same Indo-European root.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 2: CLOVIS AND THE KINGDOM ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The year is 481 CE. A young Frankish warlord named Clovis has just begun to consolidate power in the lands that will become France. He is ruthless, militarily brilliant, and acutely aware of something that will shape the course of history: the Roman Empire, though fragmenting, still wields tremendous prestige. Its language is Latin. Its religion is Christianity. Its administrative systems still function, even as barbarian kingdoms carve up its corpse.
+    </p>
+
+    <p class="narrative">
+      Clovis understands power, and power in this world flows through Rome. In 496 CE — just fifteen years into his reign — he makes a decision that will echo through the centuries. He converts to Roman Christianity. Not because he is pious (though he may have been), but because it gives him legitimacy. His people are Germanic, pagan, warrior-cultured. But his kingdom's future lies in appearing civilized, Romanized, Christian.
+    </p>
+
+    <p class="narrative">
+      Here is the paradox that will define medieval Europe: The Franks speak a Germanic language. Their culture is Germanic — warrior codes, tribal structures, the tribal assembly where free men vote on important decisions. But their <em>administration</em> is Roman. Their <em>religion</em> is Roman. Their <em>prestige language</em> is Latin.
+    </p>
+
+    <p class="narrative">
+      In the royal court, Clovis and his successors, the Merovingian kings, speak Frankish with each other. But they speak Latin to the bishops, Latin to the educated elite, Latin when conducting the business of empire. The people in the countryside — peasants, farmers, herders — speak the Germanic dialects. But those dialects are beginning to diverge. The language that was once unified across the entire Germanic world is splintering.
+    </p>
+
+    <p class="narrative">
+      In the north (in what will become England, the Low Countries, Scandinavia), the language is changing slowly. A few sound shifts, mostly vowels.
+    </p>
+
+    <p class="narrative">
+      In the south (in what will become Bavaria, Austria, Switzerland, the southern Rhine valley), something more drastic is happening.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 3: THE SOUND SHIFT ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The <em>Second Germanic Consonant Shift</em> is not a single event. It is not a law handed down by a king, or a rule taught in a monastery. It is something far more mysterious: a gradual, almost imperceptible change in the way people in a particular region of Europe produce consonant sounds.
+    </p>
+
+    <p class="narrative">
+      Linguists debate why this happened. Perhaps it was contact with Bavarian or Celtic populations in the south. Perhaps it was a natural drift in how the mouth shapes sounds. Whatever the cause, by the year 500 CE, the effect is clear: In the south, consonants are shifting.
+    </p>
+
+    <p class="narrative">
+      Here is the pattern. In the north (what we now call Low German, Dutch, English, Scandinavian languages), these consonants remain unchanged:
+    </p>
+
+    <p class="narrative" style="text-align: center; font-family: 'Courier New', monospace; font-size: 1.15rem; margin: 20px 0;">
+      p, t, k
+    </p>
+
+    <p class="narrative">
+      But in the south, starting around 500 CE and continuing through the next several centuries, these same consonants transform:
+    </p>
+
+    <p class="narrative" style="text-align: center; font-family: 'Courier New', monospace; font-size: 1.15rem; margin: 20px 0;">
+      p → pf or ff<br>
+      t → ts or ss<br>
+      k → ch
+    </p>
+
+    <p class="narrative">
+      This is why German looks so alien to English speakers today. It is not because the languages are unrelated — they are deeply related. It is because this single, systematic shift transformed the sound system of the southern Germanic dialects (which became High German, the language of modern Germany) while leaving the northern dialects (which became English, Dutch, Yiddish, etc.) largely unchanged.
+    </p>
+
+    <p class="narrative">
+      Let us look at concrete examples. We have seen some of these already, but now you will understand <em>why</em> they seem so strange.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 1: APFEL ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Take the most perfect example: the word for the fruit that sits in a bowl on a table.
+    </p>
+
+    <p class="narrative">
+      In English, we say <span class="german-word" data-card="apfel">apple.</span> Simple. Clean. Two syllables: ap-ple. The 'p' is clear and distinct.
+    </p>
+
+    <p class="narrative">
+      In German, the same fruit is <span class="german-word" data-card="apfel">Apfel.</span> Pronounced: AHP-full. The 'p' has shifted to 'pf' — a completely different sound. If you are English, you might pronounce it something like "off-ull" — that 'pf' combination is nearly impossible for English speakers to produce naturally, because English never made this shift.
+    </p>
+
+    <p class="narrative">
+      This is the shift at its most visible. p → pf. And it applies everywhere in the southern speech:
+    </p>
+
+    <!-- APFEL card -->
+    <div class="ety-card" id="card-apfel">
+      <div class="word-header">
+        <span class="word-main">Apfel</span>
+        <span class="word-pron">/ˈɑpfəl/</span>
+      </div>
+      <div class="word-meaning">apple — the fruit, and a symbol of the Second Shift</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*abōl-</span>
+        <span class="bridge-note">— from Proto-Indo-European via various branches</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">apple</span>
+        <span class="bridge-note">— Old English "æpple" — p remains unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Apfel</span>
+        <span class="bridge-note">— p → pf in the Second Shift. Compare: English apple, German Apfel</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">苹果</span>
+        <span class="bridge-note">— píngguǒ — literally "apple fruit" (苹 = apple, 果 = fruit). Chinese borrowed the concept from Western contact, not inherited it.</span>
+      </div>
+      <div class="story">
+        The word <em>Apfel</em> is the textbook example of the Second Germanic Consonant Shift. In the northern regions (England, Scandinavia, Low Germany), the word remained "apple" — p unchanged. But in the south, speakers began to pronounce the initial 'p' differently, adding a fricative quality, until it became 'pf'. Over centuries, this small shift in articulation became the norm in the south and crystallized into the standard pronunciation. The Chinese word 苹果 is much younger, borrowed or created after contact with Western fruits, and it lacks the deep Germanic inheritance entirely. Yet the character 苹, used to represent the apple, was originally the name of another plant — language adapts and borrows, just as all spoken traditions do.
+      </div>
+    </div>
+
+    <p class="narrative">
+      English "apple" has a 'p' because English speakers never made this shift. German "Apfel" has a 'pf' because German speakers did. Same word. Same origin. Radically different pronunciation, born from a single sound shift that happened when language communities were geographically separated.
+    </p>
+
+    <p class="narrative">
+      This is the central insight you must understand: <em>The Second Germanic Consonant Shift is the reason German seems hard to English speakers. It is not that German is more complex. It is that German preserved an innovation that English avoided.</em>
+    </p>
+  </div>
+
+  <!-- ==================== WORD 2: PFERD ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      What of the horse? In English, we say <span class="german-word" data-card="pferd">horse.</span> An old Germanic word. In German, the <span class="german-word" data-card="pferd">Pferd</span> is pronounced FAIR-t, with that distinctive 'pf' sound at the beginning.
+    </p>
+
+    <p class="narrative">
+      But where does the German word come from? Not from Latin "equus" (which English borrowed into "equestrian" and "equation"), but from Latin <em>paraveredus</em> — a traveling horse, a horse for relaying messages. This Latin word entered Germanic speech in the Roman period, probably in the form "parfred" or similar. Then, when the Second Shift happened, the 'p' shifted to 'pf', and the word evolved into <em>Pferd.</em>
+    </p>
+
+    <p class="narrative">
+      English speakers heard the same Latin word. But English never made the p → pf shift, so the word evolved differently in English, becoming something like "palfrey" (used for a particular kind of saddle horse). Same root word. Different sound shift. Different modern form.
+    </p>
+
+    <!-- PFERD card -->
+    <div class="ety-card" id="card-pferd">
+      <div class="word-header">
+        <span class="word-main">Pferd</span>
+        <span class="word-pron">/ˈpfeɐt/</span>
+      </div>
+      <div class="word-meaning">horse — showing how Latin loanwords were transformed by the Shift</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— This is a Latin loanword, not inherited from PIE</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">palfrey</span>
+        <span class="bridge-note">— a type of riding horse. Same Latin origin, but without the Shift</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Pferd</span>
+        <span class="bridge-note">— from Latin paraveredus, transformed by p → pf</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">马</span>
+        <span class="bridge-note">— mǎ — an ancient Chinese character, one of the oldest in the script. No Latin origin, no borrowed loanword.</span>
+      </div>
+      <div class="story">
+        Here we see the Second Shift at work on a borrowed word. Latin <em>paraveredus</em> entered Germanic speech, and then the sound systems of the north and south diverged. In the north (English), the word became <em>palfrey</em> with the 'p' intact. In the south (German), the word became <em>Pferd</em> with the p → pf shift. The Chinese word 马 (mǎ) is remarkably old — it appears in oracle bone script from 1200 BCE, originally depicted as a picture of a horse's head and legs. Chinese kept its native inheritance; Germanic languages borrowed from Latin; both are valid ways language evolves through contact and innovation.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The point is not that German is borrowing from Latin (though it is), but that <em>how</em> a language transforms borrowed words tells us about its sound system. The Second Shift transformed not just native words, but also loan words. Any 'p' sound that entered the southern German dialects would eventually shift to 'pf'.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 3: DORF ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      What of the village? In English, we have an archaic word <span class="german-word" data-card="dorf">thorp</span> — still seen in place names like Greenwich (green-wich = green clearing, but -wich/thorp means village). The modern English word for such a place is "village" (from French, not Germanic).
+    </p>
+
+    <p class="narrative">
+      In German, a <span class="german-word" data-card="dorf">Dorf</span> is a village. Pronounced DORF. Notice: this is not a 'p' shifting to 'pf'. Instead, this is a 'p' shifting to 'f' (in final position). In English thorp, the word ends with 'p'. In German Dorf, it ends with 'f'. Same pattern: p → f/ff.
+    </p>
+
+    <!-- DORF card -->
+    <div class="ety-card" id="card-dorf">
+      <div class="word-header">
+        <span class="word-main">Dorf</span>
+        <span class="word-pron">/dɔɐf/</span>
+      </div>
+      <div class="word-meaning">village — p → f in final position</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*therp-</span>
+        <span class="bridge-note">— an old Germanic root for settlement or village</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">thorp</span>
+        <span class="bridge-note">— Old English "þorp" — p unchanged, still visible in English place names like Scunthorpe</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Dorf</span>
+        <span class="bridge-note">— final p → f shift. Notice the pattern: position matters in sound change.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">村</span>
+        <span class="bridge-note">— cūn — a village or hamlet. The character originally depicted plants or trees (showing settlement near vegetation).</span>
+      </div>
+      <div class="story">
+        The shift from -thorp to -dorf teaches us something important: sound changes often happen in predictable positions (initial, medial, final) and may differ by position. In German, initial p became pf, but final p became f. English avoided both shifts entirely. The Chinese character 村 (cūn) comes from a pictograph showing wood/trees on a plot of land, literally depicting a settlement. Each language represents the concept of "village" through its own phonological system and etymological heritage.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The pattern is becoming clear. English has "thorp" with an unchanged 'p'. German has "Dorf" with a shifted 'f'. It is the same word, from the same Germanic root, transformed by the Second Shift.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 4: ZEIT ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now let us look at the second major shift: t → ts (or z, which sounds like "ts" in German).
+    </p>
+
+    <p class="narrative">
+      In English, we have the word <span class="german-word" data-card="zeit">tide</span> — as in tide and time, both from the same ancient root meaning "division of time." In German, <span class="german-word" data-card="zeit">Zeit</span> (time) is pronounced "tsyt," with that 'ts' sound at the beginning.
+    </p>
+
+    <p class="narrative">
+      This shift — t → ts/z — happens systematically throughout the southern dialects. Every word with an initial 't' that entered the changing sound system would shift to 'ts' or 'z'. And it explains another reason German sounds so different from English: where English has simple 't' sounds, German often has complex 'ts' sounds.
+    </p>
+
+    <!-- ZEIT card -->
+    <div class="ety-card" id="card-zeit">
+      <div class="word-header">
+        <span class="word-main">Zeit</span>
+        <span class="word-pron">/tsaɪt/</span>
+      </div>
+      <div class="word-meaning">time — t → ts, the second major shift of the Second Shift</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*deik-</span>
+        <span class="bridge-note">— to point, to show. Time is what is "shown" by the sun's movement</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">tide</span>
+        <span class="bridge-note">— Old English "tid" — t unchanged. Also used in "tidings" (news) and compounds like "Yuletide"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Zeit</span>
+        <span class="bridge-note">— t → ts in the Second Shift. Also used in compounds like "Zeitgeist" (spirit of the age)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">时</span>
+        <span class="bridge-note">— shí — historically depicted a sun over a field, showing time marked by the sun's movement</span>
+      </div>
+      <div class="story">
+        The semantic connection between "tide" and "time" reveals deep linguistic thinking. Both refer to divisions marked by the sun — tides by the moon (which affects tides via the sun's position), time by the sun's daily and yearly cycles. German <em>Zeit</em> and English <em>tide</em> preserve this ancient connection, but the sound shift makes them seem unrelated at first glance. The Chinese character 时 (shí) similarly depicts the sun's marking of time. Across three unrelated languages, we see humans using solar movement as a metaphor for time itself — a universal human insight encoded in three different linguistic systems.
+      </div>
+    </div>
+
+    <p class="narrative">
+      English: "tide" (t)
+      German: "Zeit" (ts)
+      Same root. Same meaning. Different sound from the Second Shift.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 5: PFUND ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now let us combine what we know. A <span class="german-word" data-card="pfund">pound</span> in English (a unit of weight) comes from Latin <em>pondus</em>. This Latin word entered Germanic languages in the Roman period.
+    </p>
+
+    <p class="narrative">
+      In the north (English), it became <em>pound</em>, with the Latin 'p' intact. A simple evolution.
+    </p>
+
+    <p class="narrative">
+      In the south (German), the Latin word <em>pondus</em> evolved into <em>Pfund</em> — with the p → pf shift applied. The same word, transformed by the southern shift.
+    </p>
+
+    <!-- PFUND card -->
+    <div class="ety-card" id="card-pfund">
+      <div class="word-header">
+        <span class="word-main">Pfund</span>
+        <span class="word-pron">/pfʊnt/</span>
+      </div>
+      <div class="word-meaning">pound — a unit of weight, from Latin pondus</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— This is a Latin loanword</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">pound</span>
+        <span class="bridge-note">— from Latin pondus (weight). The 'p' survived unchanged.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Pfund</span>
+        <span class="bridge-note">— from Latin pondus, transformed by p → pf in the Second Shift</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">磅</span>
+        <span class="bridge-note">— páng — a modern Chinese adoption of the English/Latin measure, adopted during contact with Western trade</span>
+      </div>
+      <div class="story">
+        The word <em>Pfund</em> demonstrates how the Second Shift affected even borrowed Latin words. When <em>pondus</em> entered the Germanic dialects, the word had a 'p' sound. In the northern regions, this 'p' was preserved. In the southern regions, where the Second Shift was active, the 'p' shifted to 'pf'. The Chinese character 磅 (páng) is much more recent, adopted in the modern era as Chinese encountered Western measurement systems through trade and contact. It shows how languages continue to borrow and adapt throughout their history.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The principle is universal: Any word entering a linguistic system, whether inherited or borrowed, will be transformed by the active sound shifts of that system.
+    </p>
+  </div>
+
+  <!-- ==================== INTERACTIVE GUESS SECTION ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        You have learned that in the Second Shift, p → pf and t → ts. Can you predict what the German word for "open" would be, given the English "open" (with an initial 'p')?<br><br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: think about what sound the 'p' in "open" would shift to...)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">oppel</button>
+        <button class="guess-btn" onclick="guess(this, true)">offen</button>
+        <button class="guess-btn" onclick="guess(this, false)">appen</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== WORD 6: OFFEN ==================== -->
+  <div class="scene" id="scene9">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Exactly. The German word for "open" is <span class="german-word" data-card="offen">offen</span> — not "open." The 'p' has shifted to 'ff'. This is another variant of the p → pf/ff shift: when 'p' appears in the middle of the word (medial position), it often becomes 'ff' rather than 'pf'.
+    </p>
+
+    <p class="narrative">
+      English speakers might find this strange, but to German speakers, this is simply how the word is pronounced. The sound shift happened centuries ago, and speakers today have no memory of the original form. To them, "offen" has always been the word for "open."
+    </p>
+
+    <!-- OFFEN card -->
+    <div class="ety-card" id="card-offen">
+      <div class="word-header">
+        <span class="word-main">offen</span>
+        <span class="word-pron">/ˈɔfən/</span>
+      </div>
+      <div class="word-meaning">open — p → ff in medial position</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₂ep-</span>
+        <span class="bridge-note">— a reconstructed root meaning to open or separate</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">open</span>
+        <span class="bridge-note">— Old English "open" — p unchanged, straight from Germanic</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">offen</span>
+        <span class="bridge-note">— medial p → ff. A variant of the p-shift depending on position in the word.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">开</span>
+        <span class="bridge-note">— kāi — originally pictured a door or gate opening, showing the concept visually</span>
+      </div>
+      <div class="story">
+        The word <em>offen</em> shows us that sound shifts often have position-sensitive variants. The 'p' in initial position (as in Apfel, Pferd) becomes 'pf'. The 'p' in medial position (as in offen, from open) becomes 'ff'. This is not random variation — it reflects how the mouth naturally produces these sounds in different positions within a word. The Chinese character 开 (kāi) originally depicted a door swinging open, a visual representation of the concept that transcends language.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 10: THE PATTERN EMERGES ==================== -->
+  <div class="scene" id="scene10">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      You can now see the pattern clearly:
+    </p>
+
+    <p class="narrative" style="text-align: center; font-size: 1.1rem; margin: 30px 0;">
+      <strong>Second Germanic Consonant Shift (Hochdeutsche Lautverschiebung)</strong><br>
+      <br>
+      p → pf (initial) / ff (medial) / f (final)<br>
+      t → ts / ss / z<br>
+      k → ch / h
+    </p>
+
+    <p class="narrative">
+      This shift happened gradually over several centuries (roughly 500-800 CE) in the southern Germanic regions. It was not universal across all of High German at the same time — it spread like waves across the landscape, entering some regions earlier than others.
+    </p>
+
+    <p class="narrative">
+      By the year 750 CE, the shift was largely complete in what would become Bavaria, Swabia, and the upper Rhine valley. To the north, in Saxony and the Low Countries, the shift never happened at all. Even today, we can draw a line on the map — the <em>Benrath line</em> — that divides areas where the Second Shift fully took place from areas where it barely occurred.
+    </p>
+
+    <p class="narrative">
+      And this is why, today, German and English are so different <em>despite being sister languages.</em> The sound shift that happened in southern medieval Germany, in the Rhineland and Bavaria, in monasteries and royal courts, crystallized into the modern German language we know today. English avoided this shift entirely (being in the far north), and so English maintained the original consonant system.
+    </p>
+
+    <p class="narrative">
+      This is the answer to a question that has puzzled English speakers for centuries: Why does German seem so hard, so guttural, so alien? Because German underwent a systematic transformation that English did not. Because of this one shift — this slow, grinding change that happened in a small region of Europe fourteen centuries ago — the two languages that should be nearly identical sound utterly different to modern ears.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 7: SCHIFF ==================== -->
+  <div class="scene" id="scene11">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now let us examine the third major shift: k → ch. In English, we have <span class="german-word" data-card="schiff">ship</span> — pronounced with a 'sh' sound (which is not strictly a 'k' sound, but related). In German, a <span class="german-word" data-card="schiff">Schiff</span> is pronounced SHIFF.
+    </p>
+
+    <p class="narrative">
+      But wait — this word does not have a 'k' in either language. So how does the k → ch shift apply here? The answer lies in the shape of the word. The English "ship" comes from an older form "skipa" (a ship). The Germanic root *skipa- had an initial 'sk' cluster. When the Second Shift happened, this initial 'k' shifted to 'ch', but the 's' before it modified the sound to become 'sch' (like the 'ch' in "loch" or "Bach").
+    </p>
+
+    <!-- SCHIFF card -->
+    <div class="ety-card" id="card-schiff">
+      <div class="word-header">
+        <span class="word-main">Schiff</span>
+        <span class="word-pron">/ʃɪf/</span>
+      </div>
+      <div class="word-meaning">ship — showing the k → ch/sch shift</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*skei-</span>
+        <span class="bridge-note">— a root meaning to separate or cut, extended to mean a vessel that cuts through water</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">ship</span>
+        <span class="bridge-note">— Old English "scip" — the k (from older *sk-) has merged with 's' into 'sh', but no further shift</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schiff</span>
+        <span class="bridge-note">— sk → sch through the k → ch shift, with the 's' coloring the sound</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">船</span>
+        <span class="bridge-note">— chuán — originally depicted a wooden vessel, with the boat radical 舟 (zhōu) at its core</span>
+      </div>
+      <div class="story">
+        The word <em>Schiff</em> demonstrates the k → ch shift applied to an 'sk' cluster. In English, the 's' and 'k' merged into 'sh' without further shifting. In German, the 'k' shifted to 'ch', and the 's' before it colored the sound to become 'sch'. This is a perfect example of how a single sound shift can create dramatically different modern forms from the same ancient root. The Chinese character 船 (chuán) contains the radical 舟 (zhōu), which originally depicted a wooden boat, showing how cultures independently develop visual symbols for maritime technology.
+      </div>
+    </div>
+
+    <p class="narrative">
+      English: "ship" (from older skipa, with sk → sh)
+      German: "Schiff" (from older skipa, with sk → sch via the k → ch shift)
+      Same root. Same meaning. Transformed by how each language's sound system evolved.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 8: PFLANZE ==================== -->
+  <div class="scene" id="scene12">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Take the word <span class="german-word" data-card="pflanze">plant.</span> In English, we say "plant" — a simple word borrowed from Latin <em>planta</em>. In German, a <span class="german-word" data-card="pflanze">Pflanze</span> is pronounced FLAHN-tsuh, with a 'pf' at the beginning (from the Latin 'p') and a 'tz' near the end (from the Latin 't').
+    </p>
+
+    <p class="narrative">
+      This single word shows both shifts in action. The Latin word <em>planta</em> entered Germanic speech in the Roman period. In the north (English), it preserved its Latin form: "plant." In the south (German), both the 'p' and the final 't' shifted: p → pf, and t → tz, giving us "Pflanze."
+    </p>
+
+    <!-- PFLANZE card -->
+    <div class="ety-card" id="card-pflanze">
+      <div class="word-header">
+        <span class="word-main">Pflanze</span>
+        <span class="word-pron">/ˈpflɑntsə/</span>
+      </div>
+      <div class="word-meaning">plant — showing both p → pf and t → tz shifts</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— A Latin loanword</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">plant</span>
+        <span class="bridge-note">— from Latin planta, p and t unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Pflanze</span>
+        <span class="bridge-note">— p → pf and t → tz from the Second Shift</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">植物</span>
+        <span class="bridge-note">— zhíwù — literally "grow-thing" (植 = plant/grow, 物 = thing/object)</span>
+      </div>
+      <div class="story">
+        <em>Pflanze</em> is a perfect demonstration of the Second Shift affecting a loanword. The Latin <em>planta</em> entered both English and German, but the southern sound shifts transformed it. In English, "plant" retains the Latin form. In German, "Pflanze" shows both p → pf and t → tz. The Chinese word 植物 (zhíwù) is a native compound, not a loanword, built from the elements for "plant" and "object," reflecting Chinese morphological preferences for compound nouns.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This is astonishing: a single Latin word, borrowed by both English and German, evolved so differently due to the Second Shift that English speakers and German speakers might not even recognize the connection.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 9: WAPPEN ==================== -->
+  <div class="scene" id="scene13">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Finally, consider the word <span class="german-word" data-card="wappen">Wappen</span> — a coat of arms, the heraldic emblem of a noble house. This word is related to the English <span class="german-word" data-card="wappen">weapon.</span>
+    </p>
+
+    <p class="narrative">
+      English: "weapon" (wep-un), from Old English <em>wæpn</em>
+      German: "Wappen" (VAH-pen), where the 'p' shifted to 'pp' (another variant of the p → ff/pf shift)
+    </p>
+
+    <p class="narrative">
+      A coat of arms is, in a sense, a symbol of weapons and warfare. The meaning connection is subtle, but the word connection is clear. Same origin, transformed by the southern shift.
+    </p>
+
+    <!-- WAPPEN card -->
+    <div class="ety-card" id="card-wappen">
+      <div class="word-header">
+        <span class="word-main">Wappen</span>
+        <span class="word-pron">/ˈvɑpən/</span>
+      </div>
+      <div class="word-meaning">coat of arms, heraldic emblem — related to weapon through shifting sounds</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wep-</span>
+        <span class="bridge-note">— a Germanic root meaning to wrap or cover (as a weapon is covered in leather)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">weapon</span>
+        <span class="bridge-note">— Old English "wæpn" — p unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wappen</span>
+        <span class="bridge-note">— p → pp (a variant of p → ff/pf shift in medial position)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">纹</span>
+        <span class="bridge-note">— wén — a pattern or mark, used in heraldry; originally depicted thread or grain patterns</span>
+      </div>
+      <div class="story">
+        The connection between English "weapon" and German "Wappen" is obscured by the Second Shift, yet the relationship is clear. German eventually used "Wappen" to mean "coat of arms" — the heraldic emblem that represents a warrior family and their weapons. The underlying concept of "wrapping" (protective covering) connects the etymologies. The Chinese word 纹 (wén) means pattern or mark, and is used in heraldic contexts to describe the distinctive patterns on a coat of arms. Different languages, different paths, but all expressing the human need to mark, identify, and display status.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== WORD 10: PFEFFER ==================== -->
+  <div class="scene" id="scene14">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The last word carries us all the way to Asia. <span class="german-word" data-card="pfeffer">Pfeffer</span> (pepper) — a spice that traveled from India to Europe via ancient trade routes, entered Latin as <em>piper</em>, and then evolved differently in the north and south.
+    </p>
+
+    <p class="narrative">
+      English: "pepper" (pep-ur), with the Latin 'p' intact
+      German: "Pfeffer" (PFEF-ur), with p → pf at the beginning
+    </p>
+
+    <p class="narrative">
+      A single word, born in Sanskrit, traveled through trade, entered Latin, was borrowed by Germanic peoples, and then transformed differently in the north and south. This is how words travel through the world, how meaning moves across empires and languages, how trade and contact reshape the vocabulary of nations.
+    </p>
+
+    <!-- PFEFFER card -->
+    <div class="ety-card" id="card-pfeffer">
+      <div class="word-header">
+        <span class="word-main">Pfeffer</span>
+        <span class="word-pron">/ˈpfɛfɐ/</span>
+      </div>
+      <div class="word-meaning">pepper — a spice that traveled from India, showing p → pf</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— Not from PIE; this is a Sanskrit loanword via Latin and Greek</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">pepper</span>
+        <span class="bridge-note">— from Latin piper (from Sanskrit pippali), p unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Pfeffer</span>
+        <span class="bridge-note">— p → pf via the Second Shift</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">胡椒</span>
+        <span class="bridge-note">— hújiāo — "barbarian pepper" (胡 = foreign/barbarian, 椒 = pepper). Shows how Chinese labeled the foreign import.</span>
+      </div>
+      <div class="story">
+        The word <em>Pfeffer</em> is a remarkable journey across the ancient world. It began in Sanskrit as <em>pippali</em>, traveled to Greek as <em>peperi</em>, to Latin as <em>piper</em>, and from there to Germanic languages. In English, it remained "pepper," resembling the Latin form. In German, it became "Pfeffer," transformed by the p → pf shift. The Chinese word 胡椒 (hújiāo) literally means "barbarian pepper," reflecting the fact that black pepper was a foreign luxury good in ancient China, arriving through trade routes from India. The word tells a story of spice trading, cultural contact, and linguistic evolution across continents and centuries.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And with that final word, you have seen nine examples of the Second Germanic Consonant Shift at work. Nine words that illuminate a single, systematic transformation that happened in a small region of Europe and created a linguistic divide that still echoes today.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== ASIDE: BENRATH LINE ==================== -->
+  <div class="scene" id="scene-aside">
+    <div class="aside-box">
+      <div class="aside-title">The Benrath Line — A Geographic Boundary</div>
+      <p>
+        Linguists can draw a line on the map of Europe that marks where the Second Shift took place and where it did not. This line, called the <em>Benrath line</em> (named after the village of Benrath near Düsseldorf, Germany), runs roughly from west to east, through the Low Countries and the Rhineland. To the south of this line, the Second Shift occurred. To the north, it did not.
+      </p>
+      <p style="margin-top: 12px;">
+        This is why modern German (south of the line) has "Apfel," "Pferd," and "Zeit" — all transformed by the shift. But Low German (north of the line, in the north German plain) has "Appel," "Peerd," and "Tid" — more similar to English than to standard German. Dutch, spoken north of the line, is even closer to English. And English itself is the northern extreme — it preserves the original consonants entirely.
+      </p>
+      <p style="margin-top: 12px;">
+        This single line, drawn in the early medieval period by the slow drift of how people in different regions pronounced their sounds, explains why German and English diverged so dramatically. Geography is destiny in language. The people who stayed in the north kept the old pronunciation. The people who moved south, or whose language center was in the south, were caught up in the sound shift. And once the shift crystallized, it was permanent — built into the sound system of the language for all future generations.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE: MEDITATION ON THE SHIFT ==================== -->
+  <div class="scene" id="scene15">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The Second Germanic Consonant Shift is perhaps the most important linguistic event in European history after the Indo-European migrations themselves. It is the event that explains why German seems so alien to English speakers, despite the two languages being sisters.
+    </p>
+
+    <p class="narrative">
+      In the year 500 CE, a Frankish child learning to speak would have heard speakers gradually beginning to shift their consonants. By the time that child was old, the new sounds would seem perfectly natural. By the time that child's grandchildren were born, the shift would be complete. And by the time a thousand years had passed, the modern sound system would be so deeply embedded that nobody would remember the original forms.
+    </p>
+
+    <p class="narrative">
+      This is how language changes. Not through decree or law, but through the accumulated tiny shifts in how millions of individual speakers move their mouths. A 'p' that gradually becomes 'pf'. A 't' that gradually becomes 'ts'. Repeated billions of times, across generations, until a new sound system is born.
+    </p>
+
+    <p class="narrative emphasis">
+      And this is why German is not "harder" than English. It is simply different — shaped by events that happened in a small region of medieval Europe, in monasteries and royal courts, in the mouths of Frankish warriors and Saxon traders, in the accumulated speech patterns of millions of people across centuries.
+    </p>
+
+    <p class="narrative">
+      The spark rises from the forge, changing color as it cools. So too did language change, imperceptibly but inevitably, as the Germanic peoples spread across Europe and their unified speech became the many languages we know today. One spark. Many colors. One voice. Many tongues.
+    </p>
+  </div>
+
+  <!-- ==================== INTERACTIVE GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        Now that you understand the shifts, consider this challenge. The English word "Clovis" (the Frankish king from Chapter 7) contains a 'v' sound. In German, proper names sometimes undergo shifts too. Would a German speaker be more likely to say "Klovis" or something closer to the original Frankish pronunciation?<br><br>
+        What does this tell us about how the shifts apply to borrowed words and names?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">Klovis — the shifts only apply to common words</button>
+        <button class="guess-btn" onclick="guess(this, true)">Clovis — names retain their original form as identifiers</button>
+        <button class="guess-btn" onclick="guess(this, false)">Chlohvis — both shifts would apply</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">The Second Germanic Consonant Shift</strong> — A systematic transformation that happened in southern German regions (500-800 CE), creating the divide between High German and Low German, and explaining why German seems so different from English.<br><br>
+    <strong style="color: var(--text-bright);">P → PF/FF/F</strong> — The most visible shift, affecting every word with an initial 'p' in the shifted regions. This alone accounts for dozens of German words that seem alien to English speakers.<br><br>
+    <strong style="color: var(--text-bright);">T → TS/SS/Z</strong> — The second major shift, transforming 't' sounds into affricate and fricative forms. Time becomes Zeit, Tide remains Tide.<br><br>
+    <strong style="color: var(--text-bright);">K → CH/H</strong> — The third shift, often combining with other sounds. Make becomes Machen, Ship (from sk-) becomes Schiff.<br><br>
+    <strong style="color: var(--text-bright);">The Benrath Line</strong> — A geographic boundary marking where the shifts took place and where they did not. South of the line: German with all shifts. North of the line: Dutch and Low German, closer to English. This single line explains much of modern European linguistic geography.
+  </div>
+
+  <!-- ==================== WORD COLLECTION (for revision) ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Seven</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Apfel</span><span class="cw-english">apple</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Pferd</span><span class="cw-english">horse</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Dorf</span><span class="cw-english">village</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Zeit</span><span class="cw-english">time</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Pfund</span><span class="cw-english">pound</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">offen</span><span class="cw-english">open</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Schiff</span><span class="cw-english">ship</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Pflanze</span><span class="cw-english">plant</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Wappen</span><span class="cw-english">coat of arms</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Pfeffer</span><span class="cw-english">pepper</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <!-- WORDS BAR (clickable) -->
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">70 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(8%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:8%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words ▾</div>
+    </div>
+
+    <!-- WORDS DETAIL TABLE (hidden, expands on click) -->
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mutter</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">mother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Feuer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fire</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wasser</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">water</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stern</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">star</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Vater</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">father</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schwester</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">sister</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">name</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 2–6: ~60 more words · Scroll for full list</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Apfel</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">apple</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Pferd</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">horse</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Dorf</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">village</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">time</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Pfund</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">pound</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">offen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">open</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schiff</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">ship</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Pflanze</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">plant</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wappen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">coat of arms</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Pfeffer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">pepper</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+      </table>
+    </div>
+
+    <!-- PATTERNS BAR (clickable) -->
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">17 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(12%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:12%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns ▾</div>
+    </div>
+
+    <!-- PATTERNS DETAIL TABLE (hidden, expands on click) -->
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">gh = ch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night/Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">sw = schw</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">swim/schwimmen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">th = d/t</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother/Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">V = F</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Vater = "Fahter"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">st/sp = sht/shp</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Stern = "shtern"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 2–6: ~12 more patterns</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">P → PF/FF/F</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">apple/Apfel, pound/Pfund</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">T → TS/SS/Z</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">time/Zeit, water/Wasser</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">K → CH/H</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">make/machen, ship/Schiff</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">The Benrath Line</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Geographic divide: High vs Low German</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">7</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Seven
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten revelations of a single, extraordinary transformation.<br>
+        The Second Germanic Consonant Shift forged the High German language in the heat of medieval monasteries and royal courts.<br>
+        From one spark, many colors. From one voice, many tongues.<br>
+        And now you understand why German and English, though sisters, sound like strangers to each other's ears.
+      </p>
+      <div class="next-chapter">
+        Chapter Eight: The Monastery — coming soon
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter6.html" class="nav-btn">← Chapter 6</a>
+    <a href="chapter8.html" class="nav-btn next">Chapter 8 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 7: FRANKS/FORGE - ANVIL, HAMMER, SPARKS & MOLTEN METAL ---
+const canvas = document.getElementById('forge-canvas');
+const ctx = canvas.getContext('2d');
+let sparks = [];
+let drips = [];
+let hammers = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createSparks() {
+  sparks = [];
+}
+
+function emitSparks(count = window.innerWidth < 600 ? 10 : 20) {
+  const forgeX = canvas.width / 2;
+  const forgeY = canvas.height * 0.75;
+
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.random() - 0.5) * Math.PI * 0.9;
+    const speed = Math.random() * 4 + 2.5;
+
+    sparks.push({
+      x: forgeX + (Math.random() - 0.5) * 30,
+      y: forgeY,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 0.5,
+      r: Math.random() * 2 + 0.8,
+      alpha: Math.random() * 0.7 + 0.4,
+      drag: 0.97,
+      gravity: 0.06,
+      lifespan: Math.random() * 180 + 120,
+      age: 0,
+      colorOffset: Math.random()
+    });
+  }
+}
+
+function emitDrips() {
+  const forgeX = canvas.width / 2;
+  const forgeY = canvas.height * 0.73;
+
+  for (let i = 0; i < (Math.random() < 0.6 ? 2 : 0); i++) {
+    drips.push({
+      x: forgeX + (Math.random() - 0.5) * 50,
+      y: forgeY,
+      vy: Math.random() * 1 + 0.5,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random() * 0.5 + 0.3,
+      lifespan: 300,
+      age: 0
+    });
+  }
+}
+
+function drawAnvil() {
+  const forgeX = canvas.width / 2;
+  const forgeY = canvas.height * 0.8;
+
+  // Anvil base
+  ctx.fillStyle = 'rgba(60, 60, 60, 0.3)';
+  ctx.fillRect(forgeX - 70, forgeY, 140, 40);
+
+  // Anvil top (horn)
+  ctx.beginPath();
+  ctx.arc(forgeX - 40, forgeY - 5, 25, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(80, 80, 80, 0.3)';
+  ctx.fill();
+}
+
+function drawHammer(time) {
+  const forgeX = canvas.width / 2;
+  const forgeY = canvas.height * 0.75;
+
+  const hammerSwing = Math.sin(time * 0.004) * 0.3;
+  const rotation = hammerSwing * 0.5;
+
+  ctx.save();
+  ctx.translate(forgeX + 60, forgeY - 80);
+  ctx.rotate(rotation);
+
+  // Hammer head
+  ctx.fillStyle = 'rgba(100, 100, 100, 0.25)';
+  ctx.fillRect(-20, -15, 40, 30);
+
+  // Hammer handle
+  ctx.strokeStyle = 'rgba(80, 60, 40, 0.25)';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(0, 15);
+  ctx.lineTo(0, 80);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(20, 15, 10, 0.15)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const forgeX = canvas.width / 2;
+  const forgeY = canvas.height * 0.75;
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Forge glow with heat shimmer
+  const glowIntensity = 0.15 + scroll * 0.25;
+  const gradient = ctx.createRadialGradient(forgeX, forgeY, 0, forgeX, forgeY, 300);
+  gradient.addColorStop(0, `rgba(255, 140, 60, ${glowIntensity})`);
+  gradient.addColorStop(0.5, `rgba(200, 80, 40, ${glowIntensity * 0.4})`);
+  gradient.addColorStop(1, `rgba(50, 20, 10, 0)`);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawAnvil();
+  drawHammer(time);
+
+  // Draw drips (molten metal)
+  drips = drips.filter(d => d.age < d.lifespan);
+  drips.forEach(d => {
+    d.y += d.vy;
+    d.age++;
+
+    const fadeOut = 1 - (d.age / d.lifespan);
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 160, 80, ${d.alpha * fadeOut})`;
+    ctx.fill();
+  });
+
+  // Draw sparks
+  sparks = sparks.filter(s => s.age < s.lifespan);
+  sparks.forEach((s, idx) => {
+    s.x += s.vx;
+    s.y += s.vy;
+    s.vy += s.gravity;
+    s.vx *= s.drag;
+    s.age++;
+
+    const fadeOut = 1 - (s.age / s.lifespan);
+    const alpha = s.alpha * fadeOut;
+
+    let r, g, b;
+    if (s.colorOffset < 0.4) {
+      r = 255; g = Math.round(180 - s.colorOffset * 200); b = 60;
+    } else if (s.colorOffset < 0.7) {
+      r = 240; g = Math.round(140 - (s.colorOffset - 0.4) * 100); b = 40;
+    } else {
+      r = Math.round(200 - (s.colorOffset - 0.7) * 100); g = 80; b = 30;
+    }
+
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${Math.max(0, alpha)})`;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r * 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${Math.max(0, alpha * 0.25)})`;
+    ctx.fill();
+  });
+
+  if (Math.random() < 0.4) {
+    emitSparks(window.innerWidth < 600 ? 8 : 15);
+  }
+  if (Math.random() < 0.15) {
+    emitDrips();
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+emitSparks(30);
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct. The sounds shifted as the shift dictates, creating the modern German form.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about how systematic the shifts are.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "Which consonants undergo the Second Germanic Consonant Shift?",
+    options: ["p, t, k", "b, d, g", "f, s, h", "m, n, l"],
+    correct: 0,
+    explanation: "The Second Shift transforms p → pf/ff/f, t → ts/ss/z, and k → ch/h."
+  },
+  {
+    question: "What is the geographic boundary line that marks where the Second Shift occurred?",
+    options: ["the Rhine River", "the Benrath line", "the North Sea coast", "the Alps"],
+    correct: 1,
+    explanation: "The Benrath line, named after a village in Germany, marks the north-south division of the Second Shift's application."
+  },
+  {
+    question: "Why does German 'Apfel' sound so different from English 'apple'?",
+    options: ["German borrowed from French", "The Second Shift changed p → pf in southern German", "English simplified its pronunciation", "They come from different language families"],
+    correct: 1,
+    explanation: "The Second Germanic Consonant Shift transformed initial 'p' to 'pf' in southern German regions, but English avoided this shift entirely."
+  },
+  {
+    question: "What happened to the Latin word 'paraveredus' in the southern Germanic dialects?",
+    options: ["It became 'palfrey' without change", "It became 'Pferd' through p → pf shifting", "It was replaced entirely", "It merged with Germanic 'horse'"],
+    correct: 1,
+    explanation: "The Latin loanword 'paraveredus' underwent the p → pf shift in southern German, becoming 'Pferd', while English developed 'palfrey' without the shift."
+  },
+  {
+    question: "Which of these word pairs best demonstrates the t → ts shift?",
+    options: ["tide / Zeit", "open / offen", "ship / Schiff", "pound / Pfund"],
+    correct: 0,
+    explanation: "English 'tide' (with 't') and German 'Zeit' (with 'ts' pronounced 'tsyt') show the t → ts shift."
+  },
+  {
+    question: "When did the Second Germanic Consonant Shift primarily occur?",
+    options: ["100-300 CE", "500-800 CE", "1000-1300 CE", "1500-1700 CE"],
+    correct: 1,
+    explanation: "The Second Shift happened gradually over roughly 300 years, from around 500 to 800 CE, in the southern Germanic regions."
+  },
+  {
+    question: "From Chapter 1: What does 'Mutter' mean?",
+    options: ["matter", "mother", "mouth", "mountain"],
+    correct: 1,
+    explanation: "Mutter means 'mother' — one of the core family words inherited from Proto-Indo-European."
+  },
+  {
+    question: "From Chapter 6: What does 'Heimat' emotionally represent?",
+    options: ["a distant kingdom", "the home you have left behind", "a warrior's weapon", "a merchant's goods"],
+    correct: 1,
+    explanation: "Heimat captures the emotional sense of homeland — the place you belong to, even when separated from it by distance or time."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>79 words</strong> across seven chapters. You understand the core vocabulary of Proto-Indo-European, traced migrations across millennia, witnessed the divergence of language families, and now comprehended the single most important sound change in German linguistic history — the Second Germanic Consonant Shift.</p>
+      <p style="margin-top: 8px;"><strong>The Shift Unlocked:</strong> You can now explain why German seems so "hard" to English speakers. It is not complexity; it is divergence. A systematic transformation, beginning in the year 500 CE, that reshaped every consonant in the southern Germanic dialects, creating the vast phonological distance between German and English.</p>
+      <p style="margin-top: 8px;">In the next chapter, we enter the monasteries where monks will begin writing down these diverging languages, where the spoken word becomes sacred text, and where the process of language standardization begins. The shift was unplanned and gradual; the recording will be deliberate and permanent.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

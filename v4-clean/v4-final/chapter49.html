@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 49: Ich Habe (I Have)</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- HOLDING PARTICLES CANVAS --- */
+  #holding-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 1000px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.zho { background: rgba(196, 154, 108, 0.15); color: var(--chinese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CONJUGATION TABLE --- */
+  .conjugation-table {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    font-size: 1rem;
+  }
+
+  .conjugation-table h4 {
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .conj-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+  }
+
+  .conj-row:last-child {
+    border-bottom: none;
+  }
+
+  .conj-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .conj-pronoun {
+    color: rgba(212, 202, 187, 0.6);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .conj-verb {
+    color: var(--fire);
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+    .content { max-width: 100% !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .conjugation-table { padding: 24px 16px; font-size: 0.95rem; }
+    .conj-row { grid-template-columns: 1fr; gap: 12px; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="holding-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Forty-Nine</div>
+    <h1>Ich Habe</h1>
+    <div class="subtitle">The Verb of Possession and State</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE CONTRAST ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      If <span class="german-word" data-speak="true">sein</span> (to be) is the most fundamental verb in German, then <span class="german-word" data-speak="true">haben</span> (to have) is the second pillar. And where sein is ancient and irregular, haben is younger and regular.
+    </p>
+
+    <div class="conjugation-table">
+      <h4>The Present Tense of HABEN (To Have)</h4>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">I</span>
+          <span class="conj-verb">ich habe</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">You (singular)</span>
+          <span class="conj-verb">du hast</span>
+        </div>
+      </div>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">He/She/It</span>
+          <span class="conj-verb">er/sie/es hat</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">We</span>
+          <span class="conj-verb">wir haben</span>
+        </div>
+      </div>
+      <div class="conj-row">
+        <div class="conj-item">
+          <span class="conj-pronoun">You (plural)</span>
+          <span class="conj-verb">ihr habt</span>
+        </div>
+        <div class="conj-item">
+          <span class="conj-pronoun">They/You (formal)</span>
+          <span class="conj-verb">sie/Sie haben</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative">
+      Look at haben. It's regular. It follows the pattern. All forms are clearly related: habe, hast, hat, haben, habt. No mystery. No fusion of ancient roots. This is how a modern verb conjugates.
+    </p>
+
+    <p class="narrative">
+      Why? Because haben is younger. It didn't come from the deepest depths of Proto-Indo-European. It emerged later, in Proto-Germanic, and it preserved its regularity. It shows us how German verbs work when they haven't been worn down by billions of uses across thousands of years.
+    </p>
+
+    <p class="narrative">
+      And haben serves a crucial function: it's the auxiliary verb that helps form the perfect tense. When you say <span class="german-word" data-speak="true">Ich habe gegessen</span> (I have eaten), you're using haben as the helper, and the past participle as the main event.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE QUIRK ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But here's the fascinating part. German uses "have" in ways that English doesn't. When a German speaker says <span class="german-word" data-speak="true">Ich habe Hunger</span>, they don't mean "I possess hunger." They mean "I am hungry." Literally: "I have hunger."
+    </p>
+
+    <p class="narrative">
+      Similarly: <span class="german-word" data-speak="true">Ich habe Angst</span> (I have fear = I am afraid). <span class="german-word" data-speak="true">Ich habe Durst</span> (I have thirst = I am thirsty). <span class="german-word" data-speak="true">Ich habe Recht</span> (I have right = I am right).
+    </p>
+
+    <p class="narrative">
+      In English, we use the verb "to be" for these states: "I am hungry," "I am afraid." But in German, the language reached for "have." Why? Because these are not inherent states — they are things you possess, things you carry with you. You can get hungry and then not be hungry. It's not a permanent condition; it's something you have.
+    </p>
+
+    <p class="narrative">
+      This reveals something deep about how languages categorize the world. English and German are related, but they made different choices about which states require "be" and which require "have."
+    </p>
+
+    <p class="narrative">
+      Chinese, meanwhile, solved this differently. <span class="german-word" data-speak="true">我饿</span> (Wǒ è) means "I am hungry." It's neither possession nor being — it's a simple quality. One verb, no conjugation, no gender, no case. Just the concept itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE WORDS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let's see haben in action:
+    </p>
+
+    <!-- HABEN card -->
+    <div class="ety-card" id="card-haben">
+      <div class="word-header">
+        <span class="word-main">Haben</span>
+        <span class="word-pron">/ˈhaːbən/</span>
+      </div>
+      <div class="word-meaning">to have — to possess, to hold, to own</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kap-</span>
+        <span class="bridge-note">— to seize, to grab, to take hold of</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">have</span>
+        <span class="bridge-note">— same root, same meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">haben (infinitive)</span>
+        <span class="bridge-note">— a regular verb, younger than sein</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">有</span>
+        <span class="bridge-note">— yǒu (have) — a simple, unchanging verb</span>
+      </div>
+      <div class="story">
+        <em>Haben</em> comes from the PIE root *kap-, which meant "to seize" or "to take hold of." The original sense was action-oriented: to grab something, to hold it. Over time, this evolved into the abstract sense of possession: to have something, to own it. The shift from action to possession happened gradually as the verb became more frequently used in contexts of ownership rather than physical grasping. German <em>haben</em> is regular because it's not ancient enough to have been fragmented into irregular forms. English <em>have</em> is equally regular. Chinese 有 (yǒu) never changes, reflecting a completely different grammatical system.
+      </div>
+    </div>
+
+    <!-- ICH HABE card -->
+    <div class="ety-card" id="card-ichhabe">
+      <div class="word-header">
+        <span class="word-main">Ich Habe</span>
+        <span class="word-pron">/ɪç ˈhaːbə/</span>
+      </div>
+      <div class="word-meaning">I have — the assertion of possession</div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">I have</span>
+        <span class="bridge-note">— identical form, identical conjugation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kap-ō (I seize)</span>
+        <span class="bridge-note">— first person singular of *kap-</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ich habe</span>
+        <span class="bridge-note">— regular first person present tense</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">我有</span>
+        <span class="bridge-note">— wǒ yǒu (I have) — pronoun + unchanging verb</span>
+      </div>
+      <div class="story">
+        <em>Ich habe</em> is the first person singular of haben. Unlike <em>ich bin</em>, it follows a completely predictable pattern. Remove the infinitive ending -n from <em>haben</em>, and you get the stem <em>hab-</em>. Then add the first person ending <em>-e</em>, and you get <em>habe</em>. This is regular conjugation. English <em>I have</em> follows the same pattern. Chinese is simpler: the verb 有 (yǒu) doesn't change at all — all the work is done by the pronoun 我 (wǒ).
+      </div>
+    </div>
+
+    <!-- DU HAST card -->
+    <div class="ety-card" id="card-duhast">
+      <div class="word-header">
+        <span class="word-main">Du Hast</span>
+        <span class="word-pron">/duː hast/</span>
+      </div>
+      <div class="word-meaning">you have — singular second person possession</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kap-s-ti (you seize)</span>
+        <span class="bridge-note">— second person singular ending *-s-ti</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">you have</span>
+        <span class="bridge-note">— modern English has lost the -st ending</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">du hast</span>
+        <span class="bridge-note">— regular second person, with -st ending</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">你有</span>
+        <span class="bridge-note">— nǐ yǒu (you have) — same structure as "I have"</span>
+      </div>
+      <div class="story">
+        <em>Du hast</em> shows the regular conjugation system. The stem is <em>hab-</em>, and the second person singular ending is -st. So: hab- + -st = <em>hast</em>. This is predictable, regular, systematic. The -st ending comes from the PIE ending *-s-ti. German preserves this ending in haben but has lost it in most other verbs. English has lost it entirely — we just say "you have," not "thou hast." This is a sign that English is regularizing, losing old inflections, while German preserves more of them.
+      </div>
+    </div>
+
+    <!-- ER HAT card -->
+    <div class="ety-card" id="card-erhat">
+      <div class="word-header">
+        <span class="word-main">Er Hat</span>
+        <span class="word-pron">/ɛʁ hat/</span>
+      </div>
+      <div class="word-meaning">he has — third person singular possession</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kap-e-ti (he seizes)</span>
+        <span class="bridge-note">— third person singular ending *-e-ti</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">he has</span>
+        <span class="bridge-note">— same form as all other persons except third singular</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">er hat</span>
+        <span class="bridge-note">— regular third person singular</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">他有</span>
+        <span class="bridge-note">— tā yǒu (he has) — identical to other persons</span>
+      </div>
+      <div class="story">
+        <em>Er hat</em> is third person singular. The stem <em>hab-</em> gets the ending -t (from PIE *-e-ti), creating <em>hat</em>. Notice: this is completely regular. Compare it to <em>er ist</em> (he is), which comes from a completely different root (*es-). The regularity of <em>er hat</em> versus the irregularity of <em>er ist</em> shows the difference between a younger verb (haben) and an ancient one (sein). German marks third person singular differently from other persons by adding -t, which is a remnant of the old PIE ending. English has lost this distinction — we say "he has" for third person, but "I have" and "you have" for first and second person. Wait, actually that's not right — English has "has" only for third singular. The point is that Modern German preserves more of the old system than Modern English.
+      </div>
+    </div>
+
+    <!-- WIR HABEN card -->
+    <div class="ety-card" id="card-wirhaben">
+      <div class="word-header">
+        <span class="word-main">Wir Haben</span>
+        <span class="word-pron">/vɪʁ ˈhaːbən/</span>
+      </div>
+      <div class="word-meaning">we have — plural first person possession</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kap-ə-mos (we seize)</span>
+        <span class="bridge-note">— plural first person ending *-ə-mos</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">we have</span>
+        <span class="bridge-note">— same as ich habe in modern English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wir haben</span>
+        <span class="bridge-note">— plural first person, stem + -en</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">我们有</span>
+        <span class="bridge-note">— wǒmen yǒu (we have) — pronoun includes plural marker</span>
+      </div>
+      <div class="story">
+        <em>Wir haben</em> is the plural first person form. The stem is <em>hab-</em>, and the plural ending is -en. This -en ending appears in multiple forms (plural 1st and 3rd person, and the infinitive). This is a pattern collapse: originally, different plural endings indicated different persons, but over time the system regularized so that many forms share -en. German preserved this partial regularization. The interesting thing about German plurals is that they don't distinguish person the way singular forms do. "Wir haben" and "sie haben" both use the same ending -en, even though one is first person and the other is third person. The pronoun carries the person distinction, not the verb ending.
+      </div>
+    </div>
+
+    <!-- HABT card -->
+    <div class="ety-card" id="card-habt">
+      <div class="word-header">
+        <span class="word-main">Ihr Habt</span>
+        <span class="word-pron">/ɪʁ hapt/</span>
+      </div>
+      <div class="word-meaning">you (plural) have — plural second person</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kap-ə-te (you-all seize)</span>
+        <span class="bridge-note">— plural second person ending *-ə-te</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">you have</span>
+        <span class="bridge-note">— English doesn't distinguish singular and plural you</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ihr habt</span>
+        <span class="bridge-note">— plural second person, -t ending marks this form</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">你们有</span>
+        <span class="bridge-note">— nǐmen yǒu (you-all have) — plural marker on pronoun, not verb</span>
+      </div>
+      <div class="story">
+        <em>Ihr habt</em> is plural second person. The -t ending marks this as distinct from the infinitive and first/third person plural. This is a remnant of the old PIE system where different persons had different endings even in the plural. English has lost the distinction between singular you and plural you entirely, so we just say "you have" regardless. German keeps <em>du</em> (singular you, informal) distinct from <em>ihr</em> (plural you, informal), which reflects the old hierarchy of person and number. Chinese marks the plural on the pronoun (们 = men = plural marker), not on the verb at all.
+      </div>
+    </div>
+
+    <!-- GEHABT card -->
+    <div class="ety-card" id="card-gehabt">
+      <div class="word-header">
+        <span class="word-main">Gehabt</span>
+        <span class="word-pron">/ɡəˈhaːpt/</span>
+      </div>
+      <div class="word-meaning">had — the past participle of "to have"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kap-no- (had, seized)</span>
+        <span class="bridge-note">— past participle form of *kap-</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">had</span>
+        <span class="bridge-note">— but English uses it as simple past tense too</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">gehabt (Ich habe gehabt = I have had)</span>
+        <span class="bridge-note">— ge- prefix marks it as past participle</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label zho">ZHO</span>
+        <span class="bridge-word zh">有</span>
+        <span class="bridge-note">— still yǒu — no change for past tense</span>
+      </div>
+      <div class="story">
+        <em>Gehabt</em> is the past participle of haben. Like all German past participles, it uses the <em>ge-</em> prefix. When you say <em>Ich habe gehabt</em> (I have had), you're using the present tense of haben as an auxiliary, combined with the past participle. The structure is: present + past = perfect tense. This is a Germanic innovation that German preserved but English has partially lost. English creates simple past tense through sound change (have → had), but German uses a compound structure (habe + gehabt). Chinese never changes the verb form at all.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: AUXILIARY POWER ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The power of <span class="german-word" data-speak="true">haben</span> lies in its role as an auxiliary. In the perfect tense, it combines with past participles to express completed actions:
+    </p>
+
+    <p class="narrative small" style="margin: 1.5em 0; padding: 20px; background: rgba(232, 164, 74, 0.06); border-radius: 8px;">
+      <strong>Ich habe gegessen.</strong> (I have eaten.)<br>
+      Ich habe schlafen. (I have slept.)<br>
+      Ich habe gearbeitet. (I have worked.)
+    </p>
+
+    <p class="narrative">
+      In all these sentences, haben carries the tense marking (present tense), while the past participle (gegessen, geschlafen, gearbeitet) carries the aspect (completed action). This division of labor is elegant: one word marks the time, another marks the completion.
+    </p>
+
+    <p class="narrative">
+      But here's where it gets complex. Not all verbs use haben as an auxiliary. Some verbs use <span class="german-word" data-speak="true">sein</span> instead. Which ones? The pattern is semantic: verbs of motion or change of state use sein. <span class="german-word" data-speak="true">Ich bin gegangen</span> (I have gone — literally, "I am gone"). The movement or transformation makes sein the right choice.
+    </p>
+
+    <p class="narrative">
+      This is where German reveals its logic. The choice of auxiliary depends on meaning. Sein for motion and change. Haben for action and possession. The grammar encodes meaning.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== ASIDE BOX ==================== -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">Have Versus Be: A Philosophical Divide</div>
+      <p>
+        The choice between "have" and "be" in perfect tenses reveals something about how languages conceptualize change and action. Germanic languages (German and English) primarily use "have" with most verbs. Romance languages (French, Spanish, Italian) sometimes use "be." German uses "be" with intransitive motion verbs and change-of-state verbs. This isn't arbitrary — it's semantic. An action you "have done" is something you possess, something you carry with you. A motion or change you "are" reflects the idea that you exist in a new state. The grammar embeds philosophy.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        If <strong style="color: var(--german);">Ich habe Hunger</strong> means "I am hungry," what does <strong style="color: var(--german);">Ich habe Recht</strong> mean?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: the pattern is "I have [quality]" = I am [quality])</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">I am right</button>
+        <button class="guess-btn" onclick="guess(this, false)">I have rights</button>
+        <button class="guess-btn" onclick="guess(this, false)">I turn right</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        Why is haben (to have) regular while sein (to be) is irregular?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: one is ancient, one is younger.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">German speakers preferred regular verbs</button>
+        <button class="guess-btn" onclick="guess(this, true)">Haben is younger and hasn't been worn down by billions of uses across thousands of years</button>
+        <button class="guess-btn" onclick="guess(this, false)">Regular verbs are easier to pronounce</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge of HABEN</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">444 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(52%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:52%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 444 words across 49 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">98 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(67%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:67%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 98 patterns and grammar rules across 49 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
+    </div>
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Forty-Nine</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">haben</span><span class="cw-english">to have</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">ich habe</span><span class="cw-english">I have</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">du hast</span><span class="cw-english">you have</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">er/sie/es hat</span><span class="cw-english">he/she/it has</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">wir haben</span><span class="cw-english">we have</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">ihr habt</span><span class="cw-english">you (plural) have</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">sie/Sie haben</span><span class="cw-english">they/you (formal) have</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">gehabt</span><span class="cw-english">had</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered</div>
+      <strong style="color: var(--text-bright);">Regular vs. Irregular</strong> — Haben is regular because it's younger and less fundamental than sein. Older, more-used verbs are more irregular. Frequency drives irregularity.<br><br>
+      <strong style="color: var(--text-bright);">Possession vs. Being</strong> — German uses haben for abstract states English reserves for sein: "I have hunger" instead of "I am hungry." This reflects different ways of conceptualizing states.<br><br>
+      <strong style="color: var(--text-bright);">Auxiliary Function</strong> — Haben serves as an auxiliary verb, combining with past participles to form perfect tenses. Sein also does this, but with motion and change-of-state verbs. The choice encodes meaning.<br><br>
+      <strong style="color: var(--text-bright);">Predictable Conjugation</strong> — Unlike sein, haben follows regular patterns. Remove the -n from the infinitive to get the stem, then add regular endings. This is how most German verbs work.
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Forty-Nine
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Eight forms. One regular verb. Younger than sein, clearer than sein, and just as fundamental.<br>
+        Haben carries meaning: possession, action, completion. It's the auxiliary that marks tense in perfect constructions.<br>
+        Every time you say <em>ich habe</em>, you're using a verb that works exactly the way modern German verbs should work.<br>
+        Where sein shows history, haben shows how the system functions today.<br>
+        Next, we turn to the regular pattern that covers 90% of German verbs.
+      </p>
+      <div class="next-chapter">
+        Chapter Fifty: Was Machst Du? — The Regular Present Tense
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter48.html" class="nav-btn">← Chapter 48</a>
+    <a href="chapter50.html" class="nav-btn next">Chapter 50 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 49: HOLDING/CUPPED HANDS ---
+const canvas = document.getElementById('holding-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 8000) :
+    Math.floor((canvas.width * canvas.height) / 6000);
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.6,
+      alpha: Math.random() * 0.5 + 0.15,
+      speed: Math.random() * 0.12 + 0.04,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.015 + 0.004,
+      collected: Math.random() > 0.7,
+      cluster: Math.floor(Math.random() * 3)
+    });
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  const midY = canvas.height / 2;
+
+  // Draw collecting hands shape
+  const handX1 = canvas.width * 0.3;
+  const handX2 = canvas.width * 0.7;
+  const handY = midY + (scroll * 100 - 50);
+
+  // Left hand curve
+  ctx.beginPath();
+  ctx.arc(handX1, handY, 60, 0, Math.PI, true);
+  ctx.strokeStyle = `rgba(232, 164, 74, ${0.15 + scroll * 0.1})`;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Right hand curve
+  ctx.beginPath();
+  ctx.arc(handX2, handY, 60, Math.PI, 0, true);
+  ctx.strokeStyle = `rgba(232, 164, 74, ${0.15 + scroll * 0.1})`;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  particles.forEach((p, idx) => {
+    p.y -= p.speed + scroll * 0.1;
+    p.wobble += p.wobbleSpeed;
+    p.x += Math.sin(p.wobble) * 0.2;
+
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    // Particles are attracted to hand areas
+    const distToLeft = Math.hypot(p.x - handX1, p.y - handY);
+    const distToRight = Math.hypot(p.x - handX2, p.y - handY);
+    const minDist = 70;
+
+    if (distToLeft < minDist || distToRight < minDist) {
+      p.collected = true;
+      p.alpha = Math.max(p.alpha - 0.01, 0.3);
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 164, 74, ${p.alpha * (p.collected ? 0.7 : 1)})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- AUDIO FOR GERMAN WORDS ---
+function speakGerman(word) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Exactly right! You understand the pattern.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about meaning and frequency.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What is the PIE root of the verb 'haben'?",
+    options: ["*kap- (to seize, to grasp)", "*wes- (to dwell)", "*bheu- (to become)", "*es- (to exist)"],
+    correct: 0,
+    explanation: "Haben comes from *kap-, meaning 'to seize' or 'to grasp.' The shift from 'seizing' to 'possessing' happened as the verb became more abstract."
+  },
+  {
+    question: "Why is 'haben' (to have) regular while 'sein' (to be) is irregular?",
+    options: ["German speakers preferred regular verbs", "Haben is younger and hasn't been worn down by billions of uses", "Regular verbs sound better", "There is no linguistic reason"],
+    correct: 1,
+    explanation: "Ancient, fundamental verbs are worn down by use and become irregular. Haben is younger (it emerged in Proto-Germanic), so it preserved its regular patterns."
+  },
+  {
+    question: "In German, 'Ich habe Hunger' literally means what?",
+    options: ["I own hunger (I am hungry)", "I pursue hunger", "I understand hunger", "I need hunger"],
+    correct: 0,
+    explanation: "Literally, 'Ich habe Hunger' = 'I have hunger,' but it means 'I am hungry.' German treats hunger as a possession, not an inherent state."
+  },
+  {
+    question: "Which of these is a regular pattern in 'haben' conjugation?",
+    options: ["Forms come from different PIE roots", "All forms use the stem 'hab-' plus regular endings", "The verb changes completely between persons", "There are no patterns"],
+    correct: 1,
+    explanation: "Haben is entirely regular: habe, hast, hat, haben, habt all follow the pattern of removing -n from the infinitive and adding person-number endings."
+  },
+  {
+    question: "What does 'Ich habe gegessen' mean?",
+    options: ["I eat", "I am eating", "I have eaten", "I will eat"],
+    correct: 2,
+    explanation: "This is the perfect tense: present haben (habe) + past participle (gegessen) = 'I have eaten.' Haben serves as an auxiliary verb here."
+  },
+  {
+    question: "Which auxiliary verb would you use with 'Ich bin gegangen'?",
+    options: ["haben", "sein", "wollen", "können"],
+    correct: 1,
+    explanation: "Motion verbs use sein: 'Ich bin gegangen' (I went/have gone). Literally: 'I am gone.' Most other verbs use haben."
+  },
+  {
+    question: "What does the -st ending in 'du hast' indicate?",
+    options: ["past tense", "second person singular", "plural", "question form"],
+    correct: 1,
+    explanation: "The -st ending comes from PIE and marks second person singular. German preserves this ending; English has largely lost it."
+  },
+  {
+    question: "How is 'gehabt' (past participle of haben) formed?",
+    options: ["add -en to the stem", "add ge- prefix + -t suffix", "irregular form", "add -d to the stem"],
+    correct: 1,
+    explanation: "German past participles use the ge- prefix: ge- + hab + -t = gehabt. The -t comes from the third person singular ending."
+  },
+  {
+    question: "In the sentence 'Wir haben die Aufgabe gemacht' (We have done the task), what role does 'haben' play?",
+    options: ["main verb showing possession", "auxiliary verb marking perfect tense", "past tense marker", "question indicator"],
+    correct: 1,
+    explanation: "Haben is the auxiliary (helper) verb. It marks that this is perfect tense (completed action). The past participle 'gemacht' carries the main meaning."
+  },
+  {
+    question: "What principle explains why ancient verbs like 'sein' are irregular while younger verbs like 'haben' are regular?",
+    options: ["Ancient peoples were not intelligent", "High-frequency verbs change faster and accumulate irregularities", "Modern grammar rules require regularity", "Random chance"],
+    correct: 1,
+    explanation: "Frequency drives irregularity. Common verbs are used billions of times, so sound changes accumulate. Rare verbs stay regular because they're used less."
+  },
+  {
+    question: "How does Chinese express 'to have' differently from German?",
+    options: ["Chinese uses a completely different verb", "Chinese never marks tense or conjugation", "有 (yǒu) is the only form, never changing", "All of the above"],
+    correct: 2,
+    explanation: "Chinese 有 (yǒu) never changes. It's used for all persons, tenses, and aspects. Context provides meaning; the verb doesn't conjugate."
+  },
+  {
+    question: "What is the cumulative impact of understanding both 'sein' and 'haben'?",
+    options: ["You can now express completion and existence in German", "You understand why some verbs are irregular and others regular", "You see how grammar encodes meaning (motion vs. action, state vs. possession)", "All of the above"],
+    correct: 3,
+    explanation: "These two verbs reveal fundamental principles: irregularity from frequency, auxiliary systems for complex tenses, semantic choices about which verbs are used where. They're foundational to understanding German grammar."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>465 words and patterns</strong> across forty-nine chapters. You understand the two essential verbs of German: sein (to be) and haben (to have). One is ancient and irregular, showing you the history of the language. The other is younger and regular, showing you how the grammar system works today.</p>
+      <p style="margin-top: 8px;"><strong>Architecture Unlocked:</strong> You see that regularity emerges from the system, while irregularity emerges from history. The two auxiliary verbs haben and sein carry different meanings: haben for actions and possession, sein for existence and motion. Understanding these two verbs is the gateway to understanding German grammar.</p>
+      <p style="margin-top: 8px;">Finally, we turn to the regular present tense that covers 90% of German verbs. This is where the system shows its true power.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+initializeQuiz();
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+</body>
+</html>

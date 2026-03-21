@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 91: Kollokationen (Collocations)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a; --fire-glow: #f4c67a; --night: #0a0e1a; --text: #d4cabb; --text-bright: #efe8db;
+    --german: #e8a44a; --chinese: #c49a6c; --gold: #d4af37;
+  }
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed; color: var(--text); font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem; line-height: 1.85; overflow-x: hidden;
+  }
+  #workshop-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+  .page-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 120px; }
+  @media (max-width: 640px) { .page-wrapper { padding: 30px 18px 80px; } body { font-size: 1.1rem; } }
+  .title-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 40px; }
+  .title-screen h1 { font-size: 4rem; font-weight: 300; letter-spacing: 0.02em; color: var(--text-bright); opacity: 0; animation: fadeUp 2s ease 0.4s forwards; margin-bottom: 0.3em; }
+  .title-screen .title-de { font-size: 3.5rem; font-weight: 400; color: var(--german); opacity: 0; animation: fadeUp 2s ease 0.8s forwards; margin-bottom: 1.5em; font-style: italic; }
+  .title-screen .description { font-size: 1.3rem; max-width: 700px; color: rgba(212, 202, 187, 0.6); line-height: 1.8; opacity: 0; animation: fadeUp 2s ease 1.2s forwards; margin-bottom: 2em; }
+  .chapter-label { font-size: 0.9rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(212, 202, 187, 0.4); opacity: 0; animation: fadeUp 2s ease 0.2s forwards; }
+  .scroll-hint { opacity: 0; animation: fadeUp 2s ease 2s forwards; color: rgba(212, 202, 187, 0.3); font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 3em; }
+  .scroll-hint span { display: inline-block; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .scene { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+  .scene.visible { opacity: 1; transform: translateY(0); }
+  .scene-marker { display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--fire), transparent); margin: 0 auto 40px; }
+  .narrative { font-size: 1.25rem; line-height: 1.9; margin-bottom: 1.5em; color: var(--text); }
+  .narrative.emphasis { font-size: 1.35rem; color: var(--text-bright); text-align: center; font-style: italic; margin: 2em 0; padding: 1.5em; background: rgba(232, 164, 74, 0.08); border-left: 3px solid var(--german); }
+  .german-word { color: var(--german); font-weight: 600; cursor: pointer; border-bottom: 1px dotted rgba(232, 164, 74, 0.4); padding: 2px 4px; }
+  .german-word:hover { background: rgba(232, 164, 74, 0.1); border-bottom: 1px solid var(--german); }
+  .collocation-card { background: rgba(20, 28, 45, 0.6); border: 1px solid rgba(232, 164, 74, 0.2); border-radius: 12px; padding: 28px; margin: 32px 0; transition: all 0.3s ease; }
+  .collocation-card:hover { background: rgba(20, 28, 45, 0.9); border-color: rgba(232, 164, 74, 0.4); box-shadow: 0 8px 32px rgba(232, 164, 74, 0.1); }
+  .collocation-de { font-size: 1.5rem; color: var(--german); font-weight: 600; margin-bottom: 12px; }
+  .collocation-literal { font-size: 1rem; color: rgba(212, 202, 187, 0.8); margin-bottom: 16px; padding: 12px 16px; background: rgba(232, 164, 74, 0.05); border-left: 2px solid var(--fire); font-style: italic; }
+  .section { margin: 16px 0; font-size: 1rem; line-height: 1.8; color: var(--text); }
+  .section-title { color: var(--fire-glow); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; }
+  .explanation { background: rgba(26, 35, 55, 0.5); padding: 12px 16px; border-radius: 8px; margin: 8px 0; color: rgba(212, 202, 187, 0.9); }
+  .chinese-callout { background: rgba(196, 154, 108, 0.08); padding: 16px 20px; border-radius: 8px; margin: 12px 0; border-left: 3px solid var(--chinese); font-size: 0.95rem; color: rgba(212, 202, 187, 0.85); }
+  .comparison-table { width: 100%; border-collapse: collapse; margin: 32px 0; background: rgba(20, 28, 45, 0.6); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 8px; overflow: hidden; }
+  .comparison-table th { background: rgba(232, 164, 74, 0.1); color: var(--fire-glow); padding: 16px 20px; text-align: left; font-weight: 600; border-bottom: 2px solid rgba(232, 164, 74, 0.2); font-size: 0.95rem; }
+  .comparison-table td { padding: 16px 20px; border-bottom: 1px solid rgba(232, 164, 74, 0.1); color: var(--text); }
+  .comparison-table tr:last-child td { border-bottom: none; }
+  .divider { text-align: center; margin: 80px 0; color: rgba(232, 164, 74, 0.3); font-size: 1.5rem; letter-spacing: 0.5em; }
+  .quiz-container { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95)); border: 1px solid rgba(232, 164, 74, 0.12); border-radius: 16px; padding: 40px 32px; margin: 80px 0; }
+  .quiz-container h3 { font-size: 1.3rem; color: var(--text-bright); text-align: center; margin-bottom: 32px; }
+  .quiz-question { background: rgba(26, 35, 55, 0.6); border: 1px solid rgba(232, 164, 74, 0.08); border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+  .quiz-question .q-text { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 16px; font-weight: 500; }
+  .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+  .quiz-option { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.2); color: var(--text); padding: 14px 18px; border-radius: 8px; cursor: pointer; transition: all 0.3s; font-family: 'Cormorant Garamond', serif; font-size: 1rem; text-align: left; }
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+  .quiz-nav { display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+  .quiz-nav button { background: rgba(232, 164, 74, 0.08); border: 1px solid rgba(232, 164, 74, 0.25); color: var(--text-bright); font-family: 'Cormorant Garamond', serif; font-size: 1rem; padding: 12px 28px; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .quiz-score { text-align: center; font-size: 1.3rem; color: var(--fire-glow); margin: 24px 0; font-weight: 500; }
+  .post-quiz-summary { background: rgba(155, 142, 196, 0.06); border-left: 2px solid rgba(232, 164, 74, 0.3); padding: 24px 28px; margin: 24px 0; border-radius: 0 8px 8px 0; font-size: 1rem; line-height: 1.7; color: rgba(212, 202, 187, 0.8); display: none; }
+  .post-quiz-summary.show { display: block; }
+  .progress-bar { background: rgba(232, 164, 74, 0.15); border-radius: 4px; height: 4px; margin: 16px 0; overflow: hidden; }
+  .progress-fill { background: var(--german); height: 100%; transition: width 0.3s; }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<canvas id="workshop-canvas"></canvas>
+<div class="page-wrapper">
+  <div class="title-screen">
+    <div class="chapter-label" data-speak="true">Chapter 91</div>
+    <h1 data-speak="true">Kollokationen</h1>
+    <p class="title-de" data-speak="true">Collocations</p>
+    <p class="description" data-speak="true">Words That Naturally Attract Each Other. In every language, certain words prefer to be paired with certain other words. These natural pairings, called collocations, are the glue that holds natural German speech together. Master collocations and you will speak German that sounds native, authentic, and precise. This is where learners transition from "technically correct" to "authentically fluent."</p>
+    <p class="scroll-hint" data-speak="true">Discover word pairings that create meaning<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">Collocations are word pairs that have become so natural together that native speakers use them automatically, often without realizing they're following a fixed pattern. They exist in every language, but they are particularly crucial in German because they help determine which verb goes with which noun, which creates a much more natural sound than literal translations might suggest. Understanding collocations is the difference between speaking "correct" German and speaking German that sounds native. A learner might construct grammatically perfect sentences and still sound foreign because they're using the wrong verb with a noun. Collocations are the hidden grammar that only native speakers truly master.</p>
+
+    <p class="narrative emphasis" data-speak="true">"Certain words belong together the way certain people belong together: by nature, by history, by cultural practice." — Linguistic wisdom</p>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Entscheidung treffen</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to hit a decision" — Actually: "to make a decision"</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">The verb "treffen" literally means "to hit" or "to strike." Using it with "Entscheidung" (decision) creates the image of making a decisive strike—hitting upon a decision. This metaphor comes from military and hunting contexts where a decisive blow was "treffen" (hitting the target). The pairing captures the sense of decisiveness and finality. You don't say "machen" (make) with decision in German the way English says "make a decision"—that would sound awkward, almost tentative. Instead, you "hit" or "strike" a decision, emphasizing its decisive nature and the moment when the decision crystallizes. In a board meeting, when someone says "Wir müssen eine Entscheidung treffen," there's an implicit sense of commitment and finality that "machen" would lack.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Wir müssen heute eine Entscheidung treffen" (We must strike a decision today). "Eine wichtige Entscheidung zu treffen ist schwer" (Striking an important decision is hard). "Sie hat eine schwierige Entscheidung getroffen" (She struck a difficult decision).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Cross-Language Insight: Chinese Parallel</div>
+        <div class="chinese-callout" data-speak="true">Chinese uses "做决定" (zuò juédìng = "do decision") or "作决定" (zuò juédìng = "make decision"), showing a different conceptual metaphor. German treats decisions as objects to be struck decisively, while Chinese treats them as actions to be performed. This reveals how German conceptualizes certainty and commitment differently.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Learners often say "eine Entscheidung machen" thinking of English "make a decision," but this sounds unnatural in German—less assertive, less committed. It can feel like you're tentatively exploring rather than decisively choosing. Always use "treffen."</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Erfahrung sammeln</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to collect/gather experience" — This one is fairly transparent</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">The verb "sammeln" (to gather, to collect) paired with "Erfahrung" (experience) creates the image of gathering experiences over time as you would gather fruit or firewood. You don't "make" experience in German—you collect it, accumulate it, harvest it through living. This reflects the idea that experience is something you build gradually through life, not something you create all at once or instantaneously. The metaphor is agricultural or forager-based: experience is something you harvest from life's fields. Each conversation, each project, each failure becomes a piece of fruit you gather and store. Over time, you have a rich harvest of experiences.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Ich habe viel Erfahrung gesammelt" (I have gathered much experience). "Im Ausland Erfahrung sammeln" (To gather experience abroad—a common phrase for studying or working internationally). "Sie sammelt berufliche Erfahrung" (She is gathering professional experience).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Cross-Language Insight: Chinese Parallel</div>
+        <div class="chinese-callout" data-speak="true">Chinese uses "积累经验" (jīlěi jīngyàn = "accumulate experience") or "获得经验" (huòdé jīngyàn = "obtain experience"), both emphasizing gathering/accumulating. The conceptual metaphor is identical to German, showing how both languages see experience as something you collect over time rather than something instantly acquired.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Learners sometimes say "Erfahrung machen" (make experience), which is technically understandable but sounds less idiomatic than "sammeln." It can sound like you're fabricating or inventing experience rather than naturally accumulating it.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">In Frage stellen</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to place something in question" — Actually: "to call something into question, to doubt it"</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">This is a structural phrase-verb combination where "in Frage" (into question) is inseparable from "stellen" (to place/put). The phrase means to formally place something into the category of "questions"—to question it, to cast doubt on it, to make it uncertain. This comes from academic and intellectual discourse where ideas are placed "into question" for examination and debate. Very German in its precision: you're not just doubting passively, you're actively and formally placing the matter into the question category for examination. When a lawyer says "Das stelle ich in Frage," they're making an explicit challenge in a structured way.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Ich stelle deine Entscheidung in Frage" (I place your decision into question—formal challenge). "Diese Theorie wird immer mehr in Frage gestellt" (This theory is increasingly being questioned). "Niemand stellt die Grundlagen in Frage" (No one questions the fundamentals).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Learners might try to say "in Frage zweifeln" (doubt into question) but this is incorrect. The structure "in Frage stellen" is fixed and inseparable. You cannot vary it with different verbs.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Bescheid geben</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to give notice/description" — Actually: "to let someone know, to inform"</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">"Bescheid" is an old German word meaning "notice," "instruction," or "description of a situation." Combined with "geben" (to give), it means to provide someone with information—literally to "give them the description/notice/state of affairs." This is one of the most common collocations in German and is used whenever you need to inform someone about something. It's extremely practical and appears constantly in everyday speech. When you tell a friend you'll call them back, you say "Ich gebe dir Bescheid" (I'll give you notice/let you know).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Gib mir Bescheid, wenn du ankommst" (Give me notice when you arrive—let me know when you arrive). "Wann gibst du mir Bescheid?" (When will you let me know?). "Ich gebe dir morgen Bescheid" (I'll let you know tomorrow).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Learners might say "ich informiere" (I inform) which is correct but sounds formal and less natural. "Bescheid geben" is more natural and common in everyday speech, whether formal or informal contexts.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Rolle spielen</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to play a role" — Actually: "to matter, to be relevant, to have importance"</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">This collocation uses the theater metaphor: when something "plays a role," it's performing a function in the overall drama. The pairing captures the idea that abstract things (concepts, factors, people) can have importance or relevance the way an actor has importance in a play. In German, you don't say something "matters" or "is important"—you say it "plays a role." This is more dynamic, more theatrical, more vivid than simple importance statements. When you say "Geld spielt eine große Rolle" (Money plays a big role), you're not just saying money is important; you're saying it's actively performing, it's doing work in the situation.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Geld spielt eine große Rolle in dieser Entscheidung" (Money plays a big role in this decision). "Das spielt keine Rolle" (That plays no role—that doesn't matter). "Die Kultur spielt eine wichtige Rolle" (Culture plays an important role).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Learners might use "wichtig sein" (to be important), which is correct but "Rolle spielen" is more idiomatic, more vivid, and widely used in natural German speech.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Rücksicht nehmen</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to take back-looking" (Rücksicht = looking back) — Actually: "to be considerate, to show consideration"</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">"Rücksicht" derives from "Rück" (back) + "Sicht" (sight/view), originally meaning to look back at something with consideration, to consider the background, the context, the other person's perspective. The phrase "Rücksicht nehmen" means to take consideration into account, to be mindful of others' feelings or situations. Always used with "auf" (on): "Rücksicht auf jemanden nehmen" (to take consideration on someone = to be considerate of someone). It's a deeply ethical word in German, emphasizing consideration and respect for others.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Nimm Rücksicht auf deine Eltern!" (Take consideration of your parents!). "Er nahm keine Rücksicht auf die anderen" (He took no consideration of others—he was inconsiderate). "Sie nimmt Rücksicht auf seine Gefühle" (She takes consideration of his feelings).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Don't forget the "auf"—you must say "Rücksicht auf..." not just "Rücksicht nehmen" without specification of who you're being considerate toward. The preposition is essential to the meaning.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Verantwortung übernehmen</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to take over responsibility" — This one's quite direct</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">"Übernehmen" (to take over, to assume) paired with "Verantwortung" (responsibility) creates the image of taking something on your shoulders, assuming it as your burden or duty. This is the standard collocation for accepting responsibility in a formal, committed way. In German, you don't "assume" responsibility in the English sense—you "take over" it, the way you might take over a job or a position. It suggests active acceptance and willingness to bear the burden.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Ich übernehme die Verantwortung dafür" (I take over responsibility for this). "Er weigert sich, Verantwortung zu übernehmen" (He refuses to take over responsibility). "Wer übernimmt die Verantwortung?" (Who will take over responsibility?).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Saying "Verantwortung machen" or "Verantwortung tragen" (carry responsibility) are possible but "übernehmen" is the standard, most natural choice for formally accepting responsibility.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Eindruck machen</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to make an impression" — Also quite transparent</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">An "Eindruck" (impression) is a mark or stamp left on something. "Machen" (to make) with an impression creates the idea of leaving a mental mark on someone through your behavior, appearance, or actions. Very German in its metaphor: you're literally stamping or imprinting yourself on someone's mind through your actions. It's a physical metaphor applied to psychology. When you say someone "macht einen guten Eindruck" (makes a good impression), you're saying they've left a positive imprint on people's minds.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Sie hat einen großen Eindruck auf mich gemacht" (She made a big impression on me). "Er macht immer einen guten Eindruck" (He always makes a good impression). "Das macht einen negativen Eindruck" (That makes a negative impression).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">You might say "einen Eindruck hinterlassen" (leave an impression), which is also correct but "machen" is more common and more actively focused on the person creating the impression.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Stellung nehmen</div>
+      <div class="collocation-literal" data-speak="true">Literally: "to take position" — Actually: "to take a stance, to express an opinion"</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">"Stellung" (position, stance) combined with "nehmen" (to take) creates the military metaphor of taking a position in defense or offense—planting your flag, making your stand. In discourse, "Stellung nehmen" means to take a position on an issue—to declare where you stand, to make a public statement. It's more formal and structured than casual opinion-giving. Always used with "zu" (to): "Stellung zu etwas nehmen" (to take position on something). In official contexts—press conferences, parliamentary debates—"Stellung nehmen" is the precise term.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Der Präsident nahm Stellung zu dem Skandal" (The president took position on the scandal—made an official statement). "Ich möchte dazu Stellung nehmen" (I'd like to take a stance on this). "Die Regierung nimmt keine Stellung dazu" (The government takes no position on this).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">Always include "zu"—you can't say just "Stellung nehmen" without the object of your stance. Also remember the military origin makes this quite formal and official-sounding.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="collocation-de">Fehler machen</div>
+      <div class="collocation-literal" data-speak="true">Literally and actually: "to make a mistake"</div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Etymology and Why This Pairing</div>
+        <div class="explanation" data-speak="true">This straightforward pairing treats a mistake as something you "make" or "produce" rather than "do" or "commit." It's the standard, most natural way to express errors in German. The word "Fehler" (error) is neutral and non-judgmental, and "machen" treats it as an action, not a moral failing. Germans don't "commit errors" the way some languages do—they "make" them, treating mistakes as natural products of being human and trying things.</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Examples in Context</div>
+        <div class="explanation" data-speak="true">"Ich habe einen Fehler gemacht" (I made a mistake). "Jeder macht Fehler" (Everyone makes mistakes). "Das war ein großer Fehler" (That was a big mistake).</div>
+      </div>
+      <div class="section">
+        <div class="section-title" data-speak="true">Common Error</div>
+        <div class="explanation" data-speak="true">English speakers might say "einen Fehler begehen" (commit an error), which is too formal and carries more moral weight than intended. "Machen" is the natural, everyday choice for all contexts.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative" data-speak="true">These ten collocations represent the most essential word pairings in German. They appear constantly in speech and writing. Once you internalize them, you will find your German sounding dramatically more natural because you'll be using the exact pairings that native speakers prefer. Collocations are learned through exposure and repetition—try using one per day in your speaking practice until they become automatic.</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th data-speak="true">Collocation</th>
+          <th data-speak="true">Literal Sense</th>
+          <th data-speak="true">Actual Meaning</th>
+          <th data-speak="true">Key Point</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-speak="true"><strong>Entscheidung treffen</strong></td>
+          <td data-speak="true">Hit a decision</td>
+          <td data-speak="true">Make a decision</td>
+          <td data-speak="true">Emphasizes decisiveness & commitment</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Erfahrung sammeln</strong></td>
+          <td data-speak="true">Gather experience</td>
+          <td data-speak="true">Gain experience</td>
+          <td data-speak="true">Gradual accumulation over time</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>In Frage stellen</strong></td>
+          <td data-speak="true">Place in question</td>
+          <td data-speak="true">Call into question</td>
+          <td data-speak="true">Fixed phrase-verb, formal challenge</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Bescheid geben</strong></td>
+          <td data-speak="true">Give notice</td>
+          <td data-speak="true">Let someone know</td>
+          <td data-speak="true">Very common in everyday speech</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Rolle spielen</strong></td>
+          <td data-speak="true">Play a role</td>
+          <td data-speak="true">Matter, be relevant</td>
+          <td data-speak="true">Theater metaphor, dynamic language</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Rücksicht nehmen</strong></td>
+          <td data-speak="true">Take back-looking</td>
+          <td data-speak="true">Be considerate</td>
+          <td data-speak="true">Always requires "auf" preposition</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Verantwortung übernehmen</strong></td>
+          <td data-speak="true">Take over responsibility</td>
+          <td data-speak="true">Assume responsibility</td>
+          <td data-speak="true">Standard formal choice</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Eindruck machen</strong></td>
+          <td data-speak="true">Make an impression</td>
+          <td data-speak="true">Leave a mark on someone</td>
+          <td data-speak="true">Metaphorical stamping/imprinting</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Stellung nehmen</strong></td>
+          <td data-speak="true">Take position</td>
+          <td data-speak="true">Take a stance, express opinion</td>
+          <td data-speak="true">Military origin, formal & official</td>
+        </tr>
+        <tr>
+          <td data-speak="true"><strong>Fehler machen</strong></td>
+          <td data-speak="true">Make a mistake</td>
+          <td data-speak="true">Make an error</td>
+          <td data-speak="true">Everyday, neutral, universal</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="collocation-card">
+      <div class="section">
+        <div class="section-title" data-speak="true">Why Verbs Matter: The Core of German Collocations</div>
+        <div class="section" data-speak="true">German is a verb-centered language. The verb you choose determines whether your German sounds native or foreign. Notice how in these ten collocations, the noun stays the same but the verb changes everything: "Entscheidung treffen" vs. "Entscheidung machen"—same noun, different verbs, completely different feel. "Treffen" (to hit) suggests commitment and precision. "Machen" (to make) sounds tentative and vague. Native speakers choose verbs that embody the exact nuance they want to convey. This is why learning collocations—specifically which verbs pair with which nouns—is absolutely fundamental to sounding like a native speaker. The grammar can be perfect, but if the verb is wrong, everything else feels off.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="section">
+        <div class="section-title" data-speak="true">Strategies for Mastering Collocations</div>
+        <div class="section" data-speak="true">The best way to internalize collocations is through active production and multi-sensory engagement. Rather than just reading examples, try to create sentences using each collocation in contexts relevant to your life. Notice how native speakers use these phrases in films, podcasts, interviews, and texts. Keep a collocation journal where you record not just the phrase but also the metaphor or logic behind it (why "treffen" for decisions—the metaphor of hitting the target decisively, why "spielen" for mattering—the theater metaphor of performance). The more you understand the underlying logic, the more easily these will stick in your memory and the more naturally you'll use them. When you encounter these collocations in your reading, mark them and note their context. When you hear them in conversation or media, listen for how native speakers emphasize or intonate them, what expressions precede or follow them. This multi-sensory engagement—reading, writing, speaking, listening, analyzing—accelerates internalization dramatically.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="section">
+        <div class="section-title" data-speak="true">Collocations and Register: Formal vs. Informal</div>
+        <div class="section" data-speak="true">Not all collocations are equal in every context. "Entscheidung treffen" works in both formal board meetings and casual conversations with friends. "In Frage stellen" is more intellectual and formal—you're unlikely to use it in casual chat at a café. "Fehler machen" is universal and equally natural in all contexts. "Stellung nehmen" is distinctly formal and official—used by politicians, CEOs, and academics making public statements. Learning collocations also means learning their register. When you're preparing for a job interview and someone asks "Auf welche Punkte haben Sie sich konzentriert?" (What have you focused on?), knowing to answer with "Ich habe Erfahrung in... gesammelt" (I have gathered experience in...) or "Ich habe diese Erfahrung gemacht" (I have gained this experience) shows natural fluency. These real-world contexts are where collocations truly matter and where learners most notice the difference between knowing words and knowing language.</div>
+      </div>
+    </div>
+
+    <div class="collocation-card">
+      <div class="section">
+        <div class="section-title" data-speak="true">Collocations in Your Future Learning</div>
+        <div class="section" data-speak="true">These ten collocations are the foundation, but German has hundreds more. "Anspruch erheben" (to make a claim), "Hoffnung aufgeben" (to give up hope), "Geduld verlieren" (to lose patience), "Aufmerksamkeit erregen" (to draw attention)—each one has its own logic, its own metaphor, its own proper context. As you continue your German journey, you'll encounter collocations constantly. Start collecting them. When you see a new verb-noun pairing, ask yourself: What's the metaphor? What's the underlying logic? Does it remind me of any other collocations I know? By training yourself to think about collocations this way, you'll internalize new ones more quickly and develop an intuitive sense for how German thinks and speaks. You'll move from translating collocations from English to understanding them on their own terms, in their own logic, within their own culture.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <div class="quiz-container">
+      <h3 data-speak="true">Chapter 91 Quiz: Collocations</h3>
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" data-speak="true">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()" data-speak="true">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="post-quiz-summary" id="quiz-summary"></div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <a href="chapter90.html" class="nav-btn">← Chapter 90</a>
+    <a href="chapter92.html" class="nav-btn next">Chapter 92 →</a>
+  </div>
+
+</div>
+
+<script>
+const quizData = [
+  {question:"What verb should you use with 'Entscheidung' to sound native?", options:["machen","treffen","spielen","nehmen"], correct:1, explanation:"Entscheidung treffen (hit/strike a decision) emphasizes decisiveness and commitment, not machen."},
+  {question:"Why does 'Erfahrung sammeln' use 'sammeln' instead of 'machen'?", options:["It's older German","It suggests gradual accumulation over time","It's easier to pronounce","It comes from English"], correct:1, explanation:"Sammeln (gather) implies collecting experiences gradually, like harvesting, not making them instantaneously."},
+  {question:"What is the correct form for 'to call into question' in German?", options:["Frage stellen","In Frage stellen","Zu Frage stellen","Frage nehmen"], correct:1, explanation:"In Frage stellen is the fixed phrase-verb for formally calling something into question."},
+  {question:"What does 'Bescheid geben' mean in everyday German?", options:["To give an answer","To let someone know","To give permission","To give a description"], correct:1, explanation:"Bescheid geben means to inform, to let someone know—extremely common in daily speech."},
+  {question:"When something 'spielt eine große Rolle,' what is the underlying metaphor?", options:["It's a game","Theater/performance","Military action","Gravity"], correct:1, explanation:"Rolle spielen uses the theater metaphor—things that 'perform a role' in a situation matter and are relevant."},
+  {question:"'Rücksicht nehmen' MUST be followed by what preposition?", options:["An accusative noun","The preposition 'auf'","An infinitive","A dative case"], correct:1, explanation:"You must say Rücksicht auf jemanden nehmen (take consideration ON someone)."},
+  {question:"What is the standard, most natural way to say 'assume responsibility'?", options:["Verantwortung tragen","Verantwortung machen","Verantwortung übernehmen","Verantwortung spielen"], correct:2, explanation:"Verantwortung übernehmen (take over responsibility) is the standard formal choice."},
+  {question:"'Eindruck machen' is based on what metaphor?", options:["Military position","Harvesting","Stamping or imprinting a mark","Sports competition"], correct:2, explanation:"Eindruck suggests stamping or imprinting a mental mark on someone through your actions."},
+  {question:"'Stellung nehmen' comes from which historical context?", options:["Medical terminology","Theater","Military (taking a position)","Academic discourse"], correct:2, explanation:"The military metaphor of taking a position makes this collocation formal and official."},
+  {question:"How do you naturally say 'to make a mistake' in everyday German?", options:["Fehler begehen","Fehler machen","Fehler tun","Fehler spielen"], correct:1, explanation:"Fehler machen is the natural, everyday, universal way to express making a mistake."},
+  {question:"Which collocation requires 'zu' as its essential preposition?", options:["Rolle spielen","Stellung nehmen","Rücksicht nehmen","Bescheid geben"], correct:1, explanation:"Stellung zu etwas nehmen (take a position ON something) requires 'zu'."},
+  {question:"What is the primary learning strategy for mastering collocations?", options:["Reading grammar books","Memorizing lists","Active production + multi-sensory engagement","Translating from English"], correct:2, explanation:"Collocations are best learned through creating sentences, listening, reading context, and understanding the underlying metaphors."}
+];
+
+let currentQuestion = 0, score = 0, answered = {};
+
+function displayQuestion(){
+  const q = quizData[currentQuestion];
+  const isAnswered = answered[currentQuestion] !== undefined;
+  document.getElementById('progress').style.width = ((currentQuestion + 1) / quizData.length) * 100 + '%';
+  document.getElementById('quiz-questions').innerHTML = `<div class="quiz-question"><div class="q-text" data-speak="true">Q${currentQuestion + 1}: ${q.question}</div><div class="quiz-options">${q.options.map((opt, i) => `<div class="quiz-option ${isAnswered ? (i === q.correct ? 'selected' : (i === answered[currentQuestion] && i !== q.correct ? 'incorrect' : '')) : ''}" onclick="selectAnswer(${i})" data-speak="true">${opt}</div>`).join('')}</div>${isAnswered ? `<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(232,164,74,0.1);font-size:0.95rem;color:rgba(212,202,187,0.8);" data-speak="true"><strong>Explanation:</strong> ${q.explanation}</div>` : ''}</div>`;
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').textContent = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next →';
+}
+
+function selectAnswer(i){
+  if(answered[currentQuestion] !== undefined) return;
+  answered[currentQuestion] = i;
+  if(i === quizData[currentQuestion].correct) score++;
+  displayQuestion();
+}
+
+function nextQuestion(){
+  currentQuestion < quizData.length - 1 ? (currentQuestion++, displayQuestion()) : showScore();
+}
+
+function previousQuestion(){
+  if(currentQuestion > 0){ currentQuestion--; displayQuestion(); }
+}
+
+function showScore(){
+  const pct = Math.round((score / quizData.length) * 100);
+  document.getElementById('quiz-score').textContent = `Your score: ${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('quiz-summary').classList.add('show');
+  document.getElementById('quiz-summary').innerHTML = `<p data-speak="true"><strong>Chapter 91 Complete!</strong></p><p style="margin-top:12px" data-speak="true">Collocations are the secret to sounding native. These ten pairings will serve you constantly in German conversation and writing. Your next goal: collect more collocations and internalize them through active use.</p>${pct >= 80 ? '<p style="margin-top:12px; color: var(--fire-glow)" data-speak="true">Excellent! Your mastery of these collocations is outstanding. You understand the metaphors and logic behind them.</p>' : '<p style="margin-top:12px; color: var(--fire-glow)" data-speak="true">Strong progress. Continue practicing these in sentences and listen for them in German media until they feel completely automatic.</p>'}`;
+}
+
+function drawMagnets() {
+  const canvas = document.getElementById('workshop-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let time = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    time += 0.01;
+    for(let i = 0; i < 10; i++) {
+      const x = Math.sin(time + i) * 150 + canvas.width / 2;
+      const y = (canvas.height / 10) * (i + 1);
+      ctx.fillStyle = `rgba(232, 164, 74, ${0.06 + Math.sin(time + i * 0.5) * 0.04})`;
+      ctx.fillRect(x - 20, y - 10, 40, 20);
+      ctx.strokeStyle = `rgba(232, 164, 74, ${0.15})`;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x - 20, y - 10, 40, 20);
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(s => observer.observe(s));
+
+window.addEventListener('load', () => {
+  drawMagnets();
+  displayQuestion();
+  document.querySelectorAll('[data-speak="true"]').forEach(el => {
+    el.addEventListener('click', function(e){ if(window.speakGerman) window.speakGerman(this.textContent); });
+  });
+});
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- CLICKABLE GERMAN WORDS FOR AUDIO ---
+document.querySelectorAll('.german-word[data-speak]').forEach(w => {
+  w.addEventListener('click', () => speakGerman(w.textContent.trim()));
+});
+
+</script>
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+
+  <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">780 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(91%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:91%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 780 words across 91 chapters. Revisit earlier chapters to review.</p>
+    </div>
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">140 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(96%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:96%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 140 patterns across 91 chapters.</p>
+    </div>
+  </div>
+
+</body>
+</html>
