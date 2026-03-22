@@ -394,6 +394,104 @@
 
   .guess-feedback.show { opacity: 1; }
 
+  /* --- QUIZ STYLES --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .quiz-container h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .quiz-question { margin-bottom: 24px; }
+  .quiz-question.hidden { display: none; }
+  .quiz-question .q-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+  .quiz-option.correct-answer {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+  .quiz-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .quiz-score {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--fire-glow);
+    font-weight: 500;
+  }
+  .quiz-reset { text-align: center; margin-top: 16px; }
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
   /* --- SECTION DIVIDERS --- */
   .divider {
     text-align: center;
@@ -1320,6 +1418,20 @@
     </div>
   </div>
 
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+    </div>
+  </div>
+
   <!-- ==================== YOUR PROGRESS ==================== -->
   <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
@@ -1719,6 +1831,120 @@ document.querySelectorAll('.ety-card').forEach(card => {
     if (header) header.appendChild(btn);
   }
 });
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "Which of these words has a PIE root that evolved through a sound shift?",
+    options: ["Bruder (brother)", "Bild (picture)", "Film (film)", "Butter (butter)"],
+    correct: 0,
+    explanation: "Bruder comes from PIE *bhr\u0101ter and underwent the th→d shift. Bild, Film, and Butter are later borrowings."
+  },
+  {
+    question: "What sound shift explains why English \u2018night\u2019 became German \u2018Nacht\u2019?",
+    options: ["t→ts", "gh→ch", "th→d", "st→sht"],
+    correct: 1,
+    explanation: "The gh→ch shift is part of Grimm\u0019s Law. English kept the gh, while German shifted it to ch, heard in \u2018Nacht\u2019."
+  },
+  {
+    question: "Which English word is cognate to German \u2018Stern\u2019 (star)?",
+    options: ["string", "stern", "stir", "stone"],
+    correct: 1,
+    explanation: "English \u2018stern\u2019 (meaning strict or the ship\u2019s rear) and German \u2018Stern\u2019 (star) both come from the same PIE root *ster."
+  },
+  {
+    question: "In German, the letter V sounds like which English sound?",
+    options: ["V as in \u2018vine\u2019", "F as in \u2018fine\u2019", "W as in \u2018wine\u2019", "B as in \u2018bin\u2019"],
+    correct: 1,
+    explanation: "In German, V is pronounced like the English F. That\u2019s why \u2018Vater\u2019 sounds like \u2018Fahter\u2019 to English ears."
+  },
+  {
+    question: "What does \u2018Mutter\u2019 mean in German?",
+    options: ["must", "mutiny", "mother", "change"],
+    correct: 2,
+    explanation: "\u2018Mutter\u2019 means mother. It\u2019s one of the most basic family words, inherited from Proto-Indo-European."
+  },
+  {
+    question: "Why are English and German so different in pronunciation if they come from the same roots?",
+    options: ["They don\u2019t come from the same roots", "Germanic sound shifts changed German consonants but not English", "English borrowed too many words from French", "German is older than English"],
+    correct: 1,
+    explanation: "Both languages inherited the same PIE roots, but the Second Germanic Consonant Shift transformed German consonants (p→pf, t→ts, k→ch) while English avoided these shifts."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = new Array(quizData.length).fill(false);
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-questions');
+  if (!container) return;
+  container.innerHTML = '';
+  quizData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (i === 0 ? '' : ' hidden');
+    div.id = 'q' + i;
+    div.innerHTML = '<p class="q-text">' + (i + 1) + '. ' + q.question + '</p><div class="quiz-options">' +
+      q.options.map((opt, j) => '<div class="quiz-option" onclick="selectAnswer(' + i + ',' + j + ')">' + opt + '</div>').join('') + '</div>';
+    container.appendChild(div);
+  });
+  updateNav();
+}
+
+function selectAnswer(qi, ai) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const opts = document.querySelectorAll('#q' + qi + ' .quiz-option');
+  opts.forEach((o, j) => {
+    if (j === quizData[qi].correct) o.classList.add('correct-answer');
+    else if (j === ai) o.classList.add('incorrect');
+    o.style.pointerEvents = 'none';
+  });
+  if (ai === quizData[qi].correct) score++;
+  if (answered.every(a => a)) showScore();
+  setTimeout(() => { if (currentQuestion < quizData.length - 1) nextQuestion(); }, 1200);
+}
+
+function nextQuestion() {
+  if (currentQuestion >= quizData.length - 1) return;
+  document.getElementById('q' + currentQuestion).classList.add('hidden');
+  currentQuestion++;
+  document.getElementById('q' + currentQuestion).classList.remove('hidden');
+  updateNav();
+}
+
+function previousQuestion() {
+  if (currentQuestion <= 0) return;
+  document.getElementById('q' + currentQuestion).classList.add('hidden');
+  currentQuestion--;
+  document.getElementById('q' + currentQuestion).classList.remove('hidden');
+  updateNav();
+}
+
+function updateNav() {
+  const prev = document.getElementById('prev-btn');
+  const next = document.getElementById('next-btn');
+  if (prev) prev.disabled = currentQuestion === 0;
+  if (next) next.disabled = currentQuestion === quizData.length - 1;
+}
+
+function showScore() {
+  const el = document.getElementById('quiz-score');
+  if (el) el.textContent = 'Score: ' + score + ' / ' + quizData.length;
+  const reset = document.getElementById('quiz-reset');
+  if (reset) reset.innerHTML = '<button onclick="resetQuiz()">Try Again</button>';
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  answered = new Array(quizData.length).fill(false);
+  renderQuiz();
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-reset').innerHTML = '';
+}
+
+renderQuiz();
 
 </script>
 

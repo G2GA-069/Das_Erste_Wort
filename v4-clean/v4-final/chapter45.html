@@ -28,7 +28,7 @@ body {
   overflow-x: hidden;
 }
 #workshop-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
-.page-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+.content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
 #progressBar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, #8b4513, #daa520); transition: width 0.1s ease-out; z-index: 999; }
 .title-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 40px; }
 .title-screen h1 { font-size: 4rem; font-weight: 300; color: var(--text-bright); opacity: 0; animation: fadeUp 2s ease 0.4s forwards; margin-bottom: 1em; }
@@ -149,7 +149,7 @@ body {
 <div id="progressBar"></div>
 <canvas id="workshop-canvas"></canvas>
 
-<div class="page-wrapper">
+<div class="content">
 
   <div class="title-screen" id="titleScreen">
     <p class="chapter-label">Chapter Forty-Five</p>
@@ -1056,6 +1056,27 @@ window.addEventListener('load', () => {
       </table>
     </div>
   </div>
+
+<script>
+/* --- ETYMOLOGY CARDS --- */
+document.querySelectorAll('.german-word[data-card]').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+</script>
 
 <script src="game-engine.js" defer></script>
 </body>

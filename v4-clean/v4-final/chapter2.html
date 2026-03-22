@@ -397,6 +397,104 @@
 
   .guess-feedback.show { opacity: 1; }
 
+  /* --- QUIZ STYLES --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .quiz-container h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .quiz-question { margin-bottom: 24px; }
+  .quiz-question.hidden { display: none; }
+  .quiz-question .q-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+  .quiz-option.correct-answer {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+  .quiz-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .quiz-score {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--fire-glow);
+    font-weight: 500;
+  }
+  .quiz-reset { text-align: center; margin-top: 16px; }
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
   /* --- SECTION DIVIDERS --- */
   .divider {
     text-align: center;
@@ -1350,6 +1448,21 @@
       <div class="collected-words">
         <div class="collected-word" data-delay="1000" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Strong Verbs</span><span class="cw-english">sing/sang/sung — a Germanic invention</span></div>
         <div class="collected-word" data-delay="1100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Forest Cognates</span><span class="cw-english">Wald/wold, Baum/beam, Stein/stone</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
         <div class="collected-word" data-delay="1200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Settlement Words</span><span class="cw-english">Haus/house, Brot/bread, Milch/milk</span></div>
         <div class="collected-word" data-delay="1300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Environment → Language</span><span class="cw-english">new world, new words</span></div>
       </div>
@@ -1708,6 +1821,120 @@ document.querySelectorAll('.ety-card').forEach(card => {
     if (header) header.appendChild(btn);
   }
 });
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "Which of these words is a \u2018forest cognate\u2019 — a word the Germanic peoples created for the forest?",
+    options: ["Haus (house)", "Wald (forest)", "Milch (milk)", "Feuer (fire)"],
+    correct: 1,
+    explanation: "Wald is the classic forest word, shared with English \u2018wold\u2019. It comes from the Germanic peoples\u2019 new environment in the forests of northern Europe."
+  },
+  {
+    question: "What is a \u2018strong verb\u2019 in Germanic languages?",
+    options: ["A verb with a long sound", "A verb that changes its vowel to show past tense (like sing/sang/sung)", "A verb that means something powerful", "A verb borrowed from Latin"],
+    correct: 1,
+    explanation: "Strong verbs change their internal vowel: sing→sang→sung, drink→drank→drunk. This is a unique Germanic invention, not found in Latin or Greek."
+  },
+  {
+    question: "Which English word is cognate with German \u2018Stein\u2019?",
+    options: ["stay", "stain", "stone", "stun"],
+    correct: 2,
+    explanation: "English \u2018stone\u2019 and German \u2018Stein\u2019 come from the same Proto-Germanic root, both meaning rock or stone."
+  },
+  {
+    question: "The Germanic peoples lived primarily in which type of environment?",
+    options: ["Open grasslands", "Mountains", "Deserts", "Dense forests"],
+    correct: 3,
+    explanation: "The Proto-Germanic peoples migrated into the dense forests of northern Europe, which shaped their language with new vocabulary for trees, hunting, and settlement."
+  },
+  {
+    question: "What does the German word \u2018Brot\u2019 mean?",
+    options: ["brother", "bread", "bright", "bride"],
+    correct: 1,
+    explanation: "\u2018Brot\u2019 means bread. English has the word \u2018bread\u2019 as a cognate, showing both languages share the word for this essential food."
+  },
+  {
+    question: "Which of these is an example of a \u2018weak verb\u2019 in English?",
+    options: ["sing/sang/sung", "drink/drank/drunk", "love/loved/loved", "swim/swam/swum"],
+    correct: 2,
+    explanation: "Weak verbs add a suffix (-ed) instead of changing the vowel: love→loved, walk→walked. These are later Germanic formations, created from nouns."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = new Array(quizData.length).fill(false);
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-questions');
+  if (!container) return;
+  container.innerHTML = '';
+  quizData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (i === 0 ? '' : ' hidden');
+    div.id = 'q' + i;
+    div.innerHTML = '<p class="q-text">' + (i + 1) + '. ' + q.question + '</p><div class="quiz-options">' +
+      q.options.map((opt, j) => '<div class="quiz-option" onclick="selectAnswer(' + i + ',' + j + ')">' + opt + '</div>').join('') + '</div>';
+    container.appendChild(div);
+  });
+  updateNav();
+}
+
+function selectAnswer(qi, ai) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const opts = document.querySelectorAll('#q' + qi + ' .quiz-option');
+  opts.forEach((o, j) => {
+    if (j === quizData[qi].correct) o.classList.add('correct-answer');
+    else if (j === ai) o.classList.add('incorrect');
+    o.style.pointerEvents = 'none';
+  });
+  if (ai === quizData[qi].correct) score++;
+  if (answered.every(a => a)) showScore();
+  setTimeout(() => { if (currentQuestion < quizData.length - 1) nextQuestion(); }, 1200);
+}
+
+function nextQuestion() {
+  if (currentQuestion >= quizData.length - 1) return;
+  document.getElementById('q' + currentQuestion).classList.add('hidden');
+  currentQuestion++;
+  document.getElementById('q' + currentQuestion).classList.remove('hidden');
+  updateNav();
+}
+
+function previousQuestion() {
+  if (currentQuestion <= 0) return;
+  document.getElementById('q' + currentQuestion).classList.add('hidden');
+  currentQuestion--;
+  document.getElementById('q' + currentQuestion).classList.remove('hidden');
+  updateNav();
+}
+
+function updateNav() {
+  const prev = document.getElementById('prev-btn');
+  const next = document.getElementById('next-btn');
+  if (prev) prev.disabled = currentQuestion === 0;
+  if (next) next.disabled = currentQuestion === quizData.length - 1;
+}
+
+function showScore() {
+  const el = document.getElementById('quiz-score');
+  if (el) el.textContent = 'Score: ' + score + ' / ' + quizData.length;
+  const reset = document.getElementById('quiz-reset');
+  if (reset) reset.innerHTML = '<button onclick="resetQuiz()">Try Again</button>';
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  answered = new Array(quizData.length).fill(false);
+  renderQuiz();
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-reset').innerHTML = '';
+}
+
+renderQuiz();
 
 </script>
 

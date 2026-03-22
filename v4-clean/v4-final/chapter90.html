@@ -49,16 +49,16 @@
     pointer-events: none;
   }
 
-  .page-wrapper {
+  .content {
     position: relative;
     z-index: 1;
-    max-width: 900px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 40px 24px 120px;
   }
 
   @media (max-width: 640px) {
-    .page-wrapper { padding: 30px 18px 80px; }
+    .content { padding: 30px 18px 80px; }
     body { font-size: 1.1rem; }
   }
 
@@ -387,6 +387,22 @@
   .speak-btn:active { transform: scale(0.9); }
   .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
 
+  /* --- PATTERNS BOX --- */
+  .aside-box {
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 4px;
+  }
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
 
   /* --- NAVIGATION --- */
   .nav-section {
@@ -430,7 +446,7 @@
 
 <canvas id="workshop-canvas"></canvas>
 
-<div class="page-wrapper">
+<div class="content">
   <div class="title-screen">
     <div class="chapter-label" data-speak="true">Chapter 90</div>
     <h1 data-speak="true">Wortspiele</h1>
@@ -715,6 +731,48 @@
 </div>
 
 <script>
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
 const quizData = [
   {
     question: "What does 'Kummerspeck' literally mean?",
@@ -946,6 +1004,12 @@ document.querySelectorAll('.german-word[data-speak]').forEach(w => {
     </a>
   </div>
 
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Compound Humor</strong> — Wordplay in German relies on combining roots in unexpected ways: Kummerspeck (grief + bacon), Verschlimmbessern (to worsen through improvement), showing the playful potential of German's morphological flexibility.<br><br>
+    <strong style="color: var(--text-bright);">Double Meanings</strong> — German speakers enjoy using words with multiple meanings or sensory associations: Ohrwurm (earworm = earwig or catchy tune), playing on the sound and cultural connotation of the word.<br><br>
+    <strong style="color: var(--text-bright);">Phonetic Play</strong> — Words like Pappenstiel, Flummox, and Gingelei use sound patterns that feel inherently funny through their rhythm and unusual consonant clusters.
+  </div>
 
   <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>

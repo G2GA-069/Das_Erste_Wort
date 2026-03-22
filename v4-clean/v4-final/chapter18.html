@@ -418,6 +418,104 @@
     opacity: 1;
   }
 
+  /* --- QUIZ STYLES --- */
+  .quiz-container {
+    background: rgba(245, 242, 235, 0.98);
+    border: 2px solid var(--german);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .quiz-container h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .quiz-question { margin-bottom: 24px; }
+  .quiz-question.hidden { display: none; }
+  .quiz-question .q-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option {
+    background: rgba(212, 165, 116, 0.08);
+    border: 2px solid var(--german);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+  .quiz-option:hover {
+    background: rgba(212, 165, 116, 0.15);
+    border-color: var(--german);
+  }
+  .quiz-option.selected {
+    background: rgba(212, 165, 116, 0.2);
+    border-color: var(--german);
+    color: var(--text-bright);
+  }
+  .quiz-option.correct-answer {
+    background: rgba(76, 175, 80, 0.15);
+    border-color: #4caf50;
+    color: #2d5016;
+  }
+  .quiz-option.incorrect {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: #f44336;
+    color: #b71c1c;
+    pointer-events: none;
+  }
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  .quiz-nav button {
+    background: rgba(212, 165, 116, 0.1);
+    border: 2px solid var(--german);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .quiz-nav button:hover {
+    background: rgba(212, 165, 116, 0.15);
+    border-color: var(--german);
+  }
+  .quiz-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .quiz-score {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--german);
+    font-weight: 500;
+  }
+  .quiz-reset { text-align: center; margin-top: 16px; }
+  .quiz-reset button {
+    background: rgba(212, 165, 116, 0.1);
+    border: 2px solid var(--german);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
   /* --- ASIDE BOXES --- */
   .aside-box {
     background: rgba(245, 242, 235, 0.9);
@@ -1497,6 +1595,20 @@
     </div>
   </div>
 
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+    </div>
+  </div>
+
   <!-- ==================== CHAPTER END ==================== -->
   <div class="scene" id="scene-end">
     <div class="chapter-end">
@@ -1793,6 +1905,120 @@ document.querySelectorAll('.ety-card').forEach(card => {
     if (header) header.appendChild(btn);
   }
 });
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What was the central goal of the Language Societies (\u201cSprachgesellschaften\u201d) during the Baroque period?",
+    options: ["To promote the study of French", "To purify German and replace French loanwords with Germanic alternatives", "To standardize Latin grammar", "To collect folk songs"],
+    correct: 1,
+    explanation: "The Language Societies were dedicated to purifying German by replacing French and Latin borrowings with newly coined Germanic words."
+  },
+  {
+    question: "Which German word demonstrates the purism movement\u2019s approach to innovation?",
+    options: ["Soldat (from French)", "Wörterbuch (word-book = dictionary)", "Adresse (from French)", "Bedeutung (from Latin)"],
+    correct: 1,
+    explanation: "W\u00f6rterbuch (word-book) is a brilliant Germanic compound created by German scholars to replace the French-derived term. It literally shows the puristic spirit."
+  },
+  {
+    question: "What does \u2018Augenblick\u2019 literally mean in German?",
+    options: ["eye-glance", "moment (from Latin)", "eyelid", "look away"],
+    correct: 0,
+    explanation: "\u2018Augenblick\u2019 means \u201ceye-glance\u201d or the \u201cglance of the eye\u201d — a poetic Germanic compound meaning a fleeting moment, instant."
+  },
+  {
+    question: "Who codified Hochdeutsch (High German) with a standardized grammar in 1748?",
+    options: ["Frederick the Great", "Johann Gottsched", "Martin Luther", "Johann Grimm"],
+    correct: 1,
+    explanation: "Johann Gottsched\u2019s 1748 grammar was the first successful standardization of High German, establishing the rules that modern German still follows."
+  },
+  {
+    question: "What does \u2018Sprachreiniger\u2019 mean?",
+    options: ["speech cleaner (language purifier)", "speaker", "translator", "grammarian"],
+    correct: 0,
+    explanation: "Sprachreiniger means \u201clanguage purifier\u201d or \u201cspeech cleaner\u201d — referring to the scholars of the Language Societies who worked to purify German."
+  },
+  {
+    question: "Which sound shift pattern from Chapter 1 helps explain why German has complex words like \u2018Ausdruck\u2019 (expression)?",
+    options: ["th→d", "p→pf", "k→ch", "gh→ch"],
+    correct: 2,
+    explanation: "The k→ch shift (part of the Second Germanic Consonant Shift) helps create the gutturalrich sound in words like Ausdruck and explains German\u2019s consonant complexity."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = new Array(quizData.length).fill(false);
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-questions');
+  if (!container) return;
+  container.innerHTML = '';
+  quizData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (i === 0 ? '' : ' hidden');
+    div.id = 'q' + i;
+    div.innerHTML = '<p class="q-text">' + (i + 1) + '. ' + q.question + '</p><div class="quiz-options">' +
+      q.options.map((opt, j) => '<div class="quiz-option" onclick="selectAnswer(' + i + ',' + j + ')">' + opt + '</div>').join('') + '</div>';
+    container.appendChild(div);
+  });
+  updateNav();
+}
+
+function selectAnswer(qi, ai) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const opts = document.querySelectorAll('#q' + qi + ' .quiz-option');
+  opts.forEach((o, j) => {
+    if (j === quizData[qi].correct) o.classList.add('correct-answer');
+    else if (j === ai) o.classList.add('incorrect');
+    o.style.pointerEvents = 'none';
+  });
+  if (ai === quizData[qi].correct) score++;
+  if (answered.every(a => a)) showScore();
+  setTimeout(() => { if (currentQuestion < quizData.length - 1) nextQuestion(); }, 1200);
+}
+
+function nextQuestion() {
+  if (currentQuestion >= quizData.length - 1) return;
+  document.getElementById('q' + currentQuestion).classList.add('hidden');
+  currentQuestion++;
+  document.getElementById('q' + currentQuestion).classList.remove('hidden');
+  updateNav();
+}
+
+function previousQuestion() {
+  if (currentQuestion <= 0) return;
+  document.getElementById('q' + currentQuestion).classList.add('hidden');
+  currentQuestion--;
+  document.getElementById('q' + currentQuestion).classList.remove('hidden');
+  updateNav();
+}
+
+function updateNav() {
+  const prev = document.getElementById('prev-btn');
+  const next = document.getElementById('next-btn');
+  if (prev) prev.disabled = currentQuestion === 0;
+  if (next) next.disabled = currentQuestion === quizData.length - 1;
+}
+
+function showScore() {
+  const el = document.getElementById('quiz-score');
+  if (el) el.textContent = 'Score: ' + score + ' / ' + quizData.length;
+  const reset = document.getElementById('quiz-reset');
+  if (reset) reset.innerHTML = '<button onclick="resetQuiz()">Try Again</button>';
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  answered = new Array(quizData.length).fill(false);
+  renderQuiz();
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('quiz-reset').innerHTML = '';
+}
+
+renderQuiz();
 
 </script>
 

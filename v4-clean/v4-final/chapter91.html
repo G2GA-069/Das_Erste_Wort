@@ -20,8 +20,8 @@
     font-size: 1.25rem; line-height: 1.85; overflow-x: hidden;
   }
   #workshop-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
-  .page-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 120px; }
-  @media (max-width: 640px) { .page-wrapper { padding: 30px 18px 80px; } body { font-size: 1.1rem; } }
+  .content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 40px 24px 120px; }
+  @media (max-width: 640px) { .content { padding: 30px 18px 80px; } body { font-size: 1.1rem; } }
   .title-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 40px; }
   .title-screen h1 { font-size: 4rem; font-weight: 300; letter-spacing: 0.02em; color: var(--text-bright); opacity: 0; animation: fadeUp 2s ease 0.4s forwards; margin-bottom: 0.3em; }
   .title-screen .title-de { font-size: 3.5rem; font-weight: 400; color: var(--german); opacity: 0; animation: fadeUp 2s ease 0.8s forwards; margin-bottom: 1.5em; font-style: italic; }
@@ -93,6 +93,9 @@
   .speak-btn:active { transform: scale(0.9); }
   .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
 
+  /* --- PATTERNS BOX --- */
+  .aside-box { background: rgba(232, 164, 74, 0.05); border-left: 3px solid rgba(232, 164, 74, 0.3); padding: 20px 24px; margin: 32px 0; border-radius: 4px; }
+  .aside-title { font-size: 1.1rem; font-weight: 600; color: var(--german); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
 
   /* --- NAVIGATION --- */
   .nav-section {
@@ -135,7 +138,7 @@
   </div>
 
 <canvas id="workshop-canvas"></canvas>
-<div class="page-wrapper">
+<div class="content">
   <div class="title-screen">
     <div class="chapter-label" data-speak="true">Chapter 91</div>
     <h1 data-speak="true">Kollokationen</h1>
@@ -464,6 +467,48 @@
 </div>
 
 <script>
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
 const quizData = [
   {question:"What verb should you use with 'Entscheidung' to sound native?", options:["machen","treffen","spielen","nehmen"], correct:1, explanation:"Entscheidung treffen (hit/strike a decision) emphasizes decisiveness and commitment, not machen."},
   {question:"Why does 'Erfahrung sammeln' use 'sammeln' instead of 'machen'?", options:["It's older German","It suggests gradual accumulation over time","It's easier to pronounce","It comes from English"], correct:1, explanation:"Sammeln (gather) implies collecting experiences gradually, like harvesting, not making them instantaneously."},
@@ -580,6 +625,12 @@ document.querySelectorAll('.german-word[data-speak]').forEach(w => {
     </a>
   </div>
 
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Fixed Verb-Noun Pairs</strong> — German prefers specific verbs with certain nouns: Entscheidung treffen (strike a decision), not machen; Rücksicht nehmen auf (take consideration of). Native speakers internalize these pairings as inseparable units.<br><br>
+    <strong style="color: var(--text-bright);">Metaphors in Verbs</strong> — Behind each collocation is a conceptual metaphor: Rolle spielen (play a role) from theater, Eindruck machen (stamp an impression) from printing, sammeln (gather) from harvesting. These shape how German speakers conceptualize action and causation.<br><br>
+    <strong style="color: var(--text-bright);">Syntactic Constraints</strong> — Collocations come with grammatical requirements: Rücksicht takes auf + accusative; Bescheid geben requires an indirect object; In Frage stellen demands the whole phrase. Grammar and vocabulary are inseparably linked.
+  </div>
 
   <div style="margin:48px auto;max-width:720px;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
