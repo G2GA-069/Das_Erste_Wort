@@ -392,6 +392,78 @@
     display: none;
   }
   .post-quiz-summary.show { display: block; }
+
+  /* --- PRACTICE EXERCISES --- */
+  .practice-item {
+    margin-bottom: 28px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 10px;
+  }
+
+  .practice-prompt {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .practice-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(10, 14, 26, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 6px;
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .practice-input:focus {
+    border-color: rgba(232, 164, 74, 0.5);
+  }
+
+  .practice-check {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 6px;
+    color: #e8a44a;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .practice-check:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .practice-feedback {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    min-height: 1.5em;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .practice-feedback.show {
+    opacity: 1;
+  }
+
+  .practice-feedback.correct {
+    color: #8ed69e;
+  }
+
+  .practice-feedback.wrong {
+    color: #e8a44a;
+  }
+
   .word-collection {
     background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
     border: 1px solid rgba(232, 164, 74, 0.12);
@@ -890,6 +962,17 @@
     </div>
   </div>
 
+  <!-- ==================== PRACTICE ==================== -->
+  <div class="scene" id="scene-practice">
+    <div class="quiz-container" style="border-color: rgba(232, 164, 74, 0.2);">
+      <h3 style="color: #e8a44a;">Build It Yourself</h3>
+      <p class="narrative small" style="text-align: center; margin-bottom: 24px;">
+        Type your answer, then click Check to see if you\u2019re right.
+      </p>
+      <div id="practice-exercises"></div>
+    </div>
+  </div>
+
   <div class="scene">
     <div class="quiz-container">
       <h3>Chapter Thirty-Three Comprehension Quiz</h3>
@@ -1240,6 +1323,82 @@ function resetQuiz() {
 
   updateQuizNav();
 }
+
+// --- PRACTICE EXERCISES (Ch. 33: Compound Nouns) ---
+const practiceData = [
+  {
+    prompt: "Hand + Schuh (shoe) = ___ (glove)",
+    answer: "Handschuh",
+    hint: "Germans wear a \u2018hand-shoe\u2019",
+    accept: ["handschuh", "Handschuh"],
+    explanation: " Perfect! Metaphorical classification shows cultural thinking."
+  },
+  {
+    prompt: "K\u00fchl (cool) + Schrank (cabinet) = ___ (refrigerator)",
+    answer: "K\u00fchlschrank",
+    hint: "A cool cabinet keeps food fresh",
+    accept: ["k\u00fchlschrank", "K\u00fchlschrank"],
+    explanation: " Right! The compound reveals the function."
+  },
+  {
+    prompt: "Staub (dust) + Sauger (sucker/vacuum) = ___ (vacuum cleaner)",
+    answer: "Staubsauger",
+    hint: "Something that sucks up dust",
+    accept: ["staubsauger", "Staubsauger"],
+    explanation: " Excellent! Transparent structure: it literally sucks dust."
+  },
+  {
+    prompt: "Schild (shield) + Kr\u00f6te (toad) = ___ (turtle)",
+    answer: "Schildkr\u00f6te",
+    hint: "A toad with a shield on its back",
+    accept: ["schildkr\u00f6te", "Schildkr\u00f6te"],
+    explanation: " Great! A shield-toad describes the animal perfectly."
+  },
+  {
+    prompt: "Flug (flight) + Zeug (thing/stuff) = ___ (airplane)",
+    answer: "Flugzeug",
+    hint: "A thing that flies",
+    accept: ["flugzeug", "Flugzeug"],
+    explanation: " Perfect! German builds the concept from parts."
+  }
+];
+
+function renderPractice() {
+  const container = document.getElementById('practice-exercises');
+  if (!container) return;
+  container.innerHTML = '';
+  practiceData.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = '<div class="practice-prompt">' + p.prompt + '</div>' +
+      '<input type="text" class="practice-input" id="practice-input-' + i + '" placeholder="Type your answer..." autocomplete="off">' +
+      '<button class="practice-check" onclick="checkPractice(' + i + ')">Check</button>' +
+      '<div class="practice-feedback" id="practice-fb-' + i + '"></div>';
+    container.appendChild(div);
+    document.getElementById('practice-input-' + i).addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkPractice(i);
+    });
+  });
+}
+
+function checkPractice(i) {
+  const input = document.getElementById('practice-input-' + i);
+  const fb = document.getElementById('practice-fb-' + i);
+  const val = input.value.trim();
+  const p = practiceData[i];
+
+  if (p.accept.some(a => a.toLowerCase() === val.toLowerCase())) {
+    fb.className = 'practice-feedback show correct';
+    fb.textContent = '\u2713 Correct!' + (p.explanation || '');
+    input.style.borderColor = 'rgba(74, 180, 100, 0.5)';
+  } else {
+    fb.className = 'practice-feedback show wrong';
+    fb.textContent = 'Not quite. ' + p.hint + ' The answer is: ' + p.answer;
+    input.style.borderColor = 'rgba(232, 164, 74, 0.5)';
+  }
+}
+
+renderPractice();
 
 window.addEventListener('DOMContentLoaded', initializeQuiz);
 

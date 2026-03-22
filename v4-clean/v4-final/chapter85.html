@@ -494,6 +494,77 @@
       font-size: 1.15rem;
     }
 
+    /* --- PRACTICE EXERCISES --- */
+    .practice-item {
+      margin-bottom: 28px;
+      padding: 20px;
+      background: rgba(232, 164, 74, 0.05);
+      border: 1px solid rgba(232, 164, 74, 0.12);
+      border-radius: 10px;
+    }
+
+    .practice-prompt {
+      font-size: 1.1rem;
+      color: var(--text-bright);
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .practice-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(10, 14, 26, 0.6);
+      border: 1px solid rgba(232, 164, 74, 0.25);
+      border-radius: 6px;
+      color: var(--text-bright);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .practice-input:focus {
+      border-color: rgba(232, 164, 74, 0.5);
+    }
+
+    .practice-check {
+      margin-top: 10px;
+      padding: 8px 20px;
+      background: rgba(232, 164, 74, 0.1);
+      border: 1px solid rgba(232, 164, 74, 0.25);
+      border-radius: 6px;
+      color: #e8a44a;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .practice-check:hover {
+      background: rgba(232, 164, 74, 0.2);
+      border-color: rgba(232, 164, 74, 0.4);
+    }
+
+    .practice-feedback {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      min-height: 1.5em;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .practice-feedback.show {
+      opacity: 1;
+    }
+
+    .practice-feedback.correct {
+      color: #8ed69e;
+    }
+
+    .practice-feedback.wrong {
+      color: #e8a44a;
+    }
+
     .word-collection {
       background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
       border: 1px solid rgba(232, 164, 74, 0.12);
@@ -950,6 +1021,17 @@
       </div>
     </div>
 
+    <!-- ==================== PRACTICE ==================== -->
+    <div class="scene" id="scene-practice">
+      <div class="quiz-container" style="border-color: rgba(232, 164, 74, 0.2);">
+        <h3 style="color: #e8a44a;">Build It Yourself</h3>
+        <p class="narrative small" style="text-align: center; margin-bottom: 24px;">
+          Type your answer, then click Check to see if you\u2019re right.
+        </p>
+        <div id="practice-exercises"></div>
+      </div>
+    </div>
+
     <div class="scene" id="scene-quiz">
       <div class="quiz-container">
         <h3>Test Your Knowledge: Modal Particles I</h3>
@@ -1331,6 +1413,82 @@
 
       updateQuizNav();
     }
+
+    // --- PRACTICE EXERCISES (Ch. 85: Modal Particles) ---
+    const practiceData = [
+      {
+        prompt: "Someone says \u2018Es regnet nicht.\u2019 You disagree strongly: ___!",
+        answer: "Doch",
+        hint: "Contradiction particle: \u2018No, it does!\u2019",
+        accept: ["doch", "Doch"],
+        explanation: " Perfect! \u2018Doch\u2019 contradicts a negative statement."
+      },
+      {
+        prompt: "You want someone to do something: \u2018Komm ___ her!\u2019 (Come here, will you?)",
+        answer: "mal",
+        hint: "Request particle making it softer and more persuasive",
+        accept: ["mal"],
+        explanation: " Right! \u2018Mal\u2019 makes a command gentler."
+      },
+      {
+        prompt: "Affirmative response: \u2018Du magst Deutsch, ja?\u2019 \u2018Ja, ich mag es!\u2019 — which particle marks agreement?",
+        answer: "ja",
+        hint: "The word for \u2018yes\u2019 used as a particle",
+        accept: ["ja"],
+        explanation: " Correct! \u2018Ja\u2019 affirms shared assumption."
+      },
+      {
+        prompt: "Softening a request: \u2018K\u00f6nntest du mir ___ helfen?\u2019 (Could you help me, please?)",
+        answer: "doch",
+        hint: "Softening particle making requests feel more natural",
+        accept: ["doch"],
+        explanation: " Yes! \u2018Doch\u2019 in requests shows hope and conviction."
+      },
+      {
+        prompt: "Assertive statement: \u2018Das ist ___ nicht richtig!\u2019 (That\u2019s surely not right!)",
+        answer: "ja",
+        hint: "Emphasis particle strengthening assertion",
+        accept: ["ja"],
+        explanation: " Excellent! \u2018Ja\u2019 can emphasize facts and statements."
+      }
+    ];
+
+    function renderPractice() {
+      const container = document.getElementById('practice-exercises');
+      if (!container) return;
+      container.innerHTML = '';
+      practiceData.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'practice-item';
+        div.innerHTML = '<div class="practice-prompt">' + p.prompt + '</div>' +
+          '<input type="text" class="practice-input" id="practice-input-' + i + '" placeholder="Type your answer..." autocomplete="off">' +
+          '<button class="practice-check" onclick="checkPractice(' + i + ')">Check</button>' +
+          '<div class="practice-feedback" id="practice-fb-' + i + '"></div>';
+        container.appendChild(div);
+        document.getElementById('practice-input-' + i).addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') checkPractice(i);
+        });
+      });
+    }
+
+    function checkPractice(i) {
+      const input = document.getElementById('practice-input-' + i);
+      const fb = document.getElementById('practice-fb-' + i);
+      const val = input.value.trim();
+      const p = practiceData[i];
+
+      if (p.accept.some(a => a.toLowerCase() === val.toLowerCase())) {
+        fb.className = 'practice-feedback show correct';
+        fb.textContent = '\u2713 Correct!' + (p.explanation || '');
+        input.style.borderColor = 'rgba(74, 180, 100, 0.5)';
+      } else {
+        fb.className = 'practice-feedback show wrong';
+        fb.textContent = 'Not quite. ' + p.hint + ' The answer is: ' + p.answer;
+        input.style.borderColor = 'rgba(232, 164, 74, 0.5)';
+      }
+    }
+
+    renderPractice();
 
     initializeQuiz();
   </script>

@@ -574,6 +574,77 @@
     display: block;
   }
 
+  /* --- PRACTICE EXERCISES --- */
+  .practice-item {
+    margin-bottom: 28px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 10px;
+  }
+
+  .practice-prompt {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .practice-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(10, 14, 26, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 6px;
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .practice-input:focus {
+    border-color: rgba(232, 164, 74, 0.5);
+  }
+
+  .practice-check {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 6px;
+    color: #e8a44a;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .practice-check:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .practice-feedback {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    min-height: 1.5em;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .practice-feedback.show {
+    opacity: 1;
+  }
+
+  .practice-feedback.correct {
+    color: #8ed69e;
+  }
+
+  .practice-feedback.wrong {
+    color: #e8a44a;
+  }
+
   .word-collection {
     background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
     border: 1px solid rgba(232, 164, 74, 0.12);
@@ -1040,6 +1111,17 @@
     </div>
   </div>
 
+  <!-- ==================== PRACTICE ==================== -->
+  <div class="scene" id="scene-practice">
+    <div class="quiz-container" style="border-color: rgba(232, 164, 74, 0.2);">
+      <h3 style="color: #e8a44a;">Build It Yourself</h3>
+      <p class="narrative small" style="text-align: center; margin-bottom: 24px;">
+        Type your answer, then click Check to see if you\u2019re right.
+      </p>
+      <div id="practice-exercises"></div>
+    </div>
+  </div>
+
   <div class="scene" id="scene-quiz">
     <div class="quiz-container">
       <h3>Test Your Knowledge of Regular Verbs</h3>
@@ -1351,6 +1433,18 @@ const quizData = [
     options: ["They all sound similar", "They all use the same stem + ending system", "They all borrowed from Latin", "They have no internal structure"],
     correct: 1,
     explanation: "All regular verbs use the same system: an unchanging stem plus six consistent endings. This is what makes them 'regular' — they follow the same rule."
+  },
+  {
+    question: "REVIEW (Ch. 27): What does the prefix ver- do to the verb 'kaufen' (to buy)?",
+    options: ["Makes it past tense", "Means \u2018to sell\u2019 (transforms the action)", "Negates it", "Makes it reflexive"],
+    correct: 1,
+    explanation: "Ver- transforms: kaufen (buy) \u2192 verkaufen (sell). The prefix changes the direction of the transaction."
+  },
+  {
+    question: "REVIEW (Ch. 33): German builds compound nouns by joining words. What is 'Handschuh' (Hand + Schuh)?",
+    options: ["Handball", "Handshake", "Glove (hand-shoe)", "Handbag"],
+    correct: 2,
+    explanation: "Handschuh = Hand (hand) + Schuh (shoe) = glove. German compounds are wonderfully literal."
   }
 ];
 
@@ -1491,6 +1585,82 @@ function resetQuiz() {
 
   updateQuizNav();
 }
+
+// --- PRACTICE EXERCISES (Ch. 50: Regular Present Tense) ---
+const practiceData = [
+  {
+    prompt: "Conjugate: ich ___ (machen - to make/do)",
+    answer: "mache",
+    hint: "First person singular: root + e",
+    accept: ["mache"],
+    explanation: " Perfect! The \u2013e ending marks first person singular."
+  },
+  {
+    prompt: "Complete: Sie ___ Wasser (trinken - to drink)",
+    answer: "trinkt",
+    hint: "Third person singular: root + t",
+    accept: ["trinkt"],
+    explanation: " Right! The \u2013t ending marks third person singular."
+  },
+  {
+    prompt: "Conjugate: du ___ (spielen - to play)",
+    answer: "spielst",
+    hint: "Second person singular: root + st",
+    accept: ["spielst"],
+    explanation: " Excellent! The \u2013st ending marks second person singular."
+  },
+  {
+    prompt: "Sentence building: \u2018She learns German\u2019 = Sie ___ Deutsch",
+    answer: "lernt",
+    hint: "Think: she, one person, third person singular",
+    accept: ["lernt"],
+    explanation: " Yes! Regular verbs follow predictable patterns."
+  },
+  {
+    prompt: "Pattern: wir ___ (arbeiten - to work)",
+    answer: "arbeiten",
+    hint: "First and third person plural: root + no ending",
+    accept: ["arbeiten"],
+    explanation: " Perfect! Plural forms often keep the root unchanged."
+  }
+];
+
+function renderPractice() {
+  const container = document.getElementById('practice-exercises');
+  if (!container) return;
+  container.innerHTML = '';
+  practiceData.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = '<div class="practice-prompt">' + p.prompt + '</div>' +
+      '<input type="text" class="practice-input" id="practice-input-' + i + '" placeholder="Type your answer..." autocomplete="off">' +
+      '<button class="practice-check" onclick="checkPractice(' + i + ')">Check</button>' +
+      '<div class="practice-feedback" id="practice-fb-' + i + '"></div>';
+    container.appendChild(div);
+    document.getElementById('practice-input-' + i).addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkPractice(i);
+    });
+  });
+}
+
+function checkPractice(i) {
+  const input = document.getElementById('practice-input-' + i);
+  const fb = document.getElementById('practice-fb-' + i);
+  const val = input.value.trim();
+  const p = practiceData[i];
+
+  if (p.accept.some(a => a.toLowerCase() === val.toLowerCase())) {
+    fb.className = 'practice-feedback show correct';
+    fb.textContent = '\u2713 Correct!' + (p.explanation || '');
+    input.style.borderColor = 'rgba(74, 180, 100, 0.5)';
+  } else {
+    fb.className = 'practice-feedback show wrong';
+    fb.textContent = 'Not quite. ' + p.hint + ' The answer is: ' + p.answer;
+    input.style.borderColor = 'rgba(232, 164, 74, 0.5)';
+  }
+}
+
+renderPractice();
 
 initializeQuiz();
 

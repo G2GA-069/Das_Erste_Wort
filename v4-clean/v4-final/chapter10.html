@@ -531,6 +531,77 @@
     border: 1px solid rgba(180, 74, 74, 0.3);
   }
 
+  /* --- PRACTICE EXERCISES --- */
+  .practice-item {
+    margin-bottom: 28px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 10px;
+  }
+
+  .practice-prompt {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .practice-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(10, 14, 26, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 6px;
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .practice-input:focus {
+    border-color: rgba(232, 164, 74, 0.5);
+  }
+
+  .practice-check {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 6px;
+    color: #e8a44a;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .practice-check:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .practice-feedback {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    min-height: 1.5em;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .practice-feedback.show {
+    opacity: 1;
+  }
+
+  .practice-feedback.correct {
+    color: #8ed69e;
+  }
+
+  .practice-feedback.wrong {
+    color: #e8a44a;
+  }
+
   /* --- DIVIDER --- */
   .divider {
     text-align: center;
@@ -1173,6 +1244,19 @@
 
   <div class="divider">· · ·</div>
 
+  <!-- ==================== PRACTICE ==================== -->
+  <div class="scene" id="scene-practice">
+    <div class="quiz-container" style="border-color: rgba(232, 164, 74, 0.2);">
+      <h3 style="color: #e8a44a;">Build It Yourself</h3>
+      <p class="narrative small" style="text-align: center; margin-bottom: 24px;">
+        Type your answer, then click Check to see if you\u2019re right.
+      </p>
+      <div id="practice-exercises"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
   <!-- ==================== SCENE 6: CHINESE BRIDGE ==================== -->
   <div class="scene" id="scene6">
     <div class="scene-marker"></div>
@@ -1584,6 +1668,24 @@ const quizData = [
       { text: "They use identical methods", correct: false },
       { text: "Only Chinese has compound words", correct: false }
     ]
+  },
+  {
+    question: "REVIEW (Ch. 1): The German word for 'mother' shares its PIE root *m\u0101t\u0113r with English. What is it?",
+    options: [
+      { text: "Motter", correct: false },
+      { text: "Mutter", correct: true },
+      { text: "Mitter", correct: false },
+      { text: "Matter", correct: false }
+    ]
+  },
+  {
+    question: "REVIEW (Ch. 3): What sound shift explains why English 'foot' became German 'Fu\u00df'?",
+    options: [
+      { text: "First Consonant Shift (Grimm\u2019s Law)", correct: false },
+      { text: "Second Consonant Shift (t \u2192 ss)", correct: true },
+      { text: "The Great Vowel Shift", correct: false },
+      { text: "Latin borrowing", correct: false }
+    ]
   }
 ];
 
@@ -1653,6 +1755,82 @@ function showQuizResult() {
   resultEl.innerHTML = `<strong>Quiz Complete!</strong><br>Score: ${quizState.score} / ${quizData.length} (${percentage}%)<br>${passed ? 'You understand the marketplace and the power of practical language!' : 'Review and try again.'}`;
   document.getElementById('quizContent').innerHTML = `<div style="text-align: center; padding: 20px;"><button onclick="initializeQuiz()" style="background: rgba(232, 164, 74, 0.15); border: 1px solid rgba(232, 164, 74, 0.3); color: var(--text-bright); padding: 10px 24px; border-radius: 8px; cursor: pointer; font-family: 'Cormorant Garamond', serif; font-size: 1rem;">Retake Quiz</button></div>`;
 }
+
+// --- PRACTICE EXERCISES (Ch. 10: Marketplace Vocabulary) ---
+const practiceData = [
+  {
+    prompt: "Apply the Second Consonant Shift: English \u2018water\u2019 → German ___",
+    answer: "Wasser",
+    hint: "Remember: t → ss, -er → -er",
+    accept: ["wasser", "Wasser"],
+    explanation: " Perfect! The t → ss shift is one of German\u2019s signature sound changes."
+  },
+  {
+    prompt: "English \u2018baker\u2019 → German ___ (bac- is to bake)",
+    answer: "B\u00e4cker",
+    hint: "Think: one who bakes (b\u00e4cken), double the k",
+    accept: ["b\u00e4cker", "B\u00e4cker", "backer"],
+    explanation: " Right! The umlaut shows the person who does the action."
+  },
+  {
+    prompt: "What\u2019s the German word for \u2018guild\u2019? ___",
+    answer: "Zunft",
+    hint: "Hint: It\u2019s in the cards. Professional association of craftsmen.",
+    accept: ["zunft", "Zunft"],
+    explanation: " Excellent! Zunft—the guild system that organized medieval commerce."
+  },
+  {
+    prompt: "From the chapter: the prefix \u2018ver-\u2019 + kaufen (buy) = ___ (to sell)",
+    answer: "verkaufen",
+    hint: "ver- means \u2018away\u2019 or \u2018forth\u2019",
+    accept: ["verkaufen"],
+    explanation: " Yes! German builds meaning by stacking prefixes—a machine for word creation."
+  },
+  {
+    prompt: "Compound: Markt + Platz = ___",
+    answer: "Marktplatz",
+    hint: "One word, no spaces. Market + place.",
+    accept: ["marktplatz", "Marktplatz"],
+    explanation: " Perfect! The marketplace—where words become currency."
+  }
+];
+
+function renderPractice() {
+  const container = document.getElementById('practice-exercises');
+  if (!container) return;
+  container.innerHTML = '';
+  practiceData.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = '<div class="practice-prompt">' + p.prompt + '</div>' +
+      '<input type="text" class="practice-input" id="practice-input-' + i + '" placeholder="Type your answer..." autocomplete="off">' +
+      '<button class="practice-check" onclick="checkPractice(' + i + ')">Check</button>' +
+      '<div class="practice-feedback" id="practice-fb-' + i + '"></div>';
+    container.appendChild(div);
+    document.getElementById('practice-input-' + i).addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkPractice(i);
+    });
+  });
+}
+
+function checkPractice(i) {
+  const input = document.getElementById('practice-input-' + i);
+  const fb = document.getElementById('practice-fb-' + i);
+  const val = input.value.trim();
+  const p = practiceData[i];
+
+  if (p.accept.some(a => a.toLowerCase() === val.toLowerCase())) {
+    fb.className = 'practice-feedback show correct';
+    fb.textContent = '\u2713 Correct!' + (p.explanation || '');
+    input.style.borderColor = 'rgba(74, 180, 100, 0.5)';
+  } else {
+    fb.className = 'practice-feedback show wrong';
+    fb.textContent = 'Not quite. ' + p.hint + ' The answer is: ' + p.answer;
+    input.style.borderColor = 'rgba(232, 164, 74, 0.5)';
+  }
+}
+
+renderPractice();
 
 document.addEventListener('DOMContentLoaded', initializeQuiz);
 
