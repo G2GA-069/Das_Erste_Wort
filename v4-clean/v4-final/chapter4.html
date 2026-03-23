@@ -1286,6 +1286,19 @@
     </div>
   </div>
 
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <h3>Test Your Understanding</h3>
+    <div id="quiz-questions"></div>
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+    <div class="quiz-reset" id="quiz-reset"></div>
+    <div class="post-quiz-summary" id="post-quiz-summary"></div>
+  </div>
+
   <!-- ==================== YOUR PROGRESS ==================== -->
   <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
@@ -1618,6 +1631,175 @@ document.querySelectorAll('.ety-card').forEach(card => {
     if (header) header.appendChild(btn);
   }
 });
+
+// --- CHAPTER 4: ROMAN LOANWORDS QUIZ ---
+const quizData = [
+  {
+    question: "What is the primary reason Germanic tribes borrowed Latin words?",
+    options: ["To improve their language", "For things they had never encountered before, like Roman technology and culture", "To replace their own vocabulary", "Because Latin was easier to speak"],
+    correct: 1,
+    explanation: "Germanic peoples borrowed Latin words for Roman innovations like wine (Wein), streets (Straße), and windows (Fenster) — technologies and products they had not previously had."
+  },
+  {
+    question: "Which of these German words comes from Latin 'vīnum'?",
+    options: ["Wasser", "Wein", "Wald", "Wind"],
+    correct: 1,
+    explanation: "Wein (wine) comes directly from Latin vīnum. The Romans had a sophisticated wine culture that the Germanic tribes did not, so they borrowed both the product and the word."
+  },
+  {
+    question: "What does 'Straße' originally mean in Latin?",
+    options: ["A wooden path", "A paved road", "A merchant's route", "A military road"],
+    correct: 1,
+    explanation: "Straße comes from Latin strāta, meaning 'paved road.' The Romans built paved roads with engineering; the Germanic peoples built only paths and tracks."
+  },
+  {
+    question: "Why did Germanic peoples adopt the word 'Küche' (kitchen) from Latin?",
+    options: ["They liked Latin better", "Roman kitchens were a formalized space and technology they had not developed", "It was easier to pronounce", "They needed a word to describe a fire"],
+    correct: 1,
+    explanation: "The Romans had developed formal, specialized kitchens as a distinct space with equipment and hierarchy. Germanic peoples cooked over fire but did not have this Roman-style kitchen institution, so they borrowed the word along with the concept."
+  },
+  {
+    question: "What does the German adoption of Latin words tell us about power dynamics between Rome and Germania?",
+    options: ["Both cultures were equally influential", "Germanic culture was superior", "Languages borrow most from those they admire or fear", "All languages borrow equally"],
+    correct: 2,
+    explanation: "The asymmetry of borrowing — Germanic taking from Latin but not vice versa — reveals that Romans held power. Borrowing flows from the culture that is admired or feared, not in equal directions."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Chapter 4 Insights</strong>
+      <p style="margin-top: 8px;">You now understand how languages interact across cultural boundaries. The borrowing of Latin words by Germanic peoples reveals the asymmetry of linguistic power — languages adopt words from cultures they admire or fear. This pattern continues throughout German history: words for Roman technology, medieval feudalism, French elegance, and English commerce all entered German as markers of cultural contact and influence.</p>
+      <p style="margin-top: 8px;">Germanic peoples didn't borrow words arbitrarily — they borrowed for things Rome introduced: wine, streets, windows, schools, kitchens. Each word carries the history of a technology, an innovation, a moment when two cultures met at a boundary and knowledge flowed in one direction.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the summary.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
 
 </script>
 

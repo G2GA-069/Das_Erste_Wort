@@ -428,6 +428,150 @@
     margin: 0 4px;
   }
 
+  /* --- QUIZ SYSTEM --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .quiz-container h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .quiz-question {
+    margin-bottom: 24px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    background: rgba(232, 164, 74, 0.04);
+    border-color: rgba(232, 164, 74, 0.1);
+    color: rgba(212, 202, 187, 0.3);
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--fire-glow);
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.8);
+    line-height: 1.7;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+  }
+
+  .post-quiz-summary.show {
+    max-height: 400px;
+    opacity: 1;
+  }
+
   /* --- SECTION DIVIDERS --- */
   .divider {
     text-align: center;
@@ -1131,7 +1275,7 @@
     </div>
 
     <p class="narrative">
-      By 1920, something that had seemed impossible in 1914 had happened: German, the language of global intellectual authority, had become toxic. A German accent in London, New York, or Paris was no longer the mark of a scholar. It was the mark of the enemy.
+      By 1920, something that had seemed impossible in 1914 had happened: German, the language of global intellectual authority, had become toxic. A German accent in London, New York, or Paris was no longer the mark of a scholar. It was the mark of the enemy. For Germans themselves, this collapse created a new psychological condition—<span class="german-word" data-card="angst" onclick="speakGerman('Angst')">Angst</span> on a civilizational scale.
     </p>
 
     <p class="narrative">
@@ -1280,6 +1424,19 @@
       <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Un- Prefix Dread</span><span class="cw-english">Unheimlich — Freud's uncanny, the familiar made strange</span></div>
       <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">German Exports to English</span><span class="cw-english">Kindergarten, Angst, Zeitgeist — words that couldn't be translated</span></div>
     </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <h3>Test Your Understanding</h3>
+    <div id="quiz-questions"></div>
+    <div class="quiz-nav">
+      <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+      <button id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+    <div class="quiz-reset" id="quiz-reset"></div>
+    <div class="post-quiz-summary" id="post-quiz-summary"></div>
   </div>
 
   <!-- ==================== YOUR PROGRESS ==================== -->
@@ -1741,6 +1898,205 @@ document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
 if (window.innerWidth < 600) {
   // Reduce animations on mobile
 }
+
+// --- CHAPTER 22: GERMAN SCIENTIFIC & PHILOSOPHICAL WORDS QUIZ ---
+const quizData = [
+  {
+    question: "What does 'Wissenschaft' literally mean as a compound?",
+    options: ["knowledge + system", "knowledge + collective", "study + rigor", "science + knowledge"],
+    correct: 1,
+    explanation: "'Wissenschaft' comes from Wissen (knowledge) + -schaft (collective state of being), meaning the organized collective enterprise of knowing, not just isolated facts."
+  },
+  {
+    question: "Why did every major university worldwide require students to learn German by 1900?",
+    options: ["German was easier to learn", "To understand German scientific advances in physics and chemistry", "Because German literature was superior", "To trade with Germany"],
+    correct: 1,
+    explanation: "German science dominated global academia from 1870-1920. If you wanted to understand physics, chemistry, or medicine at the cutting edge, you had to read German texts and follow German researchers."
+  },
+  {
+    question: "What is the distinction between 'Forschung' and 'Wissenschaft'?",
+    options: ["No distinction — they mean the same thing", "Forschung is the act of searching; Wissenschaft is the organized system of knowledge", "Wissenschaft is older", "They come from different languages"],
+    correct: 1,
+    explanation: "Forschung (from forschen, to search) emphasizes the active pursuit and seeking. Wissenschaft emphasizes the organized, systematic collection of knowledge that results from research."
+  },
+  {
+    question: "What does 'Entdeckung' literally mean in its compound form?",
+    options: ["en-discovery", "to undo the cover / to uncover", "to find something", "to reveal a secret"],
+    correct: 1,
+    explanation: "'Entdeckung' = ent- (un-) + Decke (cover/roof) + -ung (action). It literally means 'the action of uncovering' or 'removing the roof that hides things.'"
+  },
+  {
+    question: "What is 'Weltanschauung'?",
+    options: ["A German political party", "A world view or comprehensive philosophy about life and existence", "A type of music", "A mathematical theorem"],
+    correct: 1,
+    explanation: "'Weltanschauung' (Welt = world + Anschauung = viewing/perspective) means a comprehensive worldview or philosophy. It's a term for a complete perspective on existence."
+  },
+  {
+    question: "What does 'Zeitgeist' mean?",
+    options: ["Time zone", "The spirit of the time / the intellectual and cultural climate of an era", "A famous person", "A type of clock"],
+    correct: 1,
+    explanation: "'Zeitgeist' comes from Zeit (time) + Geist (spirit), referring to the characteristic spirit, ideas, and values of a particular historical period."
+  },
+  {
+    question: "What did Sigmund Freud theorize about the word 'Unheimlich'?",
+    options: ["It was borrowed from English", "It describes the uncanny — something familiar made strange and disturbing", "It was outdated", "It had no psychological meaning"],
+    correct: 1,
+    explanation: "Freud explored 'Unheimlich' (un- + heimlich/home = unhomely, uncanny) as a psychological concept of something familiar that becomes eerie, strange, or disturbing."
+  },
+  {
+    question: "What is 'Kindergarten' and how did it enter other languages?",
+    options: ["A type of German military", "A school for young children — from Kinder (children) + Garten (garden) — adopted by English without translation", "A German food", "A historical building"],
+    correct: 1,
+    explanation: "'Kindergarten' (children's garden) originated as a German educational concept. Other languages adopted the German word directly because it expressed the specific philosophy behind the institution."
+  },
+  {
+    question: "What is 'Angst' and why is it untranslatable?",
+    options: ["Simple fear or worry", "A deeper existential dread about the human condition itself, distinct from concrete fear", "A musical genre", "A military term"],
+    correct: 1,
+    explanation: "'Angst' became a philosophical term describing existential anxiety about human existence itself. English 'anxiety' or 'fear' are insufficient — 'Angst' implies a deeper metaphysical dread."
+  },
+  {
+    question: "What period is referred to as the 'golden age' of the German language?",
+    options: ["1618-1648 (Thirty Years' War)", "1815-1840 (Romantic era)", "1871-1918 (German Empire / Belle Époque of science)", "1933-1945 (Nazi era)"],
+    correct: 2,
+    explanation: "The German Empire's period (1871-1918) saw unprecedented scientific and intellectual achievement. German became the language of science. This was German language's peak of global influence before its catastrophic fall."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Chapter 22 Insights</strong>
+      <p style="margin-top: 8px;">You have mastered the vocabulary of German scientific and philosophical achievement. Wissenschaft, Forschung, Entdeckung, Weltanschauung, Zeitgeist, Angst, Unheimlich, Kindergarten — these words represent a culture at its peak. Between 1870 and 1918, German was not just a language but a gateway to understanding the modern world.</p>
+      <p style="margin-top: 8px;">German words entered world languages because they expressed concepts no other language had theorized. The philosophy, science, psychology, and pedagogy of the age were all German. This was the language's finest hour — before everything would collapse in 1918 and be corrupted beyond recognition in the 1930s.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the summary.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
 
 </script>
 

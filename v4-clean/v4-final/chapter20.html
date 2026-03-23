@@ -519,6 +519,150 @@
     color: rgba(212, 202, 187, 0.7);
   }
 
+  /* --- QUIZ SYSTEM --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .quiz-container h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .quiz-question {
+    margin-bottom: 24px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    background: rgba(232, 164, 74, 0.04);
+    border-color: rgba(232, 164, 74, 0.1);
+    color: rgba(212, 202, 187, 0.3);
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--fire-glow);
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.8);
+    line-height: 1.7;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+  }
+
+  .post-quiz-summary.show {
+    max-height: 400px;
+    opacity: 1;
+  }
+
   /* --- SECTION DIVIDERS --- */
   .divider {
     text-align: center;
@@ -1511,6 +1655,19 @@
       </div>
     </div>
 
+    <!-- ==================== QUIZ ==================== -->
+    <div class="quiz-container">
+      <h3>Test Your Understanding</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+
     <!-- ==================== YOUR PROGRESS ==================== -->
     <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
       <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
@@ -2039,6 +2196,205 @@ document.querySelectorAll('.guess-btn, .german-word, .quiz-btn').forEach(el => {
 if (window.innerWidth < 600) {
   fireflies = fireflies.slice(0, Math.floor(fireflies.length / 2));
 }
+
+// --- CHAPTER 20: ROMANTIC GERMAN WORDS QUIZ ---
+const quizData = [
+  {
+    question: "What does 'Sehnsucht' literally mean as a compound?",
+    options: ["to want + certainty", "to yearn + addiction", "to desire + softness", "to feel + sorrow"],
+    correct: 1,
+    explanation: "Sehnsucht comes from Sehnen (to yearn) + Sucht (addiction/seeking). It describes an addictive yearning for something you've never had and might never find."
+  },
+  {
+    question: "What was the 'Werther Fever'?",
+    options: ["A historical disease", "A political uprising", "A wave of suicides inspired by Goethe's novel about Sehnsucht", "A romantic poetry movement"],
+    correct: 2,
+    explanation: "Goethe's 1774 novel 'The Sorrows of Young Werther' expressed Sehnsucht so powerfully that readers across Europe were driven to suicide in imitation of the protagonist."
+  },
+  {
+    question: "What is the relationship between 'Wanderlust' and 'Sehnsucht'?",
+    options: ["They are synonyms", "Wanderlust is the action, Sehnsucht is the feeling that drives it", "Sehnsucht is ancient, Wanderlust is modern", "There is no relationship"],
+    correct: 1,
+    explanation: "If Sehnsucht is the deep yearning for the unreachable, Wanderlust is its expression — the itch to move, to be elsewhere, driven by that same longing."
+  },
+  {
+    question: "What does 'Heimweh' mean?",
+    options: ["A German home", "Homesickness — pain from being far from home", "Home + ache", "All of the above"],
+    correct: 3,
+    explanation: "'Heimweh' literally means 'home + pain' (Heim + Weh), expressing homesickness — the ache of being separated from a place you have known."
+  },
+  {
+    question: "What is 'Fernweh' in relation to 'Heimweh'?",
+    options: ["An older version", "The opposite — longing for distant places you've never been", "A mispronounciation", "A French borrowing"],
+    correct: 1,
+    explanation: "'Fernweh' is the mirror image of Heimweh: the pain of distance from elsewhere. While Heimweh is the pain of separation from home, Fernweh is the hunger for places far away."
+  },
+  {
+    question: "Who were the Brothers Grimm and what did they preserve?",
+    options: ["Philosophers who wrote about reason", "Collectors of German folk tales and creators of a comprehensive German dictionary", "Military leaders during the Napoleonic Wars", "Music composers of the Romantic era"],
+    correct: 1,
+    explanation: "Jacob and Wilhelm Grimm collected German folk tales (Märchen) published as 'Kinder- und Hausmärchen' and created the 'Deutsches Wörterbuch' to document German linguistic culture."
+  },
+  {
+    question: "What does 'Märchen' mean?",
+    options: ["A march or procession", "A type of music", "A fairy tale or folk story — literally 'small stories'", "A German holiday"],
+    correct: 2,
+    explanation: "'Märchen' comes from Mär (old word for story/news) + -chen (diminutive), meaning 'small stories' or folk tales. It captures the sense of living oral traditions from the common people."
+  },
+  {
+    question: "What did Jacob Grimm's German Dictionary attempt to preserve?",
+    options: ["Only modern German words", "The entire history of German language — every word, meaning, and usage from earliest texts to present", "Military terminology", "Latin roots only"],
+    correct: 1,
+    explanation: "The 'Deutsches Wörterbuch' was a comprehensive attempt to document all of German linguistic history, capturing cultural memory and the accumulated wisdom of ancestors."
+  },
+  {
+    question: "What does 'Stimmung' mean more deeply than the English word 'mood'?",
+    options: ["Depression", "The tuning of the soul to the world; attunement itself", "A musical piece", "A type of weather"],
+    correct: 1,
+    explanation: "'Stimmung' comes from 'stimmen' (to tune, as you tune an instrument). It means more than 'mood' — it's the soul being attuned to the world, a state of attunement."
+  },
+  {
+    question: "Why were German Romantic words like Sehnsucht considered untranslatable?",
+    options: ["They were too complicated", "No other culture had theorized such specific emotions or developed words to express them", "They were invented only for literature", "Translation technology didn't exist"],
+    correct: 1,
+    explanation: "The Romantic feeling-words were untranslatable because other languages (English, French, Chinese) had not conceptualized these emotions in the same way. German Romanticism created specific philosophical understandings of human longing that were unique to German culture."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Chapter 20 Insights</strong>
+      <p style="margin-top: 8px;">You have mastered the vocabulary of German Romanticism. Sehnsucht, Wanderlust, Heimweh, Fernweh, Stimmung, Gemütlichkeit — these words represent more than just feelings. They represent a philosophy of the soul. The Romantics believed that German possessed a unique capacity to express human longing, melancholy, and connection to place and possibility.</p>
+      <p style="margin-top: 8px;">The Brothers Grimm preserved these words and the stories that contained them, creating a German cultural archive. Through fairy tales and dictionary, they ensured that the Romantic understanding of the German soul would survive into the modern age. These untranslatable words remain uniquely German.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the summary.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
 
 </script>
 
