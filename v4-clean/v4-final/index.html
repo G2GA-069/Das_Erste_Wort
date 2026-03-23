@@ -225,21 +225,110 @@
     pointer-events: none;
   }
 
-  .ouroboros-frame {
+  /* ---- THE HERO TOME ---- */
+  .hero-tome-wrap {
     position: relative;
-    width: 320px;
-    height: 320px;
-    max-width: 80vw;
-    max-height: 80vw;
-    margin-bottom: 10px;
+    margin-bottom: 18px;
     opacity: 0;
-    animation: ouroReveal 3s ease 0.6s forwards;
+    animation: tomeReveal 3.2s ease 0.5s forwards;
   }
-  .ouroboros-frame svg { width: 100%; height: 100%; }
-  @keyframes ouroReveal {
-    0% { opacity: 0; transform: scale(0.85) rotate(-5deg); filter: blur(8px); }
-    60% { opacity: 1; filter: blur(0); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+  @keyframes tomeReveal {
+    0%   { opacity: 0; transform: scale(0.88) translateY(20px); filter: blur(10px); }
+    50%  { opacity: 1; filter: blur(0); }
+    100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  }
+
+  /* Radiant glow behind the book */
+  .hero-tome-glow {
+    position: absolute;
+    top: -50px; left: -60px; right: -60px; bottom: -50px;
+    background: radial-gradient(ellipse, rgba(232,164,74,0.12) 0%, rgba(200,100,30,0.04) 40%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: tomeGlowPulse 5s ease-in-out infinite;
+  }
+  @keyframes tomeGlowPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+
+  .hero-tome {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+    max-width: 75vw;
+    background: linear-gradient(160deg, #2a1a0a 0%, #1a0e04 40%, #0e0804 100%);
+    border: 2px solid #8a6a3a;
+    box-shadow:
+      0 16px 60px rgba(0,0,0,0.8),
+      0 4px 16px rgba(138,106,58,0.18),
+      inset 0 0 40px rgba(138,106,58,0.05);
+    overflow: hidden;
+    transition: transform 0.6s ease, box-shadow 0.6s ease;
+  }
+  .hero-tome:hover {
+    transform: scale(1.02);
+    box-shadow:
+      0 20px 80px rgba(0,0,0,0.9),
+      0 4px 20px rgba(138,106,58,0.25),
+      inset 0 0 50px rgba(138,106,58,0.08);
+  }
+  /* Leather texture */
+  .hero-tome::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(138,106,58,0.02) 3px, rgba(138,106,58,0.02) 4px);
+    pointer-events: none; z-index: 1;
+  }
+  /* Spine shadow */
+  .hero-tome::after {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 16px; height: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 100%);
+    pointer-events: none; z-index: 2;
+  }
+
+  .hero-tome-border {
+    position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px;
+    border: 1px solid rgba(138,106,58,0.25);
+    pointer-events: none; z-index: 2;
+  }
+  .hero-tome-border::before {
+    content: '';
+    position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px;
+    border: 1px solid rgba(138,106,58,0.12);
+  }
+
+  .hero-tome-corner {
+    position: absolute; width: 28px; height: 28px; z-index: 4;
+  }
+  .hero-tome-corner svg { width: 100%; height: 100%; }
+  .hero-tome-corner.tl { top: 6px; left: 6px; }
+  .hero-tome-corner.tr { top: 6px; right: 6px; transform: scaleX(-1); }
+  .hero-tome-corner.bl { bottom: 6px; left: 6px; transform: scaleY(-1); }
+  .hero-tome-corner.br { bottom: 6px; right: 6px; transform: scale(-1); }
+
+  .hero-tome-inner {
+    position: relative; z-index: 3;
+    padding: 48px 28px 36px;
+    text-align: center;
+  }
+
+  .hero-tome-title svg {
+    width: 200px; max-width: 100%; height: auto;
+    margin-bottom: 10px;
+  }
+
+  .hero-tome-sigil {
+    width: 90px; height: 90px;
+    margin: 8px auto 0;
+    opacity: 0.5;
+    animation: heroSigilPulse 4s ease-in-out infinite;
+  }
+  .hero-tome-sigil svg { width: 100%; height: 100%; }
+  @keyframes heroSigilPulse {
+    0%, 100% { opacity: 0.45; filter: drop-shadow(0 0 4px rgba(212,168,74,0.1)); }
+    50% { opacity: 0.7; filter: drop-shadow(0 0 14px rgba(212,168,74,0.3)); }
   }
 
   .hero-title {
@@ -808,92 +897,103 @@
   <!-- Starfield canvas -->
   <canvas id="hero-stars"></canvas>
 
-  <!-- The Flame Sigil — the sacred fire of the first speakers -->
-  <div class="ouroboros-frame">
-    <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="flameGrad" x1="0%" y1="100%" x2="50%" y2="0%">
-          <stop offset="0%" stop-color="#8a4a10"/>
-          <stop offset="40%" stop-color="#c8a44a"/>
-          <stop offset="70%" stop-color="#e8c874"/>
-          <stop offset="100%" stop-color="#f4e0a0"/>
-        </linearGradient>
-        <radialGradient id="fireGlow" cx="50%" cy="45%" r="35%">
-          <stop offset="0%" stop-color="rgba(232,164,74,0.12)"/>
-          <stop offset="60%" stop-color="rgba(200,100,30,0.04)"/>
-          <stop offset="100%" stop-color="transparent"/>
-        </radialGradient>
-        <filter id="flameBlur">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-        </filter>
-      </defs>
-
-      <!-- Deep fire glow -->
-      <circle cx="160" cy="150" r="100" fill="url(#fireGlow)"/>
-
-      <!-- Outer ring — ancient, weathered seal -->
-      <circle cx="160" cy="160" r="140" fill="none" stroke="#c8a44a" stroke-width="0.8" opacity="0.2"/>
-      <circle cx="160" cy="160" r="143" fill="none" stroke="#c8a44a" stroke-width="0.2" opacity="0.1"/>
-      <!-- Inner ring — dashed, runic feel -->
-      <circle cx="160" cy="160" r="130" fill="none" stroke="#c8a44a" stroke-width="0.4" opacity="0.15" stroke-dasharray="2 8 6 8"/>
-
-      <!-- Compass points — the four winds of the steppe -->
-      <g opacity="0.3" stroke="#c8a44a" fill="none" stroke-width="0.6">
-        <line x1="160" y1="18" x2="160" y2="28"/>
-        <line x1="160" y1="292" x2="160" y2="302"/>
-        <line x1="18" y1="160" x2="28" y2="160"/>
-        <line x1="292" y1="160" x2="302" y2="160"/>
-      </g>
-      <g opacity="0.2" fill="#c8a44a">
-        <circle cx="160" cy="16" r="1.5"/>
-        <circle cx="160" cy="304" r="1.5"/>
-        <circle cx="16" cy="160" r="1.5"/>
-        <circle cx="304" cy="160" r="1.5"/>
-      </g>
-      <!-- Diagonal marks -->
-      <g opacity="0.12" fill="#c8a44a">
-        <circle cx="62" cy="62" r="1"/><circle cx="258" cy="62" r="1"/>
-        <circle cx="62" cy="258" r="1"/><circle cx="258" cy="258" r="1"/>
-      </g>
-
-      <!-- Ember dots scattered around the ring -->
-      <g fill="#c8a44a" opacity="0.15">
-        <circle cx="100" cy="30" r="0.7"/><circle cx="220" cy="30" r="0.7"/>
-        <circle cx="280" cy="80" r="0.7"/><circle cx="290" cy="200" r="0.7"/>
-        <circle cx="250" cy="280" r="0.7"/><circle cx="70" cy="280" r="0.7"/>
-        <circle cx="30" cy="200" r="0.7"/><circle cx="40" cy="80" r="0.7"/>
-      </g>
-
-      <!-- The central flame — three tongues rising from the steppe -->
-      <g filter="url(#flameBlur)" transform="translate(160,155)">
-        <!-- Left flame tongue -->
-        <path d="M -18,45 Q -28,-5 -10,-60 Q -4,-30 0,-12 Q -2,15 -18,45 Z"
-              fill="url(#flameGrad)" opacity="0.55"/>
-        <!-- Centre flame tongue (tallest) -->
-        <path d="M -8,45 Q -15,-25 0,-85 Q 15,-25 8,45 Z"
-              fill="url(#flameGrad)" opacity="0.75"/>
-        <!-- Right flame tongue -->
-        <path d="M 18,45 Q 28,-5 10,-60 Q 4,-30 0,-12 Q 2,15 18,45 Z"
-              fill="url(#flameGrad)" opacity="0.55"/>
-        <!-- Inner bright core -->
-        <path d="M -4,38 Q -8,-5 0,-50 Q 8,-5 4,38 Z"
-              fill="#f4e0a0" opacity="0.2"/>
-        <!-- Ember base -->
-        <ellipse cx="0" cy="48" rx="24" ry="4" fill="#c8a44a" opacity="0.12"/>
-      </g>
-
-      <!-- Rolling steppe grass silhouette -->
-      <path d="M 55,220 Q 85,212 115,218 Q 140,224 160,218 Q 180,212 210,218 Q 240,224 265,218"
-            fill="none" stroke="#c8a44a" stroke-width="0.5" opacity="0.12"/>
-      <path d="M 48,228 Q 78,220 115,226 Q 145,232 165,226 Q 185,220 215,226 Q 245,232 272,226"
-            fill="none" stroke="#c8a44a" stroke-width="0.3" opacity="0.08"/>
-
-      <!-- Title inscribed beneath the flame -->
-      <text x="160" y="265" text-anchor="middle" font-family="'Cormorant Garamond', serif"
-            font-size="22" font-weight="300" fill="#c8a44a" letter-spacing="3" opacity="0.65">Das erste Wort</text>
-      <line x1="115" y1="273" x2="205" y2="273" stroke="#c8a44a" stroke-width="0.3" opacity="0.2"/>
-    </svg>
+  <!-- The Ancient Tome — floating in darkness -->
+  <div class="hero-tome-wrap">
+    <div class="hero-tome-glow"></div>
+    <div class="hero-tome">
+      <div class="hero-tome-border"></div>
+      <!-- Corner ornaments -->
+      <div class="hero-tome-corner tl"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2,2 L2,14 C2,7 7,2 14,2" fill="none" stroke="#8a6a3a" stroke-width="1.2"/>
+        <path d="M2,2 L7,2 M2,2 L2,7" fill="none" stroke="#d4a84a" stroke-width="0.9"/>
+        <circle cx="2" cy="2" r="1" fill="#d4a84a" opacity="0.6"/>
+      </svg></div>
+      <div class="hero-tome-corner tr"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2,2 L2,14 C2,7 7,2 14,2" fill="none" stroke="#8a6a3a" stroke-width="1.2"/>
+        <path d="M2,2 L7,2 M2,2 L2,7" fill="none" stroke="#d4a84a" stroke-width="0.9"/>
+        <circle cx="2" cy="2" r="1" fill="#d4a84a" opacity="0.6"/>
+      </svg></div>
+      <div class="hero-tome-corner bl"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2,2 L2,14 C2,7 7,2 14,2" fill="none" stroke="#8a6a3a" stroke-width="1.2"/>
+        <path d="M2,2 L7,2 M2,2 L2,7" fill="none" stroke="#d4a84a" stroke-width="0.9"/>
+      </svg></div>
+      <div class="hero-tome-corner br"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2,2 L2,14 C2,7 7,2 14,2" fill="none" stroke="#8a6a3a" stroke-width="1.2"/>
+        <path d="M2,2 L7,2 M2,2 L2,7" fill="none" stroke="#d4a84a" stroke-width="0.9"/>
+      </svg></div>
+      <div class="hero-tome-inner">
+        <!-- Sütterlin-style title -->
+        <div class="hero-tome-title">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="heroGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#e8c06a"/>
+                <stop offset="50%" stop-color="#d4a84a"/>
+                <stop offset="100%" stop-color="#a07830"/>
+              </linearGradient>
+            </defs>
+            <g transform="translate(100,28)" text-anchor="middle">
+              <text font-family="'Cormorant Garamond', serif" font-size="26" font-weight="600"
+                    fill="url(#heroGold)" letter-spacing="4">Das</text>
+            </g>
+            <g transform="translate(100,62)" text-anchor="middle">
+              <text font-family="'Cormorant Garamond', serif" font-size="30" font-weight="300"
+                    fill="url(#heroGold)" letter-spacing="2" font-style="italic">erste</text>
+            </g>
+            <g transform="translate(100,96)" text-anchor="middle">
+              <text font-family="'Cormorant Garamond', serif" font-size="26" font-weight="600"
+                    fill="url(#heroGold)" letter-spacing="4">Wort</text>
+            </g>
+            <line x1="55" y1="36" x2="145" y2="36" stroke="#d4a84a" stroke-width="0.4" opacity="0.4"/>
+            <line x1="60" y1="72" x2="140" y2="72" stroke="#d4a84a" stroke-width="0.4" opacity="0.4"/>
+          </svg>
+        </div>
+        <!-- Flame sigil beneath the title -->
+        <div class="hero-tome-sigil">
+          <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="htFG" x1="0%" y1="100%" x2="50%" y2="0%">
+                <stop offset="0%" stop-color="#8a6a3a"/>
+                <stop offset="40%" stop-color="#c8a44a"/>
+                <stop offset="70%" stop-color="#e8c874"/>
+                <stop offset="100%" stop-color="#d4a84a"/>
+              </linearGradient>
+              <filter id="htFB">
+                <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+            <circle cx="160" cy="130" r="120" fill="none" stroke="#c8a44a" stroke-width="0.8" opacity="0.25"/>
+            <circle cx="160" cy="130" r="112" fill="none" stroke="#c8a44a" stroke-width="0.4" opacity="0.15" stroke-dasharray="2 8 6 8"/>
+            <g opacity="0.25" stroke="#c8a44a" fill="none" stroke-width="0.6">
+              <line x1="160" y1="8" x2="160" y2="16"/>
+              <line x1="160" y1="244" x2="160" y2="252"/>
+              <line x1="38" y1="130" x2="46" y2="130"/>
+              <line x1="274" y1="130" x2="282" y2="130"/>
+            </g>
+            <g opacity="0.18" fill="#c8a44a">
+              <circle cx="160" cy="6" r="1.2"/>
+              <circle cx="160" cy="254" r="1.2"/>
+              <circle cx="36" cy="130" r="1.2"/>
+              <circle cx="284" cy="130" r="1.2"/>
+            </g>
+            <g filter="url(#htFB)" transform="translate(160,125)">
+              <path d="M -16,40 Q -24,-4 -9,-52 Q -3,-26 0,-10 Q -2,13 -16,40 Z"
+                    fill="url(#htFG)" opacity="0.55"/>
+              <path d="M -7,40 Q -13,-22 0,-72 Q 13,-22 7,40 Z"
+                    fill="url(#htFG)" opacity="0.75"/>
+              <path d="M 16,40 Q 24,-4 9,-52 Q 3,-26 0,-10 Q 2,13 16,40 Z"
+                    fill="url(#htFG)" opacity="0.55"/>
+              <path d="M -3,34 Q -7,-4 0,-42 Q 7,-4 3,34 Z"
+                    fill="#d4a84a" opacity="0.2"/>
+              <ellipse cx="0" cy="42" rx="20" ry="3.5" fill="#c8a44a" opacity="0.12"/>
+            </g>
+            <path d="M 60,195 Q 90,188 120,193 Q 145,198 160,193 Q 175,188 205,193 Q 235,198 260,193"
+                  fill="none" stroke="#c8a44a" stroke-width="0.5" opacity="0.12"/>
+          </svg>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="hero-whisper">
