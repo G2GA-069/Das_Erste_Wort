@@ -664,6 +664,20 @@
     border-radius: 8px;
     cursor: pointer;
   }
+  .quiz-explanation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(212, 202, 187, 0.85);
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    border-radius: 4px;
+  }
+  .quiz-explanation.correct-exp {
+    border-left-color: rgba(74, 180, 100, 0.4);
+    background: rgba(74, 180, 100, 0.06);
+  }
 
   /* --- AUDIO PRONUNCIATION --- */
   .speak-btn {
@@ -1736,6 +1750,46 @@ document.querySelectorAll('.ety-card').forEach(card => {
   }
 });
 
+// --- QUIZ DATA WITH EXPLANATIONS ---
+const quizData = [
+  {
+    question: "The German word Grenze (border) came into German from which language?",
+    options: ["Latin", "Slavic (Polish/Czech granica)", "French", "Greek"],
+    correct: 1,
+    explanation: "Grenze comes from Slavic granica, reflecting the long frontier contact between Germanic and Slavic-speaking peoples. This shows how languages borrow words from neighbors in contact zones."
+  },
+  {
+    question: "What does Meister mean, and where did it come from?",
+    options: ["Minister — from Germanic *mēstaz", "Master — from Latin magister", "Merchant — from French maître", "Mayor — from Latin maior"],
+    correct: 1,
+    explanation: "Meister (master) comes from Latin magister, adopted by Germanic peoples during Roman contact. This word entered many Germanic languages, showing Roman influence on trade and hierarchy."
+  },
+  {
+    question: "The word Arzt (doctor) traces back to which Latin word?",
+    options: ["artis (of art)", "archiater (chief physician)", "ardor (burning/fever)", "arcus (bow/arch)"],
+    correct: 1,
+    explanation: "Arzt comes from Latin archiater (chief physician), combining 'archi-' (chief) and '-ater' (healer). Germans borrowed this medical title directly from the Romans who had formal medical practice."
+  },
+  {
+    question: "Why do so many Latin words in German relate to building, cooking, and trade?",
+    options: ["Romans conquered all of Germany", "Germanic tribes had no language of their own", "Germans adopted words for Roman technologies they didn't have", "Latin was the only written language in Europe"],
+    correct: 2,
+    explanation: "Romans had advanced technologies and trade networks that Germanic peoples adopted along with their words. Borrowing vocabulary for new concepts (wine, streets, walls) reflects cultural exchange, not conquest."
+  },
+  {
+    question: "The German Münze (coin) comes from Latin moneta. Which English word shares the same root?",
+    options: ["mount", "minute", "money", "month"],
+    correct: 2,
+    explanation: "Münze and money both derive from Latin moneta (the goddess of coinage and the place where coins were made). This word traveled from Latin into both German and English through trade and commerce."
+  },
+  {
+    question: "From Chapter 1: The silent 'gh' in English night corresponds to what sound in German Nacht?",
+    options: ["g", "ch (a soft throaty sound)", "sh", "It is also silent in German"],
+    correct: 1,
+    explanation: "English 'gh' is silent but represents an old sound that German preserved as 'ch'. This is Grimm's First Shift in action — the 'gh' sound underwent different changes in English (silence) and German (preserved as ch)."
+  }
+];
+
 // --- QUIZ SYSTEM ---
 function selectQuizOption(btn) {
   const qDiv = btn.closest('.quiz-question');
@@ -1745,14 +1799,29 @@ function selectQuizOption(btn) {
 
 function submitQuiz(total, threshold) {
   let correct = 0;
+  let qIndex = 0;
   document.querySelectorAll('.quiz-question').forEach(q => {
     const selected = q.querySelector('.quiz-option.selected');
-    q.querySelectorAll('.quiz-option').forEach(o => {
+    const qData = quizData[qIndex];
+    q.querySelectorAll('.quiz-option').forEach((o, oIdx) => {
       o.style.pointerEvents = 'none';
       if (o.dataset.correct === '1') o.classList.add('correct');
       if (o.classList.contains('selected') && o.dataset.correct !== '1') o.classList.add('wrong');
     });
+
+    // Add explanation below the question
+    if (qData && !q.querySelector('.quiz-explanation')) {
+      const explDiv = document.createElement('div');
+      explDiv.className = 'quiz-explanation';
+      if (selected && selected.dataset.correct === '1') {
+        explDiv.classList.add('correct-exp');
+      }
+      explDiv.innerHTML = '<em>' + qData.explanation + '</em>';
+      q.appendChild(explDiv);
+    }
+
     if (selected && selected.dataset.correct === '1') correct++;
+    qIndex++;
   });
   const pct = Math.round((correct / total) * 100);
   const result = document.getElementById('quiz-result');
@@ -1797,6 +1866,7 @@ function retryQuiz() {
 <script src="game-engine.js" defer></script>
 <script>const CURRENT_CHAPTER = 5;</script>
 <script src="vocab-data.js"></script>
+<script src="quiz-enhancer.js"></script>
 <script src="progress-renderer.js?v=2"></script>
 </body>
 </html>

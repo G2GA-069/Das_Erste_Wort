@@ -438,6 +438,35 @@
     pointer-events: none;
   }
 
+  .quiz-option.correct-reveal {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .quiz-explanation {
+    margin-top: 14px;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(212, 202, 187, 0.85);
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    border-radius: 4px;
+    animation: fadeInExplanation 0.4s ease;
+  }
+
+  .quiz-explanation.correct-exp {
+    border-left-color: rgba(74, 180, 100, 0.4);
+    background: rgba(74, 180, 100, 0.06);
+  }
+
+  @keyframes fadeInExplanation {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .quiz-nav {
     display: flex;
     gap: 12px;
@@ -1921,13 +1950,27 @@ function initializeQuiz() {
 
 function selectAnswer(qIdx, optIdx) {
   if (quizComplete) return;
+  if (answers[qIdx] !== null) return; // Already answered — locked
   answers[qIdx] = optIdx;
 
+  const q = quizData[qIdx];
+  const isCorrect = optIdx === q.correct;
   const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+
   options.forEach((opt, i) => {
-    opt.classList.remove('selected', 'incorrect');
-    if (i === optIdx) opt.classList.add('selected');
+    opt.style.pointerEvents = 'none'; // Lock all options
+    if (i === q.correct) opt.classList.add('correct-reveal');
+    if (i === optIdx && !isCorrect) opt.classList.add('incorrect');
   });
+
+  // Show explanation immediately
+  if (q.explanation) {
+    const questionDiv = document.getElementById('q-' + qIdx);
+    const expDiv = document.createElement('div');
+    expDiv.className = 'quiz-explanation' + (isCorrect ? ' correct-exp' : '');
+    expDiv.textContent = (isCorrect ? '✓ Correct. ' : '✗ ') + q.explanation;
+    questionDiv.appendChild(expDiv);
+  }
 
   updateQuizNav();
 }
@@ -2012,8 +2055,10 @@ function resetQuiz() {
   });
 
   document.querySelectorAll('.quiz-option').forEach(opt => {
-    opt.classList.remove('selected', 'incorrect');
+    opt.classList.remove('selected', 'incorrect', 'correct-reveal');
+    opt.style.pointerEvents = '';
   });
+  document.querySelectorAll('.quiz-explanation').forEach(el => el.remove());
 
   document.getElementById('quiz-score').textContent = '';
   document.getElementById('post-quiz-summary').classList.remove('show');
@@ -2096,6 +2141,7 @@ document.querySelectorAll('.ety-card').forEach(card => {
 <script src="game-engine.js" defer></script>
 <script>const CURRENT_CHAPTER = 7;</script>
 <script src="vocab-data.js"></script>
+<script src="quiz-enhancer.js"></script>
 <script src="progress-renderer.js?v=2"></script>
 </body>
 </html>

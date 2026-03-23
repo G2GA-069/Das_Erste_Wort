@@ -1867,67 +1867,51 @@ document.querySelectorAll('.ety-card').forEach(card => {
 const quizData = [
   {
     question: "Which shift rule explains why English 'heart' becomes German 'Herz'?",
-    options: [
-      { text: "t → z", correct: true },
-      { text: "k → h (then h → z)", correct: false },
-      { text: "p → f", correct: false }
-    ]
+    options: ["t → z", "k → h (then h → z)", "p → f"],
+    correct: 0,
+    explanation: "The Second Consonant Shift changed t to z/s, so English 'heart' (with t) became German 'Herz' (with z sound). This shift happened around 600-800 CE in southern Germanic regions."
   },
   {
     question: "English 'make' → German 'machen'. Which shift created this?",
-    options: [
-      { text: "First Shift (500 BCE)", correct: false },
-      { text: "Second Shift (600-800 CE)", correct: true },
-      { text: "Both shifts", correct: false }
-    ]
+    options: ["First Shift (500 BCE)", "Second Shift (600-800 CE)", "Both shifts"],
+    correct: 1,
+    explanation: "The Second Shift (600-800 CE) transformed k to ch, turning English 'make' into German 'machen'. The k sound underwent this dramatic change in the southern German-speaking regions."
   },
   {
     question: "What is the most likely German form of English 'clock'? (Hint: k → ch)",
-    options: [
-      { text: "klok", correct: false },
-      { text: "Klack", correct: false },
-      { text: "Glocke", correct: true }
-    ]
+    options: ["klok", "Klack", "Glocke"],
+    correct: 2,
+    explanation: "English 'clock' has a k-sound, which the Second Shift changed to 'ch' in German. This explains why we get 'Glocke' (bell/clock) instead of a form matching English more closely."
   },
   {
     question: "English 'apple' → German 'Apfel'. What does the 'pf' pattern show?",
-    options: [
-      { text: "Original 'p' fading, 'f' replacing it", correct: true },
-      { text: "Random spelling variation", correct: false },
-      { text: "First Shift corruption", correct: false }
-    ]
+    options: ["Original 'p' fading, 'f' replacing it", "Random spelling variation", "First Shift corruption"],
+    correct: 0,
+    explanation: "The 'pf' shows the Second Shift in action: 'p' is becoming 'f', and both sounds appear together as a transition. This is how sound changes evolve—old and new sounds coexist briefly before one fully replaces the other."
   },
   {
     question: "Why German 'Wasser' has double 's' while English 'water' has single 't'?",
-    options: [
-      { text: "German always doubles consonants", correct: false },
-      { text: "Second Shift t → ss, short vowels required doubling", correct: true },
-      { text: "Different word origins", correct: false }
-    ]
+    options: ["German always doubles consonants", "Second Shift t → ss, short vowels required doubling", "Different word origins"],
+    correct: 1,
+    explanation: "The Second Shift changed t to z/s. In German 'Wasser', the short vowel caused consonant doubling (a grammar rule of German), so we get 'ss' instead of English 'water' with its single 't'."
   },
   {
     question: "Predict: If English 'pack' exists, what would High German be?",
-    options: [
-      { text: "Packen", correct: false },
-      { text: "Backen", correct: true },
-      { text: "Packe", correct: false }
-    ]
+    options: ["Packen", "Backen", "Packe"],
+    correct: 1,
+    explanation: "English 'pack' has 'p'; the Second Shift changes 'p' to 'pf' or 'f'. However, in this case (after a vowel), the shift becomes 'ck → ck' rule applies differently, and we get 'Backen' from a related root."
   },
   {
     question: "English 'ten' → German 'zehn'. Which shift created the 'z'?",
-    options: [
-      { text: "First Shift", correct: false },
-      { text: "Second Shift (t → z)", correct: true },
-      { text: "Chinese influence", correct: false }
-    ]
+    options: ["First Shift", "Second Shift (t → z)", "Chinese influence"],
+    correct: 1,
+    explanation: "The Second Consonant Shift specifically changed 't' to 'ts' or 'z' (pronounced 'tsay-hun' in modern German). This dramatic change is one of the clearest markers separating German from English."
   },
   {
     question: "How do German and Chinese preserve language history differently?",
-    options: [
-      { text: "German: sound history in spelling; Chinese: meaning in characters", correct: true },
-      { text: "Chinese older and more primitive", correct: false },
-      { text: "German changes constantly, Chinese stays same", correct: false }
-    ]
+    options: ["German: sound history in spelling; Chinese: meaning in characters", "Chinese older and more primitive", "German changes constantly, Chinese stays same"],
+    correct: 0,
+    explanation: "German spelling reveals sound history—shifts like p→pf or t→z are frozen in spelling, showing ancient sound changes. Chinese characters preserve meaning through pictographs and radicals, encoding semantic history instead of phonetic shifts."
   }
 ];
 
@@ -1949,7 +1933,7 @@ function displayQuestion() {
     <div class="quiz-options">`;
 
   q.options.forEach((opt, idx) => {
-    html += `<button class="quiz-opt" onclick="answerQuestion(${idx})" id="opt-${idx}">${opt.text}</button>`;
+    html += `<button class="quiz-opt" onclick="answerQuestion(${idx})" id="opt-${idx}">${opt}</button>`;
   });
 
   html += `</div><div class="quiz-feedback" id="qfeedback"></div></div>`;
@@ -1964,16 +1948,18 @@ function answerQuestion(idx) {
   quizState.selectedAnswer = idx;
 
   const q = quizData[quizState.currentQuestion];
-  const isCorrect = q.options[idx].correct;
+  const isCorrect = idx === q.correct;
 
   if (isCorrect) {
     quizState.score++;
     document.getElementById(`opt-${idx}`).classList.add('correct');
-    document.getElementById('qfeedback').textContent = 'Correct!';
+    document.getElementById('qfeedback').innerHTML = `<strong style="color: #8ed69e;">Correct!</strong><br><em>${q.explanation}</em>`;
     document.getElementById('qfeedback').classList.add('show');
   } else {
     document.getElementById(`opt-${idx}`).classList.add('incorrect');
-    document.getElementById('qfeedback').textContent = 'Review the shift rules...';
+    const correctIdx = q.correct;
+    document.getElementById(`opt-${correctIdx}`).classList.add('correct-reveal');
+    document.getElementById('qfeedback').innerHTML = `<strong style="color: #e88a8a;">Not quite.</strong> The correct answer is "<strong>${q.options[correctIdx]}</strong>"<br><em>${q.explanation}</em>`;
     document.getElementById('qfeedback').classList.add('show');
   }
 
@@ -1986,7 +1972,7 @@ function answerQuestion(idx) {
     } else {
       showQuizResult();
     }
-  }, 2000);
+  }, 3000);
 }
 
 function showQuizResult() {
@@ -2024,6 +2010,7 @@ document.querySelectorAll('.guess-btn, .ety-card').forEach(el => {
 <script src="game-engine.js" defer></script>
 <script>const CURRENT_CHAPTER = 3;</script>
 <script src="vocab-data.js"></script>
+<script src="quiz-enhancer.js"></script>
 <script src="progress-renderer.js?v=2"></script>
 </body>
 </html>

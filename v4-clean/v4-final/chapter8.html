@@ -595,6 +595,20 @@
   .quiz-result.pass { color: #8ed69e; }
   .quiz-result.fail { color: #e88a8a; }
   .quiz-retry { display: none; margin: 16px auto 0; background: rgba(180, 74, 74, 0.15); border: 1px solid rgba(180, 74, 74, 0.4); color: #e88a8a; font-family: 'Cormorant Garamond', serif; font-size: 1rem; padding: 10px 32px; border-radius: 8px; cursor: pointer; }
+  .quiz-explanation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(212, 202, 187, 0.85);
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    border-radius: 4px;
+  }
+  .quiz-explanation.correct-exp {
+    border-left-color: rgba(74, 180, 100, 0.4);
+    background: rgba(74, 180, 100, 0.06);
+  }
 
   /* --- AUDIO PRONUNCIATION --- */
   .speak-btn {
@@ -1814,6 +1828,58 @@ document.querySelectorAll('.ety-card').forEach(card => {
   }
 });
 
+// --- QUIZ DATA WITH EXPLANATIONS ---
+const quizData = [
+  {
+    question: "What was the Abrogans (~765 CE)?",
+    options: ["A monastery in Bavaria", "The first German-Latin dictionary", "Charlemagne's legal code", "A prayer book in Old High German"],
+    correct: 1,
+    explanation: "The Abrogans was the first systematic German-Latin dictionary, written by monks around 765 CE. Its name means 'the proud/the mighty,' reflecting pride in documenting the German language itself."
+  },
+  {
+    question: "Kirche (church) entered German from Greek kyriakón. What did the Greek word originally mean?",
+    options: ["Circle (a gathering in a circle)", "Belonging to the Lord", "A stone building", "A place of silence"],
+    correct: 1,
+    explanation: "Kyriakón comes from kyrios (lord/master), so it literally means 'belonging to the Lord.' This theological term traveled through Latin into Germanic languages during the Christianization of Europe."
+  },
+  {
+    question: "Why did Charlemagne order that sermons be given in the local language instead of Latin?",
+    options: ["He wanted to destroy the power of the Church", "He couldn't speak Latin himself", "So ordinary people could understand the Christian message", "Latin was dying out"],
+    correct: 2,
+    explanation: "Charlemagne's pragmatic decision to allow vernacular preaching reflected his goal: converting and organizing the empire. If common people couldn't understand Latin, they couldn't be fully Christianized. Language and power were intertwined."
+  },
+  {
+    question: "The German word Seele (soul) comes from a Proto-Germanic root meaning what?",
+    options: ["Fire or light", "Breath or wind", "Belonging to the sea (the soul's journey across water)", "Shadow or reflection"],
+    correct: 2,
+    explanation: "Seele originally meant something related to sailing or journeying across water, reflecting an ancient Germanic belief that the soul travels. This etymology preserves an entire metaphysical worldview in a single word."
+  },
+  {
+    question: "Feder means both 'feather' and 'quill pen.' What does this tell us about the history of writing?",
+    options: ["Germans invented the ballpoint pen", "The first pens were literally bird feathers — the tool kept the old name", "Monks used feathers as bookmarks", "Feder originally meant 'thin stick'"],
+    correct: 1,
+    explanation: "Medieval scribes actually used bird feathers as writing instruments. When pens were later invented with different materials, the word 'Feder' stayed, showing how language preserves the memory of old technologies."
+  },
+  {
+    question: "Tinte (ink) comes from Latin tincta. Which English word shares the same root?",
+    options: ["tent", "tint", "tinder", "tin"],
+    correct: 1,
+    explanation: "Tincta means 'dyed' or 'colored' (past participle of tingere). Both 'Tinte' and 'tint' come from this Latin root, showing how the concept of coloring/dyeing extended to the coloring agent used in writing."
+  },
+  {
+    question: "From Chapter 4: Why did the Germanic tribes borrow Latin words for Wein, Straße, and Mauer but the Romans borrowed almost no Germanic words?",
+    options: ["Germanic languages were too difficult for Romans", "The Romans forbade foreign words", "The Germans adopted words for Roman technologies they didn't have — the power imbalance was one-directional", "Germanic tribes had no spoken language at the time"],
+    correct: 2,
+    explanation: "Language borrowing reflects power and commerce, not linguistic quality. Germans borrowed Roman words because Romans had superior technology (wine, roads, walls). Romans had no reason to borrow Germanic words—they had nothing to learn from 'barbarians.'"
+  },
+  {
+    question: "From Chapter 7: The Second Consonant Shift changed 'p' to 'pf/ff', 't' to 'ts/ss', and 'k' to 'ch.' Which pair demonstrates this?",
+    options: ["house / Haus", "apple / Apfel", "brother / Bruder", "star / Stern"],
+    correct: 1,
+    explanation: "English 'apple' (with p) and German 'Apfel' (with pf) clearly show the Second Consonant Shift in action. The p → pf change is one of the most dramatic sound changes separating modern German from English."
+  }
+];
+
 // --- QUIZ SYSTEM ---
 function selectQuizOption(btn) {
   const qDiv = btn.closest('.quiz-question');
@@ -1823,14 +1889,29 @@ function selectQuizOption(btn) {
 
 function submitQuiz(total, threshold) {
   let correct = 0;
+  let qIndex = 0;
   document.querySelectorAll('.quiz-question').forEach(q => {
     const selected = q.querySelector('.quiz-option.selected');
+    const qData = quizData[qIndex];
     q.querySelectorAll('.quiz-option').forEach(o => {
       o.style.pointerEvents = 'none';
       if (o.dataset.correct === '1') o.classList.add('correct');
       if (o.classList.contains('selected') && o.dataset.correct !== '1') o.classList.add('wrong');
     });
+
+    // Add explanation below the question
+    if (qData && !q.querySelector('.quiz-explanation')) {
+      const explDiv = document.createElement('div');
+      explDiv.className = 'quiz-explanation';
+      if (selected && selected.dataset.correct === '1') {
+        explDiv.classList.add('correct-exp');
+      }
+      explDiv.innerHTML = '<em>' + qData.explanation + '</em>';
+      q.appendChild(explDiv);
+    }
+
     if (selected && selected.dataset.correct === '1') correct++;
+    qIndex++;
   });
   const pct = Math.round((correct / total) * 100);
   const result = document.getElementById('quiz-result');
@@ -1875,6 +1956,7 @@ function retryQuiz() {
 <script src="game-engine.js" defer></script>
 <script>const CURRENT_CHAPTER = 8;</script>
 <script src="vocab-data.js"></script>
+<script src="quiz-enhancer.js"></script>
 <script src="progress-renderer.js?v=2"></script>
 </body>
 </html>
