@@ -211,6 +211,9 @@
   // in the HTML) must wait for the full DOM to be parsed. Without this, getElementById
   // returns null because those elements haven't been created yet.
   function updateProgressDOM() {
+    // Track chapter visit in localStorage
+    localStorage.setItem('dew-last-chapter', CURRENT_CHAPTER);
+
     // Inject grouped word/pattern tables
     const wordsDetail = document.getElementById('words-detail');
     const patternsDetail = document.getElementById('patterns-detail');
