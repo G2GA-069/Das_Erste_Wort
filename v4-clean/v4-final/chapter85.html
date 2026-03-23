@@ -1,7 +1,619 @@
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 85: Doch, mal, ja (Modal Particles I)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --gold: #d4af37;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  #particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+
+  @media (max-width: 640px) {
+    .content { padding: 30px 18px 80px; }
+    body { font-size: 1.1rem; }
+  }
+
+  .title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-screen h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.4s forwards;
+    margin-bottom: 0.3em;
+  }
+
+  .title-screen .title-de {
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1.5em;
+    font-style: italic;
+  }
+
+  .title-screen .description {
+    font-size: 1.3rem;
+    max-width: 700px;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible { opacity: 1; transform: translateY(0); }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1.5em;
+    background: rgba(232, 164, 74, 0.08);
+    border-left: 3px solid var(--german);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    padding: 2px 4px;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid var(--german);
+  }
+
+  .particle-card {
+    background: rgba(20, 28, 45, 0.6);
+    border: 2px solid rgba(232, 164, 74, 0.25);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+    max-height: 150px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    cursor: pointer;
+  }
+
+  .particle-card.open {
+    max-height: 1200px;
+  }
+
+  .particle-card:hover {
+    background: rgba(20, 28, 45, 0.9);
+    border-color: rgba(232, 164, 74, 0.5);
+    box-shadow: 0 8px 32px rgba(232, 164, 74, 0.15);
+  }
+
+  .particle-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(232, 164, 74, 0.6);
+    margin-bottom: 8px;
+  }
+
+  .particle-german {
+    font-size: 2rem;
+    color: var(--german);
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+
+  .particle-tagline {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+
+  .particle-section {
+    margin: 20px 0;
+    padding: 16px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid var(--fire);
+    border-radius: 4px;
+  }
+
+  .particle-section-title {
+    font-weight: 700;
+    color: var(--fire-glow);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .particle-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: rgba(212, 202, 187, 0.95);
+  }
+
+  .example-set {
+    margin: 16px 0;
+    padding: 12px;
+    background: rgba(26, 35, 55, 0.5);
+    border-radius: 8px;
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+  }
+
+  .example-label {
+    font-weight: 600;
+    color: rgba(232, 164, 74, 0.8);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  .example-text {
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(212, 202, 187, 0.85);
+    margin-bottom: 8px;
+  }
+
+  .example-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .context-box {
+    background: rgba(155, 142, 196, 0.08);
+    border-left: 3px solid rgba(155, 142, 196, 0.5);
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 4px;
+  }
+
+  .context-label {
+    font-weight: 700;
+    color: #9b8ec4;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+
+  .context-text {
+    color: rgba(212, 202, 187, 0.85);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+
+  .divider {
+    text-align: center;
+    margin: 80px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 80px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+
+  .aside-box {
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 4px;
+  }
+
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="content">
+  <div class="title-screen">
+    <div class="chapter-label">Chapter 85</div>
+    <h1>Doch, mal, ja</h1>
+    <p class="title-de">Modal Particles I</p>
+    <p class="description">The Words That Separate Textbook German from Real German. Modal particles are untranslatable little words that add emotional texture, softness, emphasis, or reassurance to sentences. They are what makes German sound like German. Learning them is learning to think and feel in German, not translate from English.</p>
+    <p class="scroll-hint">Scroll to discover the soul of German speech<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative">There is a category of words in German that English has no good equivalent for. They are called <span class="german-word" onclick="speakGerman('Modalpartikeln')">Modalpartikeln</span> — modal particles. They don't change the grammatical structure of a sentence. They add no new information. And yet, remove them, and German sentences sound wooden, harsh, or inappropriate. Add them, and the same sentence becomes natural, gentle, or reassuring.</p>
+
+    <p class="narrative">Imagine if English had a single word that, when added to any command, transformed "Give me the salt" into "Could you pass me the salt please?" — softening it from an order into a friendly request. That's what modal particles do in German. They are the difference between textbook German and native German. They are what your German friends use naturally every single day.</p>
+
+    <p class="narrative emphasis">"Modal particles are not grammar mistakes or optional flourishes. They are the emotional layer of language. They are how German speakers add humanity to their speech."</p>
+
+    <div class="particle-card">
+      <div class="particle-label">Particle #1</div>
+      <div class="particle-german">doch</div>
+      <div class="particle-tagline">Contradiction • Emphasis • Gentle Disagreement</div>
+      <div class="particle-section">
+        <div class="particle-section-title">What It Does</div>
+        <div class="particle-text"><span class="german-word" onclick="speakGerman('doch')">Doch</span> marks contradiction or gentle emphasis. It's used when something contradicts an assumption or expectation. It can also mark reassurance or encouragement.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Examples</div>
+        <div class="example-set">
+          <div class="example-label">Contradiction/Correction:</div>
+          <div class="example-text">"Das stimmt doch nicht!" (That's NOT right! — contradicting an assumption)</div>
+          <div class="example-text">"Das habe ich doch gesagt!" (But I DID say that! — contradicting a claim)</div>
+        </div>
+        <div class="example-set">
+          <div class="example-label">Encouragement/Reassurance:</div>
+          <div class="example-text">"Komm doch mit!" (Come on, come along! — gently insisting, not harshly commanding)</div>
+          <div class="example-text">"Du schaffst doch!" (You can do it! — reassuring, encouraging)</div>
+        </div>
+      </div>
+
+      <div class="context-box">
+        <div class="context-label">When You'll Hear This</div>
+        <div class="context-text">You'll hear <span class="german-word" onclick="speakGerman('doch')">doch</span> constantly in conversation. When a German speaker gently disagrees or corrects you, <span class="german-word" onclick="speakGerman('doch')">doch</span> appears. When they encourage or reassure, <span class="german-word" onclick="speakGerman('doch')">doch</span> is there. It's one of the three most important particles in the language.</div>
+      </div>
+    </div>
+
+    <div class="particle-card">
+      <div class="particle-label">Particle #2</div>
+      <div class="particle-german">mal</div>
+      <div class="particle-tagline">Softener • Request Maker • Temporary Marker</div>
+      <div class="particle-section">
+        <div class="particle-section-title">What It Does</div>
+        <div class="particle-text"><span class="german-word" onclick="speakGerman('mal')">Mal</span> softens requests, commands, and suggestions. It transforms a statement from harsh or demanding into friendly and temporary. Without <span class="german-word" onclick="speakGerman('mal')">mal</span>, German can sound military; with it, it sounds collaborative.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Examples</div>
+        <div class="example-set">
+          <div class="example-label">Softening requests:</div>
+          <div class="example-text">"Gib mir mal das Salz" (Pass me the salt, will you? — friendly request)</div>
+          <div class="example-text">vs. "Gib mir das Salz" (Give me the salt — sounds like a military order)</div>
+        </div>
+        <div class="example-set">
+          <div class="example-label">Temporary/casual marker:</div>
+          <div class="example-text">"Schau mal!" (Look! / Take a look — informal, not demanding attention like "Schau!")</div>
+          <div class="example-text">"Warte mal!" (Wait a second — casual, not urgent like "Warte!")</div>
+        </div>
+      </div>
+
+      <div class="context-box">
+        <div class="context-label">When You'll Hear This</div>
+        <div class="context-text">You'll hear <span class="german-word" onclick="speakGerman('mal')">mal</span> in almost every conversation. It appears in requests, suggestions, and casual instructions. It is essential to understanding native German speech. Without recognizing <span class="german-word" onclick="speakGerman('mal')">mal</span>, you might think German people are always giving harsh commands.</div>
+      </div>
+    </div>
+
+    <div class="particle-card">
+      <div class="particle-label">Particle #3</div>
+      <div class="particle-german">ja</div>
+      <div class="particle-tagline">Shared Knowledge • Emphasis • Assumption Marker</div>
+      <div class="particle-section">
+        <div class="particle-section-title">What It Does</div>
+        <div class="particle-text"><span class="german-word" onclick="speakGerman('ja')">Ja</span> as a particle (not the word "yes") marks something the speaker assumes you already know or agree with. It's a signal: "As you know..." or "You must understand..." It can also emphasize surprise or emotion.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Examples</div>
+        <div class="example-set">
+          <div class="example-label">Shared knowledge:</div>
+          <div class="example-text">"Du weißt ja, dass ich morgen verreise." (You know, of course, that I'm leaving tomorrow.)</div>
+          <div class="example-text">"Das ist ja toll!" (Oh, that's great! — expressing surprise or delight)</div>
+        </div>
+        <div class="example-set">
+          <div class="example-label">Emphasis/emotion:</div>
+          <div class="example-text">"Das ist ja unmöglich!" (That's simply impossible! — emphatic disbelief)</div>
+          <div class="example-text">"Das ist ja interessant!" (That's actually interesting! — surprised interest)</div>
+        </div>
+      </div>
+
+      <div class="context-box">
+        <div class="context-label">When You'll Hear This</div>
+        <div class="context-text">You'll hear <span class="german-word" onclick="speakGerman('ja')">ja</span> when Germans assume shared knowledge or when expressing emotion. It is NOT the word for "yes" in this context — it's a particle that marks an assumption or emphasizes an emotional reaction. This is critical to understand because it's completely different from the straightforward "ja" = "yes."</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative">These three particles — <span class="german-word" onclick="speakGerman('doch')">doch</span>, <span class="german-word" onclick="speakGerman('mal')">mal</span>, and <span class="german-word" onclick="speakGerman('ja')">ja</span> — are the foundation of natural German speech. They appear in textbooks almost not at all, yet you hear them in every conversation with native speakers. This is why learning from textbooks alone will never make you sound like a German speaker. These particles are the difference between sounding like a translation machine and sounding like a person.</p>
+
+    <p class="narrative">Notice that none of these particles can be easily translated into English. You cannot add a single English word to an English sentence to achieve the same effect. This reveals something profound: <strong>German and English don't just have different words; they have different ways of expressing emotion and social nuance. Modal particles are how German adds texture to speech that English adds through tone of voice or through multi-word phrases.</strong></p>
+
+    <p class="narrative emphasis">"To master these particles is to think less as an English speaker learning German, and more as a German speaker who happens to know English. You are not translating anymore. You are speaking."</p>
+
+    <div class="particle-card">
+      <div class="particle-label">Putting It Together: Context Matters</div>
+      <div class="particle-section">
+        <div class="particle-section-title">A Comparison: With and Without</div>
+        <div class="particle-text"><strong>Without particles:</strong> "Gib mir das Buch. Komm mit. Das stimmt nicht. Du schaffst das."</div>
+        <div class="particle-text" style="margin-top:12px;"><strong>With particles:</strong> "Gib mir mal das Buch. Komm doch mit. Das stimmt doch nicht. Du schaffst doch!"</div>
+        <div class="particle-text" style="margin-top:12px;font-style:italic;color:rgba(212,202,187,0.7);">The sentences on the second line are friendlier, more human, more collaborative. They sound like something a real German person would say. The sentences on the first line sound like a robot or a textbook. That is the power of modal particles.</div>
+      </div>
+    </div>
+
+    <div class="particle-card">
+      <div class="particle-label">The Road Ahead: Particles II and III</div>
+      <div class="particle-section">
+        <div class="particle-section-title">What's Coming</div>
+        <div class="particle-text">Chapter 86 will introduce three more particles: <span class="german-word" onclick="speakGerman('halt')">halt</span> (well / just / after all), <span class="german-word" onclick="speakGerman('eben')">eben</span> (precisely / just / exactly), and <span class="german-word" onclick="speakGerman('schon')">schon</span> (already / I suppose). These are also essential for natural speech. And Chapter 87 will cover <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> (actually / really) and <span class="german-word" onclick="speakGerman('übrigens')">übrigens</span> (by the way / incidentally). Together, these nine particles form the backbone of natural German conversation.</div>
+      </div>
+    </div>
+
+    <div class="particle-card">
+      <div class="particle-label">Practice: Recognizing Particles in Real Speech</div>
+      <div class="particle-section">
+        <div class="particle-section-title">A Listening Exercise</div>
+        <div class="particle-text">When you listen to German movies, podcasts, or conversations, start listening specifically for these particles. You won't hear long stretches of speech without one of them appearing. Notice how native speakers use them naturally, without thinking. Notice how they soften requests, emphasize points, or mark shared assumptions. Once you hear them, you cannot unhear them. They are everywhere in real German.</div>
+      </div>
+    </div>
+
+    <div class="particle-card">
+      <div class="particle-label">A Note on Production: Start with Recognition</div>
+      <div class="particle-section">
+        <div class="particle-section-title">Learning to Use Particles</div>
+        <div class="particle-text">Your journey with particles has two phases, like all language learning. <strong>First: Recognition.</strong> When you hear "Komm doch mit," you understand it means "Come on, come along — it would be great if you did." When you hear "Gib mir mal das Buch," you understand it's a friendly request, not a harsh command. This phase should take weeks or months. <strong>Second: Production.</strong> After you've heard these particles hundreds of times in context, they will naturally start appearing in your own speech. You won't need to think about them; they'll emerge naturally. Do not force particle usage early; let it come naturally through exposure and context.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PATTERNS DISCOVERED -->
+  <div class="aside-box">
+    <div class="aside-title">Patterns Discovered: Modal Particles I</div>
+    <p>This chapter introduces a fundamental pattern that separates textbook German from real German: <strong>Modal particles are untranslatable emotional and social markers that add texture to speech without changing grammar or core meaning. They are used unconsciously by native speakers but are nearly invisible to learners.</strong></p>
+    <p style="margin-top:12px;">Key insight: <strong>Modal particles are how German compensates for what English expresses through tone of voice, intonation, or multi-word phrases.</strong> English: "Give me the salt, please" (using a politeness word). German: "Gib mir mal das Salz" (using a particle). Same meaning, different mechanism.</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-container">
+    <h3>Test Your Knowledge: Modal Particles I</h3>
+    <div id="quiz-content">
+      <!-- Quiz will be populated by JavaScript -->
+    </div>
+    <div id="quiz-score" style="display:none;text-align:center;font-size:1.3rem;color:var(--fire-glow);margin:24px 0;font-weight:500;">
+      Score: <span id="final-score">0</span>/6 (Passing: 80%)
+    </div>
+    <div id="quiz-result" style="display:none;text-align:center;margin:24px 0;font-size:1.1rem;"></div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-section">
+    <a href="chapter84.html" class="nav-btn">← Chapter 84</a>
+    <a href="chapter86.html" class="nav-btn next">Chapter 86 →</a>
+  </div>
+
   <!-- ==================== YOUR PROGRESS ==================== -->
-    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
 
     <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
@@ -32,6 +644,164 @@
       <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 134 patterns and grammar rules across 85 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
     </div>
   </div>
+
+</div>
+
+<script>
+  // ==================== SCROLL EFFECTS ====================
+  const scenes = document.querySelectorAll('.scene');
+  function checkScroll() {
+    scenes.forEach(scene => {
+      const rect = scene.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.8) {
+        scene.classList.add('visible');
+      }
+    });
+  }
+  window.addEventListener('scroll', checkScroll);
+  checkScroll();
+
+  // ==================== CANVAS ANIMATION ====================
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = canvas.height;
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = -Math.random() * 3 - 1;
+      this.life = 1;
+      this.decay = Math.random() * 0.01 + 0.005;
+      this.size = Math.random() * 3 + 1;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= this.decay;
+    }
+    draw() {
+      ctx.fillStyle = `rgba(232, 164, 74, ${this.life * 0.6})`;
+      ctx.fillRect(this.x, this.y, this.size, this.size);
+    }
+  }
+
+  function animate() {
+    ctx.fillStyle = 'rgba(8, 8, 16, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (Math.random() < 0.3) {
+      particles.push(new Particle());
+    }
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // ==================== AUDIO ====================
+  function speakGerman(word) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    speechSynthesis.speak(utterance);
+  }
+
+  // ==================== PARTICLE CARDS ====================
+  document.querySelectorAll('.particle-card').forEach(card => {
+    card.addEventListener('click', function() {
+      this.classList.toggle('open');
+    });
+  });
+
+  // ==================== QUIZ ====================
+  const quizData = [
+    {
+      q: 'What does the particle "doch" typically do in German?',
+      opts: ['Marks contradiction/emphasis', 'Softens requests', 'Marks shared knowledge', 'Emphasizes surprise'],
+      correct: 0,
+      expl: 'Doch marks contradiction or gentle emphasis. "Das stimmt doch nicht!" = "That\'s NOT right!" It can also mark reassurance: "Komm doch mit!" = "Come on, come along!"'
+    },
+    {
+      q: 'What is the effect of adding "mal" to a request in German?',
+      opts: ['Makes it more urgent', 'Softens it and makes it friendly', 'Changes the meaning', 'Makes it past tense'],
+      correct: 1,
+      expl: '"Gib mir das Salz" (military order) vs. "Gib mir mal das Salz" (friendly request). Mal is the softener that transforms harsh commands into collaborative requests.'
+    },
+    {
+      q: 'When a German speaker says "Du weißt ja, dass...", what does "ja" mean?',
+      opts: ['Yes', 'Maybe', 'Shared knowledge/assumption marker', 'But'],
+      correct: 2,
+      expl: 'The particle "ja" marks something the speaker assumes you already know or agree with. It\'s completely different from "ja" = "yes."'
+    },
+    {
+      q: 'Which particle appears in almost every German conversation?',
+      opts: ['doch', 'mal', 'ja', 'All three equally'],
+      correct: 1,
+      expl: 'While all three are common, "mal" is the most frequent. You\'ll hear it softening requests and marking temporary/casual actions in nearly every conversation.'
+    },
+    {
+      q: 'Why can\'t modal particles be easily translated into English?',
+      opts: ['They are grammatically different', 'English uses tone of voice, intonation, and multi-word phrases instead', 'German doesn\'t really have them', 'They are regional dialects'],
+      correct: 1,
+      expl: 'Modal particles are how German adds emotional texture without translatable equivalents. English achieves this through tone, intonation ("Could you pass the salt, please?"), not through single particles.'
+    },
+    {
+      q: 'Which statement best describes modal particles?',
+      opts: ['They change grammar', 'They add new information', 'They are optional and rarely used', 'They separate textbook German from real German'],
+      correct: 3,
+      expl: 'Modal particles don\'t change grammar or add information, but they are essential for natural speech. They are nearly invisible in textbooks yet appear constantly in real German conversation.'
+    }
+  ];
+
+  let currentQ = 0;
+  let score = 0;
+  let answered = [];
+
+  function renderQuiz() {
+    const cont = document.getElementById('quiz-content');
+    if (currentQ < quizData.length) {
+      const q = quizData[currentQ];
+      let html = `<div class="quiz-question">
+        <div class="q-text">Question ${currentQ + 1}: ${q.q}</div>
+        <div class="quiz-options">`;
+      q.opts.forEach((opt, i) => {
+        const cls = answered[currentQ] !== undefined ? (i === q.correct ? 'selected' : (i === answered[currentQ] ? 'incorrect' : '')) : '';
+        html += `<button class="quiz-option ${cls}" onclick="answerQ(${i})" ${answered[currentQ] !== undefined ? 'disabled' : ''}>${opt}</button>`;
+      });
+      html += `</div>`;
+      if (answered[currentQ] !== undefined) {
+        html += `<div style="margin-top:16px;padding:12px;background:rgba(232,164,74,0.08);border-radius:8px;color:rgba(212,202,187,0.9);font-size:1rem;">${q.expl}</div>`;
+      }
+      html += `</div>`;
+      cont.innerHTML = html;
+    } else {
+      let msg = score >= 5 ? '✓ Passed! You understand the particles.' : '✗ Below passing. Review and try again.';
+      cont.innerHTML = '';
+      document.getElementById('quiz-score').style.display = 'block';
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('quiz-result').style.display = 'block';
+      document.getElementById('quiz-result').textContent = msg;
+    }
+  }
+
+  function answerQ(idx) {
+    answered[currentQ] = idx;
+    if (idx === quizData[currentQ].correct) score++;
+    renderQuiz();
+  }
+
+  renderQuiz();
+  window.answerQ = answerQ;
+  window.speakGerman = speakGerman;
+
+</script>
+
 <script>const CURRENT_CHAPTER = 85;</script>
 <script src="vocab-data.js"></script>
 <script src="progress-renderer.js"></script>

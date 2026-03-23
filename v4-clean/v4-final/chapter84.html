@@ -1,7 +1,720 @@
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 84: Falsche Freunde II (False Friends II)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --gold: #d4af37;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  #particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+
+  @media (max-width: 640px) {
+    .content { padding: 30px 18px 80px; }
+    body { font-size: 1.1rem; }
+  }
+
+  .title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-screen h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.4s forwards;
+    margin-bottom: 0.3em;
+  }
+
+  .title-screen .title-de {
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1.5em;
+    font-style: italic;
+  }
+
+  .title-screen .description {
+    font-size: 1.3rem;
+    max-width: 700px;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible { opacity: 1; transform: translateY(0); }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1.5em;
+    background: rgba(232, 164, 74, 0.08);
+    border-left: 3px solid var(--german);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    padding: 2px 4px;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid var(--german);
+  }
+
+  .etymology-card {
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+    max-height: 120px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    cursor: pointer;
+  }
+
+  .etymology-card.open {
+    max-height: 800px;
+  }
+
+  .etymology-card.friend {
+    border-color: rgba(75, 180, 100, 0.3);
+    background: rgba(75, 180, 100, 0.05);
+  }
+
+  .etymology-card.friend:hover {
+    border-color: rgba(75, 180, 100, 0.5);
+    background: rgba(75, 180, 100, 0.1);
+  }
+
+  .etymology-card:hover {
+    background: rgba(20, 28, 45, 0.9);
+    border-color: rgba(232, 164, 74, 0.4);
+    box-shadow: 0 8px 32px rgba(232, 164, 74, 0.1);
+  }
+
+  .word-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .word-german {
+    font-size: 1.6rem;
+    color: var(--german);
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .word-german.friend {
+    color: #4ab464;
+  }
+
+  .word-meaning {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.8);
+    margin: 8px 0 16px 0;
+  }
+
+  .friend-badge {
+    display: inline-block;
+    background: rgba(75, 180, 100, 0.2);
+    color: #4ab464;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-left: 12px;
+  }
+
+  .etymology-section {
+    margin: 20px 0;
+    padding: 16px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 2px solid var(--fire);
+    border-radius: 4px;
+  }
+
+  .etymology-section.friend {
+    background: rgba(75, 180, 100, 0.05);
+    border-left-color: #4ab464;
+  }
+
+  .etymology-section-title {
+    font-weight: 600;
+    color: var(--fire-glow);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .etymology-section-title.friend {
+    color: #4ab464;
+  }
+
+  .etymology-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.9);
+  }
+
+  .context-box {
+    background: rgba(155, 142, 196, 0.08);
+    border-left: 2px solid rgba(155, 142, 196, 0.4);
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 4px;
+  }
+
+  .context-label {
+    font-weight: 600;
+    color: #9b8ec4;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .context-text {
+    color: rgba(212, 202, 187, 0.8);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+
+  .divider {
+    text-align: center;
+    margin: 80px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 80px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .aside-box {
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 4px;
+  }
+
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="content">
+  <div class="title-screen">
+    <div class="chapter-label">Chapter 84</div>
+    <h1>Falsche Freunde II</h1>
+    <p class="title-de">False Friends II</p>
+    <p class="description">More Deceptive Words, Plus the Opposite: True Friends. Not every similar word is a false friend. Some English-German word pairs DO mean the same thing across both languages — these are true friends (cognates), and they're the linguistic gift that makes this whole journey possible.</p>
+    <p class="scroll-hint">Scroll to discover betrayal and trust<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative">Now that you understand how false friends work, let's continue with more deceptive words. These will deepen your awareness of the dangers lurking in linguistic similarity. And then — here's the reward — we'll examine the opposite phenomenon: true friends, words that really do mean the same thing in both languages. These true friends are not just safe havens; they're proof that the linguistic inheritance between English and German is fundamentally strong, even if some cousins have wandered astray.</p>
+
+    <p class="narrative emphasis">"For every false friend, there are ten true friends. The language is fundamentally honest. It's just that the betrayals are memorable."</p>
+
+    <div class="etymology-card">
+      <div class="word-header">
+        <span class="word-german">brav</span>
+        <button class="speak-btn" onclick="speakGerman('brav')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Well-behaved (NOT brave/courageous)</div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">Why It's a False Friend</div>
+        <div class="etymology-text">English "brave" means courageous or fearless. German <span class="german-word" onclick="speakGerman('brav')">brav</span> means well-behaved, obedient, or dutiful. "Ein braves Kind" means "a well-behaved child," not "a courageous child." For courage, Germans use <span class="german-word" onclick="speakGerman('mutig')">mutig</span>.</div>
+      </div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">The Etymology</div>
+        <div class="etymology-text">Both words likely come from Old Germanic or Latin roots meaning "worthy" or "excellent," but diverged dramatically. English evolved "brave" toward physical courage, while German kept <span class="german-word" onclick="speakGerman('brav')">brav</span> more focused on moral compliance and good behavior.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card">
+      <div class="word-header">
+        <span class="word-german">eventuell</span>
+        <button class="speak-btn" onclick="speakGerman('eventuell')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Possibly/maybe (NOT eventually/in the end)</div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">Why It's a False Friend</div>
+        <div class="etymology-text">"Eventually" in English means at some point in the future or finally. German <span class="german-word" onclick="speakGerman('eventuell')">eventuell</span> means possibly or maybe (in the present or near future). "Eventuell komme ich später" = "Maybe I'll come later," not "I will eventually come later."</div>
+      </div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">The Etymology</div>
+        <div class="etymology-text">Both come from Latin "eventualis." English narrowed it to "at some future point." German kept it broader to mean "possibly" or "contingently." A subtle but critical difference in meaning.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card">
+      <div class="word-header">
+        <span class="word-german">Konzept</span>
+        <button class="speak-btn" onclick="speakGerman('Konzept')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Draft/rough plan (NOT a finished concept)</div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">Why It's a False Friend</div>
+        <div class="etymology-text">English "concept" is an idea or abstract thought. German <span class="german-word" onclick="speakGerman('Konzept')">Konzept</span> is specifically a draft, a preliminary plan, or a rough outline. "Ich habe ein Konzept für das Projekt" = "I have a draft plan for the project," suggesting something preliminary, not final.</div>
+      </div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">The Etymology</div>
+        <div class="etymology-text">Both from Latin "conceptum." But German semantically shifted it toward the written or documented draft/plan, while English kept it as abstract idea.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card">
+      <div class="word-header">
+        <span class="word-german">Mappe</span>
+        <button class="speak-btn" onclick="speakGerman('Mappe')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Folder/portfolio (NOT a map)</div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">Why It's a False Friend</div>
+        <div class="etymology-text">Looks like "map" but means folder or portfolio in German. "Deine Mappe ist voll Papieren" = "Your folder/portfolio is full of papers." For a map, Germans use <span class="german-word" onclick="speakGerman('Karte')">Karte</span> or <span class="german-word" onclick="speakGerman('Landkarte')">Landkarte</span>.</div>
+      </div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">The Etymology</div>
+        <div class="etymology-text">German <span class="german-word" onclick="speakGerman('Mappe')">Mappe</span> likely comes from Latin "mappa" (cloth), and evolved toward a document folder or portfolio. English "map" comes from the same root but specialized to geographical maps.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card">
+      <div class="word-header">
+        <span class="word-german">also</span>
+        <button class="speak-btn" onclick="speakGerman('also')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: So/therefore (NOT also/as well)</div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">Why It's a False Friend</div>
+        <div class="etymology-text">This is a critical false friend. English "also" means "as well" or "in addition." German <span class="german-word" onclick="speakGerman('also')">also</span> means "so" or "therefore." "Also, was machen wir?" = "So, what do we do?" NOT "Also, we do what?" For "also" (as well), Germans use <span class="german-word" onclick="speakGerman('auch')">auch</span>.</div>
+      </div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">The Etymology</div>
+        <div class="etymology-text">Both come from Latin "allso" or similar roots. But the words diverged. English kept it as an additive conjunction. German shifted it to a logical conjunction meaning "so" or "therefore."</div>
+      </div>
+    </div>
+
+    <div class="etymology-card">
+      <div class="word-header">
+        <span class="word-german">fast</span>
+        <button class="speak-btn" onclick="speakGerman('fast')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Almost (NOT fast/quick)</div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">Why It's a False Friend</div>
+        <div class="etymology-text">English "fast" means quick or rapid. German <span class="german-word" onclick="speakGerman('fast')">fast</span> means almost or nearly. "Das ist fast fertig" = "That's almost finished," not "That's finished quickly." For quick, Germans use <span class="german-word" onclick="speakGerman('schnell')">schnell</span>.</div>
+      </div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">The Etymology</div>
+        <div class="etymology-text">These words don't even share roots. German <span class="german-word" onclick="speakGerman('fast')">fast</span> probably comes from Old High German "fasta" meaning "hardship" or "strain," evolving toward "almost" (as in "almost didn't make it"). English "fast" comes from Old Germanic meaning "fixed" or "firm" (fast = firmly fixed, therefore quick). Pure coincidence that they sound identical.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card">
+      <div class="word-header">
+        <span class="word-german">See</span>
+        <button class="speak-btn" onclick="speakGerman('See')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Lake (der See) OR sea (die See) — gender determines meaning</div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">Why It's a False Friend (and complicated)</div>
+        <div class="etymology-text"><span class="german-word" onclick="speakGerman('See')">See</span> is fascinating: the masculine form <span class="german-word" onclick="speakGerman('der See')">der See</span> means a lake. The feminine form <span class="german-word" onclick="speakGerman('die See')">die See</span> means the sea. Same spelling, different genders, opposite meanings. This is a unique linguistic quirk where gender is the decoder.</div>
+      </div>
+      <div class="etymology-section">
+        <div class="etymology-section-title">The Etymology</div>
+        <div class="etymology-text">German has two separate words that happen to be homophones: <span class="german-word" onclick="speakGerman('See')">See</span> (lake, from Old Germanic), and <span class="german-word" onclick="speakGerman('See')">See</span> (sea, from Old High German). Different origins, same pronunciation, different genders. The gender tells you which one is meant: <span class="german-word" onclick="speakGerman('der See')">der See</span> = lake (masc.), <span class="german-word" onclick="speakGerman('die See')">die See</span> = sea (fem.).</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative">Now for the antidote to false friends: TRUE FRIENDS. These are cognates — words that really do mean the same thing in English and German. They're proof that the two languages are fundamentally siblings, even if some cousins have become unreliable.</p>
+
+    <div class="etymology-card friend">
+      <div class="word-header">
+        <span class="word-german friend">Finger</span>
+        <span class="friend-badge">TRUE FRIEND ✓</span>
+        <button class="speak-btn" onclick="speakGerman('Finger')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Finger — exactly what it means in English</div>
+      <div class="etymology-section friend">
+        <div class="etymology-section-title friend">The Trust</div>
+        <div class="etymology-text"><span class="german-word" onclick="speakGerman('Finger')">Finger</span> means finger in German, same as in English. A true friend that you can always rely on. From Proto-Germanic roots that have remained stable for thousands of years.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card friend">
+      <div class="word-header">
+        <span class="word-german friend">Butter</span>
+        <span class="friend-badge">TRUE FRIEND ✓</span>
+        <button class="speak-btn" onclick="speakGerman('Butter')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Butter — the dairy product, same as in English</div>
+      <div class="etymology-section friend">
+        <div class="etymology-section-title friend">The Trust</div>
+        <div class="etymology-text"><span class="german-word" onclick="speakGerman('Butter')">Butter</span> is identical in meaning across both languages. From Latin "butyrum," both English and German kept the same meaning and form for this essential food.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card friend">
+      <div class="word-header">
+        <span class="word-german friend">Wanderlust</span>
+        <span class="friend-badge">TRUE FRIEND ✓</span>
+        <button class="speak-btn" onclick="speakGerman('Wanderlust')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: A strong desire to travel and explore (English borrowed this directly from German!)</div>
+      <div class="etymology-section friend">
+        <div class="etymology-section-title friend">The Trust</div>
+        <div class="etymology-text"><span class="german-word" onclick="speakGerman('Wanderlust')">Wanderlust</span> is a compound: "Wander" (to hike/roam) + "Lust" (desire). English borrowed this word directly from German in the 19th century. When English speakers use "wanderlust," they're speaking German.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card friend">
+      <div class="word-header">
+        <span class="word-german friend">Kindergarten</span>
+        <span class="friend-badge">TRUE FRIEND ✓</span>
+        <button class="speak-btn" onclick="speakGerman('Kindergarten')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: A school for young children (English borrowed this German word too!)</div>
+      <div class="etymology-section friend">
+        <div class="etymology-section-title friend">The Trust</div>
+        <div class="etymology-text">German compound: "Kinder" (children) + "Garten" (garden). Literally, a "children's garden" — a place where young minds grow like plants. English borrowed this term entirely, recognizing its perfection.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card friend">
+      <div class="word-header">
+        <span class="word-german friend">Rucksack</span>
+        <span class="friend-badge">TRUE FRIEND ✓</span>
+        <button class="speak-btn" onclick="speakGerman('Rucksack')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: A backpack (English borrowed this directly from German)</div>
+      <div class="etymology-section friend">
+        <div class="etymology-section-title friend">The Trust</div>
+        <div class="etymology-text">German compound: "Ruck" (back) + "Sack" (sack/bag). A bag you carry on your back. English adopted this term in the 19th century. True friend from the start.</div>
+      </div>
+    </div>
+
+    <div class="etymology-card friend">
+      <div class="word-header">
+        <span class="word-german friend">Angst</span>
+        <span class="friend-badge">TRUE FRIEND ✓</span>
+        <button class="speak-btn" onclick="speakGerman('Angst')">🔊</button>
+      </div>
+      <div class="word-meaning">Meaning: Anxiety/dread/existential fear (English borrowed this from German psychology)</div>
+      <div class="etymology-section friend">
+        <div class="etymology-section-title friend">The Trust</div>
+        <div class="etymology-text"><span class="german-word" onclick="speakGerman('Angst')">Angst</span> in English means a sense of anxiety or dread, especially existential anxiety. This word was borrowed from German philosophy and psychology (think Kierkegaard, Heidegger) in the 20th century. It's a true friend and a gift to English.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative">The lesson? The relationship between English and German is fundamentally honest. For every false friend, there are dozens of true friends waiting to be discovered. <span class="german-word" onclick="speakGerman('Finger')">Finger</span>, <span class="german-word" onclick="speakGerman('Butter')">Butter</span>, <span class="german-word" onclick="speakGerman('Wanderlust')">Wanderlust</span>, <span class="german-word" onclick="speakGerman('Kindergarten')">Kindergarten</span>, <span class="german-word" onclick="speakGerman('Rucksack')">Rucksack</span>, <span class="german-word" onclick="speakGerman('Angst')">Angst</span> — these words prove it. English didn't just borrow words; it borrowed concepts. It borrowed German ways of seeing the world. And for every word that betrays you, ten more will confirm your intuition. Trust the language. Just check yourself with the dangerous ones.</p>
+
+  </div>
+
+  <!-- PATTERNS DISCOVERED -->
+  <div class="aside-box">
+    <div class="aside-title">Patterns Discovered: False Friends II & True Friends</div>
+    <p>This chapter introduces a critical insight: <strong>Linguistic divergence is not random. False friends typically follow patterns of semantic narrowing, semantic shift, or compound repurposing. True friends demonstrate that the inheritance between English and German is fundamentally strong.</strong></p>
+    <p style="margin-top:12px;">Key insight: English borrowed certain German words wholesale (Wanderlust, Kindergarten, Rucksack, Angst), recognizing their conceptual perfection. This is not weakness in German; it's recognition of semantic precision.</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-container">
+    <h3>Test Your Knowledge: False Friends II</h3>
+    <div id="quiz-content">
+      <!-- Quiz will be populated by JavaScript -->
+    </div>
+    <div id="quiz-score" style="display:none;text-align:center;font-size:1.3rem;color:var(--fire-glow);margin:24px 0;font-weight:500;">
+      Score: <span id="final-score">0</span>/7 (Passing: 80%)
+    </div>
+    <div id="quiz-result" style="display:none;text-align:center;margin:24px 0;font-size:1.1rem;"></div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-section">
+    <a href="chapter83.html" class="nav-btn">← Chapter 83</a>
+    <a href="chapter85.html" class="nav-btn next">Chapter 85 →</a>
+  </div>
+
   <!-- ==================== YOUR PROGRESS ==================== -->
-    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
 
     <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
@@ -32,6 +745,178 @@
       <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 133 patterns and grammar rules across 84 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
     </div>
   </div>
+
+</div>
+
+<script>
+  // ==================== SCROLL EFFECTS ====================
+  const scenes = document.querySelectorAll('.scene');
+  function checkScroll() {
+    scenes.forEach(scene => {
+      const rect = scene.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.8) {
+        scene.classList.add('visible');
+      }
+    });
+  }
+  window.addEventListener('scroll', checkScroll);
+  checkScroll();
+
+  // ==================== CANVAS ANIMATION ====================
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = canvas.height;
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = -Math.random() * 3 - 1;
+      this.life = 1;
+      this.decay = Math.random() * 0.01 + 0.005;
+      this.size = Math.random() * 3 + 1;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= this.decay;
+    }
+    draw() {
+      ctx.fillStyle = `rgba(232, 164, 74, ${this.life * 0.6})`;
+      ctx.fillRect(this.x, this.y, this.size, this.size);
+    }
+  }
+
+  function animate() {
+    ctx.fillStyle = 'rgba(8, 8, 16, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (Math.random() < 0.3) {
+      particles.push(new Particle());
+    }
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // ==================== AUDIO ====================
+  function speakGerman(word) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    speechSynthesis.speak(utterance);
+  }
+
+  // ==================== ETYMOLOGY CARDS ====================
+  document.querySelectorAll('.etymology-card').forEach(card => {
+    card.addEventListener('click', function() {
+      this.classList.toggle('open');
+    });
+  });
+
+  // ==================== QUIZ ====================
+  const quizData = [
+    {
+      q: 'What does "brav" mean in German?',
+      opts: ['Brave/courageous', 'Well-behaved', 'Strong', 'Intelligent'],
+      correct: 1,
+      expl: 'Brav means well-behaved or dutiful, not brave/courageous. For courage, Germans use "mutig."'
+    },
+    {
+      q: 'If someone says "Eventuell komme ich später," what do they mean?',
+      opts: ['I will eventually come later', 'Maybe I will come later', 'I might come eventually', 'I will come after everything'],
+      correct: 1,
+      expl: 'Eventuell means "possibly" or "maybe," not "eventually." The timing is uncertain, not delayed.'
+    },
+    {
+      q: 'What does "Konzept" mean in German?',
+      opts: ['A finished concept', 'A draft/preliminary plan', 'A theoretical idea', 'A complete project'],
+      correct: 1,
+      expl: 'Konzept means a draft or rough plan, suggesting something preliminary, not a finished concept.'
+    },
+    {
+      q: 'If a German person says "eine Mappe," what are they referring to?',
+      opts: ['A geographical map', 'A folder or portfolio', 'A piece of fabric', 'A travel document'],
+      correct: 1,
+      expl: 'Mappe means folder or portfolio, not a geographical map. For map, Germans use "Karte."'
+    },
+    {
+      q: 'What does the German word "also" mean?',
+      opts: ['Also/as well', 'So/therefore', 'Because', 'Almost'],
+      correct: 1,
+      expl: '"Also" in German means "so" or "therefore," not "also/as well." For "also," Germans use "auch."'
+    },
+    {
+      q: 'The word "See" in German means...',
+      opts: ['Sea only', 'Lake only', 'Lake (der See) or Sea (die See) — gender determines the meaning', 'A physical location'],
+      correct: 2,
+      expl: 'The gender changes the meaning: "der See" = lake, "die See" = sea. German cleverly uses gender as a decoder.'
+    },
+    {
+      q: 'Which of the following is a TRUE FRIEND (means the same in both languages)?',
+      opts: ['Handy (phone)', 'Wanderlust (desire to travel)', 'Fast (almost)', 'Chef (boss)'],
+      correct: 1,
+      expl: 'Wanderlust is a true friend — English borrowed this word directly from German. It means a desire to travel in both languages.'
+    }
+  ];
+
+  let currentQ = 0;
+  let score = 0;
+  let answered = [];
+
+  function renderQuiz() {
+    const cont = document.getElementById('quiz-content');
+    if (currentQ < quizData.length) {
+      const q = quizData[currentQ];
+      let html = `<div class="quiz-question">
+        <div class="q-text">Question ${currentQ + 1}: ${q.q}</div>
+        <div class="quiz-options">`;
+      q.opts.forEach((opt, i) => {
+        const cls = answered[currentQ] !== undefined ? (i === q.correct ? 'selected' : (i === answered[currentQ] ? 'incorrect' : '')) : '';
+        html += `<button class="quiz-option ${cls}" onclick="answerQ(${i})" ${answered[currentQ] !== undefined ? 'disabled' : ''}>${opt}</button>`;
+      });
+      html += `</div>`;
+      if (answered[currentQ] !== undefined) {
+        html += `<div style="margin-top:16px;padding:12px;background:rgba(232,164,74,0.08);border-radius:8px;color:rgba(212,202,187,0.9);font-size:1rem;">${q.expl}</div>`;
+      }
+      html += `</div>`;
+      cont.innerHTML = html;
+    } else {
+      let msg = score >= 6 ? '✓ Passed! Excellent discernment.' : '✗ Below passing. Review and try again.';
+      cont.innerHTML = '';
+      document.getElementById('quiz-score').style.display = 'block';
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('quiz-result').style.display = 'block';
+      document.getElementById('quiz-result').textContent = msg;
+    }
+  }
+
+  function answerQ(idx) {
+    answered[currentQ] = idx;
+    if (idx === quizData[currentQ].correct) score++;
+    renderQuiz();
+  }
+
+  function nextQ() {
+    if (currentQ < quizData.length - 1) {
+      currentQ++;
+      renderQuiz();
+    }
+  }
+
+  renderQuiz();
+  window.answerQ = answerQ;
+  window.nextQ = nextQ;
+  window.speakGerman = speakGerman;
+
+</script>
+
 <script>const CURRENT_CHAPTER = 84;</script>
 <script src="vocab-data.js"></script>
 <script src="progress-renderer.js"></script>

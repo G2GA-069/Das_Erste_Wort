@@ -1,13 +1,754 @@
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 87: Eigentlich, übrigens (Modal Particles III)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --gold: #d4af37;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+
+  @media (max-width: 640px) {
+    .content { padding: 30px 18px 80px; }
+    body { font-size: 1.1rem; }
+  }
+
+  .title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-screen h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.4s forwards;
+    margin-bottom: 0.3em;
+  }
+
+  .title-screen .title-de {
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1.5em;
+    font-style: italic;
+  }
+
+  .title-screen .description {
+    font-size: 1.3rem;
+    max-width: 700px;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible { opacity: 1; transform: translateY(0); }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1.5em;
+    background: rgba(232, 164, 74, 0.08);
+    border-left: 3px solid var(--german);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    padding: 2px 4px;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid var(--german);
+  }
+
+  .particle-card {
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+    transition: all 0.3s ease;
+  }
+
+  .particle-card:hover {
+    background: rgba(20, 28, 45, 0.9);
+    border-color: rgba(232, 164, 74, 0.4);
+    box-shadow: 0 8px 32px rgba(232, 164, 74, 0.1);
+  }
+
+  .particle-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(232, 164, 74, 0.6);
+    margin-bottom: 8px;
+  }
+
+  .particle-german {
+    font-size: 2.2rem;
+    color: var(--german);
+    font-weight: 600;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .particle-tagline {
+    font-size: 1.1rem;
+    color: rgba(212, 202, 187, 0.8);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .particle-section {
+    margin: 16px 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .particle-section-title {
+    color: var(--fire-glow);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+
+  .example-sentence {
+    background: rgba(26, 35, 55, 0.5);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    font-style: italic;
+    color: rgba(212, 202, 187, 0.9);
+  }
+
+  .chinese-equiv {
+    background: rgba(196, 154, 108, 0.08);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    color: var(--chinese);
+    border-left: 2px solid var(--chinese);
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 32px 0;
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .comparison-table th {
+    background: rgba(232, 164, 74, 0.1);
+    color: var(--fire-glow);
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(232, 164, 74, 0.2);
+    font-size: 0.95rem;
+  }
+
+  .comparison-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+    color: var(--text);
+  }
+
+  .comparison-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 80px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 80px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    background: rgba(232, 164, 74, 0.15);
+    border-radius: 4px;
+    height: 4px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    background: var(--german);
+    height: 100%;
+    transition: width 0.3s;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  .aside-box {
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 4px;
+  }
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+  /* G2G Branding */
+  .g2g-logo {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 200;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+  .g2g-logo:hover { opacity: 0.7; }
+
+  .g2g-footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(212, 202, 187, 0.3);
+    margin-top: 80px;
+    padding-top: 40px;
+  }
+
+  #progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #e8a44a, #f4c67a);
+    z-index: 100;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+<!-- G2G Logo -->
+<div class="g2g-logo">
+  <a href="https://www.g2gadvisory.co.uk" style="text-decoration: none;">
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="8" width="16" height="32" rx="3" fill="#9b8ec4" opacity="0.8"/>
+      <rect x="28" y="8" width="16" height="32" rx="3" fill="#9b8ec4" opacity="0.8"/>
+      <path d="M 24 16 L 32 28 L 16 28 Z" fill="#e8a44a" opacity="0.9"/>
+    </svg>
+  </a>
+</div>
+
+<div id="progressBar"></div>
+<canvas id="particleCanvas"></canvas>
+
+<div class="content">
+  <div class="title-screen">
+    <p class="chapter-label">Chapter 87</p>
+    <h1>The First Word</h1>
+    <p class="title-de">Eigentlich, übrigens</p>
+    <p class="description">The Final Pair of Modal Particles, and a Synthesis of All Eight. These words shift conversations—hedging thoughts and changing topics gracefully. Together with the six particles you've already learned, they complete the emotional vocabulary of native German speech.</p>
+    <p class="scroll-hint">Scroll to master the eight particles<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative">You have journeyed through eight particles now. In Chapter 85, you met <span class="german-word" onclick="speakGerman('doch')">doch</span>, <span class="german-word" onclick="speakGerman('mal')">mal</span>, and <span class="german-word" onclick="speakGerman('ja')">ja</span>. In Chapter 86, you encountered <span class="german-word" onclick="speakGerman('halt')">halt</span>, <span class="german-word" onclick="speakGerman('eben')">eben</span>, and <span class="german-word" onclick="speakGerman('schon')">schon</span>. Now you meet the final two: <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> and <span class="german-word" onclick="speakGerman('übrigens')">übrigens</span>.</p>
+
+    <p class="narrative">These two particles complete your understanding. Together, the eight form a coherent system—the emotional foundation of German speech. Mastering these particles is the step that transforms you from someone who knows German words and grammar into someone who thinks and feels in German.</p>
+
+    <p class="narrative emphasis">"These final two particles are the hinges upon which German conversation turns. They shift direction, soften intentions, and change subjects gracefully. They are the particles of real, human speech."</p>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+    <p class="narrative">Let us begin with <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span>.</p>
+
+    <div class="particle-card">
+      <div class="particle-label">Particle #7</div>
+      <div class="particle-german">eigentlich</div>
+      <div class="particle-tagline">Hedging • Shifting • Softened Contradiction</div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Core Meaning</div>
+        <div class="particle-section">The particle <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> (which also exists as an adverb meaning "actually" or "really") signals a shift or a softened contradiction. It introduces a thought that partially contradicts or complicates what was just said. It is the particle of hedging—of reconsidering, of changing course mid-thought. When you add <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> to a sentence, you are subtly suggesting "upon further reflection" or "well, now that I think about it."</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Examples in Context</div>
+        <div class="example-sentence" onclick="speakGerman('Eigentlich wollte ich nicht kommen.')">Eigentlich wollte ich nicht kommen.</div>
+        <div class="particle-section" style="margin-top: 8px; font-size: 1rem;">Actually, I didn't want to come. (A softened revelation of your actual intention.)</div>
+
+        <div class="example-sentence" onclick="speakGerman('Was machst du eigentlich?')">Was machst du eigentlich?</div>
+        <div class="particle-section" style="margin-top: 8px; font-size: 1rem;">What do you actually do? (Genuine curiosity; asking for clarification.)</div>
+
+        <div class="example-sentence" onclick="speakGerman('Das ist eigentlich nicht so schlecht.')">Das ist eigentlich nicht so schlecht.</div>
+        <div class="particle-section" style="margin-top: 8px; font-size: 1rem;">Actually, that's not so bad. (A softened positive reassessment.)</div>
+
+        <div class="example-sentence" onclick="speakGerman('Ich hätte eigentlich lieber Wasser.')">Ich hätte eigentlich lieber Wasser.</div>
+        <div class="particle-section" style="margin-top: 8px; font-size: 1rem;">I would actually prefer water. (A polite correction or preference shift.)</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Two Faces of Eigentlich</div>
+        <div class="particle-section">As a particle, <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> softens contradictions. As an adverb, it means "really" or "actually," providing straightforward information. The context determines which use is operative. In "Eigentlich wollte ich nicht kommen," <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> is a particle (softening a contradiction). In "Das ist eigentlich wahr," <span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> is more adverbial (meaning "really" or "in fact").</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Emotional Tone</div>
+        <div class="particle-section">Thoughtful. Reconsidering. Soft. Not harsh or aggressive. The tone of someone who is giving it more thought and coming to a slightly different conclusion.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('eigentlich')">其实 (qíshí) — actually; 说到底 (shuōdàodǐ) — when you get down to it</div>
+      </div>
+    </div>
+
+    <div class="particle-card">
+      <div class="particle-label">Particle #8</div>
+      <div class="particle-german">übrigens</div>
+      <div class="particle-tagline">Topic Pivot • "By the Way" • Conversation Shift</div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Core Meaning</div>
+        <div class="particle-section"><span class="german-word" onclick="speakGerman('übrigens')">Übrigens</span> (literally "by the way" or "incidentally") signals a shift in topic. It announces that you are about to say something that is not directly connected to the previous line of conversation, but that you want to mention now because you've just remembered it or because it occurred to you. It is the particle of conversational pivots—the word that lets you change subjects gracefully without jarring your listener.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Examples in Context</div>
+        <div class="example-sentence" onclick="speakGerman('Das Projekt geht gut voran. Übrigens, hast du gehört, dass Anna umzieht?')">Das Projekt geht gut voran. Übrigens, hast du gehört, dass Anna umzieht?</div>
+        <div class="particle-section" style="margin-top: 8px; font-size: 1rem;">The project is progressing well. By the way, did you hear that Anna is moving?</div>
+
+        <div class="example-sentence" onclick="speakGerman('Übrigens, ich wollte dir sagen...')">Übrigens, ich wollte dir sagen...</div>
+        <div class="particle-section" style="margin-top: 8px; font-size: 1rem;">By the way, I wanted to tell you... (A tangential thought you've just remembered.)</div>
+
+        <div class="example-sentence" onclick="speakGerman('Das ist eine gute Idee. Übrigens, wusstest du schon, dass wir nächste Woche eine Konferenz haben?')">Das ist eine gute Idee. Übrigens, wusstest du schon, dass wir nächste Woche eine Konferenz haben?</div>
+        <div class="particle-section" style="margin-top: 8px; font-size: 1rem;">That's a good idea. By the way, did you know we have a conference next week?</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Social Function</div>
+        <div class="particle-section"><span class="german-word" onclick="speakGerman('übrigens')">Übrigens</span> allows you to introduce new information without making it seem like a non sequitur. It signals "I'm changing the subject now, and here's why: I just remembered this." It softens the topic shift and makes the conversation flow more naturally.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Emotional Tone</div>
+        <div class="particle-section">Casual. Friendly. The tone of someone who has just remembered something and wants to share it. Sometimes conspiratorial or gossipy, depending on what follows.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('übrigens')">顺便说一句 (shùnbiàn shuō yī jù) — by the way; 对了 (duì le) — oh right; 话说回来 (huàshuō huíláilai) — by the way; speaking of which</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <p class="narrative">Now let us see all eight particles in a master reference table—the complete emotional vocabulary of German.</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Particle</th>
+          <th>Primary Function</th>
+          <th>Example</th>
+          <th>Emotional Tone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong onclick="speakGerman('doch')">doch</strong></td>
+          <td>Contradiction, emphasis, gentle disagreement</td>
+          <td><em>"Das ist doch falsch!"</em></td>
+          <td>Emphatic, insistent</td>
+        </tr>
+        <tr>
+          <td><strong onclick="speakGerman('mal')">mal</strong></td>
+          <td>Softening, suggestion, casualness</td>
+          <td><em>"Gib mir mal den Stift."</em></td>
+          <td>Casual, friendly, polite</td>
+        </tr>
+        <tr>
+          <td><strong onclick="speakGerman('ja')">ja</strong></td>
+          <td>Emphasis, confirmation, obviousness</td>
+          <td><em>"Das ist ja wunderbar!"</em></td>
+          <td>Emphatic, obvious, delighted</td>
+        </tr>
+        <tr>
+          <td><strong onclick="speakGerman('halt')">halt</strong></td>
+          <td>Resigned acceptance, acknowledgment</td>
+          <td><em>"Das ist halt so."</em></td>
+          <td>Resigned, accepting, peaceful</td>
+        </tr>
+        <tr>
+          <td><strong onclick="speakGerman('eben')">eben</strong></td>
+          <td>Acceptance (also temporal: "just now")</td>
+          <td><em>"Das ist eben die Natur."</em></td>
+          <td>Accepting, sometimes formal</td>
+        </tr>
+        <tr>
+          <td><strong onclick="speakGerman('schon')">schon</strong></td>
+          <td>Reassurance, confidence, optimism</td>
+          <td><em>"Das wird schon klappen!"</em></td>
+          <td>Optimistic, encouraging, reassuring</td>
+        </tr>
+        <tr>
+          <td><strong onclick="speakGerman('eigentlich')">eigentlich</strong></td>
+          <td>Hedging, shifting, softened contradiction</td>
+          <td><em>"Eigentlich wollte ich nicht kommen."</em></td>
+          <td>Thoughtful, reconsidering, soft</td>
+        </tr>
+        <tr>
+          <td><strong onclick="speakGerman('übrigens')">übrigens</strong></td>
+          <td>Topic pivot, "by the way"</td>
+          <td><em>"Übrigens, hast du gehört...?"</em></td>
+          <td>Casual, friendly, gossipy</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="narrative">Look at this table and understand what you have accomplished. You have moved beyond grammar and vocabulary. You have entered the emotional life of the German language. Each particle opens a door into how Germans think, what they feel, and how they move through the world. These are not optional flourishes. They are the heart of real German speech.</p>
+
+    <p class="narrative">In your journey to German, you have passed through several stages. First, you learned words. Then grammar. Then complex structures. Now you are learning the emotional subtext—the layer of meaning that lies beneath the words. This is the layer that separates textbook German from real German. This is where native speakers live.</p>
+
+    <div class="aside-box">
+      <div class="aside-title">Patterns Discovered</div>
+      <div class="particle-section">
+        <strong onclick="speakGerman('Modal Particles III')">Modal Particles III (Final Synthesis):</strong> Two more particles: <span class="german-word" onclick="speakGerman('Eigentlich')">Eigentlich</span> (hedging, shifting thoughts), <span class="german-word" onclick="speakGerman('Übrigens')">Übrigens</span> (topic pivot, "by the way"). Together with the six earlier particles, these eight form the complete emotional vocabulary of German. They are not grammar. They are the soul of German speech.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-4">
+    <span class="scene-marker"></span>
+    <p class="narrative" style="font-size: 1.2rem; margin-bottom: 2em;"><strong>The Particles as a System</strong></p>
+
+    <p class="narrative">At this point, you may be asking: "Why these eight particles? Why not more? Why these specific ones?" The answer lies in how German speakers actually think about emotion and emphasis. These eight particles form a complete system because they address the most common emotional needs in conversation:</p>
+
+    <div class="particle-card">
+      <div class="particle-section">
+        <div class="particle-section-title">The Emphasis Layer</div>
+        <div class="particle-section"><span class="german-word" onclick="speakGerman('Doch')">Doch</span> and <span class="german-word" onclick="speakGerman('ja')">ja</span> emphasize and insist. They make statements louder, more obvious, more emphatic. They are the voice when you need to be heard or when something is self-evident.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">The Softening Layer</div>
+        <div class="particle-section"><span class="german-word" onclick="speakGerman('Mal')">Mal</span> softens and polishes. It takes a hard request and makes it a suggestion. It is the particle of politeness and casualness.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">The Acceptance Layer</div>
+        <div class="particle-section"><span class="german-word" onclick="speakGerman('Halt')">Halt</span> and <span class="german-word" onclick="speakGerman('eben')">eben</span> accept what cannot be changed. They are the voice of resignation, of philosophical calm, of acknowledgment that some things simply are.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">The Encouragement Layer</div>
+        <div class="particle-section"><span class="german-word" onclick="speakGerman('Schon')">Schon</span> encourages and reassures. It is the voice of optimism, of confidence that things will work out.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">The Shifting Layer</div>
+        <div class="particle-section"><span class="german-word" onclick="speakGerman('Eigentlich')">Eigentlich</span> and <span class="german-word" onclick="speakGerman('übrigens')">übrigens</span> shift and pivot. They change direction, soften contradictions, and introduce new topics. They are the voice of reconsideration and topic change.</div>
+      </div>
+    </div>
+
+    <div class="particle-card">
+      <div class="particle-section">
+        <div class="particle-section-title">From Textbook German to Real German</div>
+        <div class="particle-section">A textbook sentence might be: "Der Mann ist gross." (The man is tall.) It is grammatically correct. It communicates the information. But it is flat. It has no emotional texture. No native German speaker would say this in isolation. Instead, they would say something like: "Der Mann ist ja wirklich gross!" (<span class="german-word" onclick="speakGerman('ja')">ja</span> — making it obvious), or "Der Mann ist eigentlich ziemlich gross." (<span class="german-word" onclick="speakGerman('eigentlich')">eigentlich</span> — softening a possible contradiction), or "Der Mann? Der ist halt gross." (<span class="german-word" onclick="speakGerman('halt')">halt</span> — accepting it as fact). The particle chosen reveals how the speaker feels about the statement. This is what native German sounds like.</div>
+      </div>
+
+      <div class="particle-section">
+        <div class="particle-section-title">Your Next Steps</div>
+        <div class="particle-section">You have now learned the eight core modal particles. But learning them and using them are different things. To move from recognition to production, you should: (1) Notice particles in German speech and writing. When you encounter them, pause and feel the emotional texture they add. (2) Try to use one particle per day in your own speech or writing, even if you are not sure if it is correct. Mistakes with particles are much less serious than mistakes with grammar. (3) Listen to German music, films, and podcasts, and notice how native speakers use particles naturally. (4) Understand that mastering particles is a gradual process. You will not suddenly "get" them. Instead, over time, they will become second nature.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-5">
+    <span class="scene-marker"></span>
+    <h3 style="font-size: 1.4rem; color: var(--text-bright); margin-bottom: 24px;">Chapter 87 Quiz: All Eight Particles</h3>
+
+    <div class="quiz-container">
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+    </div>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
   <!-- ==================== YOUR PROGRESS ==================== -->
-    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
 
     <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
         <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
-        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">748 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(88%)</span></span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">750 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(88%)</span></span>
       </div>
       <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
         <div style="height:100%;width:88%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
@@ -15,7 +756,7 @@
       <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
     </div>
     <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
-      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 748 words across 87 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 750 words across 87 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
     </div>
 
     <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
@@ -32,6 +773,188 @@
       <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have discovered 136 patterns and grammar rules across 87 chapters. See the "Patterns Discovered" section above for this chapter's patterns, or revisit earlier chapters.</p>
     </div>
   </div>
+
+  <div class="nav-section">
+    <a href="chapter86.html" class="nav-btn">← Chapter 86</a>
+    <a href="chapter88.html" class="nav-btn next">Chapter 88 →</a>
+  </div>
+
+  <div class="g2g-footer">A G2G Advisory Project · 100 chapters · 4 phases · 6,000 years</div>
+</div>
+
+<script>
+const quizQuestions = [
+  {
+    q: "What is the primary function of 'eigentlich' as a particle?",
+    opts: ["Emphasis and insistence", "Hedging and shifting thoughts", "Resigned acceptance", "Topic pivot"],
+    ans: 1
+  },
+  {
+    q: "Complete: 'Eigentlich wollte ich nicht _____.'",
+    opts: ["gehen", "kommen", "sehen", "sprechen"],
+    ans: 1
+  },
+  {
+    q: "Which particle is used to pivot topics gracefully?",
+    opts: ["eigentlich", "halt", "schon", "übrigens"],
+    ans: 3
+  },
+  {
+    q: "'Was machst du eigentlich?' This expresses:",
+    opts: ["A command", "Genuine curiosity", "Resignation", "Reassurance"],
+    ans: 1
+  },
+  {
+    q: "Which phrase best represents the function of 'übrigens'?",
+    opts: ["That's just how it is", "By the way", "It will work out", "Don't be sad"],
+    ans: 1
+  },
+  {
+    q: "From the 8 particles, which one expresses optimistic reassurance?",
+    opts: ["eben", "schon", "mal", "ja"],
+    ans: 1
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = [];
+
+function loadQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  const q = quizQuestions[currentQuestion];
+  const questionDiv = document.createElement('div');
+  questionDiv.className = 'quiz-question';
+
+  let html = `<div class="q-text">${currentQuestion + 1}. ${q.q}</div>`;
+  html += '<div class="quiz-options">';
+  q.opts.forEach((opt, idx) => {
+    const isAnswered = answered[currentQuestion] !== undefined;
+    const isCorrect = idx === q.ans;
+    const isSelected = answered[currentQuestion] === idx;
+    let classes = 'quiz-option';
+    if (isAnswered) {
+      if (isSelected && isCorrect) classes += ' selected';
+      else if (isSelected && !isCorrect) classes += ' incorrect';
+    }
+    html += `<div class="${classes}" onclick="selectAnswer(${idx})">${opt}</div>`;
+  });
+  html += '</div>';
+  questionDiv.innerHTML = html;
+  container.appendChild(questionDiv);
+
+  document.getElementById('progress').style.width = ((currentQuestion + 1) / quizQuestions.length * 100) + '%';
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').disabled = currentQuestion === quizQuestions.length - 1;
+
+  if (answered.every(a => a !== undefined)) {
+    const finalScore = answered.filter((a, i) => a === quizQuestions[i].ans).length;
+    document.getElementById('quiz-score').textContent = `Score: ${finalScore}/${quizQuestions.length}`;
+  }
+}
+
+function selectAnswer(idx) {
+  answered[currentQuestion] = idx;
+  loadQuiz();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizQuestions.length - 1) {
+    currentQuestion++;
+    loadQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    loadQuiz();
+  }
+}
+
+function speakGerman(word, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+function animateOnScroll() {
+  const scenes = document.querySelectorAll('.scene');
+  scenes.forEach(scene => {
+    const rect = scene.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.75) {
+      scene.classList.add('visible');
+    }
+  });
+}
+
+let canvasAnimationId;
+function setupCanvas() {
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + Math.random() * 100,
+      vy: -0.5 - Math.random() * 1,
+      size: Math.random() * 2 + 0.5,
+      opacity: Math.random() * 0.3 + 0.1
+    });
+  }
+
+  function animate() {
+    ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+      p.y += p.vy;
+      p.opacity -= 0.001;
+      if (p.y < -50 || p.opacity <= 0) {
+        p.y = canvas.height;
+        p.opacity = Math.random() * 0.3 + 0.1;
+      }
+      ctx.fillStyle = `rgba(232, 164, 74, ${p.opacity})`;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+
+    canvasAnimationId = requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+function updateProgressBar() {
+  const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercentage + '%';
+}
+
+window.addEventListener('scroll', animateOnScroll);
+window.addEventListener('scroll', updateProgressBar);
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('particleCanvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupCanvas();
+  loadQuiz();
+  animateOnScroll();
+});
+</script>
+
 <script>const CURRENT_CHAPTER = 87;</script>
 <script src="vocab-data.js"></script>
 <script src="progress-renderer.js"></script>

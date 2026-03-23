@@ -1,21 +1,809 @@
-</body>
-</html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 88: Redewendungen I (Idioms I)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --chinese: #c49a6c;
+    --english: #8a9bae;
+    --gold: #d4af37;
+  }
+
+  html { scroll-behavior: smooth; background: var(--night); }
+  body {
+    background: linear-gradient(to bottom, #2a2215 0%, #1a1410 40%, #0f0e0c 70%, #080605 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+
+  @media (max-width: 640px) {
+    .content { padding: 30px 18px 80px; }
+    body { font-size: 1.1rem; }
+  }
+
+  .title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-screen h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.4s forwards;
+    margin-bottom: 0.3em;
+  }
+
+  .title-screen .title-de {
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--german);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 1.5em;
+    font-style: italic;
+  }
+
+  .title-screen .description {
+    font-size: 1.3rem;
+    max-width: 700px;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible { opacity: 1; transform: translateY(0); }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1.5em;
+    background: rgba(232, 164, 74, 0.08);
+    border-left: 3px solid var(--german);
+  }
+
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    padding: 2px 4px;
+  }
+
+  .german-word:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid var(--german);
+  }
+
+  .idiom-card {
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+    transition: all 0.3s ease;
+  }
+
+  .idiom-card:hover {
+    background: rgba(20, 28, 45, 0.9);
+    border-color: rgba(232, 164, 74, 0.4);
+    box-shadow: 0 8px 32px rgba(232, 164, 74, 0.1);
+  }
+
+  .idiom-german {
+    font-size: 1.4rem;
+    color: var(--german);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .idiom-literal {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 2px solid var(--fire);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  .idiom-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .idiom-section {
+    margin: 16px 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .idiom-section-title {
+    color: var(--fire-glow);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+
+  .example-sentence {
+    background: rgba(26, 35, 55, 0.5);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    font-style: italic;
+    color: rgba(212, 202, 187, 0.9);
+  }
+
+  .chinese-equiv {
+    background: rgba(196, 154, 108, 0.08);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    color: var(--chinese);
+    border-left: 2px solid var(--chinese);
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 32px 0;
+    background: rgba(20, 28, 45, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .comparison-table th {
+    background: rgba(232, 164, 74, 0.1);
+    color: var(--fire-glow);
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(232, 164, 74, 0.2);
+    font-size: 0.95rem;
+  }
+
+  .comparison-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+    color: var(--text);
+  }
+
+  .comparison-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 80px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 80px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-option.selected { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.incorrect { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.3); }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .quiz-nav button:hover { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); }
+  .quiz-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    background: rgba(232, 164, 74, 0.15);
+    border-radius: 4px;
+    height: 4px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    background: var(--german);
+    height: 100%;
+    transition: width 0.3s;
+  }
+
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  .aside-box {
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 4px;
+  }
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+  /* G2G Branding */
+  .g2g-logo {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 200;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+  .g2g-logo:hover { opacity: 0.7; }
+
+  .g2g-footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(212, 202, 187, 0.3);
+    margin-top: 80px;
+    padding-top: 40px;
+  }
+
+  #progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #e8a44a, #f4c67a);
+    z-index: 100;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+<!-- G2G Logo -->
+<div class="g2g-logo">
+  <a href="https://www.g2gadvisory.co.uk" style="text-decoration: none;">
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="8" width="16" height="32" rx="3" fill="#9b8ec4" opacity="0.8"/>
+      <rect x="28" y="8" width="16" height="32" rx="3" fill="#9b8ec4" opacity="0.8"/>
+      <path d="M 24 16 L 32 28 L 16 28 Z" fill="#e8a44a" opacity="0.9"/>
+    </svg>
+  </a>
+</div>
+
+<div id="progressBar"></div>
+<canvas id="particleCanvas"></canvas>
+
+<div class="content">
+  <div class="title-screen">
+    <p class="chapter-label">Chapter 88</p>
+    <h1>The First Word</h1>
+    <p class="title-de">Redewendungen I</p>
+    <p class="description">Common German Idioms and Their Stories. Idioms are the final frontier of language learning. They cannot be decomposed or translated literally. They must be learned as wholes. Yet their origins—often rooted in everyday German life—reveal how Germans think about the world.</p>
+    <p class="scroll-hint">Scroll to decode the spirit of German language<span>↓</span></p>
+  </div>
+
+  <div class="scene scene-1">
+    <span class="scene-marker"></span>
+    <p class="narrative">You have now mastered the patterns, the grammar, the emotional particles. You understand how German words are built and how sentences are constructed. You have traveled through time from Proto-Indo-European to modern Berlin. You have learned the decoder ring that makes 80% of German vocabulary visible to English speakers.</p>
+
+    <p class="narrative">But there is one final layer. There are expressions that cannot be decoded. They cannot be translated word-for-word. They must be learned as complete units, and their meanings must be internalized as wholes. These are <span class="german-word" onclick="speakGerman('Redewendungen')">Redewendungen</span>—idioms. And they reveal something profound: the way a culture sees the world. German idioms are especially revealing because they tend to be concrete, practical, and rooted in observable reality.</p>
+
+    <p class="narrative emphasis">"Idioms are the poetry of everyday speech. They reveal how a people think, what they value, and how they see the world. They are not optional—they are essential to native-level fluency."</p>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-2">
+    <span class="scene-marker"></span>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Da steppt der Bär</div>
+      <div class="idiom-literal">Literally: "The bear is dancing there"</div>
+
+      <div class="idiom-meaning">Meaning: It's a great party; things are lively and fun. The atmosphere is energetic and celebratory.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">This idiom dates back to medieval times, when traveling performers and circuses included trained bears as entertainment. A bear "dancing" (actually performing trained movements) would draw crowds and create excitement. The image of a dancing bear became synonymous with lively entertainment and celebration. When a party is so fun that it feels like a bear is dancing, the energy is obvious and contagious.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Das ist ja eine tolle Party! Da steppt der Bär!')">"Das ist ja eine tolle Party! Da steppt der Bär!"</div>
+        <div class="example-sentence" onclick="speakGerman('Im Tanzclub da steppt wirklich der Bär.')">"Im Tanzclub da steppt wirklich der Bär."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('da steppt der Bär')">欢呼雀跃 (huāny call joyfully); 热闹非凡 (rènao fēi fán) — very lively</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Die Kirche im Dorf lassen</div>
+      <div class="idiom-literal">Literally: "Leave the church in the village"</div>
+
+      <div class="idiom-meaning">Meaning: Don't exaggerate; keep things in proportion; don't make a mountain out of a molehill.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">In rural German communities, the church was the center of village life—literally and figuratively. A village without its church was unthinkable. The phrase suggests: keep the important things (the church) in their proper place (the village), rather than inflating minor issues out of proportion. The church remains where it belongs—grounded, centered, not elevated beyond measure.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Das Problem ist nicht so groß. Lass die Kirche im Dorf!')">"Das Problem ist nicht so groß. Lass die Kirche im Dorf!"</div>
+        <div class="example-sentence" onclick="speakGerman('Du dramatisierst zu viel. Lass die Kirche doch im Dorf.')">"Du dramatisierst zu viel. Lass die Kirche doch im Dorf."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('Die Kirche im Dorf lassen')">保持理智 (bǎochí lǐzhì) — keep your senses; 不要小题大做 (búyào xiǎo tí dà zuò) — don't make a big deal of small things</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Öl ins Feuer gießen</div>
+      <div class="idiom-literal">Literally: "Pour oil on the fire"</div>
+
+      <div class="idiom-meaning">Meaning: Make things worse; escalate conflict; add fuel to the fire in a situation that is already tense.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">This idiom is pure practical logic. Fire needs fuel to grow. Oil is highly flammable. Pouring oil on a fire makes it worse—much worse. The image is immediate, visceral, and universally understood. Any action that intensifies conflict, makes a tense situation worse, or adds to existing problems is pouring oil on fire.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Mit deinen Worten gießt du nur Öl ins Feuer.')">"Mit deinen Worten gießt du nur Öl ins Feuer."</div>
+        <div class="example-sentence" onclick="speakGerman('Jetzt Öl ins Feuer gießen? Das ist eine schlechte Idee.')">"Jetzt Öl ins Feuer gießen? Das ist eine schlechte Idee."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('Öl ins Feuer gießen')">火上浇油 (huǒ shang jiāo yóu) — add oil to fire; 雪上加霜 (xuě shang jiāshūang) — frost on snow; 越来越坏 (yuè lái yuè huài) — make things worse</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Auf dem Holzweg sein</div>
+      <div class="idiom-literal">Literally: "Be on the timber path"</div>
+
+      <div class="idiom-meaning">Meaning: Be on the wrong track; be mistaken; be heading in the wrong direction.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">In German forests, there were often temporary logging paths—"Holzwege"—used to extract timber. These paths were different from main roads. A traveler following a timber path thinking it was the main route would eventually realize they were lost. The path led nowhere permanent, nowhere meaningful. Being "on the timber path" became a metaphor for being misled, mistaken, or heading in the wrong direction.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Deine Theorie ist interessant, aber ich denke, du bist auf dem Holzweg.')">"Deine Theorie ist interessant, aber ich denke, du bist auf dem Holzweg."</div>
+        <div class="example-sentence" onclick="speakGerman('Wenn du das so machst, bist du auf dem Holzweg.')">"Wenn du das so machst, bist du auf dem Holzweg."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('Auf dem Holzweg sein')">走错路了 (zǒu cuò lù le) — taking the wrong path; 大错特错 (dà cuò tè cuò) — completely wrong</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Schwein haben</div>
+      <div class="idiom-literal">Literally: "To have pig"</div>
+
+      <div class="idiom-meaning">Meaning: To be lucky; to have good fortune; to get lucky.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">The origin of this idiom reaches back to medieval times and old German customs. In some games and contests, the loser would receive a consolation prize—often a pig. Over centuries, the association shifted. Having a pig became associated with winning by luck—receiving something unexpected and valuable. Pigs were valuable animals, so "having a pig" meant having something good befall you by chance. Modern usage simply means: you got lucky.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Du hast ja Schwein gehabt! Der Bus kam gerade an.')">"Du hast ja Schwein gehabt! Der Bus kam gerade an."</div>
+        <div class="example-sentence" onclick="speakGerman('Manchmal muss man Schwein haben im Leben.')">"Manchmal muss man Schwein haben im Leben."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('Schwein haben')">走运 (zǒu yùn) — lucky; 碰巧 (pèng qiǎo) — by chance; 幸运 (xìngyùn) — fortunate</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Das ist mir Wurst</div>
+      <div class="idiom-literal">Literally: "That is sausage to me"</div>
+
+      <div class="idiom-meaning">Meaning: I don't care; it doesn't matter to me; I'm indifferent.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">German culture has long revolved around sausage—<span class="german-word" onclick="speakGerman('Wurst')">Wurst</span>—as a staple food. The phrase is irreverent and modern, appearing to originate in the early 20th century. The idea is playful: saying something "is sausage to me" is a way of saying it's completely unimportant, throwaway, or deserving of indifference. The sausage is mundane, ordinary, and hardly worth attention. Thus: "I don't care."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Was die Leute über mich sagen? Das ist mir Wurst.')">"Was die Leute über mich sagen? Das ist mir Wurst."</div>
+        <div class="example-sentence" onclick="speakGerman('Das Fußballspiel? Ist mir völlig Wurst.')">"Das Fußballspiel? Ist mir völlig Wurst."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('Das ist mir Wurst')">我不在乎 (wǒ búzàihū) — I don't care; 我不关心 (wǒ búguānxin) — I'm indifferent</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Alles hat ein Ende, nur die Wurst hat zwei</div>
+      <div class="idiom-literal">Literally: "Everything has an end, only the sausage has two"</div>
+
+      <div class="idiom-meaning">Meaning: All good things must come to an end. Everything has a beginning and an end, except a sausage—which is circular and has two ends.</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">This is a playful, somewhat philosophical saying that emerged in German-speaking regions. The humor lies in the twist: sausages are often tied or cased at both ends, so they technically have two ends rather than one. The saying humorously uses this fact to suggest that while all earthly things eventually end, sausages are the exception—they have (at least) two ends. It's a darkly humorous reminder of mortality with a culinary twist.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Die schönsten Dinge gehen vorüber. Alles hat ein Ende, nur die Wurst hat zwei.')">"Die schönsten Dinge gehen vorüber. Alles hat ein Ende, nur die Wurst hat zwei."</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('Alles hat ein Ende, nur die Wurst hat zwei')">天下没有不散的筵席 (tiānxià múyǒu búsàn de yánxí) — All gatherings must come to an end; 好景不长 (hǎo jǐng búcháng) — good times don't last</div>
+      </div>
+    </div>
+
+    <div class="idiom-card">
+      <div class="idiom-german">Klar wie Kloßbrühe</div>
+      <div class="idiom-literal">Literally: "Clear as dumpling broth"</div>
+
+      <div class="idiom-meaning">Meaning: Crystal clear; perfectly obvious. (Ironic: dumpling broth is typically murky, not clear.)</div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Historical Origin</div>
+        <div class="idiom-section">This idiom uses irony in a distinctly German way. Dumpling broth (<span class="german-word" onclick="speakGerman('Kloßbrühe')">Kloßbrühe</span>) is made by cooking dumplings in broth, and the result is definitely not clear—it's murky, opaque, and cloudy. By saying something is "clear as dumpling broth," you are using irony to suggest the opposite: that something is confusing and unclear. However, over time, the idiom has shifted meanings, and it can now also mean "crystal clear," depending on context and ironic intent. The beauty of the idiom lies in its linguistic ambiguity.</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Example Sentences</div>
+        <div class="example-sentence" onclick="speakGerman('Deine Erklärung ist mir so klar wie Kloßbrühe.')">"Deine Erklärung ist mir so klar wie Kloßbrühe." (Your explanation is unclear to me.)</div>
+        <div class="example-sentence" onclick="speakGerman('Das ist klar wie Kloßbrühe!')">"Das ist klar wie Kloßbrühe!" (That's obviously unclear!)</div>
+      </div>
+
+      <div class="idiom-section">
+        <div class="idiom-section-title">Chinese Equivalent</div>
+        <div class="chinese-equiv" onclick="speakGerman('Klar wie Kloßbrühe')">含糊不清 (hánhu búqīng) — unclear; 一团糟 (yī tuán zāo) — a mess</div>
+      </div>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>German Idiom</th>
+          <th>Literal Translation</th>
+          <th>Actual Meaning</th>
+          <th>Origin Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Da steppt der Bär</strong></td>
+          <td>The bear is dancing</td>
+          <td>It's a great party; things are lively</td>
+          <td>Medieval Entertainment</td>
+        </tr>
+        <tr>
+          <td><strong>Die Kirche im Dorf lassen</strong></td>
+          <td>Leave the church in the village</td>
+          <td>Don't exaggerate; keep perspective</td>
+          <td>Rural Community</td>
+        </tr>
+        <tr>
+          <td><strong>Öl ins Feuer gießen</strong></td>
+          <td>Pour oil on the fire</td>
+          <td>Make things worse; escalate conflict</td>
+          <td>Household/Physical</td>
+        </tr>
+        <tr>
+          <td><strong>Auf dem Holzweg sein</strong></td>
+          <td>Be on the timber path</td>
+          <td>Be on the wrong track; be mistaken</td>
+          <td>Forest Work</td>
+        </tr>
+        <tr>
+          <td><strong>Schwein haben</strong></td>
+          <td>To have pig</td>
+          <td>To be lucky</td>
+          <td>Medieval Custom</td>
+        </tr>
+        <tr>
+          <td><strong>Das ist mir Wurst</strong></td>
+          <td>That is sausage to me</td>
+          <td>I don't care</td>
+          <td>Modern/Culinary</td>
+        </tr>
+        <tr>
+          <td><strong>Alles hat ein Ende, nur die Wurst hat zwei</strong></td>
+          <td>Everything has an end, only sausage has two</td>
+          <td>All good things must come to an end</td>
+          <td>Philosophical/Culinary</td>
+        </tr>
+        <tr>
+          <td><strong>Klar wie Kloßbrühe</strong></td>
+          <td>Clear as dumpling broth</td>
+          <td>Crystal clear (or confusingly unclear)</td>
+          <td>Culinary/Ironic</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="aside-box">
+      <div class="aside-title">Patterns Discovered</div>
+      <div class="particle-section">
+        <strong>German Idioms I:</strong> Eight core <span class="german-word" onclick="speakGerman('Redewendungen')">Redewendungen</span> that reveal German cultural values. Notably: Many originate in rural life, household experience, and practical occupations. This reflects how Germans ground abstract concepts in concrete, observable reality. Idioms are untranslatable but indispensable for native-level fluency.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
+  <div class="scene scene-3">
+    <span class="scene-marker"></span>
+    <h3 style="font-size: 1.4rem; color: var(--text-bright); margin-bottom: 24px;">Chapter 88 Quiz: German Idioms</h3>
+
+    <div class="quiz-container">
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+    </div>
+  </div>
+
+  <div class="divider">◆ ◆ ◆</div>
+
   <!-- ==================== YOUR PROGRESS ==================== -->
-    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
     <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
 
     <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
         <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
-        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">756 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(88%)</span></span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">758 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(89%)</span></span>
       </div>
       <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
-        <div style="height:100%;width:88%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+        <div style="height:100%;width:89%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
       </div>
       <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
     </div>
     <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
-      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 756 words across 88 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
+      <p style="color:rgba(212,202,187,0.5);font-size:0.9rem;font-style:italic;text-align:center;">You have collected 758 words across 88 chapters. Review them in the word collection cards above, or revisit earlier chapters to refresh your memory.</p>
     </div>
 
     <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
@@ -33,7 +821,187 @@
     </div>
   </div>
 
->
+  <div class="nav-section">
+    <a href="chapter87.html" class="nav-btn">← Chapter 87</a>
+    <a href="chapter89.html" class="nav-btn next">Chapter 89 →</a>
+  </div>
+
+  <div class="g2g-footer">A G2G Advisory Project · 100 chapters · 4 phases · 6,000 years</div>
+</div>
+
+<script>
+const quizQuestions = [
+  {
+    q: "What does 'Da steppt der Bär' literally mean?",
+    opts: ["The bear walks there", "The bear is dancing there", "The bear sleeps", "The bear runs"],
+    ans: 1
+  },
+  {
+    q: "Which idiom means 'don't exaggerate; keep perspective'?",
+    opts: ["Öl ins Feuer", "Die Kirche im Dorf lassen", "Auf dem Holzweg", "Schwein haben"],
+    ans: 1
+  },
+  {
+    q: "'Öl ins Feuer gießen' is used when you want to:",
+    opts: ["Help someone", "Make things worse", "Be polite", "Ask a question"],
+    ans: 1
+  },
+  {
+    q: "What does 'Auf dem Holzweg sein' mean?",
+    opts: ["Going for a walk in forest", "Being on the wrong track", "Collecting wood", "Building a house"],
+    ans: 1
+  },
+  {
+    q: "'Schwein haben' comes from a medieval practice where:",
+    opts: ["Pigs were sacrificed", "Winners received a pig", "Losers received a pig as consolation", "Pigs were worshipped"],
+    ans: 2
+  },
+  {
+    q: "If someone says 'Das ist mir Wurst,' they mean:",
+    opts: ["I love sausage", "I don't care", "I'm hungry", "Let's cook something"],
+    ans: 1
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = [];
+
+function loadQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  const q = quizQuestions[currentQuestion];
+  const questionDiv = document.createElement('div');
+  questionDiv.className = 'quiz-question';
+
+  let html = `<div class="q-text">${currentQuestion + 1}. ${q.q}</div>`;
+  html += '<div class="quiz-options">';
+  q.opts.forEach((opt, idx) => {
+    const isAnswered = answered[currentQuestion] !== undefined;
+    const isCorrect = idx === q.ans;
+    const isSelected = answered[currentQuestion] === idx;
+    let classes = 'quiz-option';
+    if (isAnswered) {
+      if (isSelected && isCorrect) classes += ' selected';
+      else if (isSelected && !isCorrect) classes += ' incorrect';
+    }
+    html += `<div class="${classes}" onclick="selectAnswer(${idx})">${opt}</div>`;
+  });
+  html += '</div>';
+  questionDiv.innerHTML = html;
+  container.appendChild(questionDiv);
+
+  document.getElementById('progress').style.width = ((currentQuestion + 1) / quizQuestions.length * 100) + '%';
+  document.getElementById('prev-btn').disabled = currentQuestion === 0;
+  document.getElementById('next-btn').disabled = currentQuestion === quizQuestions.length - 1;
+
+  if (answered.every(a => a !== undefined)) {
+    const finalScore = answered.filter((a, i) => a === quizQuestions[i].ans).length;
+    document.getElementById('quiz-score').textContent = `Score: ${finalScore}/${quizQuestions.length}`;
+  }
+}
+
+function selectAnswer(idx) {
+  answered[currentQuestion] = idx;
+  loadQuiz();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizQuestions.length - 1) {
+    currentQuestion++;
+    loadQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    loadQuiz();
+  }
+}
+
+function speakGerman(word, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+function animateOnScroll() {
+  const scenes = document.querySelectorAll('.scene');
+  scenes.forEach(scene => {
+    const rect = scene.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.75) {
+      scene.classList.add('visible');
+    }
+  });
+}
+
+let canvasAnimationId;
+function setupCanvas() {
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + Math.random() * 100,
+      vy: -0.5 - Math.random() * 1,
+      size: Math.random() * 2 + 0.5,
+      opacity: Math.random() * 0.3 + 0.1
+    });
+  }
+
+  function animate() {
+    ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+      p.y += p.vy;
+      p.opacity -= 0.001;
+      if (p.y < -50 || p.opacity <= 0) {
+        p.y = canvas.height;
+        p.opacity = Math.random() * 0.3 + 0.1;
+      }
+      ctx.fillStyle = `rgba(232, 164, 74, ${p.opacity})`;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+
+    canvasAnimationId = requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+function updateProgressBar() {
+  const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = scrollPercentage + '%';
+}
+
+window.addEventListener('scroll', animateOnScroll);
+window.addEventListener('scroll', updateProgressBar);
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('particleCanvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupCanvas();
+  loadQuiz();
+  animateOnScroll();
+});
+</script>
+
 <script>const CURRENT_CHAPTER = 88;</script>
 <script src="vocab-data.js"></script>
 <script src="progress-renderer.js"></script>
