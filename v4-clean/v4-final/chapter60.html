@@ -1393,7 +1393,182 @@ document.querySelectorAll('.german-word[data-speak]').forEach(w => {
     </a>
   </div>
 
-<script src="game-engine.js" defer></script>
+<script src="game-engine.js" defer>// --- LISTENING & DICTATION FUNCTIONS ---
+let listeningText = "Heute Morgen bin ich aufgewacht und habe Frühstück gegessen. Danach bin ich in die Stadt gefahren, um meine Freunde zu treffen. Wir haben zusammen einen Film angeschaut und haben viel gelacht. Um Mittag haben wir im Restaurant zu Mittag gegessen. Am Abend bin ich nach Hause gegangen und habe meine Hausaufgaben gemacht.";
+let dictationSentences = ["Heute Morgen habe ich Frühstück gegessen.", "Ich bin in die Stadt gefahren.", "Wir haben einen Film angeschaut."];
+let currentDictationIndex = 0;
+let listeningSpeed = 0.95;
+
+function startListening() {
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(listeningText);
+    u.lang = "de-DE";
+    u.rate = listeningSpeed;
+    const v = window.speechSynthesis.getVoices().find(x => x.lang.startsWith("de"));
+    if (v) u.voice = v;
+    document.getElementById("listen-btn").style.display = "none";
+    document.getElementById("stop-btn").style.display = "inline-block";
+    u.onend = () => {
+      document.getElementById("listen-btn").style.display = "inline-block";
+      document.getElementById("stop-btn").style.display = "none";
+    };
+    window.speechSynthesis.speak(u);
+  }
+}
+
+function stopListening() {
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+    document.getElementById("listen-btn").style.display = "inline-block";
+    document.getElementById("stop-btn").style.display = "none";
+  }
+}
+
+function setSpeed(s) {
+  listeningSpeed = s;
+  document.querySelectorAll(".speed-btn").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+}
+
+function checkComprehension(q, e, c) {
+  if (c) {
+    e.classList.add("correct");
+    document.getElementById(`comp-feedback-${q}`).className = "comp-feedback show correct";
+    document.getElementById(`comp-feedback-${q}`).innerHTML = "✓ Correct!";
+  } else {
+    e.classList.add("incorrect");
+  }
+}
+
+function playDictation() {
+  if (currentDictationIndex >= dictationSentences.length) {
+    alert("All done!");
+    return;
+  }
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(dictationSentences[currentDictationIndex]);
+    u.lang = "de-DE";
+    u.rate = 0.8;
+    const v = window.speechSynthesis.getVoices().find(x => x.lang.startsWith("de"));
+    if (v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+function checkDictation() {
+  const i = document.getElementById("dictation-input").value.trim().toLowerCase();
+  const e = dictationSentences[currentDictationIndex].toLowerCase();
+  const f = document.getElementById("dictation-feedback");
+  if (i === e) {
+    f.className = "dictation-feedback show correct";
+    f.innerHTML = "✓ Correct!";
+    currentDictationIndex++;
+    document.getElementById("dictation-counter").textContent = `Sentence ${currentDictationIndex + 1} of ${dictationSentences.length}`;
+    document.getElementById("dictation-input").value = "";
+  } else {
+    f.className = "dictation-feedback show incorrect";
+    f.innerHTML = `Not quite. You wrote: "${i}"`;
+  }
+}
+
+
+// --- BAUWERKSTATT CHECKING FUNCTIONS ---
+function handleGapKeypress(event, exId) { if (event.key === "Enter") checkGapSentence(exId); }
+function handleFreeKeypress(event, exId) { if (event.key === "Enter") checkFreeBuilding(exId); }
+function levenshteinDistance(a, b) {
+  const aL = a.toLowerCase(), bL = b.toLowerCase();
+  const track = Array(bL.length + 1).fill(null).map(() => Array(aL.length + 1).fill(0));
+  for (let i = 0; i <= aL.length; i++) track[0][i] = i;
+  for (let j = 0; j <= bL.length; j++) track[j][0] = j;
+  for (let j = 1; j <= bL.length; j++) {
+    for (let i = 1; i <= aL.length; i++) {
+      const indicator = aL[i - 1] === bL[j - 1] ? 0 : 1;
+      track[j][i] = Math.min(track[j][i - 1] + 1, track[j - 1][i] + 1, track[j - 1][i - 1] + indicator);
+    }
+  }
+  return track[bL.length][aL.length];
+}
+function checkGapSentence(exId) {
+  const input = document.getElementById(`gap-input-${exId}`);
+  const answer = input.value.trim().toLowerCase();
+  const feedbackEl = document.getElementById(`gap-feedback-${exId}`);
+  let level = exId.charAt(0);
+  let data = bauwerkstattData[`level${level}`][exId];
+  if (!data) return;
+  const isCorrect = data.accepted.some(a => a.toLowerCase() === answer);
+  if (isCorrect) {
+    feedbackEl.className = "exercise-feedback show correct";
+    feedbackEl.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${data.explanation}</div>`;
+    if (!bauwerkstattState.completed[exId]) { bauwerkstattState.completed[exId] = true; bauwerkstattState.score++; updateBauwerkstattProgress(); }
+  } else {
+    let minDist = Infinity, closest = data.accepted[0];
+    for (const a of data.accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 2) {
+      feedbackEl.className = "exercise-feedback show close";
+      feedbackEl.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">You wrote "${input.value}" — the correct form is "${closest}". ${data.explanation}</div>`;
+    } else {
+      feedbackEl.className = "exercise-feedback show incorrect";
+      feedbackEl.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">The answer is <strong>${closest}</strong>. ${data.explanation}</div>`;
+    }
+  }
+}
+function checkFreeBuilding(exId) {
+  const input = document.getElementById(`free-input-${exId}`);
+  const answer = input.value.trim().toLowerCase();
+  const feedbackEl = document.getElementById(`free-feedback-${exId}`);
+  let level = exId.charAt(0);
+  let data = bauwerkstattData[`level${level}`][exId];
+  if (!data) return;
+  const isCorrect = data.accepted.some(a => a.toLowerCase() === answer);
+  if (isCorrect) {
+    feedbackEl.className = "exercise-feedback show correct";
+    feedbackEl.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${data.explanation}</div>`;
+    if (!bauwerkstattState.completed[exId]) { bauwerkstattState.completed[exId] = true; bauwerkstattState.score++; updateBauwerkstattProgress(); }
+  } else {
+    let minDist = Infinity, closest = data.accepted[0];
+    for (const a of data.accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 3) {
+      feedbackEl.className = "exercise-feedback show close";
+      feedbackEl.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">You wrote "${input.value}" — a correct form is "${closest}". ${data.explanation}</div>`;
+    } else {
+      feedbackEl.className = "exercise-feedback show incorrect";
+      feedbackEl.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">One correct answer is <strong>${closest}</strong>. ${data.explanation}</div>`;
+    }
+  }
+}
+function updateBauwerkstattProgress() {
+  const scoreEl = document.getElementById("bauwerkstatt-score");
+  if (scoreEl) scoreEl.textContent = bauwerkstattState.score;
+  const progressBar = document.getElementById("bauwerkstatt-progress");
+  if (progressBar) {
+    const allExercises = Object.keys(bauwerkstattState.completed).length;
+    const completedExercises = Object.values(bauwerkstattState.completed).filter(c => c).length;
+    progressBar.style.width = ((completedExercises / allExercises) * 100) + "%";
+  }
+}
+
+
+
+let bauwerkstattState = { completed: {}, score: 0 };
+
+/* === BAUWERKSTATT DATA - PLUSQUAMPERFEKT === */
+const bauwerkstattData = {
+  level2: {
+    "1": { accepted: ["hatte gegessen"], explanation: "Plusquamperfekt: hatte + past participle. 'I had eaten.'" },
+    "2": { accepted: ["war gefahren"], explanation: "Plusquamperfekt with sein. 'I had driven.'" },
+    "3": { accepted: ["hatten gesehen"], explanation: "Plural: wir hatten gesehen (we had seen)." },
+    "4": { accepted: ["war angekommen"], explanation: "Plusquamperfekt: sein + past participle. 'had arrived'" },
+  },
+  level3: {
+    "1": { accepted: ["hatte gegessen"], explanation: "Plusquamperfekt: hatte + past participle. 'I had eaten.'" },
+    "2": { accepted: ["war gefahren"], explanation: "Plusquamperfekt with sein. 'I had driven.'" },
+    "3": { accepted: ["hatten gesehen"], explanation: "Plural: wir hatten gesehen (we had seen)." },
+    "4": { accepted: ["war angekommen"], explanation: "Plusquamperfekt: sein + past participle. 'had arrived'" },
+  }
+};
+</script>
 </body>
 </html>
   <!-- ==================== YOUR PROGRESS ==================== -->

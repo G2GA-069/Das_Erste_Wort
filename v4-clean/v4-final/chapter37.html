@@ -1934,6 +1934,28 @@ document.querySelectorAll('.german-word[data-speak="true"]').forEach(w => {
 
 /* ==================== BAUWERKSTATT SYSTEM (CH 37) ==================== */
 
+// Bauwerkstatt exercise data for Chapter 37 (-schaft suffix)
+const bauwerkstattData = {
+  level1: [
+    { id: 1, words: ['die', 'Freundschaft', 'ist', 'kostbar'], correct: ['die', 'Freundschaft', 'ist', 'kostbar'], answer: 'Die Freundschaft ist kostbar', explanation: 'Freund (friend) → Freundschaft (friendship). The -schaft suffix creates abstract nouns representing relationships and states.' },
+    { id: 2, words: ['Verwandtschaft', 'die', 'verbindet', 'Menschen'], correct: ['die', 'Verwandtschaft', 'verbindet', 'Menschen'], answer: 'Die Verwandtschaft verbindet Menschen', explanation: 'Verwandt (related) → Verwandtschaft (kinship). -schaft creates nouns for collective states and bonds.' },
+    { id: 3, words: ['Mannschaft', 'eine', 'arbeitet', 'zusammen'], correct: ['eine', 'Mannschaft', 'arbeitet', 'zusammen'], answer: 'Eine Mannschaft arbeitet zusammen', explanation: 'Mann (man) → Mannschaft (team). -schaft shows collective groups united by purpose or origin.' },
+    { id: 4, words: ['Gesellschaft', 'die', 'braucht', 'Ordnung'], correct: ['die', 'Gesellschaft', 'braucht', 'Ordnung'], answer: 'Die Gesellschaft braucht Ordnung', explanation: 'Gesell (companion) → Gesellschaft (society). All -schaft nouns are feminine.' }
+  ],
+  level2: [
+    { id: 1, sentence: 'Die _______ ist das Fundament einer guten Welt.', accepted_answers: ['Freundschaft'], close_errors: [{ wrong: 'freundschaft', feedback: 'Almost! Remember: German nouns are always capitalized. The word is FREUNDSCHAFT (friendship).' }], explanation: 'Freund (friend) → Freundschaft (friendship). Friendship is the foundation of a good world.' },
+    { id: 2, sentence: 'Die _______ verbindet Menschen über Grenzen.', accepted_answers: ['Verwandtschaft'], close_errors: [{ wrong: 'verwandtschaft', feedback: 'Almost! Nouns are always capitalized in German. The word is VERWANDTSCHAFT.' }], explanation: 'Verwandt (related) → Verwandtschaft (kinship). Kinship connects people across borders.' },
+    { id: 3, sentence: 'Eine gute _______ braucht Zusammenarbeit.', accepted_answers: ['Mannschaft'], close_errors: [{ wrong: 'mannschaft', feedback: 'Almost! Remember capitalization. The word is MANNSCHAFT (team).' }], explanation: 'Mann (man) → Mannschaft (team). A good team requires cooperation.' },
+    { id: 4, sentence: 'Die _______ entwickelt sich ständig.', accepted_answers: ['Gesellschaft'], close_errors: [{ wrong: 'gesellschaft', feedback: 'Close! Capitalization is required. The word is GESELLSCHAFT (society).' }], explanation: 'Gesell (companion) → Gesellschaft (society). Society constantly develops and changes.' }
+  ],
+  level3: [
+    { id: 1, english: 'friendship', accepted_answers: ['Freundschaft'], close_errors: [{ wrong: 'freundschaft', feedback: 'Close! The word needs capitalization: FREUNDSCHAFT.' }], explanation: 'Freund (friend) + -schaft = Freundschaft (friendship). A relationship bonded by affection.' },
+    { id: 2, english: 'kinship', accepted_answers: ['Verwandtschaft'], close_errors: [{ wrong: 'verwandtschaft', feedback: 'You have the right word, but nouns must be capitalized: VERWANDTSCHAFT.' }], explanation: 'Verwandt (related) + -schaft = Verwandtschaft (kinship). The bonds of family.' },
+    { id: 3, english: 'team', accepted_answers: ['Mannschaft'], close_errors: [{ wrong: 'mannschaft', feedback: 'Right word, but all German nouns are capitalized: MANNSCHAFT.' }], explanation: 'Mann (man) + -schaft = Mannschaft (team). A group unified for a common purpose.' },
+    { id: 4, english: 'society', accepted_answers: ['Gesellschaft'], close_errors: [{ wrong: 'gesellschaft', feedback: 'Close! The noun form requires capitalization: GESELLSCHAFT.' }], explanation: 'Gesell (companion) + -schaft = Gesellschaft (society). The collective organization of people.' }
+  ]
+};
+
 let bauwerkstattState = {
   level1: { completed: [false, false, false, false], score: 0 },
   level2: { completed: [false, false, false, false], score: 0 },
@@ -1942,14 +1964,183 @@ let bauwerkstattState = {
 };
 
 function initBauwerkstatt() {
+  bauwerkstattData.level1.forEach((ex) => {
+    const bankId = `word-bank-${ex.id}`;
+    const bank = document.getElementById(bankId);
+    if (bank) {
+      bank.innerHTML = '';
+      ex.words.forEach(word => {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.textContent = word;
+        chip.onclick = () => addToAssembly(ex.id, word);
+        bank.appendChild(chip);
+      });
+    }
+    bauwerkstattState.assembled[ex.id - 1] = [];
+  });
   updateProgress();
 }
 
+function addToAssembly(exId, word) {
+  const areaId = `assembly-area-${exId}`;
+  const area = document.getElementById(areaId);
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  if (!bauwerkstattState.assembled[exId - 1]) {
+    bauwerkstattState.assembled[exId - 1] = [];
+  }
+  const chip = document.createElement('div');
+  chip.className = 'word-chip placed';
+  chip.textContent = word;
+  chip.onclick = () => removeFromAssembly(exId, word, chip);
+  area.appendChild(chip);
+  bauwerkstattState.assembled[exId - 1].push(word);
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => { if (c.textContent === word) c.classList.add('unavailable'); });
+}
+
+function removeFromAssembly(exId, word, chipEl) {
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  chipEl.remove();
+  const idx = bauwerkstattState.assembled[exId - 1].indexOf(word);
+  if (idx > -1) bauwerkstattState.assembled[exId - 1].splice(idx, 1);
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => { if (c.textContent === word) c.classList.remove('unavailable'); });
+}
+
+function undoWordAssembly(exId) {
+  const areaId = `assembly-area-${exId}`;
+  const area = document.getElementById(areaId);
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  area.innerHTML = '';
+  bauwerkstattState.assembled[exId - 1] = [];
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => c.classList.remove('unavailable'));
+  const feedbackId = `feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  if (fb) fb.classList.remove('show', 'correct', 'close', 'incorrect');
+}
+
+function checkWordAssembly(exId) {
+  const ex = bauwerkstattData.level1[exId - 1];
+  const assembled = bauwerkstattState.assembled[exId - 1].join(' ').toLowerCase();
+  const correct = ex.correct.join(' ').toLowerCase();
+  const feedbackId = `feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  if (assembled === correct) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${ex.explanation}</div>`;
+    if (!bauwerkstattState.level1.completed[exId - 1]) {
+      bauwerkstattState.level1.completed[exId - 1] = true;
+      bauwerkstattState.level1.score++;
+      updateProgress();
+    }
+  } else {
+    fb.className = 'exercise-feedback show incorrect';
+    fb.innerHTML = `<div class="feedback-label">Not quite yet.</div><div class="feedback-text">Try again. The correct phrase is: <strong>${ex.answer}</strong></div>`;
+  }
+}
+
+function handleGapKeypress(event, exId) { if (event.key === 'Enter') checkGapSentence(exId); }
+function handleFreeKeypress(event, exId) { if (event.key === 'Enter') checkFreeBuilding(exId); }
+
+function levenshteinDistance(a, b) {
+  const aLower = a.toLowerCase(); const bLower = b.toLowerCase(); const lenA = aLower.length; const lenB = bLower.length;
+  if (lenA === 0) return lenB; if (lenB === 0) return lenA;
+  const matrix = []; for (let i = 0; i <= lenB; i++) { matrix[i] = [i]; }
+  for (let j = 0; j <= lenA; j++) { matrix[0][j] = j; }
+  for (let i = 1; i <= lenB; i++) {
+    for (let j = 1; j <= lenA; j++) {
+      const cost = aLower[j - 1] === bLower[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1, matrix[i - 1][j - 1] + cost);
+    }
+  }
+  return matrix[lenB][lenA];
+}
+
+function checkGapSentence(exId) {
+  const ex = bauwerkstattData.level2[exId - 1];
+  const input = document.getElementById(`gap-input-${exId}`);
+  const answer = input.value.trim();
+  const feedbackId = `gap-feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  const accepted = ex.accepted_answers;
+  const isCorrect = accepted.some(a => a.toLowerCase() === answer.toLowerCase());
+  if (isCorrect) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${answer.charAt(0).toUpperCase() + answer.slice(1)}. ${ex.explanation}</div>`;
+    if (!bauwerkstattState.level2.completed[exId - 1]) {
+      bauwerkstattState.level2.completed[exId - 1] = true;
+      bauwerkstattState.level2.score++;
+      updateProgress();
+    }
+  } else {
+    let closest = null; let minDist = Infinity;
+    for (const a of accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 2) {
+      let specificFeedback = null;
+      for (const err of ex.close_errors) { if (err.wrong.toLowerCase() === answer.toLowerCase()) { specificFeedback = err.feedback; break; } }
+      fb.className = 'exercise-feedback show close';
+      fb.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">${specificFeedback || `You wrote '${answer}' — the right form is '${closest}'. ${ex.explanation}`}</div>`;
+    } else {
+      fb.className = 'exercise-feedback show incorrect';
+      fb.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">The answer is <strong>${closest}</strong>. ${ex.explanation}</div>`;
+    }
+  }
+}
+
+function checkFreeBuilding(exId) {
+  const ex = bauwerkstattData.level3[exId - 1];
+  const input = document.getElementById(`free-input-${exId}`);
+  const answer = input.value.trim();
+  const feedbackId = `free-feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  const accepted = ex.accepted_answers;
+  const isCorrect = accepted.some(a => a.toLowerCase() === answer.toLowerCase());
+  if (isCorrect) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${ex.explanation}</div>`;
+    if (!bauwerkstattState.level3.completed[exId - 1]) {
+      bauwerkstattState.level3.completed[exId - 1] = true;
+      bauwerkstattState.level3.score++;
+      updateProgress();
+    }
+  } else {
+    let closest = null; let minDist = Infinity;
+    for (const a of accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 2) {
+      let specificFeedback = null;
+      for (const err of ex.close_errors) { if (err.wrong.toLowerCase() === answer.toLowerCase()) { specificFeedback = err.feedback; break; } }
+      fb.className = 'exercise-feedback show close';
+      fb.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">${specificFeedback || `You wrote '${answer}' — the right answer is '${closest}'. ${ex.explanation}`}</div>`;
+    } else {
+      fb.className = 'exercise-feedback show incorrect';
+      fb.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">The answer is <strong>${closest}</strong>. ${ex.explanation}</div>`;
+    }
+  }
+}
+
 function updateProgress() {
+  const total = 12;
   const score = bauwerkstattState.level1.score + bauwerkstattState.level2.score + bauwerkstattState.level3.score;
   const scoreEl = document.getElementById('bauwerkstatt-score');
   if (scoreEl) scoreEl.textContent = score;
+  const bar = document.getElementById('bauwerkstatt-progress-bar');
+  if (bar) {
+    bar.innerHTML = '';
+    const allCompleted = [...bauwerkstattState.level1.completed, ...bauwerkstattState.level2.completed, ...bauwerkstattState.level3.completed];
+    allCompleted.forEach(completed => {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot' + (completed ? ' completed' : '');
+      bar.appendChild(dot);
+    });
+  }
 }
+
+document.addEventListener('DOMContentLoaded', () => { initBauwerkstatt(); });
 
 /* ==================== LESEN & HÖREN SYSTEM ==================== */
 

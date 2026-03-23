@@ -1423,6 +1423,165 @@ document.querySelectorAll('.german-word[data-speak]').forEach(w => {
   w.addEventListener('click', () => speakGerman(w.textContent.trim()));
 });
 
+
+// ===== BAUWERKSTATT DATA FOR CHAPTER 89 =====
+const bauwerkstattData = {
+  theme: 'German idioms 2',
+  gapAnswers: ['Nase', 'Haar'],
+  freeKeywords: [['arm'], ['kopf'], ['ohr']]
+};
+
+// ===== BAUWERKSTATT EXERCISE FUNCTIONS =====
+function checkWordAssembly(exId) {
+  const feedback = document.getElementById('feedback-' + exId);
+  if (!feedback) return;
+  feedback.classList.add('show', 'correct');
+  feedback.innerHTML = '<div class="feedback-label">✓ Correct!</div>';
+  const scoreEl = document.getElementById('bauwerkstatt-score');
+  if (scoreEl) scoreEl.textContent = parseInt(scoreEl.textContent || 0) + 1;
+}
+function undoWordAssembly(exId) {
+  const feedback = document.getElementById('feedback-' + exId);
+  if (feedback) feedback.classList.remove('show');
+}
+function checkGapSentence(exId) {
+  const input = document.getElementById('gap-input-' + exId);
+  const feedback = document.getElementById('gap-feedback-' + exId);
+  if (!input || !feedback) return;
+  const answers = bauwerkstattData.gapAnswers;
+  const expected = answers[exId - 1];
+  const userAnswer = input.value.toLowerCase().trim();
+  if (userAnswer === expected.toLowerCase()) {
+    feedback.classList.add('show', 'correct');
+    feedback.innerHTML = '<div class="feedback-label">✓ Correct!</div>';
+    const scoreEl = document.getElementById('bauwerkstatt-score');
+    if (scoreEl) scoreEl.textContent = parseInt(scoreEl.textContent || 0) + 1;
+  } else {
+    feedback.classList.add('show', 'incorrect');
+    feedback.innerHTML = '<div class="feedback-label">✗ Not quite.</div><div class="feedback-text">Expected: ' + expected + '</div>';
+  }
+}
+function handleGapKeypress(event, exId) {
+  if (event.key === 'Enter') checkGapSentence(exId);
+}
+function checkFreeBuilding(exId) {
+  const input = document.getElementById('free-input-' + exId);
+  const feedback = document.getElementById('free-feedback-' + exId);
+  if (!input || !feedback) return;
+  const userAnswer = input.value.toLowerCase().trim();
+  const keywordChecks = bauwerkstattData.freeKeywords[exId - 1] || [];
+  let isCorrect = keywordChecks.some(keyword => userAnswer.includes(keyword.toLowerCase()));
+  if (isCorrect) {
+    feedback.classList.add('show', 'correct');
+    feedback.innerHTML = '<div class="feedback-label">✓ Good structure!</div>';
+    const scoreEl = document.getElementById('bauwerkstatt-score');
+    if (scoreEl) scoreEl.textContent = parseInt(scoreEl.textContent || 0) + 1;
+  } else {
+    feedback.classList.add('show', 'incorrect');
+    feedback.innerHTML = '<div class="feedback-label">✗ Try again.</div>';
+  }
+}
+function handleFreeKeypress(event, exId) {
+  if (event.key === 'Enter') checkFreeBuilding(exId);
+}
+function checkFreeProduction(exId) {
+  checkFreeBuilding(exId);
+}
+
+// ===== LESEN & HÖREN FUNCTIONS =====
+let currentSpeed = 0.95;
+function startListening() {
+  const listenBtn = document.getElementById('listen-btn');
+  const stopBtn = document.getElementById('stop-btn');
+  if (listenBtn) listenBtn.style.display = 'none';
+  if (stopBtn) stopBtn.style.display = 'inline-block';
+  const sentences = document.querySelectorAll('.passage-sentence');
+  if (sentences.length === 0) return;
+  const text = Array.from(sentences).map(s => s.textContent).join(' ');
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'de-DE';
+  utterance.rate = currentSpeed;
+  const voices = window.speechSynthesis.getVoices();
+  const deVoice = voices.find(v => v.lang.startsWith('de'));
+  if (deVoice) utterance.voice = deVoice;
+  window.speechSynthesis.speak(utterance);
+  sentences.forEach((s, i) => {
+    setTimeout(() => s.classList.add('reading'), i * 1500);
+    setTimeout(() => s.classList.remove('reading'), (i + 1) * 1500);
+  });
+}
+function stopListening() {
+  window.speechSynthesis.cancel();
+  const listenBtn = document.getElementById('listen-btn');
+  const stopBtn = document.getElementById('stop-btn');
+  if (listenBtn) listenBtn.style.display = 'inline-block';
+  if (stopBtn) stopBtn.style.display = 'none';
+}
+function setSpeed(speed) {
+  currentSpeed = speed;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  if (event && event.target) event.target.classList.add('active');
+}
+
+// ===== COMPREHENSION FUNCTIONS =====
+function checkComprehension(qNum, elem, isCorrect) {
+  if (elem.classList.contains('answered')) return;
+  elem.classList.add('answered');
+  const feedback = elem.parentElement.parentElement.querySelector('.comp-feedback');
+  if (!feedback) return;
+  if (isCorrect) {
+    elem.classList.add('correct');
+    feedback.classList.add('show', 'correct');
+    feedback.textContent = '✓ Correct!';
+  } else {
+    elem.classList.add('incorrect');
+    feedback.classList.add('show', 'incorrect');
+    feedback.textContent = '✗ Try again.';
+  }
+}
+
+// ===== DICTATION FUNCTIONS =====
+function playDictation() {
+  if (!window.dictationSentences || window.dictationSentences.length === 0) return;
+  const idx = window.currentDictationIndex || 0;
+  const sentence = window.dictationSentences[idx];
+  const utterance = new SpeechSynthesisUtterance(sentence);
+  utterance.lang = 'de-DE';
+  utterance.rate = 0.8;
+  const voices = window.speechSynthesis.getVoices();
+  const deVoice = voices.find(v => v.lang.startsWith('de'));
+  if (deVoice) utterance.voice = deVoice;
+  const playBtn = document.getElementById('dictation-play-btn');
+  if (playBtn) playBtn.disabled = true;
+  utterance.onend = () => {
+    if (playBtn) playBtn.disabled = false;
+  };
+  window.speechSynthesis.speak(utterance);
+}
+function checkDictation() {
+  const input = document.getElementById('dictation-input');
+  const feedback = document.getElementById('dictation-feedback');
+  if (!input || !feedback) return;
+  const userAnswer = input.value.trim().toLowerCase();
+  if (!userAnswer) {
+    feedback.textContent = 'Please type something first.';
+    feedback.classList.add('show', 'incorrect');
+    return;
+  }
+  if (!window.dictationSentences) return;
+  const idx = window.currentDictationIndex || 0;
+  const expected = window.dictationSentences[idx].toLowerCase();
+  feedback.classList.remove('correct', 'incorrect');
+  if (userAnswer === expected) {
+    feedback.textContent = '✓ Perfect!';
+    feedback.classList.add('show', 'correct');
+  } else {
+    feedback.textContent = '✗ Not quite. Try again.';
+    feedback.classList.add('show', 'incorrect');
+  }
+}
+function updateBauwerkstattProgress() {}
+
 </script>
 
   

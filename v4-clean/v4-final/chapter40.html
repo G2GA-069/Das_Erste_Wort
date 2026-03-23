@@ -1826,6 +1826,27 @@ document.querySelectorAll('.german-word[data-speak]').forEach(w => {
 
 /* ==================== BAUWERKSTATT SYSTEM (CH 40) ==================== */
 
+const bauwerkstattData = {
+  level1: [
+    { id: 1, words: ['Entdeckung', 'die', 'ist', 'wichtig'], correct: ['die', 'Entdeckung', 'ist', 'wichtig'], answer: 'Die Entdeckung ist wichtig', explanation: 'Ent- + decken → Entdeckung (discovery). Ent- means away or from. Die Entdeckung is feminine.' },
+    { id: 2, words: ['Entfernung', 'die', 'groß', 'ist'], correct: ['die', 'Entfernung', 'ist', 'groß'], answer: 'Die Entfernung ist groß', explanation: 'Ent- + fernen → Entfernung (distance). The distance is great.' },
+    { id: 3, words: ['Entscheidung', 'eine', 'wichtig', 'ist'], correct: ['eine', 'Entscheidung', 'ist', 'wichtig'], answer: 'Eine Entscheidung ist wichtig', explanation: 'Ent- + scheiden → Entscheidung (decision). A decision is important.' },
+    { id: 4, words: ['Entwicklung', 'die', 'ständig', 'ist'], correct: ['die', 'Entwicklung', 'ist', 'ständig'], answer: 'Die Entwicklung ist ständig', explanation: 'Ent- + wickeln → Entwicklung (development). Development is constant.' }
+  ],
+  level2: [
+    { id: 1, sentence: 'Die _______ ist das Ziel der Wissenschaft.', accepted_answers: ['Entdeckung'], close_errors: [{ wrong: 'entdeckung', feedback: 'Almost! ENTDECKUNG is capitalized.' }], explanation: 'Ent- + decken → Entdeckung (discovery). Discovery is the goal of science.' },
+    { id: 2, sentence: 'Die _______ zwischen uns ist groß.', accepted_answers: ['Entfernung'], close_errors: [{ wrong: 'entfernung', feedback: 'Almost! ENTFERNUNG is capitalized.' }], explanation: 'Ent- + fernen → Entfernung (distance). The distance between us is great.' },
+    { id: 3, sentence: 'Eine _______ erfordert Mut.', accepted_answers: ['Entscheidung'], close_errors: [{ wrong: 'entscheidung', feedback: 'Almost! ENTSCHEIDUNG is capitalized.' }], explanation: 'Ent- + scheiden → Entscheidung (decision). A decision requires courage.' },
+    { id: 4, sentence: 'Die _______ ist eine Reise, nicht ein Ziel.', accepted_answers: ['Entwicklung'], close_errors: [{ wrong: 'entwicklung', feedback: 'Almost! ENTWICKLUNG is capitalized.' }], explanation: 'Ent- + wickeln → Entwicklung (development). Development is a journey, not a destination.' }
+  ],
+  level3: [
+    { id: 1, english: 'discovery', accepted_answers: ['Entdeckung'], close_errors: [{ wrong: 'entdeckung', feedback: 'Close! ENTDECKUNG needs capitalization.' }], explanation: 'Ent- + decken + -ung = Entdeckung (discovery). Uncovering what was hidden.' },
+    { id: 2, english: 'distance', accepted_answers: ['Entfernung'], close_errors: [{ wrong: 'entfernung', feedback: 'Right word! ENTFERNUNG needs capitalization.' }], explanation: 'Ent- + fernen + -ung = Entfernung (distance). The space between two points.' },
+    { id: 3, english: 'decision', accepted_answers: ['Entscheidung'], close_errors: [{ wrong: 'entscheidung', feedback: 'Right word! ENTSCHEIDUNG needs capitalization.' }], explanation: 'Ent- + scheiden + -ung = Entscheidung (decision). A choice that separates options.' },
+    { id: 4, english: 'development', accepted_answers: ['Entwicklung'], close_errors: [{ wrong: 'entwicklung', feedback: 'Close! ENTWICKLUNG needs capitalization.' }], explanation: 'Ent- + wickeln + -ung = Entwicklung (development). Gradual growth and unfolding.' }
+  ]
+};
+
 let bauwerkstattState = {
   level1: { completed: [false, false, false, false], score: 0 },
   level2: { completed: [false, false, false, false], score: 0 },
@@ -1834,14 +1855,183 @@ let bauwerkstattState = {
 };
 
 function initBauwerkstatt() {
+  bauwerkstattData.level1.forEach((ex) => {
+    const bankId = `word-bank-${ex.id}`;
+    const bank = document.getElementById(bankId);
+    if (bank) {
+      bank.innerHTML = '';
+      ex.words.forEach(word => {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.textContent = word;
+        chip.onclick = () => addToAssembly(ex.id, word);
+        bank.appendChild(chip);
+      });
+    }
+    bauwerkstattState.assembled[ex.id - 1] = [];
+  });
   updateProgress();
 }
 
+function addToAssembly(exId, word) {
+  const areaId = `assembly-area-${exId}`;
+  const area = document.getElementById(areaId);
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  if (!bauwerkstattState.assembled[exId - 1]) {
+    bauwerkstattState.assembled[exId - 1] = [];
+  }
+  const chip = document.createElement('div');
+  chip.className = 'word-chip placed';
+  chip.textContent = word;
+  chip.onclick = () => removeFromAssembly(exId, word, chip);
+  area.appendChild(chip);
+  bauwerkstattState.assembled[exId - 1].push(word);
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => { if (c.textContent === word) c.classList.add('unavailable'); });
+}
+
+function removeFromAssembly(exId, word, chipEl) {
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  chipEl.remove();
+  const idx = bauwerkstattState.assembled[exId - 1].indexOf(word);
+  if (idx > -1) bauwerkstattState.assembled[exId - 1].splice(idx, 1);
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => { if (c.textContent === word) c.classList.remove('unavailable'); });
+}
+
+function undoWordAssembly(exId) {
+  const areaId = `assembly-area-${exId}`;
+  const area = document.getElementById(areaId);
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  area.innerHTML = '';
+  bauwerkstattState.assembled[exId - 1] = [];
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => c.classList.remove('unavailable'));
+  const feedbackId = `feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  if (fb) fb.classList.remove('show', 'correct', 'close', 'incorrect');
+}
+
+function checkWordAssembly(exId) {
+  const ex = bauwerkstattData.level1[exId - 1];
+  const assembled = bauwerkstattState.assembled[exId - 1].join(' ').toLowerCase();
+  const correct = ex.correct.join(' ').toLowerCase();
+  const feedbackId = `feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  if (assembled === correct) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${ex.explanation}</div>`;
+    if (!bauwerkstattState.level1.completed[exId - 1]) {
+      bauwerkstattState.level1.completed[exId - 1] = true;
+      bauwerkstattState.level1.score++;
+      updateProgress();
+    }
+  } else {
+    fb.className = 'exercise-feedback show incorrect';
+    fb.innerHTML = `<div class="feedback-label">Not quite yet.</div><div class="feedback-text">Try again. The correct phrase is: <strong>${ex.answer}</strong></div>`;
+  }
+}
+
+function handleGapKeypress(event, exId) { if (event.key === 'Enter') checkGapSentence(exId); }
+function handleFreeKeypress(event, exId) { if (event.key === 'Enter') checkFreeBuilding(exId); }
+
+function levenshteinDistance(a, b) {
+  const aLower = a.toLowerCase(); const bLower = b.toLowerCase(); const lenA = aLower.length; const lenB = bLower.length;
+  if (lenA === 0) return lenB; if (lenB === 0) return lenA;
+  const matrix = []; for (let i = 0; i <= lenB; i++) { matrix[i] = [i]; }
+  for (let j = 0; j <= lenA; j++) { matrix[0][j] = j; }
+  for (let i = 1; i <= lenB; i++) {
+    for (let j = 1; j <= lenA; j++) {
+      const cost = aLower[j - 1] === bLower[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1, matrix[i - 1][j - 1] + cost);
+    }
+  }
+  return matrix[lenB][lenA];
+}
+
+function checkGapSentence(exId) {
+  const ex = bauwerkstattData.level2[exId - 1];
+  const input = document.getElementById(`gap-input-${exId}`);
+  const answer = input.value.trim();
+  const feedbackId = `gap-feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  const accepted = ex.accepted_answers;
+  const isCorrect = accepted.some(a => a.toLowerCase() === answer.toLowerCase());
+  if (isCorrect) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${answer.charAt(0).toUpperCase() + answer.slice(1)}. ${ex.explanation}</div>`;
+    if (!bauwerkstattState.level2.completed[exId - 1]) {
+      bauwerkstattState.level2.completed[exId - 1] = true;
+      bauwerkstattState.level2.score++;
+      updateProgress();
+    }
+  } else {
+    let closest = null; let minDist = Infinity;
+    for (const a of accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 2) {
+      let specificFeedback = null;
+      for (const err of ex.close_errors) { if (err.wrong.toLowerCase() === answer.toLowerCase()) { specificFeedback = err.feedback; break; } }
+      fb.className = 'exercise-feedback show close';
+      fb.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">${specificFeedback || `You wrote '${answer}' — the right form is '${closest}'. ${ex.explanation}`}</div>`;
+    } else {
+      fb.className = 'exercise-feedback show incorrect';
+      fb.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">The answer is <strong>${closest}</strong>. ${ex.explanation}</div>`;
+    }
+  }
+}
+
+function checkFreeBuilding(exId) {
+  const ex = bauwerkstattData.level3[exId - 1];
+  const input = document.getElementById(`free-input-${exId}`);
+  const answer = input.value.trim();
+  const feedbackId = `free-feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  const accepted = ex.accepted_answers;
+  const isCorrect = accepted.some(a => a.toLowerCase() === answer.toLowerCase());
+  if (isCorrect) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${ex.explanation}</div>`;
+    if (!bauwerkstattState.level3.completed[exId - 1]) {
+      bauwerkstattState.level3.completed[exId - 1] = true;
+      bauwerkstattState.level3.score++;
+      updateProgress();
+    }
+  } else {
+    let closest = null; let minDist = Infinity;
+    for (const a of accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 2) {
+      let specificFeedback = null;
+      for (const err of ex.close_errors) { if (err.wrong.toLowerCase() === answer.toLowerCase()) { specificFeedback = err.feedback; break; } }
+      fb.className = 'exercise-feedback show close';
+      fb.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">${specificFeedback || `You wrote '${answer}' — the right answer is '${closest}'. ${ex.explanation}`}</div>`;
+    } else {
+      fb.className = 'exercise-feedback show incorrect';
+      fb.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">The answer is <strong>${closest}</strong>. ${ex.explanation}</div>`;
+    }
+  }
+}
+
 function updateProgress() {
+  const total = 12;
   const score = bauwerkstattState.level1.score + bauwerkstattState.level2.score + bauwerkstattState.level3.score;
   const scoreEl = document.getElementById('bauwerkstatt-score');
   if (scoreEl) scoreEl.textContent = score;
+  const bar = document.getElementById('bauwerkstatt-progress-bar');
+  if (bar) {
+    bar.innerHTML = '';
+    const allCompleted = [...bauwerkstattState.level1.completed, ...bauwerkstattState.level2.completed, ...bauwerkstattState.level3.completed];
+    allCompleted.forEach(completed => {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot' + (completed ? ' completed' : '');
+      bar.appendChild(dot);
+    });
+  }
 }
+
+document.addEventListener('DOMContentLoaded', () => { initBauwerkstatt(); });
 
 /* ==================== LESEN & HÖREN SYSTEM ==================== */
 

@@ -1767,6 +1767,27 @@ document.querySelectorAll('.german-word[data-speak]').forEach(w => {
 
 /* ==================== BAUWERKSTATT SYSTEM (CH 41) ==================== */
 
+const bauwerkstattData = {
+  level1: [
+    { id: 1, words: ['Zerfall', 'der', 'eine', 'ist', 'Wahrheit'], correct: ['der', 'Zerfall', 'ist', 'eine', 'Wahrheit'], answer: 'Der Zerfall ist eine Wahrheit', explanation: 'Zer- + Fall → Zerfall (decay). Zer- means apart, into pieces. Der Zerfall is masculine.' },
+    { id: 2, words: ['Zerstörung', 'die', 'verhindert', 'man', 'muss'], correct: ['man', 'muss', 'die', 'Zerstörung', 'verhindert'], answer: 'Man muss die Zerstörung verhindert', explanation: 'Zer- + stören → Zerstörung (destruction). One must prevent destruction.' },
+    { id: 3, words: ['zerbrechen', 'Glas', 'kann', 'leicht'], correct: ['Glas', 'kann', 'leicht', 'zerbrechen'], answer: 'Glas kann leicht zerbrechen', explanation: 'Zer- + brechen → zerbrechen (to break apart). Glass can easily break.' },
+    { id: 4, words: ['Zerstreuung', 'die', 'ist', 'manchmal', 'nötig'], correct: ['die', 'Zerstreuung', 'ist', 'manchmal', 'nötig'], answer: 'Die Zerstreuung ist manchmal nötig', explanation: 'Zer- + streuen → Zerstreuung (distraction). Distraction is sometimes necessary.' }
+  ],
+  level2: [
+    { id: 1, sentence: 'Der _______ ist unvermeidlich.', accepted_answers: ['Zerfall'], close_errors: [{ wrong: 'zerfall', feedback: 'Almost! ZERFALL is capitalized.' }], explanation: 'Zer- + Fall → Zerfall (decay). Decay is inevitable.' },
+    { id: 2, sentence: 'Die _______ aller Dinge ist ein Naturgesetz.', accepted_answers: ['Zerstörung'], close_errors: [{ wrong: 'zerstörung', feedback: 'Almost! ZERSTÖRUNG is capitalized.' }], explanation: 'Zer- + stören → Zerstörung (destruction). The destruction of all things is a natural law.' },
+    { id: 3, sentence: 'Das Eis wird im Frühling _______.', accepted_answers: ['zerschmolzen'], close_errors: [{ wrong: 'zerschmolzen', feedback: 'Close! Try: ZERSCHMOLZEN.' }], explanation: 'Zer- + schmelzen → zerschmolzen (melted apart). Ice melts in spring.' },
+    { id: 4, sentence: 'Die _______ kann dem Geist helfen, sich zu erholen.', accepted_answers: ['Zerstreuung'], close_errors: [{ wrong: 'zerstreuung', feedback: 'Almost! ZERSTREUUNG is capitalized.' }], explanation: 'Zer- + streuen → Zerstreuung (distraction). Distraction can help the mind rest.' }
+  ],
+  level3: [
+    { id: 1, english: 'decay', accepted_answers: ['Zerfall'], close_errors: [{ wrong: 'zerfall', feedback: 'Close! ZERFALL needs capitalization.' }], explanation: 'Zer- + Fall = Zerfall (decay). The gradual breaking down of matter.' },
+    { id: 2, english: 'destruction', accepted_answers: ['Zerstörung'], close_errors: [{ wrong: 'zerstörung', feedback: 'Right word! ZERSTÖRUNG needs capitalization.' }], explanation: 'Zer- + stören + -ung = Zerstörung (destruction). Violent ruin or demolition.' },
+    { id: 3, english: 'to break apart', accepted_answers: ['zerbrechen'], close_errors: [{ wrong: 'Zerbrechen', feedback: 'Right answer! Lowercase in translation: zerbrechen.' }], explanation: 'Zer- + brechen = zerbrechen (to break apart). To break something into pieces.' },
+    { id: 4, english: 'distraction', accepted_answers: ['Zerstreuung'], close_errors: [{ wrong: 'zerstreuung', feedback: 'Close! ZERSTREUUNG needs capitalization.' }], explanation: 'Zer- + streuen + -ung = Zerstreuung (distraction). A scattering of attention.' }
+  ]
+};
+
 let bauwerkstattState = {
   level1: { completed: [false, false, false, false], score: 0 },
   level2: { completed: [false, false, false, false], score: 0 },
@@ -1775,14 +1796,183 @@ let bauwerkstattState = {
 };
 
 function initBauwerkstatt() {
+  bauwerkstattData.level1.forEach((ex) => {
+    const bankId = `word-bank-${ex.id}`;
+    const bank = document.getElementById(bankId);
+    if (bank) {
+      bank.innerHTML = '';
+      ex.words.forEach(word => {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.textContent = word;
+        chip.onclick = () => addToAssembly(ex.id, word);
+        bank.appendChild(chip);
+      });
+    }
+    bauwerkstattState.assembled[ex.id - 1] = [];
+  });
   updateProgress();
 }
 
+function addToAssembly(exId, word) {
+  const areaId = `assembly-area-${exId}`;
+  const area = document.getElementById(areaId);
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  if (!bauwerkstattState.assembled[exId - 1]) {
+    bauwerkstattState.assembled[exId - 1] = [];
+  }
+  const chip = document.createElement('div');
+  chip.className = 'word-chip placed';
+  chip.textContent = word;
+  chip.onclick = () => removeFromAssembly(exId, word, chip);
+  area.appendChild(chip);
+  bauwerkstattState.assembled[exId - 1].push(word);
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => { if (c.textContent === word) c.classList.add('unavailable'); });
+}
+
+function removeFromAssembly(exId, word, chipEl) {
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  chipEl.remove();
+  const idx = bauwerkstattState.assembled[exId - 1].indexOf(word);
+  if (idx > -1) bauwerkstattState.assembled[exId - 1].splice(idx, 1);
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => { if (c.textContent === word) c.classList.remove('unavailable'); });
+}
+
+function undoWordAssembly(exId) {
+  const areaId = `assembly-area-${exId}`;
+  const area = document.getElementById(areaId);
+  const bankId = `word-bank-${exId}`;
+  const bank = document.getElementById(bankId);
+  area.innerHTML = '';
+  bauwerkstattState.assembled[exId - 1] = [];
+  const bankChips = bank.querySelectorAll('.word-chip');
+  bankChips.forEach(c => c.classList.remove('unavailable'));
+  const feedbackId = `feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  if (fb) fb.classList.remove('show', 'correct', 'close', 'incorrect');
+}
+
+function checkWordAssembly(exId) {
+  const ex = bauwerkstattData.level1[exId - 1];
+  const assembled = bauwerkstattState.assembled[exId - 1].join(' ').toLowerCase();
+  const correct = ex.correct.join(' ').toLowerCase();
+  const feedbackId = `feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  if (assembled === correct) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${ex.explanation}</div>`;
+    if (!bauwerkstattState.level1.completed[exId - 1]) {
+      bauwerkstattState.level1.completed[exId - 1] = true;
+      bauwerkstattState.level1.score++;
+      updateProgress();
+    }
+  } else {
+    fb.className = 'exercise-feedback show incorrect';
+    fb.innerHTML = `<div class="feedback-label">Not quite yet.</div><div class="feedback-text">Try again. The correct phrase is: <strong>${ex.answer}</strong></div>`;
+  }
+}
+
+function handleGapKeypress(event, exId) { if (event.key === 'Enter') checkGapSentence(exId); }
+function handleFreeKeypress(event, exId) { if (event.key === 'Enter') checkFreeBuilding(exId); }
+
+function levenshteinDistance(a, b) {
+  const aLower = a.toLowerCase(); const bLower = b.toLowerCase(); const lenA = aLower.length; const lenB = bLower.length;
+  if (lenA === 0) return lenB; if (lenB === 0) return lenA;
+  const matrix = []; for (let i = 0; i <= lenB; i++) { matrix[i] = [i]; }
+  for (let j = 0; j <= lenA; j++) { matrix[0][j] = j; }
+  for (let i = 1; i <= lenB; i++) {
+    for (let j = 1; j <= lenA; j++) {
+      const cost = aLower[j - 1] === bLower[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1, matrix[i - 1][j - 1] + cost);
+    }
+  }
+  return matrix[lenB][lenA];
+}
+
+function checkGapSentence(exId) {
+  const ex = bauwerkstattData.level2[exId - 1];
+  const input = document.getElementById(`gap-input-${exId}`);
+  const answer = input.value.trim();
+  const feedbackId = `gap-feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  const accepted = ex.accepted_answers;
+  const isCorrect = accepted.some(a => a.toLowerCase() === answer.toLowerCase());
+  if (isCorrect) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${answer.charAt(0).toUpperCase() + answer.slice(1)}. ${ex.explanation}</div>`;
+    if (!bauwerkstattState.level2.completed[exId - 1]) {
+      bauwerkstattState.level2.completed[exId - 1] = true;
+      bauwerkstattState.level2.score++;
+      updateProgress();
+    }
+  } else {
+    let closest = null; let minDist = Infinity;
+    for (const a of accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 2) {
+      let specificFeedback = null;
+      for (const err of ex.close_errors) { if (err.wrong.toLowerCase() === answer.toLowerCase()) { specificFeedback = err.feedback; break; } }
+      fb.className = 'exercise-feedback show close';
+      fb.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">${specificFeedback || `You wrote '${answer}' — the right form is '${closest}'. ${ex.explanation}`}</div>`;
+    } else {
+      fb.className = 'exercise-feedback show incorrect';
+      fb.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">The answer is <strong>${closest}</strong>. ${ex.explanation}</div>`;
+    }
+  }
+}
+
+function checkFreeBuilding(exId) {
+  const ex = bauwerkstattData.level3[exId - 1];
+  const input = document.getElementById(`free-input-${exId}`);
+  const answer = input.value.trim();
+  const feedbackId = `free-feedback-${exId}`;
+  const fb = document.getElementById(feedbackId);
+  const accepted = ex.accepted_answers;
+  const isCorrect = accepted.some(a => a.toLowerCase() === answer.toLowerCase());
+  if (isCorrect) {
+    fb.className = 'exercise-feedback show correct';
+    fb.innerHTML = `<div class="feedback-label">✓ Correct!</div><div class="feedback-text">${ex.explanation}</div>`;
+    if (!bauwerkstattState.level3.completed[exId - 1]) {
+      bauwerkstattState.level3.completed[exId - 1] = true;
+      bauwerkstattState.level3.score++;
+      updateProgress();
+    }
+  } else {
+    let closest = null; let minDist = Infinity;
+    for (const a of accepted) { const dist = levenshteinDistance(answer, a); if (dist < minDist) { minDist = dist; closest = a; } }
+    if (minDist <= 2) {
+      let specificFeedback = null;
+      for (const err of ex.close_errors) { if (err.wrong.toLowerCase() === answer.toLowerCase()) { specificFeedback = err.feedback; break; } }
+      fb.className = 'exercise-feedback show close';
+      fb.innerHTML = `<div class="feedback-label">Almost!</div><div class="feedback-text">${specificFeedback || `You wrote '${answer}' — the right answer is '${closest}'. ${ex.explanation}`}</div>`;
+    } else {
+      fb.className = 'exercise-feedback show incorrect';
+      fb.innerHTML = `<div class="feedback-label">Not quite.</div><div class="feedback-text">The answer is <strong>${closest}</strong>. ${ex.explanation}</div>`;
+    }
+  }
+}
+
 function updateProgress() {
+  const total = 12;
   const score = bauwerkstattState.level1.score + bauwerkstattState.level2.score + bauwerkstattState.level3.score;
   const scoreEl = document.getElementById('bauwerkstatt-score');
   if (scoreEl) scoreEl.textContent = score;
+  const bar = document.getElementById('bauwerkstatt-progress-bar');
+  if (bar) {
+    bar.innerHTML = '';
+    const allCompleted = [...bauwerkstattState.level1.completed, ...bauwerkstattState.level2.completed, ...bauwerkstattState.level3.completed];
+    allCompleted.forEach(completed => {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot' + (completed ? ' completed' : '');
+      bar.appendChild(dot);
+    });
+  }
 }
+
+document.addEventListener('DOMContentLoaded', () => { initBauwerkstatt(); });
 
 /* ==================== LESEN & HÖREN SYSTEM ==================== */
 
