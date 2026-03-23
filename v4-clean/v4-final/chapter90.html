@@ -883,28 +883,21 @@
     </div>
 
     <div class="dictation-section">
-      <h4>Diktat</h4>
-      <p class="dictation-instruction">Listen and type what you hear.</p>
+      <h4>Diktat — Dictation Exercise</h4>
+      <p class="dictation-instruction">Listen to a sentence and type what you hear. Click the button to hear each sentence once.</p>
 
-      <div class="dictation-exercise" id="dictation-1">
-        <button class="dictation-play-btn" onclick="playDictation(1)">🔊 Play Sentence 1</button>
-        <input type="text" class="dictation-input" id="dictation-input-1" placeholder="Type here...">
-        <button class="check-dictation-btn" onclick="checkDictation(1, 'First dictation sentence')">Check</button>
-        <div class="dictation-feedback" id="dictation-feedback-1"></div>
-      </div>
+      <div class="dictation-exercise">
+        <button class="dictation-btn" onclick="playDictation()" id="dictation-play-btn">
+          🎧 Listen to Sentence
+        </button>
+        <div class="dictation-counter" id="dictation-counter">Sentence 1 of 3</div>
 
-      <div class="dictation-exercise" id="dictation-2">
-        <button class="dictation-play-btn" onclick="playDictation(2)">🔊 Play Sentence 2</button>
-        <input type="text" class="dictation-input" id="dictation-input-2" placeholder="Type here...">
-        <button class="check-dictation-btn" onclick="checkDictation(2, 'Second dictation sentence')">Check</button>
-        <div class="dictation-feedback" id="dictation-feedback-2"></div>
-      </div>
+        <input type="text" id="dictation-input" placeholder="Type the sentence you hear..." class="dictation-input">
+        <button class="check-dictation-btn" onclick="checkDictation()">Check Answer</button>
 
-      <div class="dictation-exercise" id="dictation-3">
-        <button class="dictation-play-btn" onclick="playDictation(3)">🔊 Play Sentence 3</button>
-        <input type="text" class="dictation-input" id="dictation-input-3" placeholder="Type here...">
-        <button class="check-dictation-btn" onclick="checkDictation(3, 'Third dictation sentence')">Check</button>
-        <div class="dictation-feedback" id="dictation-feedback-3"></div>
+        <div class="dictation-feedback" id="dictation-feedback"></div>
+
+        <div class="dictation-result" id="dictation-result"></div>
       </div>
     </div>
 
@@ -930,6 +923,160 @@
 </div>
 
 <script>
+// ===== DICTATION DATA AND FUNCTIONS =====
+const dictationSentences = [
+  'First dictation sentence',
+  'Second dictation sentence',
+  'Third dictation sentence'
+];
+
+let currentDictationIndex = 0;
+
+/**
+ * Levenshtein distance for spell checking
+ */
+function levenshteinDistance(a, b) {
+  const aLower = a.toLowerCase();
+  const bLower = b.toLowerCase();
+  const lenA = aLower.length;
+  const lenB = bLower.length;
+
+  if (lenA === 0) return lenB;
+  if (lenB === 0) return lenA;
+
+  const matrix = [];
+  for (let i = 0; i <= lenB; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= lenA; j++) {
+    matrix[0][j] = j;
+  }
+
+  for (let i = 1; i <= lenB; i++) {
+    for (let j = 1; j <= lenA; j++) {
+      const cost = aLower[j - 1] === bLower[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  return matrix[lenB][lenA];
+}
+
+/**
+ * Word-level diff for showing what changed
+ */
+function wordDiff(actual, expected) {
+  const actualWords = actual.toLowerCase().split(/\s+/);
+  const expectedWords = expected.toLowerCase().split(/\s+/);
+  const result = [];
+
+  const maxLen = Math.max(actualWords.length, expectedWords.length);
+  for (let i = 0; i < maxLen; i++) {
+    const aWord = actualWords[i] || '';
+    const eWord = expectedWords[i] || '';
+
+    if (aWord === eWord) {
+      result.push(`<span class="word-diff correct">${eWord}</span>`);
+    } else {
+      result.push(`<span class="word-diff incorrect">${aWord}</span>`);
+    }
+  }
+
+  return result.join(' ');
+}
+
+/**
+ * Play dictation sentence
+ */
+function playDictation() {
+  if (currentDictationIndex >= dictationSentences.length) {
+    return;
+  }
+
+  const sentence = dictationSentences[currentDictationIndex];
+  const utterance = new SpeechSynthesisUtterance(sentence);
+  utterance.lang = 'de-DE';
+  utterance.rate = 0.8;
+
+  document.getElementById('dictation-play-btn').disabled = true;
+
+  utterance.onend = () => {
+    document.getElementById('dictation-play-btn').disabled = false;
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+/**
+ * Check dictation answer
+ */
+function checkDictation() {
+  const input = document.getElementById('dictation-input');
+  const userAnswer = input.value.trim();
+  const expectedAnswer = dictationSentences[currentDictationIndex];
+  const feedback = document.getElementById('dictation-feedback');
+  const result = document.getElementById('dictation-result');
+
+  if (!userAnswer) {
+    feedback.textContent = 'Please type something first.';
+    feedback.classList.add('show', 'incorrect');
+    return;
+  }
+
+  const distance = levenshteinDistance(userAnswer, expectedAnswer);
+  const maxDistance = Math.ceil(expectedAnswer.length * 0.15);
+
+  feedback.classList.remove('correct', 'incorrect');
+  result.classList.remove('show');
+
+  if (distance === 0) {
+    feedback.textContent = '✓ Perfect! You got it exactly right.';
+    feedback.classList.add('show', 'correct');
+    result.classList.add('show');
+    result.innerHTML = `<strong>Correct sentence:</strong> ${expectedAnswer}`;
+  } else if (distance <= 3) {
+    feedback.textContent = `✓ Very close! Only a few words different.`;
+    feedback.classList.add('show', 'correct');
+    result.classList.add('show');
+    result.innerHTML = `<strong>What you wrote:</strong> ${wordDiff(userAnswer, expectedAnswer)}<br><strong>Expected:</strong> ${expectedAnswer}`;
+  } else {
+    feedback.textContent = '✗ Not quite. Try again or listen once more.';
+    feedback.classList.add('show', 'incorrect');
+    result.classList.add('show');
+    result.innerHTML = `<strong>Expected:</strong> ${expectedAnswer}`;
+  }
+
+  // Update counter and prepare for next
+  if (currentDictationIndex < dictationSentences.length - 1) {
+    setTimeout(() => {
+      currentDictationIndex++;
+      updateDictationCounter();
+      input.value = '';
+      feedback.classList.remove('show');
+      result.classList.remove('show');
+    }, 2000);
+  } else {
+    document.getElementById('dictation-play-btn').textContent = '✓ Dictation Complete!';
+    document.getElementById('dictation-play-btn').disabled = true;
+  }
+}
+
+/**
+ * Update dictation counter
+ */
+function updateDictationCounter() {
+  const counter = document.getElementById('dictation-counter');
+  counter.textContent = `Sentence ${currentDictationIndex + 1} of ${dictationSentences.length}`;
+}
+
+// Initialize dictation counter on page load
+updateDictationCounter();
+
+// ===== GERMAN SPEECH FUNCTIONS =====
 function speakGerman(text, btn) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();

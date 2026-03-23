@@ -2002,6 +2002,37 @@ function playDictation() {
   window.speechSynthesis.speak(utterance);
 }
 
+function levenshteinDistance(a, b) {
+  const aLower = a.toLowerCase();
+  const bLower = b.toLowerCase();
+  const lenA = aLower.length;
+  const lenB = bLower.length;
+
+  if (lenA === 0) return lenB;
+  if (lenB === 0) return lenA;
+
+  const matrix = [];
+  for (let i = 0; i <= lenB; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= lenA; j++) {
+    matrix[0][j] = j;
+  }
+
+  for (let i = 1; i <= lenB; i++) {
+    for (let j = 1; j <= lenA; j++) {
+      const cost = aLower[j - 1] === bLower[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  return matrix[lenB][lenA];
+}
+
 function checkDictation() {
   const input = document.getElementById('dictation-input');
   const answer = input.value.trim();

@@ -2076,26 +2076,20 @@
     <!-- Dictation Exercise -->
     <div class="dictation-section">
       <h4>Diktat — Dictation Exercise</h4>
-      <p class="dictation-instruction">Listen to a sentence and type what you hear.</p>
+      <p class="dictation-instruction">Listen to a sentence and type what you hear. Click the button to hear the sentence once.</p>
 
       <div class="dictation-exercise">
         <button class="dictation-btn" onclick="playDictation()" id="dictation-play-btn">
           🎧 Listen to Sentence
         </button>
-        <div class="dictation-counter" id="dictation-counter">Sentence 1 of 2</div>
-        <input type="text" id="dictation-input-1" placeholder="Type what you hear" class="dictation-input">
-        <button class="check-blank-btn" onclick="checkDictation(1)">Check</button>
-        <div class="dictation-feedback" id="dictation-feedback-1"></div>
-      </div>
+        <div class="dictation-counter" id="dictation-counter">Sentence 1 of 1</div>
 
-      <div class="dictation-exercise">
-        <button class="dictation-btn" onclick="playDictation()" id="dictation-play-btn-2">
-          🎧 Listen to Sentence
-        </button>
-        <div class="dictation-counter" id="dictation-counter-2">Sentence 2 of 2</div>
-        <input type="text" id="dictation-input-2" placeholder="Type what you hear" class="dictation-input">
-        <button class="check-blank-btn" onclick="checkDictation(2)">Check</button>
-        <div class="dictation-feedback" id="dictation-feedback-2"></div>
+        <input type="text" id="dictation-input" placeholder="Type the sentence you hear..." class="dictation-input">
+        <button class="check-dictation-btn" onclick="checkDictation()">Check Answer</button>
+
+        <div class="dictation-feedback" id="dictation-feedback"></div>
+
+        <div class="dictation-result" id="dictation-result"></div>
       </div>
     </div>
   </div>
@@ -2877,19 +2871,34 @@ function checkFillBlank() {
   }
 }
 
-function checkDictation(num) {
-  const input = document.getElementById(`dictation-input-${num}`);
-  const feedback = document.getElementById(`dictation-feedback-${num}`);
-  const sentences = ['Der Morgen bringt neue Hoffnung.', 'Wir versuchen, das Beste aus jedem Tag zu machen.'];
-  const expected = sentences[num - 1].toLowerCase();
-  const answer = input.value.trim().toLowerCase();
+function checkDictation() {
+  const input = document.getElementById('dictation-input');
+  const feedback = document.getElementById('dictation-feedback');
+  const result = document.getElementById('dictation-result');
+  const dictationSentences = ['Der Morgen bringt neue Hoffnung.'];
+  const expectedAnswer = dictationSentences[0];
+  const userAnswer = input.value.trim();
 
-  if (levenshteinDistance(answer, expected) <= 5) {
+  if (!userAnswer) {
+    feedback.textContent = 'Please type something first.';
+    feedback.classList.add('show', 'incorrect');
+    return;
+  }
+
+  const distance = levenshteinDistance(userAnswer, expectedAnswer);
+  const maxDistance = Math.ceil(expectedAnswer.length * 0.15);
+
+  feedback.classList.remove('incorrect', 'correct');
+  if (distance <= maxDistance) {
     feedback.className = 'dictation-feedback show correct';
-    feedback.textContent = '✓ Good job!';
+    feedback.textContent = '✓ Correct!';
+    result.textContent = `Expected: "${expectedAnswer}"`;
+    result.className = 'show correct';
   } else {
     feedback.className = 'dictation-feedback show incorrect';
-    feedback.textContent = `✗ Expected: ${sentences[num - 1]}`;
+    feedback.textContent = `✗ Not quite. Distance: ${distance}`;
+    result.textContent = `Expected: "${expectedAnswer}"`;
+    result.className = 'show incorrect';
   }
 }
 
