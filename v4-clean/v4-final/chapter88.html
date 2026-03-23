@@ -1716,6 +1716,50 @@ function updateBauwerkstattProgress() {}
   </div>
 
 <script>
+// ===== FALSE FRIEND AND FILL-BLANK FUNCTIONS =====
+function checkFalseFriend(questionNum, answerText, isCorrect) {
+  const feedback = document.getElementById(`gap-feedback-${questionNum}`);
+
+  if (isCorrect) {
+    feedback.className = 'exercise-feedback show correct';
+    feedback.innerHTML = `<div class="feedback-label">Correct!</div><div class="feedback-text">You chose the right meaning.</div>`;
+  } else {
+    feedback.className = 'exercise-feedback show incorrect';
+    feedback.innerHTML = `<div class="feedback-label">Not quite</div><div class="feedback-text">Watch out for false friends!</div>`;
+  }
+}
+
+function checkFillBlankSentence(questionNum, ...expectedAnswers) {
+  const input = document.getElementById(`fill-blank-${questionNum}`);
+  const userAnswer = input.value.trim();
+
+  // Determine which feedback element ID to use
+  // The pattern seems to be that fill-blank questions use comp-feedback with question offset
+  const feedbackId = `comp-feedback-${questionNum + 2}`;
+  const feedback = document.getElementById(feedbackId);
+
+  if (!userAnswer) {
+    feedback.className = 'comp-feedback show incorrect';
+    feedback.textContent = 'Please provide an answer.';
+    return;
+  }
+
+  // Check if user answer matches any of the expected answers
+  const matches = expectedAnswers.some(expected => {
+    const distance = levenshteinDistance(userAnswer, expected);
+    const maxDistance = Math.ceil(expected.length * 0.2);
+    return distance <= maxDistance;
+  });
+
+  if (matches) {
+    feedback.className = 'comp-feedback show correct';
+    feedback.innerHTML = `<div class="feedback-label">Correct!</div><div class="feedback-text">Good understanding of false friends.</div>`;
+  } else {
+    feedback.className = 'comp-feedback show incorrect';
+    feedback.innerHTML = `<div class="feedback-label">Try again</div><div class="feedback-text">Expected: ${expectedAnswers[0]}</div>`;
+  }
+}
+
 // ===== DICTATION DATA AND FUNCTIONS =====
 const dictationSentences = [
   'Dictation sentence 1 for Chapter 88.',

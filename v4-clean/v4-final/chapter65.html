@@ -2022,6 +2022,67 @@ document.querySelectorAll('.german-word[data-card]').forEach(word => {
   });
 });
 
+// --- LEVENSHTEIN DISTANCE FOR FUZZY MATCHING ---
+function levenshteinDistance(a, b) {
+  const aL = a.toLowerCase(), bL = b.toLowerCase();
+  const track = Array(bL.length + 1).fill(null).map(() => Array(aL.length + 1).fill(0));
+  for (let i = 0; i <= aL.length; i++) track[0][i] = i;
+  for (let j = 0; j <= bL.length; j++) track[j][0] = j;
+  for (let j = 1; j <= bL.length; j++) {
+    for (let i = 1; i <= aL.length; i++) {
+      const indicator = aL[i - 1] === bL[j - 1] ? 0 : 1;
+      track[j][i] = Math.min(track[j][i - 1] + 1, track[j - 1][i] + 1, track[j - 1][i - 1] + indicator);
+    }
+  }
+  return track[bL.length][aL.length];
+}
+
+// --- WORD ASSEMBLY EXERCISE FUNCTIONS ---
+function checkWordAssembly(exId) {
+  const assemblyArea = document.getElementById(`assembly-area-${exId}`);
+  const feedback = document.getElementById(`feedback-${exId}`);
+  if (!assemblyArea || !feedback) return;
+
+  const assembledWords = Array.from(assemblyArea.querySelectorAll('.word-chip')).map(chip => chip.textContent.trim());
+  feedback.className = 'exercise-feedback show correct';
+  feedback.innerHTML = '<div class="feedback-label">✓ Correct!</div><div class="feedback-text">Well done!</div>';
+}
+
+function undoWordAssembly(exId) {
+  const assemblyArea = document.getElementById(`assembly-area-${exId}`);
+  const wordBank = document.getElementById(`word-bank-${exId}`);
+  if (assemblyArea && wordBank) {
+    assemblyArea.innerHTML = '';
+    wordBank.querySelectorAll('.word-chip').forEach(chip => {
+      chip.classList.remove('unavailable');
+    });
+  }
+  const feedback = document.getElementById(`feedback-${exId}`);
+  if (feedback) feedback.className = 'exercise-feedback';
+}
+
+// --- FILL BLANK EXERCISE FUNCTION ---
+function checkFillBlank(exId, expectedAnswer) {
+  const inputId = `fill-blank-input-${exId}`;
+  const feedbackId = `comp-feedback-${exId}`;
+  const input = document.getElementById(inputId);
+  const feedback = document.getElementById(feedbackId);
+
+  if (!input || !feedback) return;
+
+  const userAnswer = input.value.trim().toLowerCase();
+  const expectedLower = expectedAnswer.toLowerCase();
+  const distance = levenshteinDistance(userAnswer, expectedLower);
+
+  if (userAnswer === expectedLower || distance <= 2) {
+    feedback.className = 'comp-feedback show correct';
+    feedback.textContent = '✓ Correct!';
+  } else {
+    feedback.className = 'comp-feedback show incorrect';
+    feedback.textContent = `✗ Expected: ${expectedAnswer}`;
+  }
+}
+
 </script>
 
 
