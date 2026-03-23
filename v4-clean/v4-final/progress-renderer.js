@@ -7,8 +7,8 @@
 
   if (typeof VOCAB_DATA === 'undefined' || typeof CURRENT_CHAPTER === 'undefined') return;
 
-  const TOTAL_WORDS = 850;
-  const TOTAL_PATTERNS = 145;
+  const TOTAL_WORDS = 467;
+  const TOTAL_PATTERNS = 254;
 
   // Filter data up to current chapter
   const myWords = VOCAB_DATA.words.filter(w => w.c <= CURRENT_CHAPTER);
@@ -242,6 +242,30 @@
   // Auto-collapse all non-current chapters
   document.querySelectorAll('.progress-chapter-group:not(.current)').forEach(g => {
     g.classList.add('collapsed');
+  });
+
+  // Hide old redundant word/concept collection sections (now handled by cumulative progress)
+  // These sections have words at opacity:0 (animation not triggering) and appear as empty boxes
+  document.querySelectorAll('#scene-collection, #concept-collection-box, .word-collection, .concept-collection').forEach(el => {
+    // Only hide if it's the old-style section (not our new progress groups)
+    if (!el.closest('#words-detail') && !el.closest('#patterns-detail')) {
+      el.style.display = 'none';
+    }
+  });
+  // Also hide any old h3 headings like "Words Gathered in Chapter X" / "Concepts Learned in Chapter X"
+  document.querySelectorAll('h3').forEach(h3 => {
+    const text = h3.textContent.toLowerCase();
+    if ((text.includes('words') && (text.includes('gathered') || text.includes('this chapter') || text.includes('in chapter'))) ||
+        (text.includes('concepts') && (text.includes('learned') || text.includes('this chapter') || text.includes('in chapter')))) {
+      // Hide the parent container (the scene or collection box)
+      let parent = h3.closest('.scene, .word-collection, .concept-collection, [id*="collection"]');
+      if (parent) {
+        parent.style.display = 'none';
+      } else {
+        // Hide the h3 and its sibling content
+        h3.parentElement.style.display = 'none';
+      }
+    }
   });
 
 })();
