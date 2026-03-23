@@ -236,6 +236,11 @@
     #patterns-detail .progress-chapter-group.current .progress-ch-title {
       color: #9b8ec4;
     }
+    /* Fix canvas overlap on progress section */
+    #words-bar-row, #words-detail, #patterns-bar-row, #patterns-detail {
+      position: relative;
+      z-index: 10;
+    }
   `;
   document.head.appendChild(style);
 
@@ -267,5 +272,42 @@
       }
     }
   });
+
+  // FEATURE 1: Reading Time Estimate
+  const bodyText = document.body.innerText || '';
+  const wordCount = bodyText.split(/\s+/).length;
+  const readingTime = Math.max(3, Math.round(wordCount / 200)); // ~200 wpm, min 3 min
+  const titleEl = document.querySelector('h1, .chapter-title, .hero-title');
+  if (titleEl && !document.querySelector('.reading-time')) {
+    const rt = document.createElement('div');
+    rt.className = 'reading-time';
+    rt.style.cssText = 'text-align:center;font-size:0.75rem;color:rgba(212,202,187,0.35);letter-spacing:0.15em;text-transform:uppercase;margin-top:8px;';
+    rt.textContent = '~' + readingTime + ' min read';
+    titleEl.parentNode.insertBefore(rt, titleEl.nextSibling);
+  }
+
+  // FEATURE 2: "Remember These?" Sidebar - show 3-5 words from earlier chapters
+  if (CURRENT_CHAPTER > 5) {
+    const earlierWords = VOCAB_DATA.words.filter(w => w.c <= CURRENT_CHAPTER - 5);
+    if (earlierWords.length > 0) {
+      // Pick 4 random-but-deterministic words (seeded by chapter number)
+      const seed = CURRENT_CHAPTER * 7;
+      const picked = [];
+      for (let i = 0; i < Math.min(4, earlierWords.length); i++) {
+        picked.push(earlierWords[(seed + i * 13) % earlierWords.length]);
+      }
+      const rememberHTML = `
+        <div class="remember-box" style="margin:24px auto;max-width:600px;padding:16px 20px;background:rgba(232,164,74,0.04);border:1px solid rgba(232,164,74,0.12);border-radius:10px;font-size:0.85rem;">
+          <div style="color:rgba(232,164,74,0.5);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;">Remember these?</div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            ${picked.map(w => `<span style="color:#e8a44a;font-weight:600;">${w.w}</span> <span style="color:rgba(212,202,187,0.5);">${w.m}</span>`).join(' · ')}
+          </div>
+        </div>`;
+      const firstScene = document.querySelector('.scene, .scene-1, .chapter-intro');
+      if (firstScene) {
+        firstScene.insertAdjacentHTML('afterend', rememberHTML);
+      }
+    }
+  }
 
 })();
