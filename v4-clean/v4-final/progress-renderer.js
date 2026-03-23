@@ -113,62 +113,7 @@
     return html;
   }
 
-  // Inject into the page
-  const wordsDetail = document.getElementById('words-detail');
-  const patternsDetail = document.getElementById('patterns-detail');
-
-  if (wordsDetail) {
-    wordsDetail.innerHTML = buildWordTable();
-  }
-
-  if (patternsDetail) {
-    patternsDetail.innerHTML = buildPatternTable();
-  }
-
-  // Update the counts in the bar
-  const wordsPct = Math.round((myWords.length / TOTAL_WORDS) * 100);
-  const patternsPct = Math.round((myPatterns.length / TOTAL_PATTERNS) * 100);
-
-  // Update the bar text and fill width
-  // NOTE: We use DOM structure instead of style-attribute selectors because browsers
-  // normalize inline styles (adding spaces, reordering properties, converting colors),
-  // which breaks substring-based querySelector matches.
-
-  function updateBarRow(barRowId, count, total, pct, color, pctColor) {
-    const barRow = document.getElementById(barRowId);
-    if (!barRow) return;
-
-    // Strategy: use DOM structure, not style-attribute selectors.
-    // Bar row structure:
-    //   div (flex row with two spans: label + bold count)
-    //   div (bar track with one child: the fill)
-    //   div (hint text)
-    const firstDiv = barRow.querySelector('div');
-    if (firstDiv) {
-      // The bold count span is the second span inside the flex row
-      const spans = firstDiv.querySelectorAll(':scope > span');
-      if (spans.length >= 2) {
-        spans[1].innerHTML = count + ' / ' + total +
-          ' <span style="font-size:0.85rem;font-weight:400;color:' + pctColor + ';">(' + pct + '%)</span>';
-      }
-    }
-
-    // The bar track is a div containing exactly one child div (the gradient fill).
-    // It's the second direct child div of barRow.
-    const childDivs = barRow.querySelectorAll(':scope > div');
-    if (childDivs.length >= 2) {
-      const barTrack = childDivs[1];
-      const fill = barTrack.firstElementChild;
-      if (fill) fill.style.width = pct + '%';
-    }
-  }
-
-  updateBarRow('words-bar-row', myWords.length, TOTAL_WORDS, wordsPct,
-    '#e8a44a', 'rgba(232,164,74,0.6)');
-  updateBarRow('patterns-bar-row', myPatterns.length, TOTAL_PATTERNS, patternsPct,
-    '#9b8ec4', 'rgba(155,142,196,0.6)');
-
-  // Inject CSS for the grouped display
+  // Inject CSS immediately (doesn't need DOM elements to exist)
   const style = document.createElement('style');
   style.textContent = `
     .progress-chapter-group {
@@ -262,34 +207,89 @@
   `;
   document.head.appendChild(style);
 
-  // Auto-collapse all non-current chapters
-  document.querySelectorAll('.progress-chapter-group:not(.current)').forEach(g => {
-    g.classList.add('collapsed');
-  });
+  // All DOM operations that target progress elements (which appear AFTER the script tag
+  // in the HTML) must wait for the full DOM to be parsed. Without this, getElementById
+  // returns null because those elements haven't been created yet.
+  function updateProgressDOM() {
+    // Inject grouped word/pattern tables
+    const wordsDetail = document.getElementById('words-detail');
+    const patternsDetail = document.getElementById('patterns-detail');
 
-  // Hide old redundant word/concept collection sections (now handled by cumulative progress)
-  // These sections have words at opacity:0 (animation not triggering) and appear as empty boxes
-  document.querySelectorAll('#scene-collection, #concept-collection-box, .word-collection, .concept-collection').forEach(el => {
-    // Only hide if it's the old-style section (not our new progress groups)
-    if (!el.closest('#words-detail') && !el.closest('#patterns-detail')) {
-      el.style.display = 'none';
+    if (wordsDetail) {
+      wordsDetail.innerHTML = buildWordTable();
     }
-  });
-  // Also hide any old h3 headings like "Words Gathered in Chapter X" / "Concepts Learned in Chapter X"
-  document.querySelectorAll('h3').forEach(h3 => {
-    const text = h3.textContent.toLowerCase();
-    if ((text.includes('words') && (text.includes('gathered') || text.includes('this chapter') || text.includes('in chapter'))) ||
-        (text.includes('concepts') && (text.includes('learned') || text.includes('this chapter') || text.includes('in chapter')))) {
-      // Hide the parent container (the scene or collection box)
-      let parent = h3.closest('.scene, .word-collection, .concept-collection, [id*="collection"]');
-      if (parent) {
-        parent.style.display = 'none';
-      } else {
-        // Hide the h3 and its sibling content
-        h3.parentElement.style.display = 'none';
+
+    if (patternsDetail) {
+      patternsDetail.innerHTML = buildPatternTable();
+    }
+
+    // Update the counts in the bar
+    const wordsPct = Math.round((myWords.length / TOTAL_WORDS) * 100);
+    const patternsPct = Math.round((myPatterns.length / TOTAL_PATTERNS) * 100);
+
+    // Update bar text and fill width using DOM structure (not style-attribute selectors)
+    function updateBarRow(barRowId, count, total, pct, color, pctColor) {
+      const barRow = document.getElementById(barRowId);
+      if (!barRow) return;
+
+      // Bar row structure:
+      //   div (flex row with two spans: label + bold count)
+      //   div (bar track with one child: the fill)
+      //   div (hint text)
+      const firstDiv = barRow.querySelector('div');
+      if (firstDiv) {
+        const spans = firstDiv.querySelectorAll(':scope > span');
+        if (spans.length >= 2) {
+          spans[1].innerHTML = count + ' / ' + total +
+            ' <span style="font-size:0.85rem;font-weight:400;color:' + pctColor + ';">(' + pct + '%)</span>';
+        }
+      }
+
+      const childDivs = barRow.querySelectorAll(':scope > div');
+      if (childDivs.length >= 2) {
+        const barTrack = childDivs[1];
+        const fill = barTrack.firstElementChild;
+        if (fill) fill.style.width = pct + '%';
       }
     }
-  });
+
+    updateBarRow('words-bar-row', myWords.length, TOTAL_WORDS, wordsPct,
+      '#e8a44a', 'rgba(232,164,74,0.6)');
+    updateBarRow('patterns-bar-row', myPatterns.length, TOTAL_PATTERNS, patternsPct,
+      '#9b8ec4', 'rgba(155,142,196,0.6)');
+
+    // Auto-collapse all non-current chapters
+    document.querySelectorAll('.progress-chapter-group:not(.current)').forEach(g => {
+      g.classList.add('collapsed');
+    });
+
+    // Hide old redundant word/concept collection sections
+    document.querySelectorAll('#scene-collection, #concept-collection-box, .word-collection, .concept-collection').forEach(el => {
+      if (!el.closest('#words-detail') && !el.closest('#patterns-detail')) {
+        el.style.display = 'none';
+      }
+    });
+    // Hide old h3 headings like "Words Gathered in Chapter X"
+    document.querySelectorAll('h3').forEach(h3 => {
+      const text = h3.textContent.toLowerCase();
+      if ((text.includes('words') && (text.includes('gathered') || text.includes('this chapter') || text.includes('in chapter'))) ||
+          (text.includes('concepts') && (text.includes('learned') || text.includes('this chapter') || text.includes('in chapter')))) {
+        let parent = h3.closest('.scene, .word-collection, .concept-collection, [id*="collection"]');
+        if (parent) {
+          parent.style.display = 'none';
+        } else {
+          h3.parentElement.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // Run after full DOM is parsed, or immediately if already ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateProgressDOM);
+  } else {
+    updateProgressDOM();
+  }
 
   // FEATURE 1: Reading Time Estimate
   const bodyText = document.body.innerText || '';
