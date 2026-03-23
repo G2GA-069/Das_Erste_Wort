@@ -58,6 +58,72 @@
   .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
   @media (max-width: 600px) { .nav-section { flex-direction: column; } }
 
+
+  .bauwerkstatt-level {
+    margin-bottom: 48px;
+  }
+
+  .bauwerkstatt-exercise {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .exercise-prompt {
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .word-assembly-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    min-height: 50px;
+    padding: 12px;
+    background: rgba(10, 14, 26, 0.5);
+    border-radius: 8px;
+    border: 1px dashed rgba(232, 164, 74, 0.2);
+  }
+
+  .reading-passage-box {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-left: 3px solid rgba(232, 164, 74, 0.4);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 32px;
+  }
+
+  .comprehension-section {
+    margin-top: 40px;
+  }
+
+  .comp-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .dictation-section {
+    margin-top: 40px;
+  }
+
+  .dictation-exercise {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
 </style>
 <link rel="stylesheet" href="game-engine.css">
 </head>
@@ -391,7 +457,140 @@
 
 <div class="scene scene-3">
 <span class="scene-marker"></span>
-<div class="quiz-container">
+
+    <!-- ==================== BAUWERKSTATT ==================== -->
+    <h3>Bauwerkstatt</h3>
+    <div class="bauwerkstatt-subtitle">Building Workshop — Advanced Practice</div>
+
+    <div class="bauwerkstatt-level">
+      <div class="bauwerkstatt-exercise" id="level1-ex1">
+        <div class="exercise-prompt">Exercise 1: Practice the main concept of this chapter</div>
+        <div class="word-assembly-area" id="assembly-area-1"></div>
+        <div class="word-chips-available">
+          <div class="chips-label">Available words:</div>
+          <div class="word-bank" id="word-bank-1"></div>
+        </div>
+        <div class="exercise-buttons">
+          <button class="btn-check" onclick="checkWordAssembly(1)">Check</button>
+          <button class="btn-undo" onclick="undoWordAssembly(1)">Undo</button>
+        </div>
+        <div class="exercise-feedback" id="feedback-1"></div>
+      </div>
+
+      <div class="bauwerkstatt-exercise" id="level1-ex2">
+        <div class="exercise-prompt">Exercise 2: Build a sentence with chapter vocabulary</div>
+        <div class="word-assembly-area" id="assembly-area-2"></div>
+        <div class="word-chips-available">
+          <div class="chips-label">Available words:</div>
+          <div class="word-bank" id="word-bank-2"></div>
+        </div>
+        <div class="exercise-buttons">
+          <button class="btn-check" onclick="checkWordAssembly(2)">Check</button>
+          <button class="btn-undo" onclick="undoWordAssembly(2)">Undo</button>
+        </div>
+        <div class="exercise-feedback" id="feedback-2"></div>
+      </div>
+
+      <div class="bauwerkstatt-exercise" id="level1-ex3">
+        <div class="exercise-prompt">Exercise 3: Apply the concept in context</div>
+        <input type="text" class="exercise-input" id="gap-input-3" placeholder="Type your answer..." onkeypress="handleGapKeypress(event, 3)">
+        <button class="btn-check" onclick="checkGapSentence(3)">Check</button>
+        <div class="exercise-feedback" id="gap-feedback-3"></div>
+      </div>
+    </div>
+
+    <!-- ==================== LESEN & HÖREN ==================== -->
+    <h3>Lesen & Hören</h3>
+
+    <div class="reading-passage-box">
+      <div class="reading-passage" id="passage-text">
+        <div class="passage-sentence" data-sentence="1">First sentence of the reading passage.</div>
+        <div class="passage-sentence" data-sentence="2">Second sentence with vocabulary from this chapter.</div>
+        <div class="passage-sentence" data-sentence="3">Third sentence showing usage and context.</div>
+        <div class="passage-sentence" data-sentence="4">Fourth sentence continuing the narrative.</div>
+        <div class="passage-sentence" data-sentence="5">Fifth sentence with additional examples.</div>
+        <div class="passage-sentence" data-sentence="6">Concluding sentence that ties the lesson together.</div>
+      </div>
+
+      <div class="reading-controls">
+        <button class="listen-btn" onclick="startListening()" id="listen-btn">🔊 Hör zu</button>
+        <button class="listen-btn stop-btn" onclick="stopListening()" id="stop-btn" style="display:none;">⏹ Stop</button>
+        <div class="speed-toggle">
+          <button class="speed-btn" onclick="setSpeed(0.7)" id="speed-slow">🐢 Langsam</button>
+          <button class="speed-btn active" onclick="setSpeed(0.95)" id="speed-normal">🐇 Normal</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="comprehension-section">
+      <h4>Verständnisfragen</h4>
+
+      <div class="comp-question">
+        <div class="q-text">1. Question about the passage</div>
+        <div class="comp-options">
+          <div class="comp-option" onclick="checkComprehension(1, this, false)">Wrong answer A</div>
+          <div class="comp-option" onclick="checkComprehension(1, this, true)">Correct answer</div>
+          <div class="comp-option" onclick="checkComprehension(1, this, false)">Wrong answer B</div>
+        </div>
+        <div class="comp-feedback" id="comp-feedback-1"></div>
+      </div>
+
+      <div class="comp-question">
+        <div class="q-text">2. Second comprehension question</div>
+        <div class="comp-options">
+          <div class="comp-option" onclick="checkComprehension(2, this, false)">Option 1</div>
+          <div class="comp-option" onclick="checkComprehension(2, this, true)">Option 2 (correct)</div>
+          <div class="comp-option" onclick="checkComprehension(2, this, false)">Option 3</div>
+        </div>
+        <div class="comp-feedback" id="comp-feedback-2"></div>
+      </div>
+
+      <div class="comp-question">
+        <div class="q-text">3. Fill-in question from the passage</div>
+        <input type="text" id="fill-blank-1" placeholder="Your answer..." class="fill-blank-input">
+        <button class="check-blank-btn" onclick="checkFillBlankSentence(1, 'expected', 'similar')">Check</button>
+        <div class="comp-feedback" id="comp-feedback-3"></div>
+      </div>
+
+      <div class="comp-question">
+        <div class="q-text">4. Final comprehension question</div>
+        <div class="comp-options">
+          <div class="comp-option" onclick="checkComprehension(4, this, false)">Wrong choice</div>
+          <div class="comp-option" onclick="checkComprehension(4, this, true)">Right choice</div>
+          <div class="comp-option" onclick="checkComprehension(4, this, false)">Another wrong choice</div>
+        </div>
+        <div class="comp-feedback" id="comp-feedback-4"></div>
+      </div>
+    </div>
+
+    <div class="dictation-section">
+      <h4>Diktat</h4>
+      <p class="dictation-instruction">Listen and type what you hear.</p>
+
+      <div class="dictation-exercise" id="dictation-1">
+        <button class="dictation-play-btn" onclick="playDictation(1)">🔊 Play Sentence 1</button>
+        <input type="text" class="dictation-input" id="dictation-input-1" placeholder="Type here...">
+        <button class="check-dictation-btn" onclick="checkDictation(1, 'First dictation sentence')">Check</button>
+        <div class="dictation-feedback" id="dictation-feedback-1"></div>
+      </div>
+
+      <div class="dictation-exercise" id="dictation-2">
+        <button class="dictation-play-btn" onclick="playDictation(2)">🔊 Play Sentence 2</button>
+        <input type="text" class="dictation-input" id="dictation-input-2" placeholder="Type here...">
+        <button class="check-dictation-btn" onclick="checkDictation(2, 'Second dictation sentence')">Check</button>
+        <div class="dictation-feedback" id="dictation-feedback-2"></div>
+      </div>
+
+      <div class="dictation-exercise" id="dictation-3">
+        <button class="dictation-play-btn" onclick="playDictation(3)">🔊 Play Sentence 3</button>
+        <input type="text" class="dictation-input" id="dictation-input-3" placeholder="Type here...">
+        <button class="check-dictation-btn" onclick="checkDictation(3, 'Third dictation sentence')">Check</button>
+        <div class="dictation-feedback" id="dictation-feedback-3"></div>
+      </div>
+    </div>
+
+
+    <div class="quiz-container">
 <h3 data-speak="true">Chapter 92 Quiz: Genitive Prepositions</h3>
 <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 <div id="quiz-questions"></div>
