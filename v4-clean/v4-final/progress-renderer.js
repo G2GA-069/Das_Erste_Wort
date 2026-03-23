@@ -129,26 +129,44 @@
   const wordsPct = Math.round((myWords.length / TOTAL_WORDS) * 100);
   const patternsPct = Math.round((myPatterns.length / TOTAL_PATTERNS) * 100);
 
-  // Try to update the bar text (find the spans showing counts)
-  const wordsBarRow = document.getElementById('words-bar-row');
-  if (wordsBarRow) {
-    const countSpan = wordsBarRow.querySelector('span[style*="font-weight:700"], span[style*="font-weight: 700"]');
-    if (countSpan) {
-      countSpan.innerHTML = `${myWords.length} / ${TOTAL_WORDS} <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(${wordsPct}%)</span>`;
+  // Update the bar text and fill width
+  // NOTE: We use DOM structure instead of style-attribute selectors because browsers
+  // normalize inline styles (adding spaces, reordering properties, converting colors),
+  // which breaks substring-based querySelector matches.
+
+  function updateBarRow(barRowId, count, total, pct, color, pctColor) {
+    const barRow = document.getElementById(barRowId);
+    if (!barRow) return;
+
+    // Strategy: use DOM structure, not style-attribute selectors.
+    // Bar row structure:
+    //   div (flex row with two spans: label + bold count)
+    //   div (bar track with one child: the fill)
+    //   div (hint text)
+    const firstDiv = barRow.querySelector('div');
+    if (firstDiv) {
+      // The bold count span is the second span inside the flex row
+      const spans = firstDiv.querySelectorAll(':scope > span');
+      if (spans.length >= 2) {
+        spans[1].innerHTML = count + ' / ' + total +
+          ' <span style="font-size:0.85rem;font-weight:400;color:' + pctColor + ';">(' + pct + '%)</span>';
+      }
     }
-    const barFill = wordsBarRow.querySelector('div[style*="border-radius:7px;background:linear-gradient"]');
-    if (barFill) barFill.style.width = wordsPct + '%';
+
+    // The bar track is a div containing exactly one child div (the gradient fill).
+    // It's the second direct child div of barRow.
+    const childDivs = barRow.querySelectorAll(':scope > div');
+    if (childDivs.length >= 2) {
+      const barTrack = childDivs[1];
+      const fill = barTrack.firstElementChild;
+      if (fill) fill.style.width = pct + '%';
+    }
   }
 
-  const patternsBarRow = document.getElementById('patterns-bar-row');
-  if (patternsBarRow) {
-    const countSpan = patternsBarRow.querySelector('span[style*="font-weight:700"], span[style*="font-weight: 700"]');
-    if (countSpan) {
-      countSpan.innerHTML = `${myPatterns.length} / ${TOTAL_PATTERNS} <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(${patternsPct}%)</span>`;
-    }
-    const barFill = patternsBarRow.querySelector('div[style*="border-radius:7px;background:linear-gradient"]');
-    if (barFill) barFill.style.width = patternsPct + '%';
-  }
+  updateBarRow('words-bar-row', myWords.length, TOTAL_WORDS, wordsPct,
+    '#e8a44a', 'rgba(232,164,74,0.6)');
+  updateBarRow('patterns-bar-row', myPatterns.length, TOTAL_PATTERNS, patternsPct,
+    '#9b8ec4', 'rgba(155,142,196,0.6)');
 
   // Inject CSS for the grouped display
   const style = document.createElement('style');
