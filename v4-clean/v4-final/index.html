@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#080810">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1191,5 +1195,22 @@ window.addEventListener('resize',()=>{resize();init();});resize();init();draw();
 const bar=document.querySelector('.g2g-bar');window.addEventListener('scroll',()=>{const sy=window.scrollY||0;if(sy>100){bar.style.background='linear-gradient(135deg, rgba(123, 47, 190, 0.25), rgba(217, 70, 239, 0.12))';bar.style.borderBottomColor='rgba(147, 51, 234, 0.25)';}else{bar.style.background='linear-gradient(135deg, rgba(123, 47, 190, 0.15), rgba(217, 70, 239, 0.08))';bar.style.borderBottomColor='rgba(147, 51, 234, 0.15)';}},{passive:true});
 </script>
 <script src="game-engine.js" defer></script>
+<script src="progress-store.js"></script>
+<script>
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(function(reg) {
+    console.log('[DEW] Service worker registered');
+    // Start background caching after 10s
+    setTimeout(function() {
+      if (reg.active) {
+        reg.active.postMessage({ type: 'CACHE_ALL' });
+      }
+    }, 10000);
+  }).catch(function(err) {
+    console.log('[DEW] SW registration failed:', err);
+  });
+}
+</script>
 </body>
 </html>
