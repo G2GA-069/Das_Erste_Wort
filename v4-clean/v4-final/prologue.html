@@ -375,6 +375,83 @@
                 inset 0 0 30px rgba(138,106,58,0.08);
             border-color: rgba(212,168,74,0.6);
         }
+        .book-cover:hover .book-ornament {
+            animation: bookSigilGlow 3s ease-in-out infinite;
+        }
+
+        /* === OPENING SEQUENCE === */
+
+        /* Stage 1: insignia flare */
+        .book-cover.stage-flare .book-ornament {
+            opacity: 1 !important;
+            filter: drop-shadow(0 0 20px rgba(232,164,74,0.6)) !important;
+            transition: opacity 0.6s ease, filter 0.6s ease;
+        }
+        .book-cover.stage-flare {
+            border-color: rgba(232,164,74,0.8);
+            transition: border-color 0.6s ease, box-shadow 0.8s ease;
+        }
+
+        /* Stage 2: light erupts */
+        .book-cover.stage-erupt {
+            box-shadow:
+                0 0 60px rgba(232,164,74,0.5),
+                0 0 120px rgba(232,164,74,0.25),
+                0 0 200px rgba(232,164,74,0.1),
+                inset 0 0 60px rgba(232,164,74,0.15) !important;
+            border-color: var(--lamplight) !important;
+        }
+        .book-cover.stage-erupt .book-inner {
+            filter: brightness(1.8);
+            transition: filter 0.5s ease;
+        }
+
+        /* Stage 3: book fades out */
+        .book-cover.stage-fade {
+            opacity: 0;
+            transform: scale(1.05);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        /* Full-screen flash overlay */
+        .book-flash {
+            position: fixed;
+            inset: 0;
+            z-index: 8000;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(ellipse at center, rgba(232,164,74,0.4) 0%, rgba(232,164,74,0.1) 40%, transparent 70%);
+            transition: opacity 0.6s ease;
+        }
+        .book-flash.visible {
+            opacity: 1;
+        }
+        .book-flash.fade-out {
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        /* Particle burst container */
+        .book-particles {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .book-particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: #e8c06a;
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleBurst 1.4s ease-out forwards;
+        }
+        @keyframes particleBurst {
+            0%   { opacity: 1; transform: translate(0,0) scale(1); }
+            30%  { opacity: 1; }
+            100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
+        }
 
         .book-cover.opened {
             box-shadow:
@@ -701,6 +778,7 @@
         <div class="book-moment" id="bookMoment">
             <div class="book-outer" id="bookOuter">
                 <div class="book-glow"></div>
+                <div class="book-particles" id="bookParticles"></div>
                 <div class="book-cover" id="bookCover">
                     <div class="book-border"></div>
                     <div class="book-corner tl"><svg viewBox="0 0 24 24"><path d="M2,2 L2,12 C2,7 7,2 12,2" fill="none" stroke="#8a6a3a" stroke-width="1"/><path d="M2,2 L6,2 M2,2 L2,6" fill="none" stroke="#d4a84a" stroke-width="0.8"/></svg></div>
@@ -795,6 +873,9 @@
             </div>
             <div class="book-instruction" id="bookInstruction">Touch the cover to open it</div>
         </div>
+
+        <!-- Full-screen golden flash on book open -->
+        <div class="book-flash" id="bookFlash"></div>
 
         <!-- SCENE 6: AFTER SEEING THE BOOK — THE THEFT -->
         <div class="after-open" id="afterOpen">
@@ -1073,29 +1154,64 @@
             if (bookOpened) return;
             bookOpened = true;
 
-            bookCover.classList.add('opened');
+            var flash = document.getElementById('bookFlash');
+            var particles = document.getElementById('bookParticles');
+            var glow = bookOuter.querySelector('.book-glow');
             document.getElementById('bookInstruction').style.display = 'none';
 
-            // Pulse glow effect
-            bookOuter.querySelector('.book-glow').style.background =
-                'radial-gradient(ellipse, rgba(232,164,74,0.35) 0%, transparent 70%)';
+            // === STAGE 1: Insignia flares (0ms) ===
+            bookCover.classList.add('stage-flare');
+            glow.style.background = 'radial-gradient(ellipse, rgba(232,164,74,0.25) 0%, transparent 70%)';
+            glow.style.opacity = '1';
 
-            // Reveal the after-open content
-            setTimeout(() => {
+            // === STAGE 2: Light erupts + particles (600ms) ===
+            setTimeout(function () {
+                bookCover.classList.add('stage-erupt');
+                glow.style.background = 'radial-gradient(ellipse, rgba(232,164,74,0.5) 0%, rgba(232,164,74,0.15) 40%, transparent 70%)';
+
+                // Spawn particles
+                for (var i = 0; i < 24; i++) {
+                    var p = document.createElement('div');
+                    p.className = 'book-particle';
+                    var angle = (Math.PI * 2 / 24) * i + (Math.random() - 0.5) * 0.4;
+                    var dist = 80 + Math.random() * 100;
+                    p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
+                    p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
+                    p.style.animationDelay = (Math.random() * 0.3) + 's';
+                    p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+                    particles.appendChild(p);
+                }
+            }, 600);
+
+            // === STAGE 3: Golden flash across screen (1200ms) ===
+            setTimeout(function () {
+                flash.classList.add('visible');
+            }, 1200);
+
+            // === STAGE 4: Book fades, flash fades (1800ms) ===
+            setTimeout(function () {
+                bookCover.classList.add('stage-fade');
+                flash.classList.add('fade-out');
+                flash.classList.remove('visible');
+            }, 1800);
+
+            // === STAGE 5: Reveal after-open content (2600ms) ===
+            setTimeout(function () {
+                bookCover.classList.add('opened');
                 document.getElementById('afterOpen').classList.add('revealed');
 
-                // Scroll to the new content smoothly
-                setTimeout(() => {
-                    const afterOpen = document.getElementById('afterOpen');
-                    const firstScene = afterOpen.querySelector('.scene');
+                // Clean up particles
+                particles.innerHTML = '';
+
+                // Scroll to the new content
+                setTimeout(function () {
+                    var afterOpen = document.getElementById('afterOpen');
+                    var firstScene = afterOpen.querySelector('.scene');
                     if (firstScene) {
                         firstScene.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
-                }, 400);
-            }, 800);
-
-            // Start transition text cascade after reading the theft
-            // The cascade is triggered when the transitionText comes into view
+                }, 500);
+            }, 2600);
         }
 
         bookCover.addEventListener('click', openBook);
