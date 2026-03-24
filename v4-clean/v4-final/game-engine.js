@@ -638,7 +638,8 @@
     if (page.type !== 'index') return;
 
     // Add "Continue Where You Left Off" banner
-    if (save.lastChapter > 0) {
+    // Skip if page already has its own continue section (avoids duplicate)
+    if (save.lastChapter > 0 && !document.getElementById('continue-section')) {
       const heroSection = document.querySelector('.hero') || document.querySelector('[class*="hero"]');
       const insertPoint = heroSection ? heroSection.nextSibling : (document.querySelector('.content') || document.querySelector('.page-wrapper'))?.firstChild;
 
