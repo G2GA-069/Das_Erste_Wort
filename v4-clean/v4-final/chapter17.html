@@ -1242,15 +1242,18 @@
     </div>
   </div>
 
-  <!-- ==================== INTERACTIVE: QUIZ GATE ==================== -->
-  <div class="quiz-gate" id="quizGate">
-    <div class="quiz-gate-content">
-      <div class="quiz-gate-title">Chapter 17: Final Quiz</div>
-      <div class="quiz-gate-message">
-        You must score 80% or higher to continue to Chapter 18.<br>
-        <span style="font-size: 0.95rem; opacity: 0.6;">You have 2 attempts per question.</span>
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
       </div>
-      <div id="quizContainer"></div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
     </div>
   </div>
 
@@ -1613,7 +1616,7 @@ let quizState = {
 
 function renderQuiz() {
   if (quizState.completed) {
-    const container = document.getElementById('quizContainer');
+    const container = document.getElementById('quiz-questions');
     container.innerHTML = `
       <div class="quiz-complete">✓ Quiz Complete</div>
       <div class="quiz-score">${quizState.score}/10 (${Math.round(quizState.score / 10 * 100)}%)</div>
@@ -1626,7 +1629,7 @@ function renderQuiz() {
   }
 
   const q = quizData[quizState.currentQuestion];
-  const container = document.getElementById('quizContainer');
+  const container = document.getElementById('quiz-questions');
 
   let html = `
     <div style="margin-bottom: 24px;">
@@ -1654,7 +1657,7 @@ function renderQuiz() {
 function answerQuestion(idx) {
   const q = quizData[quizState.currentQuestion];
   const feedback = document.getElementById('qfeedback');
-  const buttons = document.querySelectorAll('#quizContainer .guess-btn');
+  const buttons = document.querySelectorAll('#quiz-questions .guess-btn');
 
   if (quizState.guesses[quizState.currentQuestion] >= 2) return;
   quizState.guesses[quizState.currentQuestion]++;
@@ -1673,7 +1676,7 @@ function answerQuestion(idx) {
       } else {
         quizState.completed = true;
         if (quizState.score >= 8) {
-          document.getElementById('quizGate').classList.add('hidden');
+          document.getElementById('scene-quiz').classList.add('hidden');
           document.getElementById('postQuiz').classList.add('visible');
         } else {
           renderQuiz();
