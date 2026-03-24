@@ -799,13 +799,45 @@ function checkDictation() {
 
   // Update counter and prepare for next
   if (currentDictationIndex < dictationSentences.length - 1) {
-    setTimeout(() => {
+    // Show "Next Sentence" button instead of auto-advancing
+
+    let nextBtn = document.getElementById('dictation-next-btn');
+
+    if (!nextBtn) {
+
+      nextBtn = document.createElement('button');
+
+      nextBtn.id = 'dictation-next-btn';
+
+      nextBtn.textContent = 'Next Sentence →';
+
+      nextBtn.style.cssText = 'margin-top:16px;padding:10px 24px;background:rgba(232,164,74,0.15);color:#e8a44a;border:1px solid rgba(232,164,74,0.3);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.95rem;display:block;';
+
+      nextBtn.onmouseover = function() { this.style.background = 'rgba(232,164,74,0.25)'; };
+
+      nextBtn.onmouseout = function() { this.style.background = 'rgba(232,164,74,0.15)'; };
+
+      feedback.parentNode.insertBefore(nextBtn, feedback.nextSibling);
+
+    }
+
+    nextBtn.style.display = 'block';
+
+    nextBtn.onclick = function() {
+
       currentDictationIndex++;
+
       updateDictationCounter();
+
       input.value = '';
+
       feedback.classList.remove('show');
+
       result.classList.remove('show');
-    }, 2000);
+
+      this.style.display = 'none';
+
+    };
   } else {
     document.getElementById('dictation-play-btn').textContent = '✓ Dictation Complete!';
     document.getElementById('dictation-play-btn').disabled = true;
