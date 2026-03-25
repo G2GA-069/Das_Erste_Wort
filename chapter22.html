@@ -1921,6 +1921,39 @@ function resetQuiz() {
 // Initialize quiz on page load
 window.addEventListener('DOMContentLoaded', initializeQuiz);
 
+// --- AUDIO PRONUNCIATION (Web Speech API) ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.innerHTML = '🔊';
+    btn.title = 'Listen';
+    btn.onclick = (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); };
+    wordEl.parentNode.insertBefore(btn, wordEl.nextSibling);
+  }
+});
+
 </script>
 
 
