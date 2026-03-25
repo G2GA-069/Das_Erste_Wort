@@ -13,7 +13,7 @@ The user is **Toby** (admin@g2gadvisory.co.uk), founder of G2G Advisory. The pri
 
 ## FILE LOCATION
 
-All files are in: `v4-clean/v4-final/` inside the mounted Thekla folder.
+All files are at the **repository root** (alongside index.html, prologue.html, etc.).
 - 102 HTML files: `prologue.html`, `chapter1.html` through `chapter100.html`, `index.html`
 - Average file size: ~62KB per chapter (range: 47KB–98KB)
 - NO chapters are missing. All 100 exist.

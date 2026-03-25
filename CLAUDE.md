@@ -1,7 +1,7 @@
 # CLAUDE.md — Instructions for Das erste Wort
 
 ## READ FIRST
-Before doing ANYTHING, read `HANDOVER.md` in this same folder. It contains the full project context, curriculum, bug list, and design principles.
+Before doing ANYTHING, read `.dev/HANDOVER.md` — it contains the full project context, curriculum, bug list, and design principles.
 
 ## Golden Rules
 
@@ -19,4 +19,4 @@ Before doing ANYTHING, read `HANDOVER.md` in this same folder. It contains the f
 All chapter files are at the **repository root** (alongside index.html, prologue.html, etc.). The old `v4-clean/v4-final/` subdirectory is no longer used.
 
 ## Current Priority
-Bug-fix the existing 100 chapters to match chapter 7's quality. See HANDOVER.md "CURRENT BUGS TO FIX" section for the specific issues.
+Bug-fix the existing 100 chapters to match chapter 7's quality. See `.dev/HANDOVER.md` "CURRENT BUGS TO FIX" section for the specific issues.
