@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 17: Der Dreißigjährige Krieg</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --ruin: #3a3028;
+    --smoke: #5a5248;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #4a4038 0%, #2a1810 30%, #0a0e1a 60%, #6b8c7f 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- RUINS CANVAS --- */
+  #ruinsCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--fire), var(--fire-glow));
+    width: 0%;
+    z-index: 999;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  .guess-counter {
+    font-size: 0.85rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 8px;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    font-size: 1.5rem;
+    color: rgba(232, 164, 74, 0.3);
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.05), rgba(232, 164, 74, 0.02));
+    border-left: 4px solid rgba(232, 164, 74, 0.15);
+    border-radius: 6px;
+    padding: 28px;
+    margin: 40px 0;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    margin: 60px 0;
+  }
+
+  .word-collection h3 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-bright);
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .collected-words {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .collected-word {
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.08), rgba(232, 164, 74, 0.03));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .cw-german {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 4px;
+  }
+
+  .cw-english {
+    display: block;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    margin: 80px 0;
+    padding: 40px 0;
+  }
+
+  .end-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--fire), transparent);
+    margin: 0 auto 30px;
+  }
+
+  .next-chapter {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(232, 164, 74, 0.15);
+    font-size: 1.1rem;
+    color: rgba(232, 164, 74, 0.6);
+    letter-spacing: 0.05em;
+  }
+
+  /* --- SPEAK BUTTONS --- */
+  .speak-btn {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-size: 1.2rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* --- QUIZ GATE --- */
+  .quiz-gate {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(10, 14, 26, 0.98), rgba(20, 15, 30, 0.98));
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .quiz-gate.hidden {
+    display: none;
+  }
+
+  .quiz-gate-content {
+    max-width: 600px;
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 48px 40px;
+    text-align: center;
+  }
+
+  .quiz-gate-title {
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+  }
+
+  .quiz-gate-message {
+    font-size: 1.1rem;
+    color: rgba(212, 202, 187, 0.7);
+    margin-bottom: 32px;
+    line-height: 1.8;
+  }
+
+  .quiz-score {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--fire);
+    margin: 24px 0;
+  }
+
+  .quiz-complete {
+    color: #8ed69e;
+    font-size: 1.3rem;
+    margin: 20px 0;
+  }
+
+  .quiz-retry {
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--text-bright);
+    padding: 12px 32px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    margin-top: 24px;
+  }
+
+  .quiz-retry:hover {
+    background: rgba(232, 164, 74, 0.25);
+    border-color: #e8a44a;
+  }
+
+  .post-quiz {
+    display: none;
+    margin-top: 60px;
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.08), rgba(232, 164, 74, 0.03));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .post-quiz.visible {
+    display: block;
+  }
+
+  .post-quiz-message {
+    font-size: 1.2rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .title-screen h1 { font-size: 2.8rem; }
+    .title-screen .subtitle { font-size: 1.1rem; }
+    .narrative { font-size: 1.1rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .guess-options { gap: 8px; }
+    .guess-btn { font-size: 1rem; padding: 8px 16px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .ety-card { padding: 20px 16px; }
+    .guess-section { padding: 20px 16px; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .nav-section { flex-direction: column; }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="ruinsCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Seventeen</div>
+    <h1>Der Dreißigjährige Krieg</h1>
+    <div class="subtitle">The Thirty Years' War</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE CATASTROPHE BEGINS ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      One-third of Germany is dead.
+    </p>
+
+    <div style="margin:20px auto;max-width:640px;padding:16px 20px;background:rgba(155,142,196,0.05);border-left:3px solid rgba(155,142,196,0.3);border-radius:0 8px 8px 0;font-size:0.82rem;color:rgba(212,202,187,0.6);line-height:1.6;">
+      <span style="color:#9b8ec4;font-weight:600;">Historical Context:</span> From 1618 to 1648, a devastating war engulfed Central Europe — initially between Catholic and Protestant states, it eventually drew in most European powers. Germany lost roughly a third of its population. The war ended with the Peace of Westphalia, which established the modern concept of national sovereignty and reshaped the political map of Europe.
+    </div>
+
+    <p class="narrative">
+      Not dying. Not sick. Dead. Burned in their homes or crucified by armies that no longer remember who hired them. Starved in villages where grass is the only crop left. Killed by plague that follows war like a shadow. The <span class="german-word" data-card="zerstoerung">Zerstörung</span> is so complete that entire regions have become lifeless, depopulated wastelands. In some territories — Pomerania, parts of Brandenburg, whole swaths of Bohemia — seventy-five percent of the population is gone.
+    </p>
+
+    <p class="narrative">
+      The year is 1648. The war has been burning for thirty years. Thirty years. An entire generation has known nothing but fighting, nothing but hunger, nothing but the sound of armies trampling across the German-speaking lands. A child born in 1618 — the year the war began — is now thirty years old and has never known peace.
+    </p>
+
+    <p class="narrative">
+      And the German language is dying with them.
+    </p>
+
+    <p class="narrative">
+      This is not the fire of the Proto-Indo-Europeans around their steppe campfire. This is not the warm glow of German <em>Feuer</em>. This is destruction. Total. Systematic. Catastrophic.
+    </p>
+
+    <p class="narrative emphasis">
+      And it will nearly kill a language.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE RUIN ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine you are a scholar in Munich or a merchant in Hamburg. You have been educated. You know Latin — the language of the Church and the courts. You know Italian and Spanish — the languages of trade. And increasingly, you know French. Because French is becoming the language of power.
+    </p>
+
+    <p class="narrative">
+      The Peace of Westphalia — signed in 1648, ending the war — is negotiated in French. The courts of German princes are adopting French manners, French fashions, French language. To speak German is to speak like a peasant. To speak French is to speak like civilization itself. Louis XIV is rising. Versailles will soon become the model that every German court will imitate. And Versailles speaks French.
+    </p>
+
+    <p class="narrative">
+      German intellectuals of this era — the survivors of the war — are ashamed of their own language. One scholar writes that German is "coarse" and "ugly." Another calls it fit only for "beasts" or "servants." The <em>Élite</em> — the educated, the powerful, the survivors — are turning away from German. It seems like a language of ruins, a language of the defeated.
+    </p>
+
+    <p class="narrative">
+      And so German retreats. Not from the villages yet — the common people still speak German, because they have no choice, because there is no court to imitate, because they are too broken to change their speech. But German retreats from power. From education. From prestige. From the future.
+    </p>
+
+    <!-- ZERSTÖRUNG etymology card -->
+    <div class="ety-card" id="card-zerstoerung">
+      <div class="word-header">
+        <span class="word-main">Zerstörung</span>
+        <span class="word-pron">/tsɛɐ̯ˈʃtœʁʊŋ/</span>
+      </div>
+      <div class="word-meaning">destruction — the act of rendering something into pieces, to disorder completely</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">zer-</span>
+        <span class="bridge-note">— prefix meaning "to pieces" (zu + er)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Störung</span>
+        <span class="bridge-note">— disturbance, disorder; from "stören" (to disturb)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">destroy</span>
+        <span class="bridge-note">— French origin, not Germanic. English borrowed from the conquerors.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Tiêu diệt / Phá hủy</span>
+        <span class="bridge-note">— destruction/demolition (tiêu = destroy, diệt = eliminate; phá = break, hủy = ruin)</span>
+      </div>
+      <div class="story">
+        Zerstörung is built from Germanic roots: zer- (to break into pieces) + Störung (disorder). To destroy is to disorder completely, to put into confusion. The Germanic languages understood destruction as a breaking-apart, a scattering of unity. English, influenced by French after 1066, adopted the Latin-derived "destroy," which comes from the Old French "destruire," meaning literally "to undo." Two different metaphors: Germanic breaks things into pieces; Romance languages undo them.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This retreat of German has a name in history. Scholars call it the <em>"Niedgang"</em> — the decline, the descent. For over a century, German will appear to be a language in terminal decline. It seems impossible that this language — this "coarse" and "peasant" tongue — could ever recover its dignity.
+    </p>
+
+    <p class="narrative">
+      But something else is happening in the ruins.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE HUNGER ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A woman digs in the frozen earth, looking for roots. Her children have not eaten in three days. She speaks German. Her hands remember German words for "hunger," for "pain," for "why?" But there are no roots. The war has taken everything — the crops, the animals, the young men who would have worked the fields. There is only <span class="german-word" data-card="hunger">Hunger</span>.
+    </p>
+
+    <p class="narrative">
+      Hunger is one of the rare words that has the same form in English and German. This is because both languages came from the same Proto-Germanic root, and this root is so old, so fundamental to human experience, that it was never borrowed from elsewhere. Every language that has speakers has a word for hunger. And in the Germanic languages — English and German — the word barely changed over thousands of years because the feeling never changed. The need never evolved. The pain of an empty stomach is the same today as it was three thousand years ago.
+    </p>
+
+    <p class="narrative">
+      During the Thirty Years' War, hunger is not a metaphor. It is life. Cities are under siege and eating their horses, then their rats, then their leather. Villages have been burned so many times that people are living in caves. Armies strip the land bare. A contemporary account describes one region where people are so desperate they are eating human flesh. Cannibalism, reported with horror, becomes a symptom of something worse than war itself: the complete breakdown of civilization.
+    </p>
+
+    <!-- HUNGER etymology card -->
+    <div class="ety-card" id="card-hunger">
+      <div class="word-header">
+        <span class="word-main">Hunger</span>
+        <span class="word-pron">/ˈhʊŋɐ/</span>
+      </div>
+      <div class="word-meaning">hunger — the painful need for food, the emptiness that drives all living things</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₂enǵ-</span>
+        <span class="bridge-note">— to narrow, to constrain. Hunger is the body contracted by need.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">hunger</span>
+        <span class="bridge-note">— identical in form and meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Hunger</span>
+        <span class="bridge-note">— identical to English, unchanged for millennia</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Đói kém</span>
+        <span class="bridge-note">— starvation/hunger (đói = hungry, kém = lack; hunger as extreme deprivation)</span>
+      </div>
+      <div class="story">
+        English and German Hunger come from Proto-Germanic *hungaraz, from PIE *h₂enǵ- (to constrain, to narrow). The sense is of the body contracted by emptiness, drawn inward by lack. Hunger is one of the most stable words in Germanic languages because it represents something so fundamental that language rarely changes it. You will find cognates across all Germanic languages: German Hunger, English hunger, Old Norse hungr. The word doesn't need updating because the feeling it describes never changes. A starving person today experiences the same sensation as one in 1648 or 3000 BCE.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And yet the people keep speaking German. Not French. Not Latin. German — because they are too desperate to learn anything else. Because language, in the end, is not something chosen by the educated elite. Language is something inherited by the living, spoken by those who have no choice but to survive in the language they were born into.
+    </p>
+
+    <p class="narrative">
+      This is the paradox that will save German: the language of the elite becomes weak, but the language of the people becomes unbreakable.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE SOLDIERS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The war is not, technically, a German war. It begins as a religious conflict — Protestant versus Catholic — but it quickly becomes something worse: a game of thrones between foreign powers. Spain fights for the Habsburgs. France fights to weaken Spain. Sweden fights to become a great power. The German territories are simply the board on which this game is played. They are the victim, not the player.
+    </p>
+
+    <p class="narrative">
+      And the armies are drawn from everywhere. A <span class="german-word" data-card="soldat">Soldat</span> in one of these armies is as likely to be Swedish, Italian, Scottish, or French as he is to be from Germany. These are not citizen armies. These are mercenary armies — paid soldiers with no loyalty except to the whoever will pay them that week. If the general running out of money or gets killed, the army doesn't care. It just changes sides.
+    </p>
+
+    <p class="narrative">
+      They burn villages not out of hate but out of necessity. They need supplies. They need money. They need to terrorize the population into submission or into payment. A contemporary account describes a town where the soldiers systematically torture villagers to find hidden gold. Another describes an army that burns a forest not for military advantage but simply for warmth around their campfires, then stays so long they use up all the timber in the region.
+    </p>
+
+    <p class="narrative">
+      The word "Soldat" itself is borrowed — from Italian <em>soldato</em>, which comes from the Spanish <em>sueldo</em>, meaning "pay." It entered German during this period because mercenary warfare was something foreign to German tradition. A <em>Ritter</em> — a knight — was bound by honor and oath. A <em>Soldat</em> is bound by coin. This new word, this new concept, reflects a new kind of war: industrial, impersonal, mercenary. War as business.
+    </p>
+
+    <!-- SOLDAT etymology card -->
+    <div class="ety-card" id="card-soldat">
+      <div class="word-header">
+        <span class="word-main">Soldat</span>
+        <span class="word-pron">/zɔlˈdat/</span>
+      </div>
+      <div class="word-meaning">soldier — one who is paid to fight, a mercenary; the new kind of warrior</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Soldat</span>
+        <span class="bridge-note">— borrowed during Thirty Years' War, ~1620</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">soldier</span>
+        <span class="bridge-note">— English borrowed from Old French</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">sueldo</span>
+        <span class="bridge-note">— Spanish, meaning "pay/wage" — from Latin solidus (coin)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Lính / Quân nhân</span>
+        <span class="bridge-note">— soldier/serviceman (lính = soldier, quân = army, nhân = person; describes rank not payment)</span>
+      </div>
+      <div class="story">
+        The word "Soldat" reveals the mercenary nature of 17th-century warfare. It comes from Italian soldato, from Spanish sueldo (wage), from Latin solidus (the coin). This is how military vocabulary travels: from the languages of the Mediterranean (Italian, Spanish) up into German. But notice the difference: English and German have similar paths (both Romance-derived), emphasizing payment and contract. Vietnamese "lính" (soldier) emphasizes role and rank rather than pay. A "Soldat" is someone with a contract; a lính is someone with duty and status. Two different philosophies of military obligation.
+      </div>
+    </div>
+
+    <p class="narrative">
+      These soldiers are brutal, but they are also — paradoxically — cosmopolitan. They speak many languages. They move across borders easily. They know Swedish and French and Italian and German. And when they plunder villages, when they rape and burn and kill, they bring their own languages with them. The Thirty Years' War, despite its devastation, is also a moment of linguistic contact — invaders speaking foreign tongues.
+    </p>
+
+    <p class="narrative">
+      But the people they encounter are still speaking German. And this contact, this violence, this invasion — it will eventually become a point of pride. German people will eventually recover from this war and say: <em>We survived this. Our language survived. When they tried to plunder us, to erase us, to make us speak French, we kept our German.</em>
+    </p>
+
+    <p class="narrative">
+      That pride is still a century away. But it is being born in these ashes.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE PLUNDERING ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A soldier on horseback approaches a farmhouse. He is not German — perhaps Swedish, perhaps Italian, perhaps Scotch. His army has not been paid in months. He needs to <span class="german-word" data-card="pluendern">Plündern</span> — to take what he needs by force. This word, "Plündern," is itself Germanic, and it will one day travel the opposite direction, entering English as "plunder."
+    </p>
+
+    <p class="narrative">
+      Most words travel from dominant cultures to dominated ones. French words entered English after 1066 because the Norman conquerors were culturally dominant. Spanish words entered English because Spain was a great power. But "plunder" entered English from German — from the German-speaking lands where plundering was so systematic, so widespread, so notorious that English-speakers borrowed the word directly from the terrified victims. This is one of the few words in the history of the Germanic languages that traveled <em>from</em> German <em>to</em> English — a lexical memorial to German suffering.
+    </p>
+
+    <!-- PLÜNDERN etymology card -->
+    <div class="ety-card" id="card-pluendern">
+      <div class="word-header">
+        <span class="word-main">Plündern</span>
+        <span class="word-pron">/ˈplʏndɐn/</span>
+      </div>
+      <div class="word-meaning">to plunder — to strip of belongings by force; to rob systematically</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Plündern</span>
+        <span class="bridge-note">— from Middle Low German "plundern," possibly from "plunder" (rags/tatters)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">plunder</span>
+        <span class="bridge-note">— entered English from German during Thirty Years' War, ~1640s</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Plunder</span>
+        <span class="bridge-note">— "rags" or "tatters" — things stripped and torn apart</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Cướp bóc / Lục soát</span>
+        <span class="bridge-note">— plunder/loot (cướp = seize, bóc = strip; systematic robbery and pillaging)</span>
+      </div>
+      <div class="story">
+        Plündern is extraordinarily rare among Germanic words: it is one that traveled from German INTO English, rather than the more common reverse. This happened because the Thirty Years' War made German plundering so famous, so systematic, so notorious that English-speaking soldiers and merchants learned the word directly from German. The word possibly derives from "Plunder" (tatters, rags), suggesting the sense of tearing apart. By 1632, English military accounts are already using "plunder" to describe the robbery of German villages. It's a linguistic memorial to the war: one of the few German words that conquered instead of being conquered.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Imagine being a German speaker during this period. Your village is burned. Your fields are taken. Your daughters are raped. Your sons are conscripted into armies they didn't choose. And the language of power — the language spoken by the conquerors, the survivors, the elite — is French. The message seems clear: German is the language of the defeated. German is the language of peasants and the poor. It is a language of ash and ruin.
+    </p>
+
+    <p class="narrative">
+      And yet German people keep speaking it. They have no choice. They keep speaking German because they have nothing else.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE FLIGHT ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Some people do not stay to be plundered. Some attempt <span class="german-word" data-card="flucht">Flucht</span> — escape, flight, the desperate hope that there is somewhere safer, somewhere beyond the reach of the armies. Some head north, toward Denmark or the Baltic. Some head south, toward the Alps and Italy. Some head east, into lands not yet ravaged by the war.
+    </p>
+
+    <p class="narrative">
+      The roads are clogged with refugees. Entire families on carts, carrying what they can. An old woman with a bundle on her back. Children who don't remember living in a stable place. The <em>Flucht</em> is a flight into an unknown future — away from home, away from language, away from everything familiar. To flee is to abandon your roots.
+    </p>
+
+    <p class="narrative">
+      But German persists. These refugees carry German with them. Into Denmark, into Bohemia, into the Balkans. German spreads — not through conquest this time, but through desperate survival. Entire German-speaking communities will establish themselves in regions far from the Rhine and the North Sea. They will preserve their German, keep it separate from the languages around them, and centuries later, when linguists study them, they will find language from this era preserved like insects in amber. German-speaking villages in Romania, in the Balkans, in Russia — all descended from refugees fleeing the Thirty Years' War.
+    </p>
+
+    <!-- FLUCHT etymology card -->
+    <div class="ety-card" id="card-flucht">
+      <div class="word-header">
+        <span class="word-main">Flucht</span>
+        <span class="word-pron">/flʊxt/</span>
+      </div>
+      <div class="word-meaning">flight — escape from danger; a desperate journey away from home</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pleuk-</span>
+        <span class="bridge-note">— to flow, to flee (also gave "flow," "flux")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">flight</span>
+        <span class="bridge-note">— Old English "flyht" — to flee or soar</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Flucht</span>
+        <span class="bridge-note">— to escape, to move urgently away</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Tẩu thoát / Lìa bỏ</span>
+        <span class="bridge-note">— escape/flight (tẩu thoát = flee, lìa bỏ = abandon; compounds expressing departure)</span>
+      </div>
+      <div class="story">
+        Flucht comes from Proto-Germanic *fluhti-, related to the verb "fliehen" (to flee). The root is ancient, possibly from PIE *pleuk- (to flow), suggesting the sense of flowing away urgently. Related words: English "flight" (the act of fleeing or of moving through air), "flock" (a flowing group), "flux" (flowing). The Thirty Years' War created millions of instances of Flucht — entire populations fleeing. This is when German-speaking refugees established communities in Eastern Europe that would preserve medieval German dialects for centuries. Language travels on the roads of refugees as much as on the routes of conquerors.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This diaspora, this spreading of German-speaking people across Europe, will eventually become a source of cultural and linguistic pride. But at this moment, it is only loss. Loss of home. Loss of security. Loss of the familiar world.
+    </p>
+
+    <p class="narrative">
+      The refugees carry German with them, but they carry it like a memory of something destroyed.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE DEVASTATION ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine a map of the German-speaking lands before the war begins in 1618. Now imagine looking at it in 1648, when the Peace of Westphalia is finally signed. Entire regions have been transformed into <span class="german-word" data-card="verwoestung">Verwüstung</span> — into deserts, into wastelands, into places that look like the end of the world.
+    </p>
+
+    <p class="narrative">
+      Pomerania — a region on the Baltic — loses 60-75% of its population. In some towns, the number is even higher. Contemporary records describe villages where only three or four buildings are left standing. One historian estimates that 250,000 people died directly in battles. Millions more died of disease, starvation, and the indirect effects of war. If we measure it as a percentage of the population, the Thirty Years' War is more devastating than either of the World Wars of the 20th century. It is proportionally the most catastrophic conflict in European history.
+    </p>
+
+    <p class="narrative">
+      And the language? German is not only devastated in the people who speak it — it is devastated in prestige, in power, in the future. The surviving educated class has already begun turning to French. The peace that ends the war also ends Germany's brief moment of cultural influence. French culture, French language, French power will dominate the German-speaking lands for the next two centuries.
+    </p>
+
+    <!-- VERWÜSTUNG etymology card -->
+    <div class="ety-card" id="card-verwoestung">
+      <div class="word-header">
+        <span class="word-main">Verwüstung</span>
+        <span class="word-pron">/fɛɐ̯ˈvʏstʊŋ/</span>
+      </div>
+      <div class="word-meaning">devastation — the state of being laid waste, turned into a desert, completely ruined</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ver-</span>
+        <span class="bridge-note">— intensive prefix, meaning "thoroughly"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wüste</span>
+        <span class="bridge-note">— desert, wasteland; desolate place</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">desolation</span>
+        <span class="bridge-note">— from Latin desolatus (abandoned) — not from Germanic roots</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Hoang tàn / Tàn tích</span>
+        <span class="bridge-note">— desolation/ruins (hoang = desolate, tàn = ruin; emptiness and abandonment)</span>
+      </div>
+      <div class="story">
+        Verwüstung builds from the Germanic prefix ver- (thoroughly) + Wüste (desert/wasteland) + -ung (noun suffix). To devastate means to turn into a desert, to render utterly empty. The Germanic languages built this concept by compounding: ver- + desert = thorough destruction. English, influenced by Romance languages, uses "desolation" from Latin desolatus (abandoned, made alone). Two metaphors again: Germanic makes desert; Romance makes loneliness. Both describe the same consequence — a place where nothing can live.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The Peace of Westphalia of 1648 establishes new borders, new treaties, new power balances. It also, unwittingly, establishes the beginning of the end of German dominance in Central Europe. For the next century and a half, German will be eclipsed. It will seem like a language in terminal decline, a language spoken only by peasants and the poor, a language with no future.
+    </p>
+
+    <p class="narrative">
+      And yet, from these ruins, a backlash will eventually grow.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: THE SURVIVAL ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      At this moment in 1648, a child is playing in the streets of Berlin — or what is left of them. The child speaks German. The child has never spoken French, never attended court, never read books in the educated languages of Latin or Italian. The child is poor. The child's parents and grandparents are probably dead. The child is hungry. The child speaks German because there is no other option.
+    </p>
+
+    <p class="narrative">
+      This child will <span class="german-word" data-card="ueberleben">Überleben</span> — will live beyond the catastrophe, will continue to speak German, will pass German to her children who will pass it to theirs. This child, and millions like her, will be the salvation of the German language. Not because she makes a choice to preserve it. Simply because she survives, and speaks, and lives.
+    </p>
+
+    <p class="narrative">
+      The educated elite of 1648 believe that German is finished. They are writing letters in French. They are teaching their children Italian and Spanish and Latin. They are looking toward Versailles and Versailles speaks French. To them, the future is not German. It is romance languages and prestige and the courts of the powerful.
+    </p>
+
+    <p class="narrative">
+      They cannot see what is being born in the villages and the ruins and the fields where people are beginning to farm again. They cannot see the future because the future, in this moment, belongs to the common people who simply keep speaking their language because they cannot stop, because language is not something you choose — it is something you breathe.
+    </p>
+
+    <!-- ÜBERLEBEN etymology card -->
+    <div class="ety-card" id="card-ueberleben">
+      <div class="word-header">
+        <span class="word-main">Überleben</span>
+        <span class="word-pron">/ˈʔyːbɐˌleːbən/</span>
+      </div>
+      <div class="word-meaning">to survive — to live beyond a catastrophe, to endure when others do not</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">über</span>
+        <span class="bridge-note">— over, beyond (also "above")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">leben</span>
+        <span class="bridge-note">— to live, to be alive</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">survive</span>
+        <span class="bridge-note">— from Latin supervivere (over-live) — similar concept but Romance origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Sống sót / Tồn tại</span>
+        <span class="bridge-note">— survival (sống sót = survive, tồn tại = exist; emphasizes remaining alive by fortune)</span>
+      </div>
+      <div class="story">
+        Überleben is built from über (over/beyond) + leben (to live). To survive is to live beyond catastrophe, to persist beyond the point where others have stopped. English "survive" is from Latin supervivere (super- + vivere), the same concept but with Romance origins. Vietnamese "sống sót" (to survive) is interesting: it can emphasize the active struggle to live or the passive matter of good fortune. Germanic languages make survival active — you live beyond, you persist. Vietnamese allows both readings.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This is the paradox of language: it is preserved not by scholars and intellectuals, not by those who plan its future, but by ordinary people who simply refuse to stop speaking it. Language is not a thing — it is an action. It is something that must be spoken continuously, passed on moment by moment, generation by generation. You cannot kill a language from above if the people at the bottom refuse to stop speaking it.
+    </p>
+
+    <p class="narrative">
+      And so German survives. Not triumphantly. Not heroically. Simply because the German people keep speaking it. Because they have no other language. Because they are too broken and too desperate to change their speech.
+    </p>
+
+    <p class="narrative">
+      From this ash, something will grow. But it will take a hundred years. It will take the Enlightenment. It will take Frederick the Great and Goethe and the German philosophers. It will take the Sprachgesellschaften — the language societies — that will emerge in the next chapter, determined to restore German to its dignity.
+    </p>
+
+    <p class="narrative">
+      But at this moment, in 1648, with the smoke still rising from ruined villages, no one can see that future. All anyone can see is devastation. All anyone can feel is loss. All anyone can hear is silence where there should have been voices.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 9: THE FRIEDEN ==================== -->
+  <div class="scene" id="scene9">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A document is signed in two cities — Osnabrück and Münster — in 1648. The Treaty of Westphalia. It ends the war. It establishes new borders. It promises that the violence will stop.
+    </p>
+
+    <p class="narrative">
+      The word for peace is <span class="german-word" data-card="frieden">Frieden</span>. We encountered this word earlier in our journey — in Chapter 13 — and it carries the same weight, the same ancient meaning that it has carried for thousands of years. Peace is not merely the absence of war. Peace is the end of conflict, the breaking of enmity, the restoration of wholeness. It is what is left when all other options have been exhausted.
+    </p>
+
+    <p class="narrative">
+      But the peace of 1648 is not peace for Germany. It is peace for the great powers who have been using Germany as their battlefield. France has won. Spain has lost. Sweden has gained territory. The German states remain fragmented, remain weak, remain divided. Germany itself is broken into hundreds of small principalities and kingdoms, each with its own ruler, each with its own court, each increasingly speaking French because that is the language of power.
+    </p>
+
+    <p class="narrative">
+      The peace comes at a cost so high that it seems like a sentence, not a solution. One-third of the population is dead. The economy is devastated. The fields are empty. The forests have been burned. The survivors are traumatized. And the language that they speak — German — is now associated with this devastation, with this failure, with this ruin.
+    </p>
+
+    <!-- FRIEDEN etymology card -->
+    <div class="ety-card" id="card-frieden">
+      <div class="word-header">
+        <span class="word-main">Frieden</span>
+        <span class="word-pron">/ˈfʁiːdn̩/</span>
+      </div>
+      <div class="word-meaning">peace — the end of conflict, the restoration of wholeness after violence</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*per- / *pri-</span>
+        <span class="bridge-note">— to be satisfied, to be whole (related to "pro-" and "fruit")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">free</span>
+        <span class="bridge-note">— Old English "frēo" — originally meaning satisfied/whole, then free</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Frieden</span>
+        <span class="bridge-note">— from Old High German "friduhu" — satisfaction, wholeness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Hòa bình / Bình yên</span>
+        <span class="bridge-note">— peace/tranquility (Sino-Vietnamese: hòa = harmony, bình = level/calm; harmony and calmness)</span>
+      </div>
+      <div class="story">
+        Frieden comes from Proto-Germanic *frijaz (free, satisfied), related to PIE *per- or *pri- (to advance, be satisfied). The sense is of satisfaction, wholeness, being satisfied with what one has. English "free" took a different path — from satisfied to unbounded to liberated. German kept the older meaning closer: peace is when people are satisfied. Vietnamese "hòa bình" (peace) is built from hòa (harmony) + bình (calm/level), suggesting that peace is when everything is balanced and harmonious. Notice the cultural difference: Germanic sees peace as satisfaction, Vietnamese sees it as harmony and calm.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But even this broken peace, this treaty signed by exhausted powers in distant cities, even this contains the seed of something. Because peace — however devastated and incomplete — also means that the rebuilding can begin. That people can stop fleeing and start rebuilding their villages. That children can begin to imagine a future beyond survival.
+    </p>
+
+    <p class="narrative">
+      It will take a hundred years. It will take the Enlightenment. It will take thinkers and scholars and, eventually, the entire force of German culture reasserting itself. But from this moment — from 1648, from the ashes, from the devastation — German will begin, slowly, to recover its voice.
+    </p>
+
+    <p class="narrative emphasis">
+      But that story belongs to the next chapter.
+    </p>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">War Vocabulary</strong> — Zerstörung, Plündern, Verwüstung — destruction words that intensify devastation through Germanic prefixes.<br><br>
+    <strong style="color: var(--text-bright);">French Court Dominance</strong> — 150 years of French as prestige language in German courts, nearly extinguishing German as a language of culture and literature.<br><br>
+    <strong style="color: var(--text-bright);">Prefix Power: ver-/zer-</strong> — ver-wüsten (transform into wasteland), zer-stören (break apart completely) — intensifying prefixes that build survival vocabulary.<br><br>
+    <strong style="color: var(--text-bright);">Survival Language</strong> — Überleben (over+live = survive), Flucht (flight/escape), Frieden (peace) — the vocabulary that remained stubbornly Germanic because the language of suffering doesn't borrow.
+  </div>
+
+  <!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Seventeen</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Zerstörung</span><span class="cw-english">destruction</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Hunger</span><span class="cw-english">hunger</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Soldat</span><span class="cw-english">soldier</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Plündern</span><span class="cw-english">to plunder</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Flucht</span><span class="cw-english">flight/escape</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Verwüstung</span><span class="cw-english">devastation</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Überleben</span><span class="cw-english">to survive</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Frieden</span><span class="cw-english">peace</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== CONCEPTS LEARNED ==================== -->
+    <div style="margin-top: 32px; margin-bottom: 32px;">
+      <h3 style="text-align: center; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.3em; color: rgba(232, 164, 74, 0.6); margin-bottom: 20px;">Concepts Learned in Chapter Seventeen</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+        <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">War Vocabulary</span><span class="cw-english">Zerstörung, Plündern, Verwüstung — destruction words</span></div>
+        <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">French Court Dominance</span><span class="cw-english">150 years of French as prestige language</span></div>
+        <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Prefix Power: ver-/zer-</span><span class="cw-english">ver-wüsten, zer-stören — intensifying destruction</span></div>
+        <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Survival Language</span><span class="cw-english">Überleben, Flucht — the vocabulary of endurance</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">170 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(20%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:20%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zerstörung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">destruction</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Hunger</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">hunger</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Soldat</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">soldier</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Plündern</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">to plunder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Flucht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">flight</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Verwüstung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">devastation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Überleben</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">to survive</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Frieden</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">peace</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–16</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~160 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">37 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(25%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:25%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">War vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Zerstörung, Plündern, Verwüstung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">French court dominance</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">150 years of French prestige</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Prefix ver- / zer-</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">ver-wüsten, zer-stören as intensifiers</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Survival language</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Überleben, Flucht, Frieden remain Germanic</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">17</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–16</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~47 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Seventeen
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        One-third of Germany dead. One language on the verge of extinction.<br>
+        French triumphant. German broken in the ruins.<br>
+        But in the villages, in the fields, in the broken hearts of survivors,<br>
+        the language refuses to die.
+      </p>
+      <div class="next-chapter">
+        <a href="chapter18.html" style="color: rgba(232, 164, 74, 0.6); text-decoration: none;">Chapter Eighteen: Die Sprachgesellschaften — The Language Societies</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-quiz" id="postQuiz">
+    <div class="post-quiz-message">
+      You have passed the chapter quiz. The story continues below.
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter16.html" class="nav-btn">← Chapter 16</a>
+    <a href="chapter18.html" class="nav-btn next">Chapter 18 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- RUINS CANVAS --- with gradient transition ---
+const canvas = document.getElementById('ruinsCanvas');
+const ctx = canvas.getContext('2d');
+let ruins = [];
+let rainParticles = [];
+let floatingWords = [];
+let time = 0;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createRuins() {
+  ruins = [];
+  const count = Math.floor(window.innerWidth / 120);
+  for (let i = 0; i < count; i++) {
+    ruins.push({
+      x: (i / count) * canvas.width,
+      y: canvas.height * (0.5 + Math.random() * 0.35),
+      width: 60 + Math.random() * 40,
+      height: 100 + Math.random() * 80,
+      broken: Math.random() > 0.3
+    });
+  }
+}
+
+function createRainParticles() {
+  rainParticles = [];
+  const count = Math.floor((canvas.width * canvas.height) / 5000);
+  for (let i = 0; i < count; i++) {
+    rainParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: 0.5,
+      vy: 4 + Math.random() * 2,
+      alpha: Math.random() * 0.5 + 0.2
+    });
+  }
+}
+
+function createFloatingWords() {
+  const frenchWords = ['Civilisation', 'Gloire', 'Pouvoir', 'Beauté', 'Grâce', 'Honneur', 'Désir', 'Amour', 'Reine'];
+  floatingWords = [];
+  for (let i = 0; i < 15; i++) {
+    floatingWords.push({
+      text: frenchWords[Math.floor(Math.random() * frenchWords.length)],
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * 0.6,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: -0.2 + Math.random() * 0.1,
+      alpha: Math.random() * 0.15 + 0.05,
+      sway: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawRuins() {
+  ruins.forEach((ruin, idx) => {
+    const scrollPct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+
+    // Transition colors: grey-brown → black → pale dawn
+    let bkgColor;
+    if (scrollPct < 0.5) {
+      const t = scrollPct * 2;
+      bkgColor = `rgba(${Math.floor(58 + (30 - 58) * t)}, ${Math.floor(48 + (15 - 48) * t)}, ${Math.floor(40 + (20 - 40) * t)}, 0.3)`;
+    } else {
+      const t = (scrollPct - 0.5) * 2;
+      bkgColor = `rgba(${Math.floor(30 + (107 - 30) * t)}, ${Math.floor(15 + (140 - 15) * t)}, ${Math.floor(20 + (127 - 20) * t)}, 0.3)`;
+    }
+
+    ctx.fillStyle = bkgColor;
+    ctx.fillRect(ruin.x, ruin.y, ruin.width, ruin.height);
+
+    // Broken roofline
+    if (ruin.broken) {
+      ctx.strokeStyle = `rgba(100, 80, 60, 0.4)`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(ruin.x, ruin.y);
+      for (let j = 0; j < 5; j++) {
+        ctx.lineTo(ruin.x + (ruin.width / 5) * j, ruin.y - Math.random() * 20);
+      }
+      ctx.lineTo(ruin.x + ruin.width, ruin.y);
+      ctx.stroke();
+    }
+  });
+}
+
+function drawRain() {
+  rainParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+
+    if (p.y > canvas.height) {
+      p.y = 0;
+      p.x = Math.random() * canvas.width;
+    }
+
+    ctx.strokeStyle = `rgba(220, 200, 180, ${p.alpha})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x + p.vx * 8, p.y + p.vy * 8);
+    ctx.stroke();
+  });
+}
+
+function drawFloatingWords() {
+  floatingWords.forEach(word => {
+    word.x += word.vx;
+    word.y += word.vy;
+    word.sway += 0.01;
+
+    if (word.x > canvas.width + 100) word.x = -100;
+    if (word.y < 0) word.y = canvas.height;
+
+    ctx.font = `italic 16px 'Cormorant Garamond', serif`;
+    ctx.fillStyle = `rgba(196, 154, 108, ${word.alpha})`;
+    ctx.textAlign = 'center';
+    ctx.fillText(word.text, word.x + Math.sin(word.sway) * 20, word.y);
+  });
+}
+
+function drawFrame() {
+  time += 0.016;
+
+  const scrollPct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+
+  // Background gradient transition
+  let gradStart, gradEnd;
+  if (scrollPct < 0.5) {
+    const t = scrollPct * 2;
+    gradStart = `rgb(${Math.floor(74 + (42 - 74) * t)}, ${Math.floor(64 + (24 - 64) * t)}, ${Math.floor(56 + (16 - 56) * t)})`;
+    gradEnd = `rgb(${Math.floor(10 + (42 - 10) * t)}, ${Math.floor(14 + (24 - 14) * t)}, ${Math.floor(26 + (16 - 26) * t)})`;
+  } else {
+    const t = (scrollPct - 0.5) * 2;
+    gradStart = `rgb(${Math.floor(42 + (107 - 42) * t)}, ${Math.floor(24 + (140 - 24) * t)}, ${Math.floor(16 + (127 - 16) * t)})`;
+    gradEnd = `rgb(${Math.floor(42 + (30 - 42) * t)}, ${Math.floor(24 + (15 - 24) * t)}, ${Math.floor(16 + (20 - 16) * t)})`;
+  }
+
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, gradStart);
+  grad.addColorStop(1, gradEnd);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawRuins();
+  drawFloatingWords();
+  drawRain();
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createRuins();
+createRainParticles();
+createFloatingWords();
+drawFrame();
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  createRuins();
+  createRainParticles();
+});
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "What does 'Zerstörung' literally mean as a compound?",
+    options: ["to break into pieces + disturbance", "to lose + power", "to weaken + silence", "to end + forever"],
+    correct: 0
+  },
+  {
+    question: "Approximately what percentage of the German-speaking population died in the Thirty Years' War?",
+    options: ["5-10%", "15-20%", "One-third to nearly one-half", "50-60%"],
+    correct: 2
+  },
+  {
+    question: "Which language became dominant in German courts after the Thirty Years' War?",
+    options: ["Italian", "Spanish", "Latin", "French"],
+    correct: 3
+  },
+  {
+    question: "What is unusual about the word 'Plündern' in the history of Germanic languages?",
+    options: ["It's the oldest Germanic word still in use", "It entered English from German (reverse direction)", "It was borrowed from Yiddish", "It has no etymological ancestors"],
+    correct: 1
+  },
+  {
+    question: "What does 'Elend' originally mean in Old High German?",
+    options: ["pain and suffering", "in another land / exile", "sorrow and loss", "to be alone"],
+    correct: 1
+  },
+  {
+    question: "According to the chapter, what saved the German language during the seventeenth century?",
+    options: ["German scholars writing to preserve it", "German princes supporting it officially", "Ordinary people refusing to stop speaking it", "Religious institutions protecting it"],
+    correct: 2
+  },
+  {
+    question: "How many of the nine German words in this chapter have Germanic roots?",
+    options: ["3", "5", "7", "9"],
+    correct: 2
+  },
+  {
+    question: "What trade route did 'Soldat' follow into German?",
+    options: ["From English to German", "From German to English", "From French via Italian and Spanish", "From Latin directly"],
+    correct: 2
+  },
+  {
+    question: "Which of these words relates to survival as a compound of 'über' (over/beyond)?",
+    options: ["Flucht", "Überleben", "Verwüstung", "Frieden"],
+    correct: 1
+  },
+  {
+    question: "When was the Peace of Westphalia signed, ending the Thirty Years' War?",
+    options: ["1638", "1648", "1658", "1668"],
+    correct: 1
+  }
+];
+
+let quizState = {
+  currentQuestion: 0,
+  score: 0,
+  attempts: 0,
+  guesses: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  completed: false
+};
+
+function renderQuiz() {
+  if (quizState.completed) {
+    const container = document.getElementById('quiz-questions');
+    container.innerHTML = `
+      <div class="quiz-complete">✓ Quiz Complete</div>
+      <div class="quiz-score">${quizState.score}/10 (${Math.round(quizState.score / 10 * 100)}%)</div>
+      <div class="quiz-gate-message" style="margin-top: 20px;">
+        ${quizState.score >= 8 ? "Excellent work. The story continues." : "Well done. You have earned passage."}
+      </div>
+      <button class="quiz-retry" onclick="location.reload()">Retry Quiz</button>
+    `;
+    return;
+  }
+
+  const q = quizData[quizState.currentQuestion];
+  const container = document.getElementById('quiz-questions');
+
+  let html = `
+    <div style="margin-bottom: 24px;">
+      <div style="font-size: 0.9rem; color: rgba(212, 202, 187, 0.5); margin-bottom: 8px;">Question ${quizState.currentQuestion + 1} of ${quizData.length}</div>
+      <div class="guess-section" style="border: none; background: transparent; padding: 0; margin: 0;">
+        <div class="prompt" style="text-align: left; font-size: 1.1rem;">${q.question}</div>
+        <div class="guess-options" style="flex-direction: column; align-items: stretch; margin-top: 20px;">
+  `;
+
+  q.options.forEach((option, idx) => {
+    html += `<button class="guess-btn" onclick="answerQuestion(${idx})" style="text-align: left;">${option}</button>`;
+  });
+
+  html += `
+        </div>
+        <div class="guess-counter">Attempts: ${quizState.guesses[quizState.currentQuestion]} / 2</div>
+        <div class="guess-feedback" id="qfeedback"></div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function answerQuestion(idx) {
+  const q = quizData[quizState.currentQuestion];
+  const feedback = document.getElementById('qfeedback');
+  const buttons = document.querySelectorAll('#quiz-questions .guess-btn');
+
+  if (quizState.guesses[quizState.currentQuestion] >= 2) return;
+  quizState.guesses[quizState.currentQuestion]++;
+
+  if (idx === q.correct) {
+    quizState.score++;
+    buttons[idx].classList.add('correct');
+    buttons.forEach((b, i) => { if (i !== idx) b.classList.add('incorrect'); });
+    feedback.textContent = '✓ Correct';
+    feedback.classList.add('show');
+
+    setTimeout(() => {
+      if (quizState.currentQuestion < quizData.length - 1) {
+        quizState.currentQuestion++;
+        renderQuiz();
+      } else {
+        quizState.completed = true;
+        if (quizState.score >= 8) {
+          document.getElementById('scene-quiz').classList.add('hidden');
+          document.getElementById('postQuiz').classList.add('visible');
+        } else {
+          renderQuiz();
+        }
+      }
+    }, 1200);
+  } else {
+    buttons[idx].classList.add('incorrect');
+    if (quizState.guesses[quizState.currentQuestion] < 2) {
+      feedback.textContent = 'Not quite — you have one more attempt.';
+    } else {
+      feedback.textContent = `The correct answer was: "${q.options[q.correct]}"`;
+      setTimeout(() => {
+        if (quizState.currentQuestion < quizData.length - 1) {
+          quizState.currentQuestion++;
+          renderQuiz();
+        } else {
+          quizState.completed = true;
+          renderQuiz();
+        }
+      }, 2000);
+    }
+    feedback.classList.add('show');
+  }
+}
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- INITIAL QUIZ RENDER ---
+renderQuiz();
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- MOBILE: performance ---
+if (window.innerWidth < 600) {
+  rainParticles = rainParticles.slice(0, Math.floor(rainParticles.length / 2));
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 17;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

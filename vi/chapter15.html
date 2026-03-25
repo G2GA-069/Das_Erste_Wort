@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 15</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: linear-gradient(to bottom, #2a1a0f 0%, #1a1410 40%, #e8dcc8 80%, #f5f0e6 100%);
+    background-attachment: fixed;
+  }
+
+  body {
+    background: linear-gradient(to bottom, #2a1a0f 0%, #1a1410 40%, #e8dcc8 80%, #f5f0e6 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- CANVAS BACKGROUND --- */
+  #canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1s forwards;
+    margin-bottom: 3em;
+  }
+
+  .chapter-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--fire);
+    margin-bottom: 1em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.3s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    font-size: 1.5rem;
+    opacity: 0.5;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* --- NARRATIVE --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    animation: sceneReveal 0.8s ease forwards;
+  }
+
+  .scene.visible {
+    animation: sceneReveal 0.8s ease forwards;
+  }
+
+  @keyframes sceneReveal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .scene-marker {
+    height: 40px;
+    margin-bottom: 40px;
+    background: linear-gradient(90deg, transparent 0%, rgba(232, 164, 74, 0.2) 50%, transparent 100%);
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .narrative {
+    margin-bottom: 1.3em;
+    text-align: justify;
+  }
+
+  .narrative em {
+    font-style: italic;
+    color: var(--fire);
+  }
+
+  .narrative strong {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.15rem;
+    color: var(--fire);
+    font-weight: 500;
+    margin: 1.5em 0;
+  }
+
+  .narrative.small {
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .german-word {
+    cursor: pointer;
+    color: var(--fire);
+    font-weight: 500;
+    border-bottom: 2px solid rgba(232, 164, 74, 0.3);
+    transition: all 0.3s ease;
+    padding: 2px 2px;
+  }
+
+  .german-word:hover {
+    border-bottom-color: var(--fire);
+    background: rgba(232, 164, 74, 0.08);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: var(--fire);
+  }
+
+  .ety-card {
+    background: rgba(20, 15, 10, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 12px;
+    padding: 28px 24px;
+    margin: 24px 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 24px;
+    margin: 24px 0;
+  }
+
+  .word-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .word-main {
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: var(--fire);
+    letter-spacing: 0.02em;
+  }
+
+  .word-pron {
+    font-size: 1rem;
+    color: rgba(232, 164, 74, 0.6);
+    font-style: italic;
+  }
+
+  .word-meaning {
+    font-size: 1.05rem;
+    color: var(--text-bright);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+
+  .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.3); color: #9b8ec4; }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.3); color: #8a9bae; }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.3); color: #e8a44a; }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.3); color: #c49a6c; }
+
+  .bridge-word {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-bright);
+    flex: 1;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.8);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.8;
+    margin-top: 12px;
+    padding: 12px 0;
+  }
+
+  /* --- GUESS SECTION --- */
+  .guess-section {
+    background: rgba(20, 15, 10, 0.7);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 12px;
+    padding: 32px 28px;
+    margin: 40px 0;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+
+  .guess-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .guess-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 14px 20px;
+    background: rgba(232, 164, 74, 0.1);
+    border: 2px solid rgba(232, 164, 74, 0.4);
+    color: var(--fire);
+    font-size: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+  }
+
+  .guess-btn:active {
+    transform: scale(0.95);
+  }
+
+  .guess-btn.correct {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: #f44336;
+    color: #f44336;
+    opacity: 0.6;
+  }
+
+  .guess-feedback {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.7);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .guess-feedback.show {
+    max-height: 100px;
+  }
+
+  /* --- CHAR DISPLAY --- */
+  .char-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    margin: 24px auto;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    max-width: 200px;
+  }
+
+  .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 500;
+    color: var(--vietnamese);
+  }
+
+  .pinyin {
+    font-size: 0.95rem;
+    color: rgba(196, 154, 108, 0.8);
+    font-style: italic;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    margin: 60px 0;
+    padding: 40px 0;
+  }
+
+  .word-collection h3 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-bright);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    padding: 20px 0;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    min-width: 100px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .cw-german {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--fire);
+  }
+
+  .cw-english {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.7);
+    font-style: italic;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(20, 15, 10, 0.6);
+    border-left: 4px solid rgba(232, 164, 74, 0.4);
+    padding: 24px 24px;
+    margin: 40px 0;
+    border-radius: 8px;
+    font-size: 0.98rem;
+    line-height: 1.8;
+  }
+
+  .aside-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .aside-box strong {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    color: var(--text-bright);
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+    margin: 80px 0;
+    border-top: 2px solid rgba(232, 164, 74, 0.2);
+    border-bottom: 2px solid rgba(232, 164, 74, 0.2);
+  }
+
+  .end-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.3), transparent);
+    margin: 40px 0;
+  }
+
+  .next-chapter {
+    font-size: 1.1rem;
+    color: var(--fire);
+    margin-top: 40px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  /* --- QUIZ CONTAINER --- */
+  .quiz-container {
+    background: rgba(20, 15, 10, 0.8);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-header h2 {
+    font-size: 1.8rem;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+
+  .quiz-header p {
+    color: rgba(212, 202, 187, 0.8);
+    font-size: 0.95rem;
+  }
+
+  .quiz-question {
+    margin-bottom: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .quiz-question:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .quiz-q-text {
+    font-size: 1.05rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    padding: 12px 16px;
+    background: rgba(232, 164, 74, 0.08);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.correct {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: #f44336;
+    color: #f44336;
+  }
+
+  .quiz-result {
+    text-align: center;
+    padding: 20px;
+    margin-top: 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+  }
+
+  .quiz-result.pass {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border: 1px solid #4caf50;
+  }
+
+  .quiz-result.fail {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+  }
+
+  .quiz-hidden {
+    opacity: 0;
+    pointer-events: none;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  /* --- SPEAK BUTTON --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+
+  .speak-btn:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: rgba(232, 164, 74, 0.5);
+  }
+
+  .speak-btn:active {
+    transform: scale(0.9);
+  }
+
+  .speak-btn.speaking {
+    background: rgba(232, 164, 74, 0.3);
+    border-color: #e8a44a;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn { padding: 12px 20px; font-size: 1.1rem; min-height: 44px; -webkit-tap-highlight-color: transparent; }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-header h2 { font-size: 1.5rem; }
+    .quiz-option { padding: 10px 12px; font-size: 0.95rem; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .quiz-question { padding: 16px; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE SCREEN ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Fifteen</div>
+    <h1>Die Bibel auf Deutsch</h1>
+    <div class="subtitle">The Bible in German</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE CASTLE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In May of 1521, a man sat in a castle tower and changed the German language forever.
+    </p>
+
+    <div style="margin:20px auto;max-width:640px;padding:16px 20px;background:rgba(155,142,196,0.05);border-left:3px solid rgba(155,142,196,0.3);border-radius:0 8px 8px 0;font-size:0.82rem;color:rgba(212,202,187,0.6);line-height:1.6;">
+      <span style="color:#9b8ec4;font-weight:600;">Historical Context:</span> In 1517, Martin Luther challenged the Catholic Church's authority by nailing his 95 Theses to the church door in Wittenberg. He translated the Bible from Latin into German so ordinary people could read it — this standardised the German language and split Christianity into Catholic and Protestant branches. Luther's translation became the foundation for all modern German.
+    </div>
+
+    <p class="narrative">
+      His name was Martin Luther. He had just been declared a heretic by the Pope. The Holy Roman Emperor wanted him dead. So Luther — tall, intense, burning with certainty — was smuggled away to Wartburg Castle, a fortress in the hills of Saxony where he could hide and write in safety.
+    </p>
+
+    <p class="narrative">
+      For eleven weeks, Luther did not leave that tower. He ate little. He slept less. His hands became cramped, his back bent. But his mind — his mind was on fire with a single, consuming purpose: to translate the New Testament from Greek and Latin into German.
+    </p>
+
+    <p class="narrative">
+      Not for scholars. Not for priests. Not for the Church.
+    </p>
+
+    <p class="narrative emphasis">
+      For the people.
+    </p>
+
+    <p class="narrative">
+      Luther had already translated a few pages. They had circulated in print — miraculous, dangerous print — and something extraordinary happened. People read them. Ordinary people. Merchants and bakers and mothers and children. They understood. For the first time, they could read God's word not through a priest's interpretation, but directly, in the language they spoke every day.
+    </p>
+
+    <p class="narrative">
+      The Church had kept the Bible in Latin for a thousand years. Latin was the language of authority, of mystery, of power. Only educated men could read it. Only priests could explain it. This was how the Church maintained control.
+    </p>
+
+    <p class="narrative">
+      Luther was going to demolish that control. Not with a sword. With a pen. With paper. With the printing press.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 2: THE PROBLEM ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But here was the difficulty: <em>there was no German language.</em>
+    </p>
+
+    <p class="narrative">
+      This sounds absurd. Of course there was German. Millions of people spoke it. But "German" was not a single language — it was a chaos of dialects. A Bavarian merchant could barely understand a Saxon miller. A merchant from Cologne would be lost in conversation with a vendor from Vienna. Every principality, every river valley, every territory had its own version of German — as different from each other as Spanish is from Portuguese.
+    </p>
+
+    <p class="narrative">
+      When you wrote in "German," which German did you write in? Whose German? The answer was that you couldn't write in German at all. You wrote in Latin if you wanted to be understood. Or you wrote in your local dialect and accepted that only locals would read you.
+    </p>
+
+    <p class="narrative">
+      So when Luther set out to translate the Bible, he faced an impossible task: he had to create a German that didn't exist. He had to invent not a few words, but an entire <em>standard</em> — a version of German that people from Munich to Hamburg, from the Rhine to the Danube, would recognize and understand.
+    </p>
+
+    <p class="narrative">
+      Luther called his creation <span class="german-word">Kanzleideutsch</span> — "Chancery German" — the German used in royal courts and official documents. But he didn't just use existing court language. He <em>created</em> it by drawing from many dialects, finding the words that seemed most universal, the syntax that felt most natural when spoken aloud.
+    </p>
+
+    <p class="narrative">
+      He was not trying to write like Cicero. He was trying to write like a mother talking to her children.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 3: THE PRINCIPLE ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Years later, Luther wrote a letter explaining his method. He described how he would stand in the marketplace and listen to how people actually spoke:
+    </p>
+
+    <p class="narrative emphasis">
+      "Man muss die Mutter im Hause, die Kinder auf der Gassen, den gemeinen Mann auf dem Markt drum fragen" — You must ask the mother in the house, the children in the streets, the common man at the market how they speak.
+    </p>
+
+    <p class="narrative">
+      This was revolutionary. In an age when Latin scholars wrote in elaborate, tortured sentences that required a lifetime of education to parse, Luther said: write as people speak. Use the word order that feels natural. Use the sentences that mothers use when teaching their children. Write for the ear, not the page.
+    </p>
+
+    <p class="narrative">
+      This principle — write as people speak — didn't just create a Bible translation. It created modern German itself. Before Luther, there was no "German language." There was Latin. There were dialects. After Luther, there was <span class="german-word" data-card="deutsch">Deutsch</span> — a unified language that a peasant from Saxony could read and recognize as his own, even if the words weren't exactly as he would speak them.
+    </p>
+
+    <p class="narrative">
+      The printing press distributed his translation everywhere. Sixty thousand copies sold in the first year alone. In a world without mass communication, sixty thousand copies was like millions today. Suddenly, all across German-speaking lands, people were reading the same words. They were learning the same German. Local dialects began to converge toward Luther's standard.
+    </p>
+
+    <p class="narrative">
+      Within decades, Luther's German — the German he had invented in a tower room — had become <em>the</em> German. Not the only German, but the one that everyone understood. The one that united a language.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 4: THE WORDS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But Luther did something more than standardize an existing language. He created new words. He invented phrases that are still used, in German, today — five hundred years later.
+    </p>
+
+    <p class="narrative">
+      Consider the word <span class="german-word" data-card="glaube">Glaube</span> — "faith" or "belief." It's an old word, tracing back to Proto-Germanic *geleubiz (something trusted, something believed). But when Luther wrote "sola fide" — "by faith alone" — he revived and elevated Glaube into something new. It became the central concept of Protestant theology. A word that had been ordinary became <em>sacred</em>. Today, when a German speaker says "Glaube," they're speaking Luther's theology through the shape of a single word.
+    </p>
+
+    <p class="narrative">
+      Or consider <span class="german-word" data-card="gewissen">Gewissen</span> — "conscience." It comes from the Proto-Germanic *witaną (to know) with the prefix *ga- (collective), so it literally means "collective knowing" — what you know within yourself. When Luther stood at the Diet of Worms and declared "Here I stand, I can do no other" — he was invoking Gewissen. He was saying: conscience is the highest authority. Not the Pope. Not the Emperor. What you know in your collective inner knowing.
+    </p>
+
+    <p class="narrative">
+      That principle — that your conscience is sacred — is embedded in the word itself. Every time a German speaker says Gewissen, they're hearing the echo of Luther's defiance.
+    </p>
+
+    <p class="narrative">
+      But Luther didn't just elevate old words. He created entirely new ones. He invented <em>Machtwort</em> (word of authority) — Macht (power) + Wort (word). He invented <em>Lückenbüßer</em> (stopgap) — Lücke (gap) + Büßer (one who fills). He invented <em>Bluthund</em> (bloodhound) — Blut (blood) + Hund (dog). He invented <em>Feuertaufe</em> (baptism by fire) — Feuer (fire) + Taufe (baptism).
+    </p>
+
+    <p class="narrative">
+      And perhaps most famously, he coined the phrase <em>Perlen vor die Säue werfen</em> — "cast pearls before swine" — which German speakers still use today to mean: don't waste your wisdom on people who won't appreciate it.
+    </p>
+
+    <p class="narrative">
+      Hundreds of these phrases were created by Luther. And the remarkable thing is that they didn't disappear. They entered the language. They became part of how Germans think and speak. When a German says "Feuertaufe," they're speaking with Luther's pen.
+    </p>
+  </div>
+
+  <!-- ==================== GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        Luther believed the Bible should be read by everyone, not just priests. From the Old High German <em>diutisc</em> (meaning "of the people," not Latin), the language itself became a statement.<br><br>
+        What do you think <strong style="color: var(--german);">Deutsch</strong> originally meant?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: it's about who speaks it.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">educated</button>
+        <button class="guess-btn" onclick="guess(this, true)">of the people</button>
+        <button class="guess-btn" onclick="guess(this, false)">Eastern</button>
+        <button class="guess-btn" onclick="guess(this, false)">divine</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 5: INTRODUCING THE TEN WORDS ==================== -->
+  <div class="scene" id="scene5-intro">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But Luther's influence extended far beyond these four words. His translation elevated ten key concepts that would reshape not just German, but European thought itself. Consider <span class="german-word" data-card="bibel">Bibel</span> — the book itself, no longer a sacred object locked in Latin, but a tangible thing you could hold, read, and own in your own language.
+    </p>
+
+    <p class="narrative">
+      Or take <span class="german-word" data-card="wahrheit">Wahrheit</span> — truth. For Luther, this was not an abstract theological principle handed down from Rome. It was what you could verify yourself, what you could read directly from the text. Truth became democratic.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-card="freiheit">Freiheit</span> — freedom. Not merely spiritual freedom, but the freedom to read, to think, to access the sacred without a priest as intermediary. This was revolutionary language.
+    </p>
+
+    <p class="narrative">
+      Luther also elevated <span class="german-word" data-card="volk">Volk</span> — the people — to the center of his vision. His entire project was about the Volk, for the Volk. And he did this through <span class="german-word" data-card="sprache">Sprache</span> — the living language of the people, not the dead Latin of scholars.
+    </p>
+
+    <p class="narrative">
+      The acts of <span class="german-word" data-card="lesen">Lesen</span> (reading) and understanding each <span class="german-word" data-card="buchstabe">Buchstabe</span> (letter) became sacred acts. Every mark on the page mattered. Every word had weight.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 6: THE WORDS THEMSELVES ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let us look at the ten words that Luther's translation brought into focus — words that carry the weight of the Reformation itself.
+    </p>
+
+    <!-- DEUTSCH etymology card -->
+    <div class="ety-card" id="card-deutsch">
+      <div class="word-header">
+        <span class="word-main">Deutsch</span>
+        <span class="word-pron">/dɔɪtʃ/</span>
+      </div>
+      <div class="word-meaning">German — the language of the people, not the Church</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*tewtā</span>
+        <span class="bridge-note">— people, nation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">diutisc</span>
+        <span class="bridge-note">— of the people, vernacular (not Latin)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">Dutch, Theodoric</span>
+        <span class="bridge-note">— from Old Saxon *theod (people, nation)</span>
+      </div>
+      <div class="ety-card .story">
+        For centuries, Deutsch meant "not-Latin." It meant the language spoken by common folk in their homes, not the language of the Church, the law, the elite. When Luther chose to translate the Bible into Deutsch, he was making a political statement: the sacred can be spoken in the language of the people.
+      </div>
+    </div>
+
+    <!-- BIBEL etymology card -->
+    <div class="ety-card" id="card-bibel">
+      <div class="word-header">
+        <span class="word-main">Bibel</span>
+        <span class="word-pron">/ˈbiːbəl/</span>
+      </div>
+      <div class="word-meaning">Bible — the Book, from Greek "biblion"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*bʰeh₂- (to grow)</span>
+        <span class="bridge-note">— the root of "book" itself</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Bibel</span>
+        <span class="bridge-note">— from Greek biblion via Latin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">Bible</span>
+        <span class="bridge-note">— same Greek root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Kinh Thánh</span>
+        <span class="bridge-note">— sacred Scripture (Kinh = scripture/classic, Thánh = sacred/holy)</span>
+      </div>
+      <div class="ety-card .story">
+        In Greek, biblion simply meant "book" — a small, written document. When Christians called their sacred collection of texts "biblia" (the Books), they were using a humble, everyday word. The sacred is contained in a common thing. Luther's decision to print the Bible in the language of bakers and mothers made the sacred even more common — and more powerful for that reason.
+      </div>
+    </div>
+
+    <!-- GLAUBE etymology card -->
+    <div class="ety-card" id="card-glaube">
+      <div class="word-header">
+        <span class="word-main">Glaube</span>
+        <span class="word-pron">/ˈɡlaʊbə/</span>
+      </div>
+      <div class="word-meaning">faith — belief in something unseen</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*leubʰ-</span>
+        <span class="bridge-note">— to love, to trust, to believe</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">geleubiz (Old High German)</span>
+        <span class="bridge-note">— something trusted or believed</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">believe, beloved</span>
+        <span class="bridge-note">— from the same Proto-Germanic root</span>
+      </div>
+      <div class="ety-card .story">
+        Luther's theology hinged on one revolutionary concept: <em>Sola fide</em> — by faith alone. Not works. Not the Church's authority. Faith. When he chose to write about faith in German — in Glaube — he was placing the believer's inner experience at the center of religion. No priest needed. No Latin needed. Just you and your Glaube — your trust in God.
+      </div>
+    </div>
+
+    <!-- WAHRHEIT etymology card -->
+    <div class="ety-card" id="card-wahrheit">
+      <div class="word-header">
+        <span class="word-main">Wahrheit</span>
+        <span class="word-pron">/ˈvaːɐ̯haɪt/</span>
+      </div>
+      <div class="word-meaning">truth — the state of being true</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wer- (to trust, believe)</span>
+        <span class="bridge-note">— truth comes from what you can trust</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wahr (true) + -heit (state/condition)</span>
+        <span class="bridge-note">— the state of being true</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">aware, beware</span>
+        <span class="bridge-note">— from the same root (being aware of truth)</span>
+      </div>
+      <div class="ety-card .story">
+        For Luther, <em>Wahrheit</em> — truth — was what mattered. The truth of Scripture, read directly, without a priest's interpretation standing between you and the page. In making Wahrheit the foundation of his theology, Luther made it a weapon against the Church's authority. Truth, he said, is not what Rome tells you to believe. Truth is what you read with your own eyes.
+      </div>
+    </div>
+
+    <!-- FREIHEIT etymology card -->
+    <div class="ety-card" id="card-freiheit">
+      <div class="word-header">
+        <span class="word-main">Freiheit</span>
+        <span class="word-pron">/ˈfraɪhaɪt/</span>
+      </div>
+      <div class="word-meaning">freedom — the condition of being free</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*preyh₂-</span>
+        <span class="bridge-note">— to spare, to let go, to free</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">frei (free) + -heit (state/condition)</span>
+        <span class="bridge-note">— the state of being free</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">free, friend</span>
+        <span class="bridge-note">— from the same Indo-European root</span>
+      </div>
+      <div class="ety-card .story">
+        Luther wrote a famous essay: "On the Freedom of a Christian." In it, he argued that faith alone grants freedom — freedom from works, from the Church's authority, from fear. When Freiheit appears in Luther's writing, it carries the weight of spiritual liberation. The word itself became inseparable from the Reformation's promise: you are free.
+      </div>
+    </div>
+
+    <!-- GEWISSEN etymology card -->
+    <div class="ety-card" id="card-gewissen">
+      <div class="word-header">
+        <span class="word-main">Gewissen</span>
+        <span class="word-pron">/ɡəˈvɪsən/</span>
+      </div>
+      <div class="word-meaning">conscience — what you know within yourself</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wid-</span>
+        <span class="bridge-note">— to see, to know</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">ge- (collective) + wissen (to know)</span>
+        <span class="bridge-note">— collective knowing, inner knowledge</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wit, wisdom, knowledge</span>
+        <span class="bridge-note">— from the same root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Lương tâm</span>
+        <span class="bridge-note">— good + heart (conscience as moral heart; Sino-Vietnamese: lương = good, tâm = heart)</span>
+      </div>
+      <div class="ety-card .story">
+        At the Diet of Worms in 1521, when Luther refused to recant, he said: "My conscience is captive to the Word of God." Here I stand, I can do no other. Gewissen — conscience — became the highest authority. Not the Pope. Not tradition. What you know in your heart. The word became inseparable from Luther's defiance.
+      </div>
+    </div>
+
+    <!-- VOLK etymology card -->
+    <div class="ety-card" id="card-volk">
+      <div class="word-header">
+        <span class="word-main">Volk</span>
+        <span class="word-pron">/fɔlk/</span>
+      </div>
+      <div class="word-meaning">people — the folk, the nation</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*plek-</span>
+        <span class="bridge-note">— to fold, to multiply, to spread out</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Volk (Old Saxon)</span>
+        <span class="bridge-note">— the common people, the multitude</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">folk, folk tale, folklore</span>
+        <span class="bridge-note">— from the same root</span>
+      </div>
+      <div class="ety-card .story">
+        Luther's entire project was framed around the Volk — the people. He didn't translate for scholars. He translated for the Volk. His principle was: write as the Volk speaks. Listen to mothers and children and merchants. The Bible is for the Volk. In elevating the Volk to the center of religion, Luther gave them the power that the Church had hoarded for a thousand years.
+      </div>
+    </div>
+
+    <!-- SPRACHE etymology card -->
+    <div class="ety-card" id="card-sprache">
+      <div class="word-header">
+        <span class="word-main">Sprache</span>
+        <span class="word-pron">/ˈʃpraːχə/</span>
+      </div>
+      <div class="word-meaning">language — speech, the power to speak</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*spregʰ-</span>
+        <span class="bridge-note">— to spread, to speak, to jump</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">sprechen (to speak)</span>
+        <span class="bridge-note">— from the Proto-Germanic root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">speech, spread</span>
+        <span class="bridge-note">— from the same root</span>
+      </div>
+      <div class="ety-card .story">
+        Luther elevated Sprache — everyday spoken language — to the level of sacred writing. For a thousand years, the Church had insisted that Latin was the language of God. Luther said no: Sprache — the language people actually speak — is good enough for God. This act of linguistic democracy would reshape not just German, but European civilization.
+      </div>
+    </div>
+
+    <!-- LESEN etymology card -->
+    <div class="ety-card" id="card-lesen">
+      <div class="word-header">
+        <span class="word-main">Lesen</span>
+        <span class="word-pron">/ˈleːzən/</span>
+      </div>
+      <div class="word-meaning">to read — to gather meaning from marks on a page</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*leg-</span>
+        <span class="bridge-note">— to gather, to collect, to pick</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">lesen (Old High German)</span>
+        <span class="bridge-note">— to gather, to collect, to read</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">to glean, to gather</span>
+        <span class="bridge-note">— from the same root</span>
+      </div>
+      <div class="ety-card .story">
+        When you lesen — when you read — you are gathering. The Latin root for reading is <em>legere</em> (to choose, to pick), and the Germanic root means the same: to gather, to collect. Reading is an act of gathering meaning from scattered marks. Luther's printed Bible was scattered across the German lands, and millions began to gather its meaning. The act of reading became an act of personal power.
+      </div>
+    </div>
+
+    <!-- BUCHSTABE etymology card -->
+    <div class="ety-card" id="card-buchstabe">
+      <div class="word-header">
+        <span class="word-main">Buchstabe</span>
+        <span class="word-pron">/ˈbuːxʃtaːbə/</span>
+      </div>
+      <div class="word-meaning">letter, character — literally "beech-stick"</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*bʰeh₂g-</span>
+        <span class="bridge-note">— beech tree (where runes were carved)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Buch (beech) + Stab (stick/staff)</span>
+        <span class="bridge-note">— ancient Germanic runes carved on beech wood</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">beech, book</span>
+        <span class="bridge-note">— both from the tree that provided writing material</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Chữ viết</span>
+        <span class="bridge-note">— character writing (chữ = letter/character, viết = to write; Sino-Vietnamese legacy)</span>
+      </div>
+      <div class="ety-card .story">
+        A Buchstabe is literally a "beech-stick" — a reminder that German writing itself was born from carving runes on wood. Every time Luther writes a Buchstabe on paper, he is echoing the ancient Germanic practice of marking truth on wood. The word itself is a fossil of pagan Germanic culture, now carrying Christian meaning.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        Luther invented hundreds of new German words and phrases. One of his most famous creations was about offering something precious to someone who won't value it.<br><br>
+        Which phrase did Luther coin?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(All of these sound like things Luther might have said.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">Den Teufel reiten</button>
+        <button class="guess-btn" onclick="guess(this, true)">Perlen vor die Säue werfen</button>
+        <button class="guess-btn" onclick="guess(this, false)">Gott im Munde tragen</button>
+        <button class="guess-btn" onclick="guess(this, false)">Die Seele retten</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 6: THE IMPACT ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Luther's Bible was published on September 21, 1522. The first edition sold out in three months. Reprints were rushed. Within a year, sixty thousand copies had circulated — a number that seems small until you realize that the entire population of German-speaking territories was perhaps five million people. This was a bestseller of unprecedented scale.
+    </p>
+
+    <p class="narrative">
+      And something remarkable began to happen. The German language itself started to standardize. Local dialects didn't disappear, but they began to converge toward Luther's standard. Children learned to read from Luther's Bible. They absorbed his word choices, his syntax, his way of putting things. Printers in different cities used Luther's translation as a template, reprinting it with only minor variations.
+    </p>
+
+    <p class="narrative">
+      Within fifty years, there was such a thing as "German" — a unified language that a speaker from any German territory could recognize and understand. Before Luther, this didn't exist. <em>He created it.</em>
+    </p>
+
+    <p class="narrative">
+      And he did this not by decree, not by royal authority, not by the Church's power. He did it through words. Through the printing press. Through the simple act of making the sacred text available in the language of ordinary people.
+    </p>
+
+    <p class="narrative">
+      This is the most consequential linguistic act in German history. More important than Charlemagne's court, more influential than any grammarian or scholar. One man, in hiding, with a pen and paper, created the language that millions would speak for centuries to come.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 7: VIETNAMESE BRIDGE ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The same revolution that Luther sparked in German echoed across the world. When missionaries brought Christianity to Vietnam, translators faced the same challenge: how to express sacred concepts in the vernacular language?
+    </p>
+
+    <p class="narrative">
+      Vietnamese translators created new words. For "Bible," they used <strong style="color: var(--vietnamese);">Kinh Thánh</strong> — literally "sacred scripture" — combining the classical Vietnamese words for sacred and scripture. Just as "<span class="german-word" data-card="bibel">Bibel</span>" means "the Book," Kinh Thánh means "the Sacred Scripture." Different languages, separated by thousands of miles and centuries of history, but naming the same sacred object by its sacred status.
+    </p>
+
+    <p class="narrative">
+      When Vietnamese speakers needed a word for "conscience," they naturally turned to <strong style="color: var(--vietnamese);">lương tâm</strong> — literally "good heart," combining the words for "good" (lương) and "heart" (tâm). The German Gewissen (collective knowing) locates conscience in the intellect, in what you know. Vietnamese lương tâm locates it in the heart, in what you feel. Two languages, two worldviews, but speaking to the same human capacity: the ability to know what is right, whether through mind or heart.
+    </p>
+
+    <p class="narrative">
+      This is why you study languages. Not to master grammar. Not to pass exams. But to see how different peoples have solved the same problem: <em>How do we hold the sacred in words?</em>
+    </p>
+  </div>
+
+  <!-- ==================== GUESS 3 ==================== -->
+  <div class="scene" id="scene-guess3">
+    <div class="guess-section">
+      <div class="prompt">
+        Luther's principle was revolutionary: write as people speak. He would listen to ordinary people — mothers, children, merchants — to understand natural speech patterns.<br><br>
+        This approach meant Luther prioritized which of these?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Think about what matters more than eloquence.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">Scholarly precision</button>
+        <button class="guess-btn" onclick="guess(this, true)">Natural, spoken word order</button>
+        <button class="guess-btn" onclick="guess(this, false)">Latin grammar rules</button>
+        <button class="guess-btn" onclick="guess(this, false)">Poetic beauty</button>
+      </div>
+      <div class="guess-feedback" id="feedback3"></div>
+    </div>
+  </div>
+
+  <!-- ==================== ASIDE BOXES ==================== -->
+  <div class="scene" id="scene-aside">
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">"Here I Stand" — The Diet of Worms, 1521</div>
+      On April 18, 1521, Martin Luther stood before the Holy Roman Emperor and the Pope's representatives. They demanded he recant his writings. Luther refused. He said: "My conscience is captive to the Word of God. I cannot and will not recant. Here I stand, I can do no other."
+      <br><br>
+      This moment — when a single man stood against the Church and Emperor — was the moment Gewissen (conscience) became central to Western thought. Luther was saying: your conscience is the highest authority. Not tradition. Not power. What you know in your heart.
+      <br><br>
+      Thirty years later, this principle would reach 60,000 German speakers through his printed Bible. The revolution was not fought with swords. It was fought with words.
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Luther's Invented Phrases — Still Used Today</div>
+      <strong style="color: var(--text-bright);">Lückenbüßer</strong> — a stopgap solution (literally: one who fills gaps)<br>
+      <strong style="color: var(--text-bright);">Machtwort</strong> — a word of authority (literally: word of power)<br>
+      <strong style="color: var(--text-bright);">Bluthund</strong> — a bloodhound, a cruel pursuer (literally: blood-dog)<br>
+      <strong style="color: var(--text-bright);">Feuertaufe</strong> — a baptism by fire, a traumatic first experience (literally: fire-baptism)<br>
+      <strong style="color: var(--text-bright);">Perlen vor die Säue werfen</strong> — to cast pearls before swine, to waste wisdom on the unappreciative<br>
+      <br>
+      All of these were created by Luther. None of them existed before him. Yet a German speaker today — five hundred years later — will recognize and use them without thinking. Luther's pen shaped the German language at such a fundamental level that his inventions became invisible. They are simply how German people speak.
+    </div>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">-heit suffix = English -hood/-ness</strong> — Wahrheit/truth-ness, Freiheit/free-ness, Gewissen-heit/conscience-ness (state of being)<br><br>
+    <strong style="color: var(--text-bright);">-heit always feminizes</strong> — der Mensch (man, masc.), die Menschheit (humanity, fem.)<br><br>
+    <strong style="color: var(--text-bright);">German compound words = Germanic invention</strong> — Bluthund, Feuertaufe, Buchstabe (beech-stick) — English has lost this power<br><br>
+    <strong style="color: var(--text-bright);">Luther's principle: write as people speak</strong> — This created modern German syntax, not Latin syntax<br><br>
+    <strong style="color: var(--text-bright);">Sacred + vernacular = revolution</strong> — Latin kept power. German democratized it.
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Fifteen</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Deutsch</span><span class="cw-english">German (language)</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Bibel</span><span class="cw-english">Bible</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Glaube</span><span class="cw-english">faith</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Wahrheit</span><span class="cw-english">truth</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Freiheit</span><span class="cw-english">freedom</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Gewissen</span><span class="cw-english">conscience</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Volk</span><span class="cw-english">people</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Sprache</span><span class="cw-english">language</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Lesen</span><span class="cw-english">to read</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Buchstabe</span><span class="cw-english">letter/character</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== CONCEPTS LEARNED IN CHAPTER 15 ==================== -->
+    <div class="word-collection" style="margin-top: 48px;">
+      <h3>Concepts Learned in Chapter Fifteen</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Luther's Standard</span><span class="cw-english">one Bible dialect became all of Germany's language</span></div>
+        <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Abstract Vocabulary</span><span class="cw-english">Wahrheit, Freiheit, Gewissen — ideas in words</span></div>
+        <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Suffix Power: -heit/-keit</span><span class="cw-english">Wahr→Wahrheit, Frei→Freiheit</span></div>
+        <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Language Democratisation</span><span class="cw-english">print + translation = literacy for all</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <h2>Chapter 15 Quiz — 80% Required</h2>
+        <p>Luther changed German forever. Let's see what you've learned.</p>
+      </div>
+
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>1.</strong> Luther translated the Bible into German while hiding in what location?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Rome</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Wartburg Castle</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Wittenberg Cathedral</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">The Vatican Library</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>2.</strong> Before Luther, the main obstacle to translating the Bible into German was that:</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">There was no single unified German language</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">German was considered barbaric by the Church</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">The printing press didn't exist yet</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">German speakers didn't want to read</button>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>3.</strong> Luther's famous principle was to ask which people how they spoke?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Scholars and monks</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Mothers, children, and merchants</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Kings and nobles</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Priests and bishops</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>4.</strong> What does Buchstabe literally mean?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Beech-stick</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Written mark</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Book-sound</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Holy letter</button>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>5.</strong> Luther's theology centered on the principle of "Sola fide" — by _____ alone.</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">faith</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">works</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">grace</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Scripture</button>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>6.</strong> How many copies of Luther's Bible sold in the first year?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Five thousand</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Sixty thousand</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Six hundred thousand</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Six million</button>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>7.</strong> At the Diet of Worms, Luther invoked what German word when he refused to recant?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Mut (courage)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Gewissen (conscience)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Kraft (strength)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Ehre (honor)</button>
+        </div>
+      </div>
+
+      <!-- Q8 - Review Ch1 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>8.</strong> [Review] What is the oldest human word that appears in nearly every language?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Mutter / mother</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Vater / father</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Wasser / water</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Feuer / fire</button>
+        </div>
+      </div>
+
+      <!-- Q9 - Review Ch14 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>9.</strong> [Review] The printing press was invented by _____ in _____ CE.</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Johann Schmidt, 1440</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">Johannes Gutenberg, 1440</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Martin Luther, 1521</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Hans Burgkmair, 1500</button>
+        </div>
+      </div>
+
+      <!-- Q10 - Review Ch6 -->
+      <div class="quiz-question">
+        <div class="quiz-q-text"><strong>10.</strong> [Review] What does Volk mean, and what ancient word root do we encounter in it?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Realm (kingdom) — from Proto-Germanic *rikiz</button>
+          <button class="quiz-option" onclick="checkAnswer(this, true)">People (folk) — from PIE *plek- (to multiply)</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Land (territory) — from Proto-Germanic *landaz</button>
+          <button class="quiz-option" onclick="checkAnswer(this, false)">Nation (state) — from Latin natio</button>
+        </div>
+      </div>
+
+      <div class="quiz-result" id="quizResult"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">150 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(17%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:17%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Deutsch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">German</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bibel</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Bible</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Glaube</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">faith</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wahrheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">truth</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Freiheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">freedom</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gewissen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">conscience</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Volk</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">people</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sprache</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">language</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Lesen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">to read</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Buchstabe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">letter</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–14</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~140 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">33 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(22%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:22%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">-heit = -hood/-ness</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Wahrheit, Freiheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">-heit feminizes</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">der Mensch → die Menschheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Compound words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Bluthund, Feuertaufe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Luther's principle</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">write as people speak</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sacred + vernacular</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Latin kept power, German democratized</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">15</td></tr>
+        <tr><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);font-style:italic;">Chapters 1–14</td><td style="padding:5px 10px;color:rgba(212,202,187,0.5);border-bottom:1px solid rgba(212,202,187,0.04);">~37 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.35);border-bottom:1px solid rgba(212,202,187,0.04);"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== WORD COLLECTION POST-QUIZ (Hidden until 80%) ==================== -->
+  <div class="scene quiz-hidden" id="scene-post-collection">
+    <div class="word-collection">
+      <h3>All Words Collected — Chapters 1 to 15</h3>
+      <p style="text-align: center; color: rgba(212, 202, 187, 0.8); margin-bottom: 24px; font-size: 0.95rem;">149 words across 34 patterns, 15% of the German language unlocked</p>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Mutter</span><span class="cw-english">mother</span></div>
+        <div class="collected-word" data-delay="50"><span class="cw-german">Feuer</span><span class="cw-english">fire</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Wasser</span><span class="cw-english">water</span></div>
+        <div class="collected-word" data-delay="150"><span class="cw-german">Nacht</span><span class="cw-english">night</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Stern</span><span class="cw-english">star</span></div>
+        <div class="collected-word" data-delay="250"><span class="cw-german">Vater</span><span class="cw-english">father</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Bruder</span><span class="cw-english">brother</span></div>
+        <div class="collected-word" data-delay="350"><span class="cw-german">Schwester</span><span class="cw-english">sister</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Name</span><span class="cw-english">name</span></div>
+        <div class="collected-word" data-delay="450"><span class="cw-german">Deutsch</span><span class="cw-english">German</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Bibel</span><span class="cw-english">Bible</span></div>
+        <div class="collected-word" data-delay="550"><span class="cw-german">Glaube</span><span class="cw-english">faith</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Wahrheit</span><span class="cw-english">truth</span></div>
+        <div class="collected-word" data-delay="650"><span class="cw-german">Freiheit</span><span class="cw-english">freedom</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Gewissen</span><span class="cw-english">conscience</span></div>
+        <div class="collected-word" data-delay="750"><span class="cw-german">Volk</span><span class="cw-english">people</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Sprache</span><span class="cw-english">language</span></div>
+        <div class="collected-word" data-delay="850"><span class="cw-german">Lesen</span><span class="cw-english">to read</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Buchstabe</span><span class="cw-english">letter</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Fifteen
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        One man. One tower. Eleven weeks. Sixty thousand copies.<br>
+        Luther created modern German not with force, but with words.<br>
+        The printing press distributed them everywhere.<br>
+        A language was born. A people found their voice.
+      </p>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter14.html" class="nav-btn">← Chapter 14</a>
+    <a href="chapter16.html" class="nav-btn next">Chapter 16 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- QUIZ DATA ---
+const quizData = [
+  {
+    question: "Luther translated the Bible into German while hiding in what location?",
+    options: ["Rome", "Wartburg Castle", "Wittenberg Cathedral", "The Vatican Library"],
+    correct: 1,
+    explanation: "After his excommunication at the Diet of Worms (1521), Luther was protected by Elector Frederick and hidden in Wartburg Castle. In this fortress, he translated the New Testament in just 11 weeks—a revolutionary act that brought sacred scripture into the vernacular."
+  },
+  {
+    question: "Before Luther, the main obstacle to translating the Bible into German was that:",
+    options: ["There was no single unified German language", "German was considered barbaric by the Church", "The printing press didn't exist yet", "German speakers didn't want to read"],
+    correct: 0,
+    explanation: "German existed in hundreds of regional dialects with no standard form. Luther didn't just translate—he created a unified written German by blending Upper Saxon (his dialect) with common elements from other regions, establishing what became modern standard German."
+  },
+  {
+    question: "Luther's famous principle was to ask which people how they spoke?",
+    options: ["Scholars and monks", "Mothers, children, and merchants", "Kings and nobles", "Priests and bishops"],
+    correct: 1,
+    explanation: "Luther believed the German language should reflect how common people actually spoke: mothers, children, and merchants in the marketplace. This democratic approach to translation revolutionized how languages were standardized—not by scholars, but by the living speech of ordinary people."
+  },
+  {
+    question: "What does Buchstabe literally mean?",
+    options: ["Beech-stick", "Written mark", "Book-sound", "Holy letter"],
+    correct: 0,
+    explanation: "Buchstabe comes from Buche (beech tree) and Stab (stick). Before paper, ancient Germanic people wrote runes on wooden sticks (often beech). The word preserves this memory—a letter is literally a 'beech-stick,' showing how early Germanic writing was done."
+  },
+  {
+    question: "Luther's theology centered on the principle of \"Sola fide\" — by _____ alone.",
+    options: ["faith", "works", "grace", "Scripture"],
+    correct: 0,
+    explanation: "Sola fide means 'faith alone.' Luther believed salvation came through faith in Christ, not through works or the Church's mediation. This theological principle drove his translation work—every believer needed direct access to Scripture in their native language to read God's word."
+  },
+  {
+    question: "How many copies of Luther's Bible sold in the first year?",
+    options: ["Five thousand", "Sixty thousand", "Six hundred thousand", "Six million"],
+    correct: 1,
+    explanation: "Sixty thousand copies sold in the first year alone—an astronomical number for the 16th century. This explosion of Bible ownership democratized literacy and made German the language of spiritual authority. The printing press and vernacular translation created an unstoppable force."
+  },
+  {
+    question: "At the Diet of Worms, Luther invoked what German word when he refused to recant?",
+    options: ["Mut (courage)", "Gewissen (conscience)", "Kraft (strength)", "Ehre (honor)"],
+    correct: 1,
+    explanation: "Luther reportedly said 'Here I stand, I can do no other, so help me God.' He invoked his Gewissen (conscience) as the authority over Church doctrine. This German word captures the Protestant principle that individual conscience—not institutional authority—is sovereign."
+  },
+  {
+    question: "[Review] What is the oldest human word that appears in nearly every language?",
+    options: ["Mutter / mother", "Vater / father", "Wasser / water", "Feuer / fire"],
+    correct: 0,
+    explanation: "Mutter (mother) is among the most ancient kinship terms. The m-sound for mother appears in PIE *meh₂ter and echoes in nearly every human language: Latin mater, Greek meter, German Mutter. This shows how the concept of motherhood is so fundamental it created linguistic universals."
+  },
+  {
+    question: "[Review] The printing press was invented by _____ in _____ CE.",
+    options: ["Johann Schmidt, 1440", "Johannes Gutenberg, 1440", "Martin Luther, 1521", "Hans Burgkmair, 1500"],
+    correct: 1,
+    explanation: "Johannes Gutenberg invented the moveable type printing press around 1440 in Mainz, Germany. This technology made mass production of Luther's Bible possible just 77 years later. Together, printing and vernacular translation created the modern world."
+  },
+  {
+    question: "[Review] What does Volk mean, and what ancient word root do we encounter in it?",
+    options: ["Realm (kingdom) — from Proto-Germanic *rikiz", "People (folk) — from PIE *plek- (to multiply)", "Land (territory) — from Proto-Germanic *landaz", "Nation (state) — from Latin natio"],
+    correct: 1,
+    explanation: "Volk (people) comes from PIE *plek- (to multiply or fold together). The root appears in 'folk,' 'flock,' and 'multiplex.' Luther's work democratized language for the Volk—the common folk. This word embodies the idea that language belongs to the multiplied masses, not elites."
+  }
+];
+
+// --- CANVAS BACKGROUND ---
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let pages = [];
+let gears = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+// --- FALLING PAGES ANIMATION ---
+function createPages() {
+  pages = [];
+  const count = window.innerWidth < 600 ? 8 : 15;
+  for (let i = 0; i < count; i++) {
+    pages.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      width: 40 + Math.random() * 40,
+      height: 60 + Math.random() * 60,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: 0.2 + Math.random() * 0.3,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.05,
+      opacity: Math.random() * 0.15 + 0.05
+    });
+  }
+}
+
+// --- INK PARTICLES ---
+function createInkBurst(x, y) {
+  for (let i = 0; i < 8; i++) {
+    particles.push({
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 3,
+      vy: (Math.random() - 0.5) * 3,
+      r: Math.random() * 2 + 1,
+      life: 1,
+      maxLife: 1
+    });
+  }
+}
+
+// --- ROTATING GEARS ---
+function createGears() {
+  gears = [];
+  const centerX = canvas.width / 2;
+  const bottomY = canvas.height * 0.85;
+  for (let i = 0; i < 3; i++) {
+    gears.push({
+      x: centerX - 200 + i * 200,
+      y: bottomY,
+      radius: 40 + i * 15,
+      rotation: 0,
+      rotationSpeed: (0.005 + Math.random() * 0.005) * (i % 2 === 0 ? 1 : -1),
+      opacity: 0.15
+    });
+  }
+}
+
+function drawGear(x, y, radius, rotation, teeth = 12) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+
+  // Outer circle
+  ctx.strokeStyle = `rgba(232, 164, 74, ${0.2})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Teeth
+  for (let i = 0; i < teeth; i++) {
+    const angle = (i / teeth) * Math.PI * 2;
+    const toothLength = radius * 0.15;
+    const x1 = Math.cos(angle) * radius;
+    const y1 = Math.sin(angle) * radius;
+    const x2 = Math.cos(angle) * (radius + toothLength);
+    const y2 = Math.sin(angle) * (radius + toothLength);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+
+  // Center dot
+  ctx.fillStyle = `rgba(232, 164, 74, ${0.3})`;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawFrame(time) {
+  const scroll = window.scrollY / window.innerHeight;
+  const bgGradientStart = Math.max(0.2, 1 - scroll * 0.5);
+
+  ctx.fillStyle = `rgba(0, 0, 0, ${0.05})`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw falling pages
+  pages.forEach(page => {
+    page.y += page.vy;
+    page.x += page.vx;
+    page.rotation += page.rotationSpeed;
+
+    if (page.y > canvas.height + 100) {
+      page.y = -100;
+      page.x = Math.random() * canvas.width;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = page.opacity;
+    ctx.translate(page.x, page.y);
+    ctx.rotate(page.rotation);
+
+    // Page outline
+    ctx.strokeStyle = `rgba(232, 164, 74, 0.3)`;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-page.width / 2, -page.height / 2, page.width, page.height);
+
+    // Text lines on page
+    ctx.strokeStyle = `rgba(232, 164, 74, 0.15)`;
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.moveTo(-page.width / 2 + 4, -page.height / 2 + 8 + i * 12);
+      ctx.lineTo(-page.width / 2 + page.width - 8, -page.height / 2 + 8 + i * 12);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  });
+
+  // Draw particles
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.1; // gravity
+    p.life -= 0.02;
+
+    ctx.fillStyle = `rgba(232, 164, 74, ${p.life * 0.5})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Draw gears
+  gears.forEach(gear => {
+    gear.rotation += gear.rotationSpeed;
+    ctx.globalAlpha = gear.opacity;
+    drawGear(gear.x, gear.y, gear.radius, gear.rotation);
+    ctx.globalAlpha = 1;
+  });
+
+  requestAnimationFrame(drawFrame);
+}
+
+// --- OPEN BOOK SILHOUETTE (large central) ---
+function drawOpenBook() {
+  const scroll = window.scrollY / window.innerHeight;
+  const bookY = canvas.height * 0.5;
+  const bookX = canvas.width / 2;
+  const scale = 1 + scroll * 0.2;
+
+  ctx.save();
+  ctx.globalAlpha = 0.1 + scroll * 0.05;
+
+  // Left page
+  ctx.fillStyle = `rgba(232, 164, 74, 0.3)`;
+  ctx.beginPath();
+  ctx.moveTo(bookX - 100 * scale, bookY);
+  ctx.lineTo(bookX - 150 * scale, bookY - 80 * scale);
+  ctx.lineTo(bookX - 150 * scale, bookY + 80 * scale);
+  ctx.fill();
+
+  // Right page
+  ctx.beginPath();
+  ctx.moveTo(bookX + 100 * scale, bookY);
+  ctx.lineTo(bookX + 150 * scale, bookY - 80 * scale);
+  ctx.lineTo(bookX + 150 * scale, bookY + 80 * scale);
+  ctx.fill();
+
+  // Spine
+  ctx.strokeStyle = `rgba(232, 164, 74, 0.4)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(bookX, bookY - 80 * scale);
+  ctx.lineTo(bookX, bookY + 80 * scale);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+// --- INIT AND LOOP ---
+resizeCanvas();
+createPages();
+createGears();
+createInkBurst(canvas.width / 2, canvas.height * 0.5);
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  createPages();
+  createGears();
+});
+
+window.addEventListener('scroll', () => {
+  drawOpenBook();
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+drawOpenBook();
+requestAnimationFrame(drawFrame);
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+      if (entry.target.id === 'scene-post-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct! Luther believed the sacred should be accessible to all people.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite. Think about what made Luther\u2019s translation revolutionary...';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- QUIZ SYSTEM ---
+let quizAnswers = [];
+
+function checkAnswer(btn, isCorrect) {
+  const question = btn.closest('.quiz-question');
+  const options = question.querySelectorAll('.quiz-option');
+
+  options.forEach(opt => opt.style.pointerEvents = 'none');
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    quizAnswers.push(true);
+  } else {
+    btn.classList.add('incorrect');
+    quizAnswers.push(false);
+  }
+
+  // Highlight correct answer
+  if (!isCorrect) {
+    options.forEach(opt => {
+      if (opt.onclick.toString().includes('true')) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  // Check if quiz is complete
+  if (quizAnswers.length === 10) {
+    const correctCount = quizAnswers.filter(a => a).length;
+    const percentage = (correctCount / 10) * 100;
+    const resultDiv = document.getElementById('quizResult');
+
+    if (percentage >= 80) {
+      resultDiv.textContent = `Passed! You scored ${correctCount}/10 (${percentage}%). Unlocking word collection...`;
+      resultDiv.classList.add('pass');
+      setTimeout(() => {
+        const postCollection = document.getElementById('scene-post-collection');
+        postCollection.classList.remove('quiz-hidden');
+        const words = postCollection.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+        postCollection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 1000);
+    } else {
+      resultDiv.textContent = `You scored ${correctCount}/10 (${percentage}%). Review the chapter and try again!`;
+      resultDiv.classList.add('fail');
+    }
+  }
+}
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+if (window.innerWidth < 600) {
+  pages = pages.slice(0, Math.floor(pages.length / 2));
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 15;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

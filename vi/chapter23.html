@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 23: Die Republik</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --bauhaus-red: #e63946;
+    --bauhaus-yellow: #f1faee;
+    --bauhaus-blue: #1d3557;
+    --expressionist-grey: #6b5b6d;
+    --collapse: #3a3a3a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom,
+      #0a0e1a 0%,
+      #1a1533 15%,
+      #2d1e4e 25%,
+      #e63946 35%,
+      #f1faee 45%,
+      #1d3557 55%,
+      #6b5b6d 70%,
+      #3a3a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 10;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  .title-screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(10, 14, 26, 0.9), rgba(29, 53, 87, 0.95));
+    margin: 0 -40px -80px -40px;
+    margin-bottom: 0;
+    padding-bottom: 80px;
+  }
+
+  .chapter-label {
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: rgba(232, 164, 74, 0.4);
+    margin-bottom: 20px;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 20px 0;
+    color: #f1faee;
+    text-shadow: 0 4px 16px rgba(232, 164, 74, 0.2);
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+    color: rgba(232, 164, 74, 0.6);
+    letter-spacing: 0.08em;
+    margin: 24px 0 60px;
+  }
+
+  .scroll-hint {
+    margin-top: 80px;
+    font-size: 1.2rem;
+    color: rgba(232, 164, 74, 0.3);
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+  .scene {
+    margin: 80px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    height: 50px;
+    margin-bottom: 40px;
+  }
+
+  .narrative {
+    margin: 24px 0;
+    color: rgba(232, 164, 74, 0.85);
+    font-weight: 400;
+  }
+
+  .narrative em {
+    color: #f1faee;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: #f1faee;
+    font-weight: 600;
+    margin: 32px 0;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 1000px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.vi {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .german-word {
+    cursor: pointer;
+    color: var(--german);
+    font-weight: 600;
+    border-bottom: 2px solid rgba(232, 164, 74, 0.2);
+    transition: all 0.3s ease;
+    padding: 2px 4px;
+  }
+
+  .german-word:hover, .german-word.revealed {
+    border-bottom-color: rgba(232, 164, 74, 0.6);
+    color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    background: rgba(232, 164, 74, 0.08);
+    border-radius: 4px;
+  }
+
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 4px;
+    background: rgba(29, 53, 87, 0.4);
+    border-radius: 8px;
+  }
+
+  .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: var(--vietnamese);
+    line-height: 1;
+  }
+
+  .pinyin {
+    font-size: 0.75rem;
+    color: rgba(196, 154, 108, 0.6);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(230, 57, 70, 0.08);
+    border-left: 2px solid rgba(230, 57, 70, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #e63946;
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- QUIZ CONTAINER --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.98), rgba(15, 20, 35, 0.98));
+    border: 2px solid rgba(230, 57, 70, 0.25);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+  }
+
+  .quiz-title {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #e63946;
+    margin-bottom: 8px;
+  }
+
+  .quiz-subtitle {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.5);
+    margin-bottom: 32px;
+  }
+
+  .quiz-question {
+    background: rgba(29, 53, 87, 0.3);
+    border-left: 3px solid rgba(230, 57, 70, 0.4);
+    padding: 20px 24px;
+    margin: 20px 0;
+    border-radius: 4px;
+  }
+
+  .quiz-q-number {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 6px;
+  }
+
+  .quiz-q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: rgba(212, 202, 187, 0.8);
+    padding: 14px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.08);
+    border-color: rgba(232, 164, 74, 0.5);
+  }
+
+  .quiz-option.selected {
+    background: rgba(230, 57, 70, 0.25);
+    border-color: #e63946;
+    color: var(--text-bright);
+  }
+
+  .quiz-option.correct {
+    background: rgba(100, 150, 100, 0.3);
+    border-color: #66c47a;
+    color: #66c47a;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(200, 100, 100, 0.2);
+    border-color: #c45d2c;
+    color: #c45d2c;
+  }
+
+  .quiz-feedback {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-feedback.show {
+    opacity: 1;
+  }
+
+  .quiz-progress {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    text-align: center;
+  }
+
+  .quiz-progress-bar {
+    height: 6px;
+    background: rgba(232, 164, 74, 0.1);
+    border-radius: 3px;
+    margin: 12px 0 8px;
+    overflow: hidden;
+  }
+
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e63946, #e8a44a);
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .quiz-submit {
+    background: linear-gradient(135deg, #e63946, #e8a44a);
+    border: none;
+    color: #0a0e1a;
+    padding: 14px 32px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 24px;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .quiz-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
+  }
+
+  .quiz-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-result {
+    margin-top: 24px;
+    padding: 20px 24px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1.05rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .quiz-result.show {
+    opacity: 1;
+  }
+
+  .quiz-result.pass {
+    background: rgba(100, 150, 100, 0.15);
+    border: 1px solid rgba(100, 150, 100, 0.3);
+    color: #66c47a;
+  }
+
+  .quiz-result.fail {
+    background: rgba(200, 100, 100, 0.15);
+    border: 1px solid rgba(200, 100, 100, 0.3);
+    color: #e85c5c;
+  }
+
+  /* --- POST-QUIZ SECTION --- */
+  .post-quiz {
+    display: none;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 2px solid rgba(232, 164, 74, 0.2);
+  }
+
+  .post-quiz.visible {
+    display: block;
+    animation: fadeInUp 0.6s ease;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .post-quiz-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+    margin-top: 80px;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .nav-btn {
+    padding: 12px 28px;
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--german);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .nav-btn:hover {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: rgba(232, 164, 74, 0.6);
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .quiz-container { padding: 24px 16px; border-radius: 10px; }
+    .quiz-question { padding: 16px 18px; }
+    .quiz-options { gap: 8px; }
+    .quiz-option { padding: 12px 14px; font-size: 1rem; }
+    .quiz-submit { padding: 12px 20px; font-size: 1rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .guess-section { padding: 20px 16px; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .quiz-option { padding: 10px 12px; font-size: 0.95rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="bauhaus-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twenty-Three</div>
+    <h1>Die Republik</h1>
+    <div class="subtitle">The Republic · 1918-1933</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE COLLAPSE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      November 1918. The Great War ends not with victory parades, but with silence — a strange, terrible silence across Europe, broken only by the sound of surrender. Empires crumble overnight. The Kaiser flees Berlin in a stolen train. And in the streets of a city that was once the capital of absolute power, something unprecedented happens: the people speak.
+    </p>
+
+    <p class="narrative">
+      They vote. They argue. They demand. For the first time in German history, a republic is born — not from conquest or inheritance, but from the collective voice of ordinary citizens. It lasts only fifteen years. But in those fifteen years, the German language transforms into something electric, something wild, something that has never existed before or since.
+    </p>
+
+    <p class="narrative emphasis">
+      Weimar Germany. 1918 to 1933. The most brilliant cultural explosion in modern history — and its collision course with catastrophe.
+    </p>
+
+    <p class="narrative">
+      The word for this new system arrived from Latin, carrying the weight of ancient Rome: <span class="german-word" data-card="republik">Republik</span>. It means "public matter" — the shared business of the people. For the first time, Germans had to learn what it meant to own their own governance. The vocabulary was ancient, but the experience was shockingly new.
+    </p>
+
+    <!-- REPUBLIK etymology card -->
+    <div class="ety-card" id="card-republik">
+      <div class="word-header">
+        <span class="word-main">Republik</span>
+        <span class="word-pron">/ʁeˈpuːblik/</span>
+      </div>
+      <div class="word-meaning">republic — a form of government in which power is held by representatives of the people, not by a monarch</div>
+      <div class="bridge">
+        <span class="bridge-label pie">LAT</span>
+        <span class="bridge-word">res publica</span>
+        <span class="bridge-note">— literally "public matter" (res = thing, publica = public)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">republic</span>
+        <span class="bridge-note">— same Latin origin, via French</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Republik</span>
+        <span class="bridge-note">— borrowed into German directly from Latin via political terminology</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">cộng hòa quốc</span>
+        <span class="bridge-note">— cộng hòa quốc — Sino-Vietnamese: "cộng" (shared) + "hòa" (harmony) + "quốc" (country)</span>
+      </div>
+      <div class="story">
+        When Germans needed a word for the new political system, they reached for the Latin. Republic was not a Germanic root — it was learned, borrowed, adopted from the language of the ancient world. German Romanticism had rejected Rome; Weimar Germany desperately needed it. The word itself carries the paradox: an ancient concept, a modern experiment. The Weimar Republic was trying to transplant Roman democracy into the heart of Central Europe. Within fifteen years, it would be torn to pieces.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But even as Weimar stumbled forward, the language around it was exploding. This was the age of the Bauhaus, of expressionism, of radical experiment. Artists and poets and designers were doing something extraordinary: they were learning to <em>see</em> again, and they needed new words to describe what they saw.
+    </p>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: GESTALTUNG ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In 1919, in Weimar itself, a small art school opened with a radical mission: to reunite art and craft, form and function, beauty and the ordinary. It was called the Bauhaus. And it did something remarkable — it invented a visual language that changed the world forever.
+    </p>
+
+    <p class="narrative">
+      The Bauhaus artists needed a word for what they were doing. Not mere decoration. Not mere design. Something deeper. They used the German word <span class="german-word" data-card="gestaltung">Gestaltung</span>.
+    </p>
+
+    <p class="narrative">
+      Gestaltung comes from <em>Gestalt</em>, which means "form" or "shape." But it also means "configuration" — the way separate elements organize themselves into a meaningful whole. Add the suffix <em>-ung</em> (which turns verbs into nouns, actions into abstractions) and you get: <em>the act of giving form, the process of shaping, the creation of meaningful configuration from chaos.</em>
+    </p>
+
+    <p class="narrative">
+      This single word captured something that English struggles to express. When you are designing a chair, you are not merely decorating it. You are asking: what is the fundamental form of "chair-ness"? How does function reveal beauty? How does geometry speak to the human body? The Bauhaus could pack all of this into a single German compound: <em>Gestaltung</em>.
+    </p>
+
+    <!-- GESTALTUNG etymology card -->
+    <div class="ety-card" id="card-gestaltung">
+      <div class="word-header">
+        <span class="word-main">Gestaltung</span>
+        <span class="word-pron">/ɡəˈʃtaltʊŋ/</span>
+      </div>
+      <div class="word-meaning">design / shaping — the act of giving form to materials, ideas, or experiences</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gestalt</span>
+        <span class="bridge-note">— form, shape, configuration (from Old High German)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">+ -ung</span>
+        <span class="bridge-note">— suffix creating abstract nouns from actions (making, creating)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">Gestalt</span>
+        <span class="bridge-note">— borrowed directly into English psychology (Gestalt psychology = the whole is greater than the sum of its parts)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">thiết kế</span>
+        <span class="bridge-note">— thiết kế — Sino-Vietnamese: "thiết" (set up) + "kế" (pattern/plan)</span>
+      </div>
+      <div class="story">
+        The Bauhaus gave Gestaltung to the world. Walter Gropius, Herbert Bayer, Laszlo Moholy-Nagy — they understood that design was not decoration but philosophy. In their hands, the word became synonymous with modernism itself. When the Nazis later condemned the Bauhaus as "degenerate," they were attacking the very concept of Gestaltung — the democratic idea that form should serve function, that beauty emerges from honest materials, that the ordinary object can teach us about truth. The word itself became a battleground.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: AUSDRUCK ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      While the Bauhaus was reshaping the visual world, the literary world was erupting. Expressionism dominated — a violent, ecstatic movement in which poets and playwrights tried to capture the inner experience of consciousness itself. They did not write about the world. They screamed the world's inner emotional truth.
+    </p>
+
+    <p class="narrative">
+      The word that captured this movement was <span class="german-word" data-card="ausdruck">Ausdruck</span> — which literally means "pressing outward." <em>Aus</em> (out) + <em>Druck</em> (press, pressure). To express something in German is to press it outward, to force the interior outward through the mouth or pen.
+    </p>
+
+    <p class="narrative">
+      For Expressionist poets like Georg Trakl and Oskar Kokoschka, this was exactly right. Their work was not measured or controlled. It was raw expression — the soul pressed directly into language, sometimes breaking the language itself in the process. Syntax shattered. Words collided. Grammar became negotiable. All to capture the sensation of being alive in a world that had just survived the most catastrophic war in human history.
+    </p>
+
+    <p class="narrative">
+      The poet Gottfried Benn could pack an entire philosophy of Expressionism into a single line: "Nur zwei Dinge: das Gedächtnis des Totenseins und die Lust, in Blöcken zu denken" ("Only two things: the memory of being dead and the urge to think in blocks"). The language itself is shattered. The syntax refuses to flow. Every phrase is a block, a hard geometric form — pure <em>Ausdruck</em>.
+    </p>
+
+    <!-- AUSDRUCK etymology card -->
+    <div class="ety-card" id="card-ausdruck">
+      <div class="word-header">
+        <span class="word-main">Ausdruck</span>
+        <span class="word-pron">/ˈaʊsdrʊk/</span>
+      </div>
+      <div class="word-meaning">expression / impression — the pressing outward of inner feeling through art, language, or gesture</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Aus</span>
+        <span class="bridge-note">— out (from Old High German)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">+ Druck</span>
+        <span class="bridge-note">— pressure, force, printing (from Old High German "drucken")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">expression</span>
+        <span class="bridge-note">— from Latin "exprimere" (press out) — the Latin captures the same image</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">biểu đạt</span>
+        <span class="bridge-note">— biểu đạt — Sino-Vietnamese: "biểu" (surface) + "đạt" (reach/express)</span>
+      </div>
+      <div class="story">
+        Ausdruck is one of the most philosophically loaded words in German. It appears throughout 20th-century aesthetics: Expressionism is "Ausdruckskunst" (expression-art). When Heidegger wrote about authenticity and truth, he invoked the image of pressing outward — of letting inner being manifest in outer form. The word carries the entire weight of German Romanticism and modernism: the belief that art's purpose is not to decorate or imitate, but to express the inexpressible, to press the soul outward until it takes shape.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE STAGE ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the smoky cabarets and concert halls of Berlin, a new kind of theater was being born. Erwin Piscator broke down the fourth wall. Bertolt Brecht invented the alienation effect, forcing audiences to <em>think</em> about what they were watching instead of simply feeling it. And on stages darkened to a threatening blur, performers like Marlene Dietrich sang songs of desire and despair.
+    </p>
+
+    <p class="narrative">
+      The German word for stage is <span class="german-word" data-card="buhne">Bühne</span> — it comes from the Old High German for "platform." But in Weimar Berlin, the Bühne was far more than a platform. It was a space where truth was performed, where the masks came off, where the republic could speak its doubts aloud.
+    </p>
+
+    <p class="narrative">
+      Brecht's theater, in particular, used the Bühne as a space of radical truth-telling. He did not want audiences to lose themselves in illusion. He wanted them to see the theater as theater, to see the actors as actors, to maintain a critical distance from what they were watching. He called this <em>Verfremdung</em> — alienation, defamiliarization. And by doing so, he was saying something political: <em>See? This is not fate. This is choice. This system is not natural or inevitable. You could change it.</em>
+    </p>
+
+    <!-- BÜHNE etymology card -->
+    <div class="ety-card" id="card-buhne">
+      <div class="word-header">
+        <span class="word-main">Bühne</span>
+        <span class="word-pron">/ˈbyːnə/</span>
+      </div>
+      <div class="word-meaning">stage — a platform where actors perform and truth is transformed into spectacle</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Bühne</span>
+        <span class="bridge-note">— from Middle High German "büne" (platform, stage)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">booth / platform</span>
+        <span class="bridge-note">— cognate: both derive from a root meaning "raised platform"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Bühnenbretter</span>
+        <span class="bridge-note">— "stage boards" — the literal wooden planks where illusion is created</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">sân khấu</span>
+        <span class="bridge-note">— sân khấu — Sino-Vietnamese: "sân" (stage/arena) + "khấu" (performance)</span>
+      </div>
+      <div class="story">
+        In Weimar theater, the Bühne was the space where the republic could perform itself — where political ideas became flesh and gesture. Piscator used the stage to project photographs, texts, documentary evidence. Brecht used it to expose the mechanics of theater itself. In both cases, the platform was no longer a space of illusion but of revelation. The Nazis understood this. Theater was dangerous because it was a space where alternative visions of society could be performed. When they took power, one of their first acts was to seize control of the Bühne.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: VERFREMDUNG ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Bertolt Brecht coined the term <span class="german-word" data-card="verfremdung">Verfremdung</span> — literally "making strange" or "alienation." The prefix <em>ver-</em> is one of German's most powerful tools. It can mean "over," "away," "across," or often simply "through-and-through" — a transformation. Add it to the German word <em>fremd</em> (strange, foreign) and you get: <em>the act of making something familiar into something strange, of revealing the constructed nature of what we take for granted.</em>
+    </p>
+
+    <p class="narrative">
+      Brecht used Verfremdung as a political weapon. In a conventional play, the audience identifies with the characters, loses itself in the story, and emerges feeling the emotions the playwright intended. But Brecht wanted to interrupt this process. He wanted to make the audience see that what they were watching was constructed, that it could be otherwise, that the social arrangements being depicted on stage were not natural or inevitable but chosen — and therefore could be changed.
+    </p>
+
+    <p class="narrative">
+      It is one of the most important concepts in theater. And it exists in German because German has the linguistic tools to express it — the prefix <em>ver-</em> that can transform a whole world, the root <em>fremd</em> that carries the philosophy of the foreign and the strange. English has nothing close. We can say "defamiliarization" or "alienation," but these are pale translations of the conceptual depth packed into Brecht's single German word.
+    </p>
+
+    <!-- VERFREMDUNG etymology card -->
+    <div class="ety-card" id="card-verfremdung">
+      <div class="word-header">
+        <span class="word-main">Verfremdung</span>
+        <span class="word-pron">/fɛɐˈfrɛmdʊŋ/</span>
+      </div>
+      <div class="word-meaning">alienation effect — the artistic technique of making the familiar strange to encourage critical thinking</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Ver-</span>
+        <span class="bridge-note">— prefix indicating transformation or a process carried through</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">fremd</span>
+        <span class="bridge-note">— strange, foreign, alien (from Old High German)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">+ -ung</span>
+        <span class="bridge-note">— suffix creating abstract action nouns</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">alienation / defamiliarization</span>
+        <span class="bridge-note">— borrowed directly into English theater criticism, often untranslated</span>
+      </div>
+      <div class="story">
+        Verfremdung is a word that could only emerge from Weimar Berlin — from a theater community that believed art could be a weapon, that aesthetics and politics were inseparable, that the stage could change consciousness. Brecht believed that if you could make the familiar strange, you could make people see that society itself was constructed, malleable, open to transformation. The Nazis understood this too. When they took power, they banned Brecht and his theater. The word Verfremdung became forbidden — too dangerous, too much a weapon of revolution. In the decades after, English theater borrowed the concept directly from Brecht, often keeping the German word because it carried weight that English translations could not match.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: STIMME & DEMOKRATIE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But beneath all this cultural explosion was a political experiment. The Weimar Republic gave German women the right to vote for the first time. Women could now participate in <em>Gleichberechtigung</em> — equal rights. Suddenly, <span class="german-word" data-card="stimme">Stimme</span>, the German word for "voice," carried a new and urgent meaning.
+    </p>
+
+    <p class="narrative">
+      In German, <em>Stimme</em> means both "voice" (as in the sound you make) and "vote" (as in your say in government). It is the same word. Your voice IS your political power. To vote is to give your voice to the democratic process. This is not accidental — it is a profound insight about what democracy means. Democracy is not a system, but a chorus. It is all voices speaking together. When you vote, you are literally giving your voice to the collective.
+    </p>
+
+    <p class="narrative">
+      In 1919, when women received the right to vote in the new German republic, they were given their <em>Stimme</em> — their voice. For the first time, half the population could participate in the democratic chorus. It was revolutionary. And it would last only fourteen years.
+    </p>
+
+    <!-- STIMME etymology card -->
+    <div class="ety-card" id="card-stimme">
+      <div class="word-header">
+        <span class="word-main">Stimme</span>
+        <span class="word-pron">/ˈʃtɪmə/</span>
+      </div>
+      <div class="word-meaning">voice / vote — the sound you make, and the power you wield in democracy</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stimme</span>
+        <span class="bridge-note">— from Middle High German "stimme" (voice, sound)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stem / voice</span>
+        <span class="bridge-note">— cognate roots, but English separates "voice" from "vote"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">abstimmen</span>
+        <span class="bridge-note">— "to vote" (literally "to voice one's opinion away from the group")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">tiếng nói</span>
+        <span class="bridge-note">— tiếng nói — Vietnamese: "tiếng" (voice/sound) + "nói" (speak), distinct from voting</span>
+      </div>
+      <div class="story">
+        In German, democracy is built into the word itself. Stimme contains both the physical act of voicing and the political act of voting. To vote is to press your voice into the system. When women gained their Stimme in 1919, they gained not just a political right but a linguistic identity — they became part of the democratic chorus. The word carries the entire philosophy of what democracy means in German thought: many voices, one chorus, shared power through the collective speaking of truth.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: ZUSAMMENBRUCH ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And then it all fell apart.
+    </p>
+
+    <p class="narrative">
+      In 1923, hyperinflation destroyed the currency. A loaf of bread cost millions of marks. The savings of an entire middle class evaporated overnight. People carried money in wheelbarrows. The word <span class="german-word" data-card="inflation">Inflation</span> entered German vocabulary as a wound that would never heal.
+    </p>
+
+    <p class="narrative">
+      By 1929, the Great Depression struck. Unemployment exploded. The political ground was shifting beneath the republic's feet. The Nazis, who had seemed like a joke in the mid-1920s, began to gain power. And by 1933, they seized control.
+    </p>
+
+    <p class="narrative">
+      For this final collapse, there is a German word that captures the totality of what was happening: <span class="german-word" data-card="zusammenbruch">Zusammenbruch</span> — literally "together-break." <em>Zusammen</em> (together) + <em>Bruch</em> (break, fracture, breach). It means "the moment when everything breaks at once, when the system itself shatters, when all the pieces that held together fall apart simultaneously."
+    </p>
+
+    <p class="narrative">
+      The Weimar Republic was a <em>Zusammenbruch</em> — a total collapse. And what emerged from it was darkness.
+    </p>
+
+    <!-- INFLATION card -->
+    <div class="ety-card" id="card-inflation">
+      <div class="word-header">
+        <span class="word-main">Inflation</span>
+        <span class="word-pron">/ɪnflaˈtsjoːn/</span>
+      </div>
+      <div class="word-meaning">inflation — the devaluation of currency, making money worth less</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">inflare</span>
+        <span class="bridge-note">— to blow into, to swell up</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Inflation</span>
+        <span class="bridge-note">— borrowed directly; the currency "swells" into worthlessness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">inflation</span>
+        <span class="bridge-note">— same Latin root, same concept</span>
+      </div>
+      <div class="story">
+        Inflation is a Latin-derived word, not Germanic, but it entered German vocabulary with a traumatic force. The 1923 hyperinflation was not a mere economic event — it was a civilizational wound. The savings of an entire middle class, built over decades, evaporated in weeks. Money became paper. Currency required wheelbarrows to carry. The word Inflation therefore carries in German the weight of this catastrophe, a reminder of the fragility of institutions, the speed at which civilization can collapse. The metaphor is apt: the currency inflates, swells up, loses all density and value. By 1923, the word had become not just economic terminology but a marker of historical trauma, one of the forces that destabilized the Weimar Republic and made the rise of the Nazis possible.
+      </div>
+    </div>
+
+    <!-- ZUSAMMENBRUCH etymology card -->
+    <div class="ety-card" id="card-zusammenbruch">
+      <div class="word-header">
+        <span class="word-main">Zusammenbruch</span>
+        <span class="word-pron">/tsʊˈzamənbʁʊx/</span>
+      </div>
+      <div class="word-meaning">collapse / breakdown — the complete shattering of a system or structure</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Zusammen</span>
+        <span class="bridge-note">— together (from Old High German "zuo" + "samane")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">+ Bruch</span>
+        <span class="bridge-note">— break, fracture, breach (from Old High German "bruchen" to break)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">collapse / breakdown</span>
+        <span class="bridge-note">— from different roots, lacks the compound power of the German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">sụp đổ</span>
+        <span class="bridge-note">— sụp đổ — Sino-Vietnamese: "sụp" (crumble) + "đổ" (collapse)</span>
+      </div>
+      <div class="story">
+        Zusammenbruch became the word used to describe the fall of the Weimar Republic. It carries the sense not just of failure, but of totality — everything breaking at once, the structure itself fracturing. The word appears throughout German history texts, describing 1933 and later 1945. It is a word heavy with the weight of catastrophe, built from two simple Germanic roots that together express the moment when a civilization breaks.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== ASIDE BOX 1: BAUHAUS ==================== -->
+  <div class="aside-box">
+    <div class="aside-title">Aside: The Language of Bauhaus Design</div>
+    <p>
+      The Bauhaus was not just an art school — it was a revolution in how humans think about form, function, and the relationship between beauty and utility. And at its core was a profound linguistic insight: that the language we use shapes the way we see.
+    </p>
+    <p>
+      Words like <em>Gestaltung</em> (shaping/design), <em>Form</em> (form), <em>Funktion</em> (function), <em>Raum</em> (space) were not neutral terms. They were philosophical statements. When Walter Gropius wrote about the Bauhaus, he was not just describing an art school — he was using language to reshape how people thought about art, craft, and the human relationship to objects.
+    </p>
+    <p>
+      The Nazis banned the Bauhaus in 1933, calling it "degenerate" and "foreign." But what they were really attacking was the linguistic framework itself — the idea that modern design could be democratic, that form should emerge from function, that the ordinary object deserved philosophical attention. By banning the Bauhaus, they were trying to erase a language that threatened their worldview.
+    </p>
+  </div>
+
+  <!-- ==================== ASIDE BOX 2: KAFKA & THE GERMAN LANGUAGE ==================== -->
+  <div class="aside-box">
+    <div class="aside-title">Aside: Kafka's German — Perfect Grammar, Perfect Dread</div>
+    <p>
+      While Berlin exploded with artistic innovation, in Prague, Franz Kafka was writing the most terrifying sentences in German literature. Kafka was Czech, but he wrote in German — German with impeccable grammar, precise vocabulary, perfectly formed sentences.
+    </p>
+    <p>
+      And yet his sentences create a profound sense of dread and alienation. The grammar is flawless, but the meaning slips away. Reality shifts. Authority is incomprehensible but all-powerful. Systems grind on without purpose or justice. How did Kafka do this?
+    </p>
+    <p>
+      He did it by using German's precision against itself. He wrote sentences so grammatically perfect, so syntactically controlled, that the reader expects them to make sense. But they don't. The meaning fractures. The reader experiences the same disorientation that Kafka's characters feel — trapped inside a language that is perfect but incomprehensible, grammatically sound but existentially hollow.
+    </p>
+    <p>
+      This is only possible in German. English would not have this effect. English's looser syntax, its comfort with ambiguity, would allow the reader to slip through. But German's demand for precision, for clarity, for grammatical exactness — this makes Kafka's fractured meaning all the more unbearable. The language itself becomes the trap.
+    </p>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Ver- prefix for transformation</strong> — Verfremdung (making-strange), Verfassung (constitution = that which is grasped/composed). Ver- transforms root meaning into something altered or intensified.<br><br>
+    <strong style="color: var(--text-bright);">Gleich- prefix for equality</strong> — Gleichberechtigung (equal+rights) shows how German builds social concepts by compounding: same rights, literally. The word structure makes the political concept transparent.<br><br>
+    <strong style="color: var(--text-bright);">Zusammen- prefix for togetherness</strong> — Zusammenbruch (together+break = collapse). When things that were zusammen (together) break, you get catastrophe. The word encodes both the unity and its destruction.<br><br>
+    <strong style="color: var(--text-bright);">Language as artistic medium</strong> — Gestaltung, Ausdruck, Bühne — Weimar artists treated German words themselves as design objects, shaping meaning through form.
+  </div>
+
+  <!-- ==================== WORD COLLECTION ==================== -->
+  <div class="word-collection">
+    <h3>Words Gathered in Chapter Twenty-Three</h3>
+    <div class="collected-words">
+      <div class="collected-word" data-delay="0">
+        <div class="cw-german">Republik</div>
+        <div class="cw-english">republic</div>
+      </div>
+      <div class="collected-word" data-delay="100">
+        <div class="cw-german">Gestaltung</div>
+        <div class="cw-english">design/shaping</div>
+      </div>
+      <div class="collected-word" data-delay="200">
+        <div class="cw-german">Ausdruck</div>
+        <div class="cw-english">expression</div>
+      </div>
+      <div class="collected-word" data-delay="300">
+        <div class="cw-german">Bühne</div>
+        <div class="cw-english">stage</div>
+      </div>
+      <div class="collected-word" data-delay="400">
+        <div class="cw-german">Stimme</div>
+        <div class="cw-english">voice/vote</div>
+      </div>
+      <div class="collected-word" data-delay="500">
+        <div class="cw-german">Verfremdung</div>
+        <div class="cw-english">alienation effect</div>
+      </div>
+      <div class="collected-word" data-delay="600">
+        <div class="cw-german">Inflation</div>
+        <div class="cw-english">inflation</div>
+      </div>
+      <div class="collected-word" data-delay="700">
+        <div class="cw-german">Gleichberechtigung</div>
+        <div class="cw-english">equal rights</div>
+      </div>
+      <div class="collected-word" data-delay="800">
+        <div class="cw-german">Rundfunk</div>
+        <div class="cw-english">radio/broadcasting</div>
+      </div>
+      <div class="collected-word" data-delay="900">
+        <div class="cw-german">Zusammenbruch</div>
+        <div class="cw-english">collapse</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CONCEPTS LEARNED ==================== -->
+  <h3 style="margin-top:32px; text-align:center; color: rgba(212, 202, 187, 0.8); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.2em;">Concepts Learned in Chapter Twenty-Three</h3>
+  <div class="collected-words">
+    <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Bauhaus Language</span><span class="cw-english">Gestaltung, Form, Funktion — words as design philosophy</span></div>
+    <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Kafka's Precision</span><span class="cw-english">perfect grammar weaponised to create existential dread</span></div>
+    <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Ver- Transformation</span><span class="cw-english">Verfremdung, Verfassung — ver- prefix alters and intensifies</span></div>
+    <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Weimar Democracy</span><span class="cw-english">Stimme means both voice and vote — language encodes democracy</span></div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container">
+    <div class="quiz-title">Master the Language of Weimar</div>
+    <div class="quiz-subtitle">80% to proceed (12 questions: 8 new + 4 review) · All words have audio</div>
+
+    <form id="quizForm">
+      <!-- Question 1 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 1 of 12</div>
+        <div class="quiz-q-text">What does <strong>Gestaltung</strong> mean?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q1" value="a"> Decoration applied to surfaces
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q1" value="b"> The act of giving form to materials through design and shaping
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q1" value="c"> The shape of a human body
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q1" value="d"> Gesture or movement
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 2 of 12</div>
+        <div class="quiz-q-text">Which prefix in <strong>Verfremdung</strong> indicates transformation?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q2" value="a"> Ver-
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q2" value="b"> Fre-
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q2" value="c"> -ung
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q2" value="d"> -frend
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 3 of 12</div>
+        <div class="quiz-q-text"><strong>Stimme</strong> in German means both "voice" and what else?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q3" value="a"> Sound
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q3" value="b"> Vote
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q3" value="c"> Tone
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q3" value="d"> Opinion
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 4 of 12</div>
+        <div class="quiz-q-text">What is the literal translation of <strong>Zusammenbruch</strong>?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q4" value="a"> Together-break
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q4" value="b"> Down-system
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q4" value="c"> Failure-time
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q4" value="d"> Break-fast
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 5 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 5 of 12</div>
+        <div class="quiz-q-text"><strong>Ausdruck</strong> literally means:</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q5" value="a"> Inner feeling
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q5" value="b"> Pressing outward
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q5" value="c"> Artistic movement
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q5" value="d"> Written form
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 6 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 6 of 12</div>
+        <div class="quiz-q-text"><strong>Republik</strong> originates from Latin and means:</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q6" value="a"> Rule of the people
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q6" value="b"> Public matter
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q6" value="c"> Shared government
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q6" value="d"> Free nation
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 7 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 7 of 12</div>
+        <div class="quiz-q-text">Brecht's <strong>Verfremdung</strong> was designed to:</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q7" value="a"> Make the audience feel comfortable
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q7" value="b"> Make the familiar strange and encourage critical thinking
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q7" value="c"> Translate foreign plays
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q7" value="d"> Introduce new characters
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 8 -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 8 of 12</div>
+        <div class="quiz-q-text">The Bauhaus used <strong>Gestaltung</strong> to express the idea that:</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q8" value="a"> Art should be separate from everyday objects
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q8" value="b"> Form should serve function and beauty emerges from honest materials
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q8" value="c"> Design is only for expensive products
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q8" value="d"> Decoration is more important than structure
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 9 - REVIEW: Mutter -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 9 of 12 (Review)</div>
+        <div class="quiz-q-text">The PIE root for <strong>Mutter</strong> is *méh₂tēr. Which modern language also derives from this root?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q9" value="a"> Vietnamese
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q9" value="b"> Arabic
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q9" value="c"> Latin (māter) and Romance languages
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q9" value="d"> Japanese
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 10 - REVIEW: Feuer -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 10 of 12 (Review)</div>
+        <div class="quiz-q-text">The word <strong>Feuer</strong> (fire) has two paths into English. One is from Germanic roots. What is the other?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q10" value="a"> From Old English borrowings
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q10" value="b"> From Greek "pyr" via Latin
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q10" value="c"> From French influence
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q10" value="d"> From Sanskrit
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 11 - REVIEW: Ausdruck concept -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 11 of 12 (Review)</div>
+        <div class="quiz-q-text">In the Chapter 1 etymology, what did <strong>Ausdruck</strong> represent philosophically?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q11" value="a"> A linguistic deviation
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q11" value="b"> An old Germanic root meaning fire
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q11" value="c"> The pressing outward of inner being into outer form
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q11" value="d"> A modern art movement
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 12 - REVIEW: Bauhaus date -->
+      <div class="quiz-question">
+        <div class="quiz-q-number">Question 12 of 12 (Review)</div>
+        <div class="quiz-q-text">When did the Bauhaus open as an art school revolutionary in form and philosophy?</div>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q12" value="a"> 1905
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q12" value="b"> 1919
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q12" value="c"> 1925
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q12" value="d"> 1933
+          </label>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button type="submit" class="quiz-submit">Submit Quiz</button>
+      <div class="quiz-progress">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="progressFill"></div>
+        </div>
+        <span id="scoreDisplay">0 / 12 answered</span>
+      </div>
+      <div class="quiz-result" id="quizResult"></div>
+    </form>
+  </div>
+
+  <!-- ==================== POST-QUIZ ==================== -->
+  <div class="post-quiz" id="postQuiz">
+    <div class="post-quiz-title">The Words Weimar Left Behind</div>
+
+    <p class="narrative">
+      The Weimar Republic lasted just fifteen years. By 1933, it was gone — destroyed by economic collapse, political extremism, and forces that had been building since 1918. But the words that emerged during those fifteen years did not disappear with the republic itself.
+    </p>
+
+    <p class="narrative">
+      <em>Gestaltung</em> is still the word that designers use when they talk about the philosophy of design. <em>Verfremdung</em> is still the term theater scholars use to describe Brecht's technique. <em>Ausdruck</em> still carries the entire philosophical weight of German Romanticism and modernism. And <em>Zusammenbruch</em> is still the word used to describe total systemic collapse.
+    </p>
+
+    <p class="narrative">
+      What is remarkable about language is that it is more durable than the systems that generate it. The republic fell. The Bauhaus was shuttered. The experimental theaters were silenced. But the words lived on, carrying within them the memory of that extraordinary cultural moment.
+    </p>
+
+    <p class="narrative">
+      The chapter has now shifted from the electric energy of Bauhaus modernism into the grey tones of collapse. The canvas has fragmented. The shapes that were clean and geometric are now shattered and distorted into expressionist chaos. The light that was so brilliant in the middle third has faded into gathering dread.
+    </p>
+
+    <p class="narrative emphasis">
+      Because what comes next is silence. And darkness. And a language itself being corrupted and weaponized by forces that will soon control the entire nation.
+    </p>
+
+    <p class="narrative">
+      Weimar German was a language of freedom, experimentation, critique, and possibility. It was a language in which people could imagine other worlds. The Nazis understood this. They knew that to control a people, you must first control their language. And they set about doing exactly that — methodically, linguistically, deliberately.
+    </p>
+
+    <p class="narrative">
+      The language of Weimar would not die. But it would be silenced. And then transformed into something it was never meant to be.
+    </p>
+
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">230 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(27%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:27%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Republik</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">republic</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gestaltung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">design, shaping</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ausdruck</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">expression</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Bühne</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">stage</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stimme</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">voice</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Verfremdung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">alienation effect</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Inflation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">inflation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gleichberechtigung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">equal rights</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Rundfunk</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">radio, broadcast</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zusammenbruch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">collapse</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~220 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–22</td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">49 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(33%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:33%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ver- transformation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Verfremdung (making-strange), Verfassung (constitution)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gleich- equality</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Gleichberechtigung (equal rights)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zusammen- togetherness</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Zusammenbruch (collapse)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Language as art</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Gestaltung, Ausdruck, Bühne</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">23</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~71 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–22</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="chapter-end">
+    <div class="end-line"></div>
+  </div>
+
+</div>
+
+<div class="nav-section">
+    <a href="chapter22.html" class="nav-btn">← Chapter 22</a>
+    <a href="chapter24.html" class="nav-btn next">Chapter 24 →</a>
+  </div>
+
+<script>
+// --- QUIZ DATA WITH EXPLANATIONS ---
+const quizData = [
+  { question: "What does Gestaltung mean?", options: ["Decoration applied to surfaces", "The act of giving form to materials through design and shaping", "The shape of a human body", "Gesture or movement"], correct: 1, explanation: "Gestaltung (from gestalten, to shape/form) is the philosophical and practical act of giving form to materials through conscious design. The Bauhaus used this term to express the revolutionary idea that form and function are inseparable, and that even ordinary objects deserve this kind of thoughtful shaping." },
+  { question: "Which prefix in Verfremdung indicates transformation?", options: ["Ver-", "Fre-", "-ung", "-frend"], correct: 0, explanation: "Ver- is the prefix that indicates transformation or change. Verfremdung (ver- + fremd, foreign) means 'making strange' or 'estrangement.' Brecht used this theatrical technique to distance audiences from emotional identification so they could think critically about what they witnessed." },
+  { question: "Stimme in German means both \"voice\" and what else?", options: ["Sound", "Vote", "Tone", "Opinion"], correct: 1, explanation: "Stimme means both 'voice' (the physical sound you make) and 'vote' (the voice of political choice). This double meaning is linguistically profound: in a democracy, your vote is quite literally your voice—your power to be heard in collective decision-making." },
+  { question: "What is the literal translation of Zusammenbruch?", options: ["Together-break", "Down-system", "Failure-time", "Break-fast"], correct: 0, explanation: "Zusammenbruch combines zusammen (together) + Bruch (break/fracture). It literally means 'together-break'—the catastrophic moment when all the pieces that held something together simultaneously fall apart. This word perfectly captures the total collapse of the Weimar system." },
+  { question: "Ausdruck literally means:", options: ["Inner feeling", "Pressing outward", "Artistic movement", "Written form"], correct: 1, explanation: "Ausdruck comes from aus- (out) + drücken (to press/push). It literally means 'pressing outward'—the expulsion of inner being into outer form. This captures the Expressionist philosophy that art is about channeling inner emotion directly into expression." },
+  { question: "Republik originates from Latin and means:", options: ["Rule of the people", "Public matter", "Shared government", "Free nation"], correct: 1, explanation: "Republik comes from Latin res (thing/matter) + publicus (public). It means 'public matter'—the idea that the state is not the property of a king but a matter of public concern. The Weimar Republic invoked this term to emphasize democracy." },
+  { question: "Brecht's Verfremdung was designed to:", options: ["Make the audience feel comfortable", "Make the familiar strange and encourage critical thinking", "Translate foreign plays", "Introduce new characters"], correct: 1, explanation: "Verfremdung (the 'alienation effect') was Brecht's revolutionary theatrical technique: by breaking the illusion of stage reality and reminding audiences they were watching a play, he forced them to think critically rather than just feel emotionally about the issues on stage." },
+  { question: "The Bauhaus used Gestaltung to express the idea that:", options: ["Art should be separate from everyday objects", "Form should serve function and beauty emerges from honest materials", "Design is only for expensive products", "Decoration is more important than structure"], correct: 1, explanation: "The Bauhaus philosophical principle was that good design integrates form and function: objects are beautiful when they honestly reflect their materials and purpose. This democratic principle meant that even cheap, everyday items could be beautifully designed—design wasn't a luxury." },
+  { question: "The PIE root for Mutter is *méh₂tēr. Which modern language also derives from this root?", options: ["Vietnamese", "Arabic", "Latin (māter) and Romance languages", "Japanese"], correct: 2, explanation: "The Proto-Indo-European root *méh₂tēr appears in Latin māter (mother), French mère, Italian madre, Spanish madre—and in Germanic languages: Mutter, mother. This shows the deep connection between German and Romance languages through their shared Indo-European ancestry." },
+  { question: "The word Feuer (fire) has two paths into English. What is the other?", options: ["From Old English borrowings", "From Greek \"pyr\" via Latin", "From French influence", "From Sanskrit"], correct: 1, explanation: "German Feuer has a Germanic root, but English has another word for fire's related concepts that comes from Greek pyr via Latin: the word 'pyre' (funeral fire), 'pyromaniac,' etc. Both languages preserved different branches of the Indo-European root for fire." },
+  { question: "In the Chapter 1 etymology, what did Ausdruck represent philosophically?", options: ["A linguistic deviation", "An old Germanic root meaning fire", "The pressing outward of inner being into outer form", "A modern art movement"], correct: 2, explanation: "From Chapter 1, Ausdruck philosophically represents Expressionism's core belief: that art is the pressing outward (aus-druck) of inner consciousness and feeling. It embodies the idea that authentic expression means channeling your inner self into external, visible form." },
+  { question: "When did the Bauhaus open as an art school revolutionary in form and philosophy?", options: ["1905", "1919", "1925", "1933"], correct: 1, explanation: "The Bauhaus was founded in 1919 in Weimar, Germany, by Walter Gropius. It became the most influential art and design school of the 20th century before being shut down by the Nazis in 1933 as 'degenerate' and 'too modern.'" }
+];
+
+// --- CANVAS BAUHAUS ANIMATION ---
+const canvas = document.getElementById('bauhaus-canvas');
+const ctx = canvas.getContext('2d');
+let shapes = [];
+let fragmentedShapes = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createShapes() {
+  shapes = [];
+  const colors = ['#e63946', '#f1faee', '#1d3557', '#457b9d', '#a8dadc'];
+  const shapeCount = window.innerWidth < 600 ? 15 : 30;
+
+  for (let i = 0; i < shapeCount; i++) {
+    const type = Math.random() > 0.6 ? 'circle' : (Math.random() > 0.5 ? 'rect' : 'triangle');
+    shapes.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 8 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      type: type,
+      opacity: Math.random() * 0.1 + 0.03,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      rotation: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawShape(shape, isFragmented = false) {
+  ctx.save();
+  ctx.globalAlpha = shape.opacity;
+  ctx.fillStyle = shape.color;
+  ctx.translate(shape.x, shape.y);
+  ctx.rotate(shape.rotation);
+
+  if (shape.type === 'circle') {
+    ctx.beginPath();
+    ctx.arc(0, 0, shape.size / 2, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (shape.type === 'rect') {
+    ctx.fillRect(-shape.size / 2, -shape.size / 2, shape.size, shape.size);
+  } else if (shape.type === 'triangle') {
+    ctx.beginPath();
+    ctx.moveTo(0, -shape.size / 2);
+    ctx.lineTo(shape.size / 2, shape.size / 2);
+    ctx.lineTo(-shape.size / 2, shape.size / 2);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function fragmentShape(shape) {
+  const fragments = [];
+  const fragmentCount = Math.random() * 4 + 3;
+  for (let i = 0; i < fragmentCount; i++) {
+    fragments.push({
+      x: shape.x + (Math.random() - 0.5) * shape.size,
+      y: shape.y + (Math.random() - 0.5) * shape.size,
+      size: shape.size / (Math.random() * 3 + 1),
+      color: shape.color,
+      opacity: shape.opacity * 0.7,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2 - 0.5,
+      rotation: Math.random() * Math.PI * 2,
+      angularVelocity: (Math.random() - 0.5) * 0.1,
+      age: 0,
+      maxAge: Math.random() * 100 + 150
+    });
+  }
+  return fragments;
+}
+
+function drawFrame(time) {
+  // Gradient background based on scroll
+  const scroll = window.scrollY / window.innerHeight;
+
+  // Background gradually transitions from blue → primary colors → grey-brown
+  let bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+
+  if (scroll < 0.5) {
+    bgGradient.addColorStop(0, '#0a0e1a');
+    bgGradient.addColorStop(1, `rgba(232, 57, 70, ${Math.min(0.3, scroll * 0.6)})`);
+  } else {
+    bgGradient.addColorStop(0, `rgba(232, 57, 70, ${Math.min(0.4, (scroll - 0.5) * 0.2)})`);
+    bgGradient.addColorStop(1, `rgba(107, 91, 109, ${Math.min(0.5, (scroll - 0.5) * 1)})`);
+  }
+
+  ctx.fillStyle = bgGradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Update and draw shapes
+  shapes.forEach((shape, idx) => {
+    shape.x += shape.vx;
+    shape.y += shape.vy;
+    shape.rotation += 0.003;
+
+    // Wrap around screen
+    if (shape.x > canvas.width + 100) shape.x = -100;
+    if (shape.x < -100) shape.x = canvas.width + 100;
+    if (shape.y > canvas.height + 100) shape.y = -100;
+    if (shape.y < -100) shape.y = canvas.height + 100;
+
+    // Fragment shapes as we scroll past 75%
+    if (scroll > 0.75 && Math.random() < 0.002 && fragmentedShapes.length < 20) {
+      fragmentedShapes.push(...fragmentShape(shape));
+      shapes.splice(idx, 1);
+    }
+
+    drawShape(shape, false);
+  });
+
+  // Update and draw fragmented shapes
+  fragmentedShapes = fragmentedShapes.filter(frag => frag.age < frag.maxAge);
+  fragmentedShapes.forEach(frag => {
+    frag.x += frag.vx;
+    frag.y += frag.vy;
+    frag.rotation += frag.angularVelocity;
+    frag.age++;
+    frag.opacity *= 0.98;
+
+    if (frag.x > canvas.width + 100) frag.x = -100;
+    if (frag.x < -100) frag.x = canvas.width + 100;
+    if (frag.y > canvas.height + 100) frag.y = -100;
+    if (frag.y < -100) frag.y = canvas.height + 100;
+
+    drawShape(frag, true);
+  });
+
+  // Overlay grid pattern for Bauhaus aesthetic
+  if (scroll < 0.6) {
+    const gridOpacity = 0.02 * scroll;
+    ctx.strokeStyle = `rgba(232, 164, 74, ${gridOpacity})`;
+    ctx.lineWidth = 1;
+    const gridSize = 60;
+    for (let x = 0; x < canvas.width; x += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+  }
+
+  // Add cabaret silhouettes as scroll increases
+  if (scroll > 0.4) {
+    const cabaretOpacity = Math.min(0.15, (scroll - 0.4) * 0.3);
+    ctx.fillStyle = `rgba(29, 53, 87, ${cabaretOpacity})`;
+
+    // Simple stage silhouette
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.2, canvas.height * 0.6);
+    ctx.lineTo(canvas.width * 0.8, canvas.height * 0.6);
+    ctx.lineTo(canvas.width * 0.75, canvas.height * 0.2);
+    ctx.lineTo(canvas.width * 0.25, canvas.height * 0.2);
+    ctx.closePath();
+    ctx.fill();
+
+    // Curtains
+    ctx.fillStyle = `rgba(230, 57, 70, ${cabaretOpacity * 0.8})`;
+    ctx.fillRect(canvas.width * 0.1, canvas.height * 0.15, canvas.width * 0.08, canvas.height * 0.55);
+    ctx.fillRect(canvas.width * 0.82, canvas.height * 0.15, canvas.width * 0.08, canvas.height * 0.55);
+
+    // Spotlight
+    ctx.strokeStyle = `rgba(241, 250, 238, ${cabaretOpacity * 0.5})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.5, canvas.height * 0.1, 40 + Math.sin(time * 0.002) * 10, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createShapes();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createShapes(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- QUIZ FUNCTIONALITY ---
+const quizForm = document.getElementById('quizForm');
+const postQuiz = document.getElementById('postQuiz');
+const correctAnswers = {
+  q1: 'b', q2: 'a', q3: 'b', q4: 'a', q5: 'b', q6: 'b', q7: 'b', q8: 'b',
+  q9: 'c', q10: 'b', q11: 'c', q12: 'b'
+};
+
+let answered = 0;
+
+document.querySelectorAll('.quiz-option input').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const question = this.closest('.quiz-question');
+    const questionNum = this.name;
+    const feedback = question.querySelector('.quiz-feedback');
+    const score = Object.values(correctAnswers).filter(ans => document.querySelector(`input[name="${Object.keys(correctAnswers).find(k => correctAnswers[k] === ans)}"][value="${ans}"]:checked`)).length;
+
+    // Check answer
+    if (this.value === correctAnswers[questionNum]) {
+      this.parentElement.classList.add('correct');
+      feedback.textContent = 'Correct! The Weimar era transformed the German language.';
+      feedback.classList.add('show');
+    } else {
+      this.parentElement.classList.add('incorrect');
+      feedback.textContent = 'Not quite. Reread the etymology card for clarity.';
+      feedback.classList.add('show');
+    }
+
+    // Update progress
+    answered = Object.keys(correctAnswers).filter(q => document.querySelector(`input[name="${q}"]:checked`)).length;
+    document.getElementById('scoreDisplay').textContent = `${answered} / 12 answered`;
+    document.getElementById('progressFill').style.width = (answered / 12) * 100 + '%';
+  });
+});
+
+quizForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  let score = 0;
+  for (const [q, correct] of Object.entries(correctAnswers)) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    if (selected && selected.value === correct) {
+      score++;
+    }
+  }
+
+  const percent = (score / 12) * 100;
+  const resultDiv = document.getElementById('quizResult');
+
+  if (percent >= 80) {
+    resultDiv.className = 'quiz-result pass show';
+    resultDiv.textContent = `You passed! Score: ${score}/12 (${percent.toFixed(0)}%). You understand Weimar German.`;
+
+    // Show post-quiz after delay
+    setTimeout(() => {
+      postQuiz.classList.add('visible');
+      postQuiz.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 600);
+  } else {
+    resultDiv.className = 'quiz-result fail show';
+    resultDiv.textContent = `You scored ${score}/12 (${percent.toFixed(0)}%). You need 80% to proceed. Review the etymology cards and try again.`;
+  }
+
+  document.querySelector('.quiz-submit').disabled = true;
+});
+
+// --- MOBILE: prevent double-tap zoom on interactive elements ---
+document.querySelectorAll('.german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- MOBILE: reduce shape count on small screens ---
+if (window.innerWidth < 600) {
+  shapes = shapes.slice(0, Math.floor(shapes.length / 2));
+}
+</script>
+
+
+  <div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 23;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 24: Die Stille</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #000000;
+  }
+
+  body {
+    background: linear-gradient(to bottom, #000000 0%, #080808 50%, #0d0b0a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- CANVAS (DARKNESS WITH ASH) --- */
+  #starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(232, 164, 74, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.3);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.2);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, rgba(232, 164, 74, 0.2), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  .narrative.warning {
+    font-size: 1.2rem;
+    color: rgba(232, 164, 74, 0.6);
+    font-style: italic;
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding-left: 20px;
+    margin: 1.5em 0;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: rgba(232, 164, 74, 0.7);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: rgba(232, 164, 74, 0.9);
+    border-bottom-color: rgba(232, 164, 74, 0.6);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(10, 10, 15, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(232, 164, 74, 0.05);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgba(232, 164, 74, 0.8);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.1); color: rgba(155, 142, 196, 0.6); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.1); color: rgba(138, 155, 174, 0.6); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.1); color: rgba(232, 164, 74, 0.6); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.1); color: rgba(196, 154, 108, 0.6); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.vi {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.4);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.08);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+    line-height: 1.7;
+  }
+
+  /* --- CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.05);
+    border: 1px solid rgba(196, 154, 108, 0.12);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--vietnamese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.6);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(15, 15, 20, 0.9), rgba(8, 8, 12, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.1);
+    border-color: rgba(232, 164, 74, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.1);
+    border-color: rgba(74, 180, 100, 0.3);
+    color: rgba(142, 214, 158, 0.8);
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.08);
+    border-color: rgba(180, 74, 74, 0.2);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: rgba(232, 164, 74, 0.6);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.15);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES (HISTORICAL CONTEXT) --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.04);
+    border-left: 2px solid rgba(155, 142, 196, 0.2);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.75);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(155, 142, 196, 0.6);
+    margin-bottom: 8px;
+  }
+
+  /* --- VOCABULARY TABLE --- */
+  .vocab-table {
+    width: 100%;
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 24px 0;
+    font-size: 0.95rem;
+  }
+
+  .vocab-table thead {
+    background: rgba(232, 164, 74, 0.08);
+    border-bottom: 1px solid rgba(232, 164, 74, 0.15);
+  }
+
+  .vocab-table th {
+    padding: 12px;
+    text-align: left;
+    color: rgba(232, 164, 74, 0.7);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .vocab-table td {
+    padding: 12px;
+    border-top: 1px solid rgba(232, 164, 74, 0.05);
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .vocab-table .german-col {
+    color: rgba(232, 164, 74, 0.7);
+    font-weight: 600;
+  }
+
+  .vocab-table .meaning-col {
+    font-style: italic;
+    color: rgba(212, 202, 187, 0.6);
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(15, 15, 20, 0.95), rgba(8, 8, 12, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.4);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.04);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: rgba(232, 164, 74, 0.7);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.3);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: rgba(232, 164, 74, 0.3);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(232, 164, 74, 0.3), rgba(232, 164, 74, 0.2));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(15, 15, 20, 0.95), rgba(8, 8, 12, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .quiz-subtitle {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.6);
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+
+  .quiz-question {
+    background: rgba(232, 164, 74, 0.03);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .quiz-question .q-number {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 8px;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .quiz-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .quiz-answer {
+    background: rgba(232, 164, 74, 0.04);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    color: rgba(212, 202, 187, 0.8);
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-size: 1rem;
+  }
+
+  .quiz-answer:hover {
+    background: rgba(232, 164, 74, 0.08);
+    border-color: rgba(232, 164, 74, 0.2);
+  }
+
+  .quiz-answer.selected-correct {
+    background: rgba(74, 180, 100, 0.1);
+    border-color: rgba(74, 180, 100, 0.3);
+    color: rgba(142, 214, 158, 0.8);
+    pointer-events: none;
+  }
+
+  .quiz-answer.selected-incorrect {
+    background: rgba(180, 74, 74, 0.08);
+    border-color: rgba(180, 74, 74, 0.2);
+    color: rgba(212, 202, 187, 0.4);
+    pointer-events: none;
+  }
+
+  .quiz-result {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-result.show { opacity: 1; }
+
+  .quiz-result.correct {
+    background: rgba(74, 180, 100, 0.1);
+    color: rgba(142, 214, 158, 0.8);
+  }
+
+  .quiz-result.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    color: rgba(220, 120, 120, 0.8);
+  }
+
+  .quiz-summary {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(232, 164, 74, 0.03);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .quiz-summary .score {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+
+  .quiz-summary .message {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+  }
+
+  .quiz-submit {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text-bright);
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-submit:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: rgba(232, 164, 74, 0.4);
+  }
+
+  .quiz-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .post-quiz {
+    display: none;
+  }
+
+  .post-quiz.show {
+    display: block;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px 14px; margin: 12px 0; }
+    .quiz-answer { padding: 10px 12px; font-size: 0.95rem; }
+    .vocab-table { font-size: 0.85rem; }
+    .vocab-table th, .vocab-table td { padding: 10px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.04);
+    color: rgba(232, 164, 74, 0.6);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.1); border-color: rgba(232, 164, 74, 0.3); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.15); border-color: rgba(232, 164, 74, 0.3); }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="starfield"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twenty-Four</div>
+    <h1>Die Stille</h1>
+    <div class="subtitle">The Silence</div>
+    <p class="narrative small" style="margin-top: 2em; opacity: 0.6; max-width: 500px;">
+      1933–1945. When a language becomes a weapon, when words are weaponized into propaganda, when silence becomes the only ethical response.
+    </p>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE CORRUPTION OF LANGUAGE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The German language had produced Goethe. It had spoken the philosophy of Hegel and the poetry of Heine. It was the language of Beethoven's symphonies and Leibniz's mathematics. For centuries, German stood among the great languages of human civilization — a language of thought, of precision, of profound depth.
+    </p>
+
+    <div style="margin:20px auto;max-width:640px;padding:16px 20px;background:rgba(155,142,196,0.05);border-left:3px solid rgba(155,142,196,0.3);border-radius:0 8px 8px 0;font-size:0.82rem;color:rgba(212,202,187,0.6);line-height:1.6;">
+      <span style="color:#9b8ec4;font-weight:600;">Historical Context:</span> After World War I, economic collapse and political instability led to the rise of the Nazi regime (1933–1945). The Nazis persecuted Jewish people and minorities, started World War II, and committed the Holocaust. This period profoundly scarred the German language — many words and phrases became unusable due to their association with propaganda and genocide.
+    </div>
+
+    <p class="narrative">
+      And then, between 1933 and 1945, something happened that had never happened before in the history of language: a nation took its own tongue and systematically weaponized it.
+    </p>
+
+    <p class="narrative">
+      Not through crude violence. Not by forbidding words or burning books (though that happened too). Instead, the Nazi regime took existing German words — words with centuries of innocent history — and twisted them. They corrupted the vocabulary from within, one word at a time.
+    </p>
+
+    <p class="narrative emphasis">
+      Language did not resist. Language cooperated.
+    </p>
+
+    <p class="narrative">
+      The historian Victor Klemperer, a German Jew who survived the war by hiding, spent the Nazi years documenting this corruption. He kept careful records of how words were being misused, how meanings were being distorted, how the German language itself was becoming a tool of genocide. He called this phenomenon "LTI" — <em>Lingua Tertii Imperii</em>, the language of the Third Reich.
+    </p>
+
+    <p class="narrative">
+      Klemperer understood something essential: the Nazis did not need to invent new words. They needed only to hijack old ones.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE CORRUPTION TABLE ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Consider what the regime did to a single word: <span class="german-word" data-card="volk">Volk.</span>
+    </p>
+
+    <p class="narrative">
+      For a thousand years, <em>Volk</em> had meant simply "people" — the people of a nation, the folk traditions of a culture, the ordinary inhabitants of a land. It was an innocent, even beautiful word. The Brothers Grimm had called their fairy tales <em>Volksmärchen</em> — folk tales. A Volkswagen was literally a "people's car," meant to be affordable to ordinary Germans.
+    </p>
+
+    <p class="narrative">
+      But in the 1930s, the regime began to restrict the meaning. <em>Volk</em> no longer meant "the people" — it began to mean only "the German people," and then more narrowly still, "the racially pure German people." The word that had once been inclusive became exclusive. The word that had meant everyone became a word for a chosen few.
+    </p>
+
+    <p class="narrative warning">
+      This table shows how the Nazi regime corrupted ordinary German vocabulary. Each word here had a legitimate meaning for centuries. The regime did not forbid these meanings — it simply began to use the words in new, narrow, twisted ways. And over time, the old meanings faded away.
+    </p>
+
+    <table class="vocab-table">
+      <thead>
+        <tr>
+          <th>German Word</th>
+          <th>Original Meaning</th>
+          <th>Nazi Corruption</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="german-col">Volk</td>
+          <td class="meaning-col">The people; folk traditions</td>
+          <td class="meaning-col">Only the racially pure German people</td>
+        </tr>
+        <tr>
+          <td class="german-col">Führerprinzip</td>
+          <td class="meaning-col">Leadership principle; guidance</td>
+          <td class="meaning-col">Total obedience to a single authoritarian leader</td>
+        </tr>
+        <tr>
+          <td class="german-col">Gleichschaltung</td>
+          <td class="meaning-col">Coordination; synchronization</td>
+          <td class="meaning-col">Forced coordination of all society under totalitarian control</td>
+        </tr>
+        <tr>
+          <td class="german-col">Sonderbehandlung</td>
+          <td class="meaning-col">Special treatment; preferential handling</td>
+          <td class="meaning-col">Murder; execution in concentration camps</td>
+        </tr>
+        <tr>
+          <td class="german-col">Endlösung</td>
+          <td class="meaning-col">Final solution; ultimate answer</td>
+          <td class="meaning-col">The systematic genocide of six million Jews</td>
+        </tr>
+        <tr>
+          <td class="german-col">Arbeitslager</td>
+          <td class="meaning-col">Work camp; labor facility</td>
+          <td class="meaning-col">Concentration camp; extermination center</td>
+        </tr>
+        <tr>
+          <td class="german-col">Rasse</td>
+          <td class="meaning-col">Race; breed; variety</td>
+          <td class="meaning-col">A pseudo-scientific category used to justify genocide</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="narrative small" style="margin-top: 20px;">
+      The pattern is clear: the regime did not create this corruption alone. It was enabled by bureaucrats, teachers, journalists, radio broadcasters, and ordinary citizens who used these words without protest. Language became complicit through the silence of those who spoke it.
+    </p>
+
+    <!-- VOLK etymology card -->
+    <div class="ety-card" id="card-volk">
+      <div class="word-header">
+        <span class="word-main">Volk</span>
+        <span class="word-pron">/fɔlk/</span>
+      </div>
+      <div class="word-meaning">people; folk; the inhabitants of a nation</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wl̥kos</span>
+        <span class="bridge-note">— cognate with English "folk," Dutch "volk," Scandinavian languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">folk</span>
+        <span class="bridge-note">— Old English "folc"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Volk</span>
+        <span class="bridge-note">— Middle High German "volc"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">dân</span>
+        <span class="bridge-note">— dân — Sino-Vietnamese: "people; citizens"</span>
+      </div>
+      <div class="story">
+        The tragedy of <em>Volk</em> is that it was an entirely innocent word. It appears in countless contexts from medieval times: <em>Volkslied</em> (folk song), <em>Volksglaube</em> (folk belief), <em>Volksbuch</em> (folk book). The word simply meant "the common people" — the ordinary folk, distinct from nobility or clergy. But this very universality — the fact that <em>Volk</em> was such a basic, everyday word — made it a perfect target for linguistic corruption. The regime took a word that belonged to everyone and gradually transformed it into a word of exclusion.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE WORDS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      In the language of the Third Reich, euphemism became a weapon of unprecedented power.
+    </p>
+
+    <p class="narrative">
+      Consider the two words at the center of the Holocaust: <span class="german-word" data-card="endloesung">Endlösung</span> and <span class="german-word" data-card="sonderbehandlung">Sonderbehandlung.</span>
+    </p>
+
+    <p class="narrative">
+      <em>Endlösung</em> — the "Final Solution" — sounds administrative, bureaucratic, almost technical. It could mean any number of things: a final answer to a problem, an ultimate resolution, an endpoint to a process. The word itself contains no violence. No one reading or hearing the word <em>Endlösung</em> would immediately understand that it referred to the systematic murder of six million human beings.
+    </p>
+
+    <p class="narrative">
+      <em>Sonderbehandlung</em> — "special treatment" — sounds almost generous. It sounds like something good is being offered. Someone receiving <em>Sonderbehandlung</em> might be expected to get special care, special attention, perhaps an honor. The words are gentle. The reality was industrial genocide.
+    </p>
+
+    <p class="narrative">
+      This is what makes the corruption of language so insidious: it hides horror behind bureaucratic abstraction. It allows someone to say horrific things while the words themselves sound neutral. The speaker can claim, when challenged, "I only used a technical term. I did not say anything violent."
+    </p>
+
+    <p class="narrative">
+      But language does not lie — even when speakers use it to lie. The violence in <em>Endlösung</em> and <em>Sonderbehandlung</em> is still there. It is just hidden, obscured, deniable.
+    </p>
+
+    <!-- ENDLÖSUNG card -->
+    <div class="ety-card" id="card-endloesung">
+      <div class="word-header">
+        <span class="word-main">Endlösung</span>
+        <span class="word-pron">/ˈɛntˌløːzʊŋ/</span>
+      </div>
+      <div class="word-meaning">final solution — the Nazi euphemism for genocide</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">End-lösung</span>
+        <span class="bridge-note">— Ende (end) + Lösung (solution) = literally, "the ending resolution"</span>
+      </div>
+      <div class="story">
+        The word <em>Endlösung</em> first appeared in Nazi documents in the late 1930s. It was deliberately chosen for its ambiguity. An <em>Endlösung</em> could refer to the "solution" of any "problem" — economic policy, territorial disputes, demographic challenges. The word is so abstract that it requires context to understand. And that was precisely the point. In Nazi bureaucratic memos and conference notes, <em>Endlösung</em> appeared again and again — always abstract, always deniable, always hiding its true meaning behind the veil of technical language. The Wannsee Conference in January 1942, where Nazi leaders discussed the systematic killing of all European Jews, referred to it only as the <em>Endlösung</em> — the Final Solution. The protocol of that meeting uses the word repeatedly, but rarely specifies what it means. The obscurity was intentional. Language was being weaponized through abstraction.
+      </div>
+    </div>
+
+    <!-- SONDERBEHANDLUNG card -->
+    <div class="ety-card" id="card-sonderbehandlung">
+      <div class="word-header">
+        <span class="word-main">Sonderbehandlung</span>
+        <span class="word-pron">/ˈzɔndɐbəˌhandluŋ/</span>
+      </div>
+      <div class="word-meaning">special treatment — Nazi code for execution</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Sonder-behandlung</span>
+        <span class="bridge-note">— Sonder (special) + Behandlung (treatment) = literally, "special care"</span>
+      </div>
+      <div class="story">
+        In concentration camp records, when a prisoner was scheduled for immediate death, the Nazi administrators would write "<em>zur Sonderbehandlung</em>" — "for special treatment." The term was used in routine correspondence, in daily reports, in administrative paperwork. Those who read these documents — guards, administrators, other officials — knew exactly what <em>Sonderbehandlung</em> meant. But the language allowed them to discuss mass murder in the same tone and style as any other administrative matter. The obscenity of the bureaucratic voice made the horror systematic and therefore survivable for those who carried it out.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: RESISTANCE IN EXILE ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Not all German speakers cooperated with this corruption.
+    </p>
+
+    <p class="narrative">
+      Thomas Mann, perhaps the greatest German novelist of the twentieth century, fled Nazi Germany in 1933 and spent the next twelve years in exile — first in France, then in Switzerland, finally in the United States. From California, Mann broadcast radio messages back to Germany, in German, speaking to a people he could no longer reach in person.
+    </p>
+
+    <p class="narrative">
+      In those broadcasts, Mann refused to use the corrupted language of the regime. He insisted on using German words with their original, true meanings. He spoke of <em>Volk</em> in its inclusive sense — the German people, yes, but all of them, including those the regime had designated as enemies. He spoke of human dignity and freedom in words that predated the Nazi corruption.
+    </p>
+
+    <p class="narrative">
+      This was an act of linguistic resistance. By insisting on the true meanings of German words, Mann was saying: <em>This language is not yours. This language belongs to its history, to its roots, to all the people who have spoken it. You cannot steal it.</em>
+    </p>
+
+    <p class="narrative">
+      Similarly, Bertolt Brecht, who had fled to Scandinavia, continued to write in German — writing plays, poems, and essays in exile, keeping alive a version of the German language untainted by Nazi corruption. These writers understood something crucial: language could be defended. Language could be kept alive in the space outside the regime's control.
+    </p>
+
+    <p class="narrative">
+      The German language had two versions during the Nazi years: the corrupted version inside Germany, and the true version spoken by the exiles. For those who had ears to hear, both existed simultaneously.
+    </p>
+
+    <div class="aside-box">
+      <div class="aside-title">The Inner Emigration</div>
+      Not all resistance to linguistic corruption happened in exile. Some German writers who remained in Germany — what historians call the "inner emigration" — also resisted. They wrote carefully, coding resistance into their words, using ambiguous language that could be read in multiple ways. They wrote in ways that appeared to be acceptable to the regime but that carried hidden meanings for those who knew how to listen. This was the most dangerous form of linguistic resistance — to live inside the corrupted language and attempt to preserve the true meanings through subtle subversion.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE SILENCE THAT CAME AFTER ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      When the war ended in 1945, when the camps were liberated, when the world saw the photographs and the evidence of what had been done — something unexpected happened to the German language.
+    </p>
+
+    <p class="narrative">
+      It broke.
+    </p>
+
+    <p class="narrative">
+      The German philosopher and theorist Theodor Adorno wrote, in 1949: "To write a poem after Auschwitz is barbaric. It is a question of whether after Auschwitz you can go on living — especially whether you can go on living in Germany."
+    </p>
+
+    <p class="narrative">
+      Adorno's statement struck at the heart of a devastating question: How could one speak German after German had been weaponized to organize genocide? How could one use the words that had been corrupted by the regime, even if one was trying to use them honestly? How could language ever recover from this?
+    </p>
+
+    <p class="narrative emphasis">
+      And so, for a time, there was silence.
+    </p>
+
+    <p class="narrative">
+      German Jews who survived the camps largely stopped speaking German. They migrated to other languages — English, Hebrew, the languages of other nations. The language that had been their mother tongue had become the language of their attempted annihilation. How could one speak the language of one's murderers?
+    </p>
+
+    <p class="narrative">
+      In Germany itself, there was a kind of stunned silence. The regime's corrupted vocabulary had to be purged, dismantled, exorcised. But this could not happen quickly. The words were too embedded in the culture, in the education system, in the media. For years after the war, German speakers struggled with the fundamental question: How do we speak German again?
+    </p>
+
+    <p class="narrative">
+      The answer did not come from any single person or even any single generation. It came from the fact that language, ultimately, is stronger than those who corrupt it.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE WORDS OF RECOVERY ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And so we come to three new German words — three words that did not exist before the war, or if they did, they took on new meaning in the ashes of 1945. They are words of memory, of responsibility, of the painful work of living with history.
+    </p>
+
+    <p class="narrative">
+      The first: <span class="german-word" data-card="schuld">Schuld.</span>
+    </p>
+
+    <p class="narrative">
+      We have seen <em>Schuld</em> before — it means guilt, responsibility, debt. But after 1945, the word took on a new depth. The question of German guilt became not just an individual matter but a collective one. What does an entire nation owe for crimes committed in its name? This question transformed <em>Schuld</em> from a simple word about personal responsibility into a word about historical responsibility, about moral debt that spans generations.
+    </p>
+
+    <!-- SCHULD card (revisited) -->
+    <div class="ety-card" id="card-schuld">
+      <div class="word-header">
+        <span class="word-main">Schuld</span>
+        <span class="word-pron">/ʃʊlt/</span>
+      </div>
+      <div class="word-meaning">guilt; debt; responsibility — and after 1945, historical responsibility</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schuld</span>
+        <span class="bridge-note">— the same word means both personal guilt and financial debt</span>
+      </div>
+      <div class="story">
+        In German, <em>Schuld</em> carries a double meaning that English separates: guilt (moral responsibility for wrongdoing) and debt (financial obligation). After 1945, this double meaning became profound. Germany had incurred both a moral and historical debt. The word <em>Schuld</em> transformed from a legal or financial term into a wound — a word that carried the weight of the Holocaust, the genocide, the unspeakable crimes. To speak of <em>Schuld</em> after 1945 was to acknowledge that some debts can never fully be repaid, only honored through eternal remembrance and responsibility. This is unique to the German language — the fact that a single word carries both meanings, and that after 1945, both meanings became inseparable from historical catastrophe.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The second word: <span class="german-word" data-card="schweigen">Schweigen.</span>
+    </p>
+
+    <p class="narrative">
+      <em>Schweigen</em> means silence, to be silent. But there are different kinds of silence. There is the silence of those who did not know, and the silence of those who knew but said nothing. There is the silence of those who could not speak, and the silence of those who chose not to. After the war, German society had to confront all these silences at once. The word <em>Schweigen</em> became a word of accusation, of shame, of the terrible power of language withheld.
+    </p>
+
+    <!-- SCHWEIGEN card -->
+    <div class="ety-card" id="card-schweigen">
+      <div class="word-header">
+        <span class="word-main">Schweigen</span>
+        <span class="word-pron">/ˈʃvaɪ̯ɡən/</span>
+      </div>
+      <div class="word-meaning">silence; to be silent; the refusal or inability to speak</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*swīganą</span>
+        <span class="bridge-note">— cognate with Old Norse "sveigja" (to bend, to be silent)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">swage</span>
+        <span class="bridge-note">— a tool that bends; related to the idea of constraint</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schweigen</span>
+        <span class="bridge-note">— the state of being silent, enforced or chosen</span>
+      </div>
+      <div class="story">
+        The etymology of <em>Schweigen</em> is disputed, but one theory connects it to the root meaning "to bend" or "to constrain" — as if silence were a form of bending, of pressing inward. After 1945, this etymological hint became profoundly meaningful. The silence of German society during and after the Nazi era was a form of bending, a constraint on speech, a refusal to name what had happened. Paul Celan, a Romanian Jewish poet who survived the camps and wrote in German, made <em>Schweigen</em> central to his work. In his poem "Death Fugue," Celan uses language itself to describe the unspeakability of the Holocaust — using German words to describe something that seemed to exceed the capacity of German words.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The third word: <span class="german-word" data-card="erinnerung">Erinnerung.</span>
+    </p>
+
+    <p class="narrative">
+      <em>Erinnerung</em> means memory or remembrance. But the word carries a hidden structure: <em>Er-</em> (a prefix meaning "to make") + <em>innerung</em> (from <em>innen</em>, meaning "inward"). Literally, <em>Erinnerung</em> means "to make something inner" — to internalize something, to take something from the outside world and bring it inward into memory and consciousness.
+    </p>
+
+    <p class="narrative">
+      After the war, this became crucial. Memory had to be actively made, actively internalized, actively brought into consciousness. It could not be forgotten. It could not be passed over. <em>Erinnerung</em> became a moral imperative — the command to remember, to make the horrors of the past an internal, permanent part of consciousness.
+    </p>
+
+    <!-- ERINNERUNG card -->
+    <div class="ety-card" id="card-erinnerung">
+      <div class="word-header">
+        <span class="word-main">Erinnerung</span>
+        <span class="word-pron">/ɛʁˈɪnɐʊŋ/</span>
+      </div>
+      <div class="word-meaning">memory; remembrance; making something inner</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Er-inner-ung</span>
+        <span class="bridge-note">— Er (to make) + inner (inward) + -ung (suffix) = to internalize</span>
+      </div>
+      <div class="story">
+        The structure of <em>Erinnerung</em> reveals something profound about how German thinks about memory. Memory is not simply a passive recording of events. It is an active process of bringing the past inward, of making it part of one's inner self. After 1945, this word took on immense significance. German society faced a choice: to practice <em>Erinnerung</em> — to actively, consciously remember and internalize the Holocaust — or to practice forgetting. The commitment to <em>Erinnerung</em> became a kind of moral promise to the victims: We will make this part of ourselves. We will not let you be forgotten. This commitment, embedded in the very structure of the German word, has shaped German culture for nearly eighty years.
+      </div>
+    </div>
+
+    <p class="narrative">
+      These three words — <em>Schuld, Schweigen, Erinnerung</em> — represent something remarkable. They are not new words. But they became new in meaning after 1945, bearing the weight of historical catastrophe. They became the words through which German society could begin to recover — not by forgetting what the language had been corrupted to do, but by remembering it, by holding it in consciousness, by building a new use of the language on top of the ruins of the old.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: BUILDING FROM RUINS ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      From the ruins of 1945 came new words, new commitments to language. Two words, in particular, became the foundation of modern Germany's relationship with its past.
+    </p>
+
+    <p class="narrative">
+      The first: <span class="german-word" data-card="verantwortung">Verantwortung.</span> Responsibility.
+    </p>
+
+    <p class="narrative">
+      The word itself is constructed beautifully: <em>Ver-</em> (a prefix meaning "into" or "forth") + <em>Antwort</em> (answer) + <em>-ung</em> (a noun suffix). Literally, <em>Verantwortung</em> means "the act of giving an answer." To be responsible is to be answerable — to have to answer for one's actions, one's choices, one's silence.
+    </p>
+
+    <p class="narrative">
+      After 1945, this word became central to German consciousness. The question was: How will Germany answer for what happened? Not by denying it, not by justifying it, but by <em>answering</em> — by acknowledging, by accepting responsibility, by building a new society on the principle that such a thing must never happen again.
+    </p>
+
+    <!-- VERANTWORTUNG card -->
+    <div class="ety-card" id="card-verantwortung">
+      <div class="word-header">
+        <span class="word-main">Verantwortung</span>
+        <span class="word-pron">/fɛɐ̯ˈantvɔɐ̯tʊŋ/</span>
+      </div>
+      <div class="word-meaning">responsibility; accountability; the duty to answer</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Ver-antwort-ung</span>
+        <span class="bridge-note">— Ver (forth) + Antwort (answer) + -ung (state of being)</span>
+      </div>
+      <div class="story">
+        The construction of <em>Verantwortung</em> is instructive. German builds moral concepts from simple, concrete words. "Responsibility" comes from "answering" — the idea that if you are responsible, you must stand up and answer for what you have done. You cannot hide. You cannot be silent. After 1945, this word became a covenant — a promise that Germany would not hide from its past, but would face it, answer for it, and use that answer to build something different. Chancellor Willy Brandt's 1970 act of kneeling at the memorial to the Warsaw Ghetto Uprising — a gesture of silent acknowledgment of responsibility and guilt — was the physical embodiment of <em>Verantwortung</em>: standing, answering, accepting without excuse.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The second word: <span class="german-word" data-card="widerstand">Widerstand.</span> Resistance.
+    </p>
+
+    <p class="narrative">
+      The word breaks down simply: <em>Wider</em> (against) + <em>Stand</em> (standing; state). To resist is to stand against. And it is standing — not sitting, not hiding, but standing upright, present, visible.
+    </p>
+
+    <p class="narrative">
+      After 1945, Germany had to remember not only those who perpetrated the Holocaust, but also those who resisted it. There were Germans who hid Jews. Germans who spoke out against the regime, even when it meant death. Germans who maintained the true meanings of German words even as the regime tried to corrupt them. The word <em>Widerstand</em> became a word of honor — the honor of those who stood against.
+    </p>
+
+    <!-- WIDERSTAND card -->
+    <div class="ety-card" id="card-widerstand">
+      <div class="word-header">
+        <span class="word-main">Widerstand</span>
+        <span class="word-pron">/ˈviːdɐˌʃtant/</span>
+      </div>
+      <div class="word-meaning">resistance; standing against</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wider-stand</span>
+        <span class="bridge-note">— Wider (against) + Stand (standing)</span>
+      </div>
+      <div class="story">
+        <em>Widerstand</em> is a word of physicality and visibility. It suggests not hiding, not acquiescing, but standing — taking up space, being seen, being heard. In German resistance literature, this word appears again and again. The White Rose, a student resistance movement that actively opposed the Nazi regime, used the word <em>Widerstand</em> as central to their moral vocabulary. By honoring the resisters, by making <em>Widerstand</em> a word of reverence, German culture after 1945 was choosing to honor those who stood when they could have been silent, those who spoke when they could have hidden.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Finally, there is one phrase that became the moral foundation of everything that came after: <span class="german-word" data-card="niewieder">Nie wieder.</span>
+    </p>
+
+    <p class="narrative">
+      Never again.
+    </p>
+
+    <p class="narrative">
+      These two simple words — <em>Nie</em> (never) + <em>wieder</em> (again) — contain a vow. They are a promise, a covenant, a commitment. They say: This happened once. It will not happen again. This is our answer. This is our responsibility. This is what we will resist.
+    </p>
+
+    <!-- NIEWIEDER card -->
+    <div class="ety-card" id="card-niewieder">
+      <div class="word-header">
+        <span class="word-main">Nie wieder</span>
+        <span class="word-pron">/niː vɪˈdeːɐ/</span>
+      </div>
+      <div class="word-meaning">never again — the moral foundation of post-Holocaust Germany</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Nie wieder</span>
+        <span class="bridge-note">— Nie (never) + wieder (again) = a vow, a covenant</span>
+      </div>
+      <div class="story">
+        Two words, seven letters, infinite meaning. "<em>Nie wieder</em>" became the motto of postwar Germany, inscribed on memorials, repeated in schools, embedded in the German constitution. It is not just a historical statement (that the Holocaust happened and we acknowledge it) but a moral promise for the future (that we will build a society where such things cannot happen). This phrase, repeated millions of times over eighty years, has shaped German consciousness. To be German after 1945 is to carry these two words as part of one's identity: the promise that another Holocaust will never occur on German soil.
+      </div>
+    </div>
+
+    <p class="narrative">
+      These words — <em>Schuld, Schweigen, Erinnerung, Verantwortung, Widerstand, Nie wieder</em> — represent the German language's recovery from corruption. They are not new words, but reborn words, carrying new weight, new meaning, new moral force.
+    </p>
+
+    <p class="narrative emphasis">
+      Language can be corrupted. This chapter has shown that. But language can also be healed. Language can be reclaimed. Language can be used to say: Never again.
+    </p>
+  </div>
+
+  <!-- ==================== VOCABULARY BRIDGE ==================== -->
+  <div class="scene" id="scene-vocab">
+    <div class="aside-box">
+      <div class="aside-title">The Vietnamese Parallel</div>
+      <p>Vietnam also grapples with collective historical responsibility and memory. The word "ký ức" (literally "mark/record" + "memory" = memory) carries similar weight in Vietnamese consciousness as <em>Erinnerung</em> does in German. The responsibility to remember — not to erase, not to diminish — is encoded into the very fabric of how Vietnamese speaks about the past. And "trách nhiệm" (responsibility + duty) is the Vietnamese equivalent of <em>Verantwortung</em> — the duty to answer. Both German and Vietnamese cultures have learned, through different historical catastrophes, that language itself must carry the weight of moral memory. The words we choose to remember the past are not neutral — they are the foundation of the future we build.</p>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== THE FINAL QUESTION ==================== -->
+  <div class="scene" id="scene-question">
+    <div class="scene-marker"></div>
+
+    <p class="narrative emphasis">
+      But this raises the deepest question of all:
+    </p>
+
+    <p class="narrative">
+      Can language itself ever be innocent again after it has been weaponized? Can German speakers speak their language without carrying, embedded in every word, the memory of what those words were made to do?
+    </p>
+
+    <p class="narrative">
+      Victor Klemperer, who documented the corruption of German, lived to see the postwar period. He returned to Germany and resumed his life as a scholar. He continued to write in German. And his ultimate conclusion was this: <em>Language is not the servant of those who speak it. Language remembers. Language keeps score.</em>
+    </p>
+
+    <p class="narrative">
+      The German language survived the Nazi era. It was corrupted, yes. But it was not destroyed. And it was cleansed, not through forgetting, but through remembering. Through the steady, painful, multigenerational practice of <em>Erinnerung</em> — making the past inner, keeping it in consciousness, refusing to let it fade.
+    </p>
+
+    <p class="narrative small">
+      This is not a happy ending. This is not a resolved ending. This is an ending that says: We carry this. We will always carry this. And in the carrying, we will try to ensure that such corruption, such weaponization of language, never happens again. This is what it means to speak German after 1945.
+    </p>
+  </div>
+
+
+  <!-- ==================== POST-QUIZ CONTENT ==================== -->
+  <div class="post-quiz" id="postQuizContent">
+
+  <!-- ==================== PATTERNS DISCOVERED ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Euphemism as weapon</strong> — Endlösung (final solution), Sonderbehandlung (special treatment) — the Nazis weaponised German's compound precision to disguise atrocity behind bureaucratic language.<br><br>
+    <strong style="color: var(--text-bright);">Schuld carries double meaning</strong> — Schuld means both "guilt" and "debt," encoding the idea that guilt is something owed, a moral debt that must be paid. Post-war Germany built an entire culture around this word.<br><br>
+    <strong style="color: var(--text-bright);">Wider- prefix for resistance</strong> — Widerstand (against+stand = resistance). The word's structure is physical: standing against something. Widerspruch (contradiction), Widerruf (revocation) follow the same pattern.<br><br>
+    <strong style="color: var(--text-bright);">Language after catastrophe</strong> — After 1945, German writers questioned whether the language itself was contaminated. Could you write poetry in the language of the perpetrators? Adorno's famous question haunted German literature for decades.
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+    <div class="scene" id="scene-collection">
+      <div class="word-collection">
+        <h3>Words Gathered in Chapter Twenty-Four</h3>
+        <div class="collected-words">
+          <div class="collected-word" data-delay="0"><span class="cw-german">Schuld</span><span class="cw-english">guilt / debt</span></div>
+          <div class="collected-word" data-delay="100"><span class="cw-german">Schweigen</span><span class="cw-english">silence</span></div>
+          <div class="collected-word" data-delay="200"><span class="cw-german">Erinnerung</span><span class="cw-english">memory</span></div>
+          <div class="collected-word" data-delay="300"><span class="cw-german">Verantwortung</span><span class="cw-english">responsibility</span></div>
+          <div class="collected-word" data-delay="400"><span class="cw-german">Widerstand</span><span class="cw-english">resistance</span></div>
+          <div class="collected-word" data-delay="500"><span class="cw-german">Volk</span><span class="cw-english">people</span></div>
+          <div class="collected-word" data-delay="600"><span class="cw-german">Endlösung</span><span class="cw-english">final solution</span></div>
+          <div class="collected-word" data-delay="700"><span class="cw-german">Sonderbehandlung</span><span class="cw-english">special treatment</span></div>
+          <div class="collected-word" data-delay="800"><span class="cw-german">Nie wieder</span><span class="cw-english">never again</span></div>
+        </div>
+      </div>
+    </div>
+
+  <!-- ==================== CONCEPTS LEARNED ==================== -->
+  <h3 style="margin-top:32px;">Concepts Learned in Chapter Twenty-Four</h3>
+  <div class="collected-words">
+    <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Language as Weapon</span><span class="cw-english">Endlösung, Sonderbehandlung — euphemism hiding atrocity</span></div>
+    <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Schuld = Guilt + Debt</span><span class="cw-english">one word carrying moral and financial obligation</span></div>
+    <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Wider- Prefix</span><span class="cw-english">Widerstand, Widerspruch — standing against, speaking against</span></div>
+    <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Contaminated Language</span><span class="cw-english">can you write poetry in the language of the perpetrators?</span></div>
+  </div>
+
+  <!-- ==================== QUIZ GATE ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <p class="quiz-subtitle">Answer 80% of these 12 questions to continue. The next chapter requires understanding.</p>
+
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 1 of 12</div>
+        <div class="q-text">What does Volk originally mean in German?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">The people; folk traditions</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Only racially pure citizens</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Military power</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">National territory</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 2 of 12</div>
+        <div class="q-text">What does Endlösung mean in Nazi context?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">A final treaty</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">The systematic genocide of Jews (Final Solution)</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">The end of the war</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Political reorganization</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 3 of 12</div>
+        <div class="q-text">What was the Nazi strategy for corrupting German language?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Creating entirely new words</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">Twisting existing words and restricting their meanings</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Banning words they disliked</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Importing words from other languages</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 4 of 12</div>
+        <div class="q-text">What does "LTI" stand for?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">Lingua Tertii Imperii (Language of the Third Reich)</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Law of Total Integration</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">League of Territorial Independence</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Linguistic Training Institute</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 5 of 12</div>
+        <div class="q-text">Who documented the corruption of German during the Nazi era?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">Victor Klemperer</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Thomas Mann</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Bertolt Brecht</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Paul Celan</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 6 of 12</div>
+        <div class="q-text">What does Sonderbehandlung mean in Nazi context?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Special privileges</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Medical treatment</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">Murder; execution in camps (special treatment)</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Reparations and compensation</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 7 of 12</div>
+        <div class="q-text">What did Theodor Adorno famously say after the Holocaust?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">To write poetry after Auschwitz is barbaric</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Language will heal all wounds</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">German culture has been vindicated</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">We must forget the past to move forward</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 8 of 12</div>
+        <div class="q-text">What is the etymological structure of Erinnerung?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">Er- (to make) + inner (inward) = to internalize, to make inward</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Ein (one) + Rahmen (frame) = putting in a frame</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Er (he) + innern (inner things)</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Eigen (own) + Rahmen (context)</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 9 of 12</div>
+        <div class="q-text">How did Thomas Mann resist Nazi linguistic corruption?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">By creating new German words</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">By using German words with their original, true meanings in exile broadcasts</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">By writing exclusively in English</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">By refusing to speak German at all</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 10 of 12</div>
+        <div class="q-text">What does Verantwortung literally mean?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">The act of giving an answer (Ver-antwort-ung)</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">The state of being aware</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">The burden of the past</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">The power to respond</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 11 of 12</div>
+        <div class="q-text">What does Widerstand mean?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Distance; separation</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">Resistance; standing against (Wider-stand)</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Contradiction; opposition</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Withdrawal; retreat</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="quiz-question">
+        <div class="q-number">Question 12 of 12</div>
+        <div class="q-text">What does "Nie wieder" mean and signify?</div>
+        <div class="quiz-answers">
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Not now; postponed for later</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Never found; completely lost</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, true)">Never again; a moral vow that such atrocity will not recur</div>
+          <div class="quiz-answer" onclick="quizAnswer(this, false)">Never written; impossible to express</div>
+        </div>
+        <div class="quiz-result"></div>
+      </div>
+
+      <button class="quiz-submit" onclick="submitQuiz()" id="quizSubmitBtn">Submit Quiz</button>
+
+      <div class="quiz-summary" id="quizSummary" style="display: none;">
+        <div class="score" id="scoreDisplay"></div>
+        <div class="message" id="scoreMessage"></div>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">240 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(28%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:28%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schuld</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">guilt, debt</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schweigen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">silence</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Erinnerung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">memory, remembrance</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Verantwortung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">responsibility</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Widerstand</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">resistance</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Volk</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">people</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Endlösung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">final solution</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sonderbehandlung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">special treatment</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Nie wieder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">never again</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~230 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–23</td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">51 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(35%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:35%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Euphemism as weapon</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Endlösung, Sonderbehandlung disguise atrocity</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schuld double meaning</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">guilt + debt; a moral debt owed</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wider- prefix resistance</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Widerstand (against+stand), Widerspruch (contradiction)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Language after catastrophe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Writers questioned if language was contaminated</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">24</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~75 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–23</td></tr>
+      </table>
+    </div>
+  </div>
+
+    <!-- ==================== CHAPTER END ==================== -->
+    <div class="scene" id="scene-end">
+      <div class="chapter-end">
+        <div class="end-line"></div>
+        <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+          End of Chapter Twenty-Four
+        </p>
+        <p class="narrative small" style="text-align: center;">
+          Nine words. Nine stories. The deepest question: Can language recover from being weaponized?<br>
+          <br>
+          The answer, offered across eighty years of German history, is: Yes — but only through remembrance, responsibility, and the refusal to forget.<br>
+          <br>
+          <em>Nie wieder.</em>
+        </p>
+        <div class="next-chapter">
+          Chapter Twenty-Five: The Rebuilding
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter23.html" class="nav-btn">← Chapter 23</a>
+    <a href="chapter25.html" class="nav-btn next">Chapter 25 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 24: DARKNESS WITH ASH PARTICLES ---
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let ashParticles = [];
+let burnBook = null;
+let candleFlame = null;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createAshParticles() {
+  ashParticles = [];
+  const count = window.innerWidth < 600 ? 20 : 40;
+  for (let i = 0; i < count; i++) {
+    ashParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: (Math.random() - 0.5) * 0.1,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random() * 0.15 + 0.05,
+      driftSpeed: Math.random() * 0.005 + 0.001
+    });
+  }
+}
+
+function createBurnBook() {
+  burnBook = {
+    x: canvas.width / 2,
+    y: canvas.height * 0.4,
+    width: 40,
+    height: 60,
+    rotation: 0,
+    burnProgress: 0,
+    pages: []
+  };
+  for (let i = 0; i < 5; i++) {
+    burnBook.pages.push({
+      offsetX: (Math.random() - 0.5) * 20,
+      offsetY: i * 12,
+      curl: Math.random() * 0.3
+    });
+  }
+}
+
+function createCandleFlame() {
+  candleFlame = {
+    x: canvas.width / 2,
+    y: canvas.height * 0.85,
+    width: 8,
+    height: 20,
+    flicker: 0,
+    brightness: 0.3
+  };
+}
+
+function drawAshParticles() {
+  ashParticles.forEach((p, idx) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx += (Math.random() - 0.5) * 0.02;
+    p.vy -= p.driftSpeed;
+
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(80, 80, 80, ${p.alpha})`;
+    ctx.fill();
+  });
+}
+
+function drawBurnBook() {
+  if (!burnBook) return;
+
+  const scroll = window.scrollY / window.innerHeight;
+  burnBook.burnProgress = Math.min(scroll * 1.5, 1);
+
+  ctx.save();
+  ctx.translate(burnBook.x, burnBook.y);
+  ctx.rotate(burnBook.burnProgress * 0.3);
+
+  // Book cover
+  ctx.fillStyle = `rgba(50, 30, 10, ${1 - burnBook.burnProgress * 0.7})`;
+  ctx.fillRect(-burnBook.width / 2, -burnBook.height / 2, burnBook.width, burnBook.height);
+
+  // Pages with burning effect
+  burnBook.pages.forEach((page, i) => {
+    const pageAlpha = 1 - (burnBook.burnProgress * 1.2);
+    if (pageAlpha > 0) {
+      ctx.fillStyle = `rgba(40, 20, 0, ${pageAlpha})`;
+      ctx.fillRect(-burnBook.width / 2 + page.offsetX, -burnBook.height / 2 + page.offsetY, burnBook.width - 4, 10);
+
+      // Charred edges
+      if (burnBook.burnProgress > 0.3) {
+        ctx.strokeStyle = `rgba(200, 80, 30, ${(burnBook.burnProgress - 0.3) * 0.5})`;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(-burnBook.width / 2 + page.offsetX, -burnBook.height / 2 + page.offsetY, burnBook.width - 4, 10);
+      }
+    }
+  });
+
+  ctx.restore();
+
+  // Fire around the book
+  if (burnBook.burnProgress > 0.2) {
+    const fireIntensity = (burnBook.burnProgress - 0.2) * 1.5;
+    for (let i = 0; i < 3; i++) {
+      const fireTime = Date.now() * 0.001 + i;
+      const flameX = burnBook.x - 30 + i * 30;
+      const flameHeight = 20 + Math.sin(fireTime) * 10;
+
+      ctx.fillStyle = `rgba(232, 164, 74, ${fireIntensity * 0.4})`;
+      ctx.beginPath();
+      ctx.moveTo(flameX - 15, burnBook.y + 40);
+      ctx.quadraticCurveTo(flameX - 8 + Math.sin(fireTime * 1.5) * 8, burnBook.y + 40 - flameHeight * 0.6, flameX, burnBook.y + 40 - flameHeight);
+      ctx.quadraticCurveTo(flameX + 8, burnBook.y + 40 - flameHeight, flameX + 15, burnBook.y + 40);
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(244, 198, 122, ${fireIntensity * 0.3})`;
+      ctx.beginPath();
+      ctx.moveTo(flameX - 8, burnBook.y + 38);
+      ctx.quadraticCurveTo(flameX - 4 + Math.sin(fireTime * 1.3) * 4, burnBook.y + 38 - flameHeight * 0.4, flameX, burnBook.y + 38 - flameHeight * 0.7);
+      ctx.quadraticCurveTo(flameX + 4, burnBook.y + 38 - flameHeight * 0.4, flameX + 8, burnBook.y + 38);
+      ctx.fill();
+    }
+  }
+}
+
+function drawCandleFlame() {
+  if (!candleFlame) return;
+
+  const scroll = window.scrollY / window.innerHeight;
+  const scrollEndPhase = Math.max(0, scroll - 0.8);
+  candleFlame.brightness = Math.max(0.1, 0.5 - scroll * 0.3 + Math.sin(Date.now() * 0.003) * 0.1 + scrollEndPhase * 0.8);
+
+  const flameTime = Date.now() * 0.001;
+  const flameHeight = candleFlame.height + Math.sin(flameTime) * 5;
+
+  // Candle
+  ctx.fillStyle = 'rgba(200, 180, 150, 0.3)';
+  ctx.fillRect(candleFlame.x - 4, candleFlame.y + 20, 8, 15);
+
+  // Flame
+  ctx.fillStyle = `rgba(232, 164, 74, ${candleFlame.brightness})`;
+  ctx.beginPath();
+  ctx.moveTo(candleFlame.x - 6, candleFlame.y + 20);
+  ctx.quadraticCurveTo(candleFlame.x - 4 + Math.sin(flameTime * 1.5) * 4, candleFlame.y + 20 - flameHeight * 0.6, candleFlame.x, candleFlame.y + 20 - flameHeight);
+  ctx.quadraticCurveTo(candleFlame.x + 4, candleFlame.y + 20 - flameHeight, candleFlame.x + 6, candleFlame.y + 20);
+  ctx.fill();
+
+  // Inner flame
+  ctx.fillStyle = `rgba(244, 198, 122, ${candleFlame.brightness * 0.6})`;
+  ctx.beginPath();
+  ctx.moveTo(candleFlame.x - 3, candleFlame.y + 18);
+  ctx.quadraticCurveTo(candleFlame.x - 2 + Math.sin(flameTime * 1.3) * 2, candleFlame.y + 18 - flameHeight * 0.4, candleFlame.x, candleFlame.y + 18 - flameHeight * 0.7);
+  ctx.quadraticCurveTo(candleFlame.x + 2, candleFlame.y + 18 - flameHeight * 0.4, candleFlame.x + 3, candleFlame.y + 18);
+  ctx.fill();
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawAshParticles();
+  drawBurnBook();
+  drawCandleFlame();
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createAshParticles();
+createBurnBook();
+createCandleFlame();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createAshParticles(); createBurnBook(); createCandleFlame(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- QUIZ DATA WITH EXPLANATIONS ---
+const quizData = [
+  { question: "What does Volk originally mean in German?", options: ["The people; folk traditions", "Only racially pure citizens", "Military power", "National territory"], correct: 0, explanation: "Volk means 'the people' or 'folk'—it has Germanic roots meaning a group bound together. Originally it was a neutral, even positive word for community. The Nazis corrupted it by adding the racist ideology that 'the people' meant 'racially pure Aryan people.'" },
+  { question: "What does Endlösung mean in Nazi context?", options: ["A final treaty", "The systematic genocide of Jews (Final Solution)", "The end of the war", "Political reorganization"], correct: 1, explanation: "Endlösung (literally 'final solution') was the Nazi euphemism for the Holocaust. By using abstract, bureaucratic language, the Nazis disguised the horrific reality of genocide behind an ordinary-sounding term. This is a chilling example of language being weaponized through euphemism." },
+  { question: "What was the Nazi strategy for corrupting German language?", options: ["Creating entirely new words", "Twisting existing words and restricting their meanings", "Banning words they disliked", "Importing words from other languages"], correct: 1, explanation: "The Nazis' strategy was insidious: they took familiar German words and twisted their meanings or restricted them to serve Nazi ideology. 'Volk' became racialized, 'Gleichberechtigung' (equality) was denied, and harmless words became horrifying euphemisms for atrocities." },
+  { question: "What does \"LTI\" stand for?", options: ["Lingua Tertii Imperii (Language of the Third Reich)", "Law of Total Integration", "League of Territorial Independence", "Linguistic Training Institute"], correct: 0, explanation: "LTI (Lingua Tertii Imperii = Language of the Third Reich) was Victor Klemperer's term for the corrupted German language under Nazism. Klemperer, a Jewish linguist, kept a diary documenting how the Nazis systematically distorted language to serve their ideology." },
+  { question: "Who documented the corruption of German during the Nazi era?", options: ["Victor Klemperer", "Thomas Mann", "Bertolt Brecht", "Paul Celan"], correct: 0, explanation: "Victor Klemperer (1881-1960) was a Jewish linguist who meticulously documented Nazi corruption of German in his diary, later published as 'LTI—Notizbuch eines Philologen' (LTI: The Notebook of a Philologist). His work is essential evidence of how language was weaponized." },
+  { question: "What does Sonderbehandlung mean in Nazi context?", options: ["Special privileges", "Medical treatment", "Murder; execution in camps (special treatment)", "Reparations and compensation"], correct: 2, explanation: "Sonderbehandlung (literally 'special treatment') was a Nazi euphemism for execution or murder in concentration camps. It exemplifies how the Nazis used ordinary-sounding language to obscure atrocities, making it possible for ordinary people to participate in or ignore genocide." },
+  { question: "What did Theodor Adorno famously say after the Holocaust?", options: ["To write poetry after Auschwitz is barbaric", "Language will heal all wounds", "German culture has been vindicated", "We must forget the past to move forward"], correct: 0, explanation: "Adorno's famous statement 'to write poetry after Auschwitz is barbaric' expressed the existential crisis many felt about culture and language after the Holocaust. He questioned whether art could exist in a world where language had been so thoroughly corrupted and weaponized." },
+  { question: "What is the etymological structure of Erinnerung?", options: ["Er- (to make) + inner (inward) = to internalize, to make inward", "Ein (one) + Rahmen (frame) = putting in a frame", "Er (he) + innern (inner things)", "Eigen (own) + Rahmen (context)"], correct: 0, explanation: "Erinnerung (memory) breaks down as er- (to make) + inner (inward). Literally 'to make inward,' it suggests that memory is the process of internalizing experience. After the Holocaust, remembrance (Erinnerung) became a moral duty: 'Never again (Nie wieder).'" },
+  { question: "How did Thomas Mann resist Nazi linguistic corruption?", options: ["By creating new German words", "By using German words with their original, true meanings in exile broadcasts", "By writing exclusively in English", "By refusing to speak German at all"], correct: 1, explanation: "Thomas Mann, exiled from Germany, broadcast speeches to Germany that used German words with their original, authentic meanings—resisting Nazi distortions of language. He argued that the true spirit of German culture could only be preserved by fighting linguistic corruption." },
+  { question: "What does Verantwortung literally mean?", options: ["The act of giving an answer (Ver-antwort-ung)", "The state of being aware", "The burden of the past", "The power to respond"], correct: 0, explanation: "Verantwortung (responsibility) comes from ver- + Antwort (answer) + -ung. Literally, it means 'the act of giving an answer'—responsibility is being answerable for one's actions. Germans today speak of 'Verantwortung für die Vergangenheit' (responsibility for the past)." },
+  { question: "What does Widerstand mean?", options: ["Distance; separation", "Resistance; standing against (Wider-stand)", "Contradiction; opposition", "Withdrawal; retreat"], correct: 1, explanation: "Widerstand (resistance) comes from wider- (against) + stand (to stand). It literally means 'standing against.' Germans who resisted Nazi tyranny—the White Rose, Dietrich Bonhoeffer, others—became symbols of Widerstand: moral courage to stand against evil." },
+  { question: "What does \"Nie wieder\" mean and signify?", options: ["Not now; postponed for later", "Never found; completely lost", "Never again; a moral vow that such atrocity will not recur", "Never written; impossible to express"], correct: 2, explanation: "'Nie wieder' (Never again) is the moral pledge of post-Holocaust Germany: that genocide will never be allowed to happen again. It appears on memorials across Germany and represents the commitment that remembrance and moral responsibility must prevent future atrocities." }
+];
+
+// --- QUIZ SYSTEM ---
+let quizAnswers = {};
+let quizCorrect = 0;
+
+function quizAnswer(btn, isCorrect) {
+  const question = btn.closest('.quiz-question');
+  const qNum = Array.from(document.querySelectorAll('.quiz-question')).indexOf(question) + 1;
+  const result = question.querySelector('.quiz-result');
+
+  if (isCorrect) {
+    quizAnswers[qNum] = true;
+    quizCorrect++;
+    btn.classList.add('selected-correct');
+    result.className = 'quiz-result correct show';
+    result.textContent = '✓ Correct';
+  } else {
+    quizAnswers[qNum] = false;
+    btn.classList.add('selected-incorrect');
+    result.className = 'quiz-result incorrect show';
+    result.textContent = '✗ Incorrect';
+  }
+
+  question.querySelectorAll('.quiz-answer').forEach(b => b.style.pointerEvents = 'none');
+}
+
+function submitQuiz() {
+  const total = document.querySelectorAll('.quiz-question').length;
+  const percentage = (quizCorrect / total) * 100;
+  const passed = percentage >= 80;
+
+  const summary = document.getElementById('quizSummary');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const scoreMessage = document.getElementById('scoreMessage');
+
+  scoreDisplay.textContent = `${quizCorrect} / ${total} (${percentage.toFixed(0)}%)`;
+
+  if (passed) {
+    scoreMessage.textContent = 'You have passed. The next chapter awaits.';
+    document.getElementById('postQuizContent').classList.add('show');
+    summary.style.display = 'block';
+    summary.classList.add('show');
+    setTimeout(() => {
+      document.getElementById('scene-collection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  } else {
+    scoreMessage.textContent = `You scored ${percentage.toFixed(0)}%. You need 80% to continue. Please review and try again.`;
+    summary.style.display = 'block';
+    summary.classList.add('show');
+  }
+
+  document.getElementById('quizSubmitBtn').disabled = true;
+}
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-answer').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 24;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

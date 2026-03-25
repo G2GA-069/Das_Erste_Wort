@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 11</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --rose: #d4a5c9;
+    --rose-dark: #a8759d;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #3d2a5c 0%, #2d1f3d 25%, #d4927a 75%, #c17845 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- COURTLY CANVAS --- */
+  #courtyard {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.vi {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section.locked {
+    background: linear-gradient(135deg, rgba(40, 30, 50, 0.8), rgba(25, 18, 35, 0.8));
+    border-color: rgba(232, 164, 74, 0.08);
+  }
+
+  .guess-section.locked .prompt {
+    color: rgba(212, 202, 187, 0.5);
+  }
+
+  .guess-section.locked .lock-message {
+    font-size: 1rem;
+    color: var(--fire);
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-section.locked .guess-options {
+    display: none;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection.hidden {
+    display: none;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .nav-section {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .chapter-end .nav-link {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.6);
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .chapter-end .nav-link:hover {
+    color: var(--fire);
+    text-decoration: underline;
+  }
+
+  .chapter-end .nav-separator {
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: rgba(232, 164, 74, 0.7); }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div id="progressBar" class="progress-bar"></div>
+<canvas id="courtyard"></canvas>
+
+<div class="content">
+
+  <!-- ==================== TITLE SCREEN ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Eleven</div>
+    <h1>Der Ritter und die Rose</h1>
+    <div class="subtitle">The Knight and the Rose</div>
+    <p class="scroll-hint"><span>↓</span></p>
+  </div>
+
+  <!-- ==================== SCENE 1: THE CRUSADES ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the year 1095, Pope Urban II stood before a crowd in Clermont-Ferrand and spoke of Jerusalem — a city held by infidels, sacred to Christendom, waiting to be reclaimed. His words ignited something primal in the European imagination: the desire to journey, to conquer, to prove oneself worthy in the eyes of God and history.
+    </p>
+
+    <p class="narrative">
+      What followed would reshape the German language forever.
+    </p>
+
+    <p class="narrative">
+      The Crusades were not merely military campaigns. They were cultural collisions — moments when languages crash against each other like waves, and when one retreats, it leaves behind sediment that never quite washes away. German soldiers, nobles, and merchants traveled south and east, through Byzantium and into the Levant. And when they returned — scarred, transformed, carrying stories of a sophistication and elegance they had never imagined — they brought back more than memories.
+    </p>
+
+    <p class="narrative">
+      They brought back <em>words</em>.
+    </p>
+
+    <p class="narrative">
+      But these were not words for iron or conquest. These were words for the feelings that had transformed the soldiers themselves during their journeys — words for longing, for devotion, for the strange ache of loving someone you could never possess. French was the language of the Crusader courts, the tongue of the nobles who organized the campaigns, the medium through which stories of chivalry spread like wildfire through German-speaking lands.
+    </p>
+
+    <p class="narrative">
+      And with French came something unexpected: a new way of speaking about love.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 2: WALTHER VON DER VOGELWEIDE ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Picture a castle courtyard in Austria, perhaps around the year 1180. A man stands before a gathered crowd — nobles and ladies, merchants and servants — and begins to sing. His name is Walther von der Vogelweide. He is the greatest Minnesinger of his age — a master of love poetry, and his verses will survive him by more than eight centuries. His voice carries across the courtyard, and as he sings, something happens that has never quite happened before in the German language.
+    </p>
+
+    <p class="narrative">
+      The language discovers <em>love</em>.
+    </p>
+
+    <p class="narrative">
+      Not the love of a mother for a child, though that word — <span class="german-word" data-card="liebe">Liebe</span> — existed in Old Germanic. Not the love of a man for his master. But something new, something that the age had invented: <em>courtly love</em>. Minne, they called it in German — a word that survives now only in compounds like Minnelied (love song), but which in the 12th century meant something very specific and utterly transformative. It meant a love that was refined, noble, often impossible, often yearning — a love that elevated the lover and the beloved into a realm beyond the ordinary.
+    </p>
+
+    <p class="narrative">
+      And Walther, singing in German, helped invent the vocabulary for this entirely new human experience.
+    </p>
+  </div>
+
+  <!-- LIEBE card -->
+  <div class="ety-card" id="card-liebe">
+    <div class="word-header">
+      <span class="word-main">Liebe</span>
+      <span class="word-pron">/ˈliːbə/</span>
+    </div>
+    <div class="word-meaning">love — the force that makes us vulnerable and whole</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*lewbh-</span>
+      <span class="bridge-note">— to care, to desire, to want deeply</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">love</span>
+      <span class="bridge-note">— Old English "lufu"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Liebe</span>
+      <span class="bridge-note">— identical to Old High German "liuba"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">yêu</span>
+      <span class="bridge-note">— an indigenous Vietnamese word for love, not borrowed from Chinese. Vietnamese emotional vocabulary developed independently from its broader cultural context.</span>
+    </div>
+    <div class="story">
+      The most ancient emotion carries forward unchanged across five thousand years of linguistic drift. German <em>Liebe</em> and English <em>love</em> both descend directly from the Proto-Indo-European root for desire and care. In Vietnamese, the word <em>yêu</em> derives from ancient Mon-Khmer roots but carries the same semantic weight as Indo-European cognates—love as a force that encompasses emotion, commitment, and vulnerability. Remarkably, in Middle High German, Liebe and the related word "glauben" (to believe) shared a root — to love and to believe were etymologically twins, suggesting that medieval Germans understood love as an act of faith, a choice to see the beloved as worthy of trust. This is the vocabulary Walther uses when he sings of Minne.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE KNIGHT EMERGES ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A knight is, etymologically speaking, simply someone who rides. The word <span class="german-word" data-card="ritter">Ritter</span> comes from the verb <em>rītan</em> — to ride on horseback. But by the time of the Crusades, the word had accumulated layers of meaning and romance. A Ritter was not merely a man on a horse. He was a man bound by a code of honor, devoted to a cause beyond himself, willing to die for something greater. He was the product of a fantasy that medieval culture had invented and then somehow convinced itself was real.
+    </p>
+
+    <p class="narrative">
+      And the Ritter, newly returned from the Crusades, brought back an even more fantastical notion: that a man's worth could be measured not by his ability to kill, but by his ability to love. That the <span class="german-word" data-card="herz">Herz</span> — the heart — was as much a weapon as the sword.
+    </p>
+
+    <p class="narrative">
+      This was revolutionary.
+    </p>
+  </div>
+
+  <!-- RITTER card -->
+  <div class="ety-card" id="card-ritter">
+    <div class="word-header">
+      <span class="word-main">Ritter</span>
+      <span class="word-pron">/ˈrɪtər/</span>
+    </div>
+    <div class="word-meaning">knight — literally, "one who rides"</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*(h)ret-</span>
+      <span class="bridge-note">— to run, to move</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">rider</span>
+      <span class="bridge-note">— Old English "ridere"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Ritter</span>
+      <span class="bridge-note">— from rītan, Old High German for "to ride"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">kỵ sĩ</span>
+      <span class="bridge-note">— Kỵ (to ride) + sĩ (warrior/scholar). Vietnamese inherited the concept of mounted warriors through a thousand years of cultural exchange, preserving the warrior ideal in its compound structure.</span>
+    </div>
+    <div class="story">
+      Both German and English define a knight first by his mode of transportation. A Ritter is a rider, just as an English knight originally meant someone mounted on a horse — which is why we have the surname "Knight" but the verb "ride" produces the noun "rider," not "knight." But by the medieval period, the simple definition had become freighted with meaning. To be a Ritter was to be someone who embodied a whole philosophy of life. The Vietnamese <em>kỵ sĩ</em> similarly builds the concept of warrior-nobility from the idea of riding—suggesting that across cultures, the horse was the symbol of the warrior class. What changes the meaning of Ritter is not the word itself, but what the courtly age demands of those who carry the title.
+    </div>
+  </div>
+
+  <!-- HERZ card -->
+  <div class="ety-card" id="card-herz">
+    <div class="word-header">
+      <span class="word-main">Herz</span>
+      <span class="word-pron">/hɛʁts/</span>
+    </div>
+    <div class="word-meaning">heart — the seat of emotion and courage</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*ḱerd-</span>
+      <span class="bridge-note">— the heart; also the center, the core</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">heart</span>
+      <span class="bridge-note">— Old English "heorte"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Herz</span>
+      <span class="bridge-note">— identical root to English "cordial" (from Latin "cor")</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">tâm</span>
+      <span class="bridge-note">— Tâm = heart, mind, spirit. Vietnamese uses this in compounds that merge emotion and intention, particularly in hierarchical family and social contexts where inner feeling guides outward respect.</span>
+    </div>
+    <div class="story">
+      One of the deepest etymological constants across Indo-European languages is the word for heart. English heart, German Herz, Latin cor (from which we get "cordial," "accord," "discord") — all trace back to the same ancient root. The heart, in virtually every human language and culture, is the symbol of feeling and will. In medieval German poetry, the Herz becomes the Ritter's true domain. While other cultures might valorize strength or cunning, the courtly tradition places the heart — the capacity to feel, to yearn, to serve something beyond oneself — at the center of heroism. Vietnamese <em>tâm</em> similarly encompasses heart, mind, and spirit in a unified way—particularly important in Vietnamese culture where emotional authenticity and internal sincerity are tied to social obligation and respect for hierarchy. The courtly age, in effect, redefined what it meant for a man to have a brave Herz.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE INFLUX OF FRENCH ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Around 1150 CE, something remarkable begins to happen in German texts. French words start appearing with increasing frequency, but they are not words for things that Germans had never seen before. They are not words for exotic spices or distant lands. They are words for feelings, for qualities, for the elaborate rituals of courtly life.
+    </p>
+
+    <p class="narrative">
+      A <span class="german-word" data-card="turnier">Turnier</span> — a tournament, from French <em>tournoi</em> — becomes the setting where a knight could prove himself worthy in the eyes of a <span class="german-word" data-card="dame">Dame</span> — a lady, from French <em>dame</em>. He might seek <span class="german-word" data-card="abenteuer">Abenteuer</span> — adventures, from French <em>aventure</em> — to demonstrate his <span class="german-word" data-card="ehre">Ehre</span> — his honor — and win the hand or the heart of his beloved through deeds of valor and declarations of undying <span class="german-word" data-card="treue">Treue</span> — loyalty and fidelity.
+    </p>
+
+    <p class="narrative">
+      What is remarkable is not that German borrowed these words from French. Languages have always borrowed from each other. What is remarkable is the <em>feeling</em> these words carried. When a German writer adopted the French word <em>tournoi</em>, he was not just adopting a word. He was adopting a whole philosophy of competition and chivalry. The word came pre-loaded with meaning — the meaning of the southern courts, of elegance, of an entirely new way of organizing desire and nobility.
+    </p>
+
+    <p class="narrative">
+      And German, in adopting these words, transformed itself.
+    </p>
+  </div>
+
+  <!-- TURNIER card -->
+  <div class="ety-card" id="card-turnier">
+    <div class="word-header">
+      <span class="word-main">Turnier</span>
+      <span class="word-pron">/tʊrˈniːɐ/</span>
+    </div>
+    <div class="word-meaning">tournament — a structured competition where knights display their valor</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">— From Old French "tournoi"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">tournament</span>
+      <span class="bridge-note">— same French root as German</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Turnier</span>
+      <span class="bridge-note">— adopted in Middle High German around 1200</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">thi đấu</span>
+      <span class="bridge-note">— thi (to compete) + đấu (to fight/contest). A compound describing competitive sporting events, reflecting Vietnam's martial traditions.</span>
+    </div>
+    <div class="story">
+      Turnier is a pure French borrowing, and it came into German not because German lacked a word for competition, but because the formal, ritualized tournament was itself a French invention. The medieval tournament — with its rules, its spectacle, its mix of lethal violence and formal etiquette — was unknown in Germanic cultures before the Crusades. When German knights encountered these tournaments in the south, they adopted both the institution and the word wholesale. But notice what German did: it kept the French word nearly unchanged. This was not a case of the Germanic language adapting a new concept in its own linguistic terms. This was wholesale adoption. Turnier entered German and stayed French-sounding, a reminder that the word carried with it the entire cultural apparatus it represented.
+    </div>
+  </div>
+
+  <!-- DAME card -->
+  <div class="ety-card" id="card-dame">
+    <div class="word-header">
+      <span class="word-main">Dame</span>
+      <span class="word-pron">/ˈdaːmə/</span>
+    </div>
+    <div class="word-meaning">lady — a woman of noble or refined bearing</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">— From Latin "domina," related to *dem- (to tame, to rule)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">dame</span>
+      <span class="bridge-note">— from Old French "dame"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Dame</span>
+      <span class="bridge-note">— identical to French; entered Middle High German around 1200</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">phu nhân</span>
+      <span class="bridge-note">— Phu (husband/man) + nhân (person/human). Vietnamese preserves the compound structure for a lady of rank or noble woman, reflecting the historically hierarchical social structure.</span>
+    </div>
+    <div class="story">
+      The Latin root <em>domina</em> means mistress or lady, and it carries within it the idea of domination — to be a dame is to have authority and status. Interestingly, Vietnamese <em>phu nhân</em> similarly compounds male/husband and personhood—reflecting a social structure where a woman's status is historically tied to her relationship to male authority and family hierarchy. But in medieval German poetry, Dame took on a new meaning. The Dame of courtly love was not merely a woman of high birth; she was an abstract ideal, sometimes unreachable, sometimes married to someone else, toward whom the knight's entire emotional life was directed. The word Dame, in this context, was not primarily about power or status — it was about the focus of longing, the object of devotion. German retained the French word because the concept came as a package from southern courts.
+    </div>
+  </div>
+
+  <!-- ABENTEUER card -->
+  <div class="ety-card" id="card-abenteuer">
+    <div class="word-header">
+      <span class="word-main">Abenteuer</span>
+      <span class="word-pron">/ˈaːbəntɔɪɐ/</span>
+    </div>
+    <div class="word-meaning">adventure — an unusual or exciting incident; a quest</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">— From Old French "aventure"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">adventure</span>
+      <span class="bridge-note">— same Romance origin</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Abenteuer</span>
+      <span class="bridge-note">— the German "ab-" prefix added to the French root</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">mạo hiểm</span>
+      <span class="bridge-note">— mạo hiểm — Vietnamese compound (to brave/rush + danger/risk) from Sino-Vietnamese roots. Vietnamese frames adventure as the willingness to face peril.</span>
+    </div>
+    <div class="story">
+      Here we see an interesting case of German adaptation. The French word <em>aventure</em> became Abenteuer in German, with the addition of the <em>ab-</em> prefix (off, away). This is a subtle but revealing change. German added its own linguistic marker, making the word distinctly Germanic while retaining the core French meaning. The medieval concept of Abenteuer was central to courtly literature — a knight would quest for adventures not for material gain but to prove his worth and dedication to his Dame. The adventures were performative, meant to be sung about, written down, commemorated. This is a very different concept from simple adventurousness, and the word carries that cultural load.
+    </div>
+  </div>
+
+  <!-- EHRE card -->
+  <div class="ety-card" id="card-ehre">
+    <div class="word-header">
+      <span class="word-main">Ehre</span>
+      <span class="word-pron">/ˈeːrə/</span>
+    </div>
+    <div class="word-meaning">honor — the quality of being worthy of respect; dignity</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*aizō</span>
+      <span class="bridge-note">— honor, dignity; from Proto-Germanic</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">honor</span>
+      <span class="bridge-note">— from Latin, but related concept in Germanic</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Ehre</span>
+      <span class="bridge-note">— Old High German "êra," purely Germanic in origin</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">vinh dự</span>
+      <span class="bridge-note">— Vinh (glory/honor) + dự (reputation). Vietnamese pairs these concepts, emphasizing outward honor tied to family and social standing.</span>
+    </div>
+    <div class="story">
+      Ehre is a purely Germanic word with deep roots, but its meaning was profoundly transformed during the courtly period. In earlier Germanic traditions, Ehre might mean the honor you had earned through battle or noble descent — it was something you possessed. But in the age of courtly love, Ehre became something more internal and more complex. A knight's honor could be questioned not just by military defeat but by his treatment of women, his ability to remain faithful despite temptation, his willingness to suffer for love. German did not need to borrow a word for this because the old word simply expanded to accommodate a new concept. Vietnamese <em>vinh dự</em> similarly emphasizes honor as visible, external, and tied to proper behavior in the social hierarchy—both cultures understood honor as something that exists in the eyes of others, something that must be seen to be real.
+    </div>
+  </div>
+
+  <!-- TREUE card -->
+  <div class="ety-card" id="card-treue">
+    <div class="word-header">
+      <span class="word-main">Treue</span>
+      <span class="word-pron">/ˈtʁɔɪ̯ə/</span>
+    </div>
+    <div class="word-meaning">loyalty; fidelity; faithfulness</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*trewwō</span>
+      <span class="bridge-note">— firm, solid, from Proto-Germanic</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">true</span>
+      <span class="bridge-note">— Old English "treowe," also meaning faithful</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Treue</span>
+      <span class="bridge-note">— the quality of being "treu" (true, faithful)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">trung thành</span>
+      <span class="bridge-note">— Trung (centered/loyal) + thành (sincere/honest). Vietnamese preserves the idea of loyalty as centered in the heart, a key virtue in family and hierarchical relationships.</span>
+    </div>
+    <div class="story">
+      Treue is built from the adjective <em>treu</em>, which descends from the same Proto-Germanic root as English "true." To be treu is to be solid, firm, not wavering — it is the opposite of false. In the courtly context, Treue became one of the most important virtues, especially in love. A knight's Treue to his Dame — his unwavering devotion despite all obstacles and temptations — was the measure of his worthiness. Vietnamese <em>trung thành</em> is similarly rooted in the idea of loyalty as centered in the heart—trung suggests a centered, focused devotion that goes beyond mere external obedience. In Vietnamese culture, such loyalty is the foundation of family and social bonds. Notice that English has "true" and "trust" from the same root — to trust someone is to believe they will remain true. For medieval German, Treue was both: the quality of being true and the act of trusting, bound together.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: MINNELIED ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The courtly culture of 12th-century Germany expressed itself primarily through one form: the <span class="german-word" data-card="minnelied">Minnelied</span> — the love song. These were not songs in the modern sense, with melodies we could recognize. Many of the musical notations have been lost to time. But the poems survive, and they are among the most sophisticated and emotionally nuanced achievements of medieval literature.
+    </p>
+
+    <p class="narrative">
+      Walther von der Vogelweide was the master of this form. His songs express the full range of courtly emotion: the bitter joy of unrequited love, the torment of seeing one's beloved with her husband, the ecstatic pain of a glance across a crowded hall, the eternity contained in a single moment when hands nearly touch.
+    </p>
+
+    <p class="narrative">
+      And the language that Walther used — the language that emerged from this fusion of Germanic and Romance, of old Germanic concepts and new French forms — was not the same language that his ancestors had spoken on the steppe. It was something new. It was richer, more subtle, more capable of expressing the full complexity of human emotion.
+    </p>
+
+    <p class="narrative">
+      This is what happens when languages collide: they do not diminish each other. They amplify each other. A new language emerges that is capable of expressing truths that neither could alone.
+    </p>
+  </div>
+
+  <!-- MINNELIED card -->
+  <div class="ety-card" id="card-minnelied">
+    <div class="word-header">
+      <span class="word-main">Minnelied</span>
+      <span class="word-pron">/ˈmɪnəliːt/</span>
+    </div>
+    <div class="word-meaning">love song — a poem expressing the refined emotions of courtly love</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">— Minne: of uncertain origin, possibly related to memory or thought</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">mind</span>
+      <span class="bridge-note">— possibly related to English "mind" through PIE *men- (to think)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Minne + Lied</span>
+      <span class="bridge-note">— Minne is now obsolete except in compounds; Lied (song) is common</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">ca yêu</span>
+      <span class="bridge-note">— Vietnamese for "love-song." Ca (song) + yêu (love). A simple transparent compound expressing the concept of romantic song.</span>
+    </div>
+    <div class="story">
+      Minne is one of the most fascinating words in this journey because it is now essentially extinct except in historical compounds. It meant a very specific thing: the refined, courtly form of love — not raw passion but an elaborate, performative emotion that had been shaped by an entire culture. The word survives only in Minnelied, Minnesinger, and similar compounds. This is a linguistic fossil — a word that has been preserved not in living speech but in the amber of literary tradition. Walther von der Vogelweide was a Minnesinger (a singer of Minne), and the form he perfected — the Minnelied — became one of the greatest achievements of medieval literature. The word Lied (song) is also Germanic, from the same root as English "lay" (a song or poem). What is fascinating is that Minne disappeared from the language while Minnelied was preserved in literary history. The concept evolved, the feeling remained, but the specific word for this type of love — this courtly emotion — vanished.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE SUFFIX REVEALS ITSELF ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Before we move beyond the age of courtly love, we must pause and notice something that will become increasingly important as we progress through the remaining chapters of this journey: the way German builds meaning through suffixes.
+    </p>
+
+    <p class="narrative">
+      Consider the word <span class="german-word" data-card="hoffnung">Hoffnung</span> — hope. This word is built from the verb <em>hoffen</em> (to hope) plus the suffix <em>-ung</em>. This suffix is not accidental. It is a systematic tool that German uses to transform verbs into nouns. When you add <em>-ung</em> to a verb, you create a noun that means the state or result of that action.
+    </p>
+
+    <p class="narrative">
+      This is not unique to Hoffnung. Consider: <em>sammeln</em> (to collect) becomes <em>Sammlung</em> (a collection). <em>Wandern</em> (to wander) becomes <em>Wanderung</em> (a journey). <em>Dankbarkeit</em> comes from <em>Dank</em> (thanks). The suffix <em>-ung</em> is a factory that produces nouns from verbs, and it is incredibly productive in German — you can apply it to almost any verb and create a new noun that is immediately understood.
+    </p>
+
+    <p class="narrative">
+      This reveals something essential about the German language: it is not a language that merely inherits words from the past. It is a language that actively creates words from existing elements, combining them according to systematic rules. And this creativity will become increasingly central to understanding how German evolved from the age of Charlemagne to the modern era.
+    </p>
+  </div>
+
+  <!-- HOFFNUNG card -->
+  <div class="ety-card" id="card-hoffnung">
+    <div class="word-header">
+      <span class="word-main">Hoffnung</span>
+      <span class="word-pron">/ˈhɔfnʊŋ/</span>
+    </div>
+    <div class="word-meaning">hope — the state of hoping; optimistic expectation</div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">— German verb "hoffen" (to hope)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">ENG</span>
+      <span class="bridge-word">hope</span>
+      <span class="bridge-note">— from Old English "hopa"</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">DEU</span>
+      <span class="bridge-word">Hoffnung</span>
+      <span class="bridge-note">— hoffen + -ung (noun-forming suffix)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label vie">VIE</span>
+      <span class="bridge-word vi">hi vọng</span>
+      <span class="bridge-note">— Hi (rare/uncommon) + vọng (look-toward/aspire). The poetic concept of looking toward something precious and distant that one does not yet possess.</span>
+    </div>
+    <div class="story">
+      Hoffnung is a perfect example of German's genius for systematic word formation through suffixes. The verb hoffen (to hope) descends from Old High German and is related to English "hope." But when medieval German writers needed a noun for the state or act of hoping, they did not invent a new word from scratch. They applied the productive suffix <em>-ung</em> to create Hoffnung. This suffix will appear again and again as we trace the evolution of German through the Middle High German period and beyond. Vietnamese <em>hi vọng</em> takes a similar approach, building the concept from two separate morphemes—hi (rare, precious) and vọng (to look toward, to aspire)—that together create the meaning of longing for something precious and distant. Both languages reveal a crucial insight: they are not languages that merely inherit from the past. They are languages that systematically generate new expressions from existing roots according to predictable patterns.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE TRANSFORMATION ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      By 1200 CE, the German language had been transformed. It was no longer the purely Germanic tongue of the early medieval period. It had absorbed French words wholesale — Turnier, Dame, Abenteuer. It had expanded its emotional vocabulary to express love not as a biological fact but as an elaborate, performative, culturally-shaped experience. It had developed literary forms — the Minnelied — that were capable of expressing profound truth.
+    </p>
+
+    <p class="narrative">
+      And crucially, it had discovered how to generate new words from existing roots using systematic suffixes. The language was becoming self-aware about its own mechanisms. It was learning to remake itself.
+    </p>
+
+    <p class="narrative">
+      The knight in his castle, singing of his unrequited love, was speaking a language that would have been incomprehensible to his ancestors on the steppe. But he was also speaking a language that was unmistakably German — a language that had absorbed foreign influence without losing its essential character.
+    </p>
+
+    <p class="narrative emphasis">
+      This is what living languages do. They are not museums. They are not static repositories of the past. They are dynamic, constantly evolving to meet the needs of the people who speak them. And they do this not by abandoning their origins but by building on them, layer after layer, century after century.
+    </p>
+
+    <p class="narrative">
+      The rose of love had bloomed in German. And with it, the language had flowered too.
+    </p>
+  </div>
+
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">French borrowings in courtly vocabulary</strong> — Turnier, Dame, Abenteuer shaped medieval German during the courtly period (1150-1250), brought by Crusades and cultural contact.<br><br>
+    <strong style="color: var(--text-bright);">Suffix -ung creates abstract nouns</strong> — hoffen → Hoffnung, sammeln → Sammlung. This productive pattern remains one of German's most generative word-building tools.<br><br>
+    <strong style="color: var(--text-bright);">Emotional vocabulary stays Germanic</strong> — While Turnier and Dame came from France, Liebe, Herz, Treue, and Hoffnung are purely Germanic, reflecting an inner emotional life.<br><br>
+    <strong style="color: var(--text-bright);">Minnesang tradition fused languages</strong> — Poetry that combined French courtly themes with Germanic word-building power, creating a new literary register.<br><br>
+    <strong style="color: var(--text-bright);">German absorbs without losing identity</strong> — French words adopted into German take on German grammar (gender, plurals, compounds), becoming invisible immigrants within the language.
+  </div>
+
+<!-- ==================== WORDS GATHERED IN CHAPTER 11 ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Eleven</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Ritter</span><span class="cw-english">knight</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Abenteuer</span><span class="cw-english">adventure</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Turnier</span><span class="cw-english">tournament</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Dame</span><span class="cw-english">lady</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Herz</span><span class="cw-english">heart</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Liebe</span><span class="cw-english">love</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Minnelied</span><span class="cw-english">love song</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Ehre</span><span class="cw-english">honor</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Treue</span><span class="cw-english">loyalty</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Hoffnung</span><span class="cw-english">hope</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CONCEPTS LEARNED IN CHAPTER 11 ==================== -->
+  <div class="scene" id="scene-concepts">
+    <div class="word-collection">
+      <h3>Concepts Learned in Chapter Eleven</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german" style="color:#9b8ec4;">French Borrowings</span><span class="cw-english">Turnier, Dame, Abenteuer entered German via Crusades</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german" style="color:#9b8ec4;">Courtly Register</span><span class="cw-english">a new elevated vocabulary for love and honour</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german" style="color:#9b8ec4;">Minnesang Tradition</span><span class="cw-english">poetry that fused Germanic form with French themes</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german" style="color:#9b8ec4;">Emotional Vocabulary</span><span class="cw-english">Liebe, Treue, Hoffnung — the inner life expressed in Germanic words</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ: CHAPTER 11 ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-section">
+      <h2 style="font-size: 1.4rem; color: var(--text-bright); margin-bottom: 24px; text-align: center;">Test Your Knowledge</h2>
+      <p style="text-align: center; color: var(--text); margin-bottom: 32px; font-style: italic;">Answer at least 8 of 10 to unlock the word collection and final chapter navigation. Two guesses per question.</p>
+
+      <!-- Q1 -->
+      <div class="guess-section" id="quiz-q1">
+        <div class="prompt">What does <strong style="color: var(--german);">Ritter</strong> literally mean?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q1')">one who rides</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q1')">one who fights</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q1')">one who rules</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q1"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="guess-section" id="quiz-q2">
+        <div class="prompt">Which of these words is NOT a French borrowing?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q2')">Herz</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q2')">Dame</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q2')">Turnier</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q2"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="guess-section" id="quiz-q3">
+        <div class="prompt"><strong style="color: var(--german);">Hoffnung</strong> is built from which verb?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q3')">hoffen (to hope)</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q3')">haben (to have)</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q3')">helfen (to help)</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q3"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="guess-section" id="quiz-q4">
+        <div class="prompt">Which suffix creates nouns from verbs in German?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q4')">-ung</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q4')">-heit</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q4')">-lich</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q4"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="guess-section" id="quiz-q5">
+        <div class="prompt"><strong style="color: var(--german);">Minne</strong> refers to which kind of love?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q5')">refined, courtly love</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q5')">romantic love in general</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q5')">the love between family</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q5"></div>
+      </div>
+
+      <!-- Q6: REVIEW from earlier chapters -->
+      <div class="guess-section" id="quiz-q6">
+        <div class="prompt">Grimm's Law shows that Latin "p" becomes which sound in Germanic?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q6')">f</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q6')">v</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q6')">h</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q6"></div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="guess-section" id="quiz-q7">
+        <div class="prompt">What does <strong style="color: var(--german);">Treue</strong> mean?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q7')">truth</button>
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q7')">loyalty and fidelity</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q7')">trust in oneself</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q7"></div>
+      </div>
+
+      <!-- Q8: REVIEW -->
+      <div class="guess-section" id="quiz-q8">
+        <div class="prompt">Which root appears in both "heart" and "cordial"?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q8')">*ḱerd-</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q8')">*lewbh-</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q8')">*trewwō</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q8"></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="guess-section" id="quiz-q9">
+        <div class="prompt">Who was the greatest Minnesinger?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q9')">Walther von der Vogelweide</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q9')">Charlemagne</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q9')">Otto the Great</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q9"></div>
+      </div>
+
+      <!-- Q10: REVIEW from Chapter 1 -->
+      <div class="guess-section" id="quiz-q10">
+        <div class="prompt">Which family relationship word shows the "sch" = "s" pattern?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q10')">Schwester / sister</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q10')">Bruder / brother</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q10')">Mutter / mother</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q10"></div>
+      </div>
+
+      <div id="quiz-result" style="text-align: center; margin-top: 32px; font-size: 1.1rem; color: var(--fire-glow); font-style: italic; display: none;"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">110 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(12%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:12%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ritter</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Knight</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Abenteuer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Adventure</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Turnier</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Tournament</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Dame</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Lady</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Herz</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Heart</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Liebe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Love</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Minnelied</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Love song</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ehre</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Honor</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Treue</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Loyalty</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Hoffnung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Hope</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–10: ~99 more words · Scroll for full list</td></tr>
+</table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">25 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(17%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:17%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">French courtly borrowings</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Turnier, Dame, Abenteuer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">-ung suffix</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">hoffen → Hoffnung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Emotional words stay Germanic</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Liebe, Herz, Treue</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Minnesang fused languages</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">French themes + Germanic roots</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">German absorbs without losing identity</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">adopted French words take German grammar</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">11</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–10: ~20 more patterns</td></tr>
+</table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Eleven
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten stories. Medieval courts transformed by Crusades.<br>
+        French words flooded in. German absorbed and transformed.<br>
+        Love became a language. Language became an art.
+      </p>
+      <div class="nav-section">
+        <a href="chapter10.html" class="nav-link">← Chapter 10</a>
+        <span class="nav-separator">·</span>
+        <a href="chapter12.html" class="nav-link">Chapter 12 →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 11: MEDIEVAL COURT WITH BLOOMING ROSE AND MUSICAL NOTES ---
+const canvas = document.getElementById('courtyard');
+const ctx = canvas.getContext('2d');
+let roses = [];
+let musicalNotes = [];
+let silhouettes = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createRose() {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const petals = [];
+  const petalCount = Math.floor(Math.random() * 4) + 8;
+
+  for (let i = 0; i < petalCount; i++) {
+    const angle = (Math.PI * 2 * i) / petalCount;
+    const distance = 40 + Math.random() * 20;
+    petals.push({
+      angle: angle,
+      distance: distance,
+      unfoldProgress: Math.random() * 0.5,
+      wobbleOffset: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.02 + 0.01
+    });
+  }
+
+  roses.push({
+    x: centerX + (Math.random() - 0.5) * 100,
+    y: centerY + (Math.random() - 0.5) * 100,
+    petals: petals,
+    life: 1,
+    maxLife: 2000,
+    age: 0,
+    color: Math.random() < 0.5 ? 'rgba(212, 165, 201, 0.6)' : 'rgba(168, 117, 157, 0.6)',
+    bloomSpeed: Math.random() * 0.002 + 0.0005
+  });
+}
+
+function createMusicalNote() {
+  const note = {
+    x: Math.random() * canvas.width,
+    y: canvas.height * 0.8 + Math.random() * canvas.height * 0.15,
+    vy: -Math.random() * 1.5 - 0.5,
+    vx: (Math.random() - 0.5) * 0.3,
+    size: Math.random() * 6 + 4,
+    alpha: Math.random() * 0.4 + 0.3,
+    wobbleOffset: Math.random() * Math.PI * 2,
+    wobbleSpeed: Math.random() * 0.06 + 0.02,
+    life: 1,
+    maxLife: 200
+  };
+  musicalNotes.push(note);
+}
+
+function drawRose(rose, time) {
+  const scroll = window.scrollY / window.innerHeight;
+  const bloomInfluence = Math.min(scroll * 0.5, 1);
+
+  rose.age++;
+  rose.unfoldProgress = Math.min(rose.unfoldProgress + rose.bloomSpeed, 1);
+
+  const finalBloom = rose.unfoldProgress * (0.3 + bloomInfluence * 0.7);
+
+  // Draw petals
+  rose.petals.forEach(petal => {
+    const wobble = Math.sin(time * petal.wobbleSpeed + petal.wobbleOffset) * 8;
+    const x = rose.x + Math.cos(petal.angle) * petal.distance * finalBloom + wobble;
+    const y = rose.y + Math.sin(petal.angle) * petal.distance * finalBloom;
+
+    ctx.beginPath();
+    ctx.ellipse(x, y, petal.distance * 0.4 * finalBloom, petal.distance * 0.6 * finalBloom, petal.angle, 0, Math.PI * 2);
+    ctx.fillStyle = rose.color;
+    ctx.fill();
+  });
+
+  // Draw center
+  const centerSize = 12 * Math.sqrt(finalBloom);
+  ctx.beginPath();
+  ctx.arc(rose.x, rose.y, centerSize, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(232, 164, 74, 0.8)';
+  ctx.fill();
+}
+
+function drawMusicalNote(note, time) {
+  const wobble = Math.sin(time * note.wobbleSpeed) * 3;
+  const x = note.x + wobble;
+  const y = note.y;
+  const alpha = note.alpha * (1 - note.life / note.maxLife);
+
+  // Simple musical note shape
+  ctx.fillStyle = `rgba(232, 164, 74, ${alpha})`;
+  ctx.beginPath();
+  ctx.arc(x, y + 4, note.size * 0.6, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(x + note.size * 0.6, y + 4);
+  ctx.lineTo(x + note.size * 0.6, y - note.size * 2);
+  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = `rgba(232, 164, 74, ${alpha})`;
+  ctx.stroke();
+}
+
+function drawCastleSilhouette(x, y, scale) {
+  ctx.fillStyle = 'rgba(61, 42, 92, 0.3)';
+
+  // Main tower
+  ctx.beginPath();
+  ctx.rect(x - 20 * scale, y - 80 * scale, 40 * scale, 80 * scale);
+  ctx.fill();
+
+  // Turrets
+  for (let i = 0; i < 3; i++) {
+    const tX = x - 30 * scale + i * 30 * scale;
+    ctx.beginPath();
+    ctx.rect(tX - 8 * scale, y - 100 * scale, 16 * scale, 20 * scale);
+    ctx.fill();
+  }
+
+  // Crenellations
+  for (let i = 0; i < 5; i++) {
+    const cX = x - 20 * scale + i * 8 * scale;
+    ctx.beginPath();
+    ctx.rect(cX, y - 80 * scale, 4 * scale, 8 * scale);
+    ctx.fill();
+  }
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw castle silhouettes at edges
+  drawCastleSilhouette(40, canvas.height * 0.3, 0.8);
+  drawCastleSilhouette(canvas.width - 40, canvas.height * 0.25, 0.9);
+
+  // Draw and update roses
+  roses.forEach((rose, idx) => {
+    drawRose(rose, time);
+  });
+
+  // Spawn new roses occasionally
+  if (Math.random() < 0.0015 && roses.length < 15) {
+    createRose();
+  }
+
+  // Update and draw musical notes
+  musicalNotes = musicalNotes.filter(note => {
+    note.y += note.vy;
+    note.x += note.vx;
+    note.life -= 1;
+    return note.life > 0;
+  });
+
+  musicalNotes.forEach(note => drawMusicalNote(note, time));
+
+  // Spawn new notes
+  if (Math.random() < 0.02) {
+    createMusicalNote();
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createRose();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- EMPTY QUIZDATA FOR QUIZ-ENHANCER.JS COMPATIBILITY ---
+const quizData = [];
+
+// --- QUIZ SYSTEM ---
+let quizScore = 0;
+let quizAnswered = 0;
+const maxQuestions = 10;
+const passThreshold = 8;
+
+function quizGuess(btn, correct, questionId) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = '✓ Correct!';
+    feedback.classList.add('show');
+    quizScore++;
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+  } else {
+    const guesses = section.querySelectorAll('.guess-btn.incorrect').length;
+    if (guesses === 0) {
+      btn.classList.add('incorrect');
+      feedback.textContent = 'Not quite — try again.';
+      feedback.classList.add('show');
+    } else {
+      btn.classList.add('incorrect');
+      btn.style.pointerEvents = 'none';
+      allBtns.forEach(b => b.style.pointerEvents = 'none');
+      feedback.textContent = 'Better luck on the next one.';
+      feedback.classList.add('show');
+    }
+  }
+
+  quizAnswered++;
+  if (quizAnswered === maxQuestions) {
+    showQuizResult();
+  }
+}
+
+function showQuizResult() {
+  const resultDiv = document.getElementById('quiz-result');
+  const collectionBox = document.getElementById('word-collection-box');
+
+  let message = '';
+  if (quizScore >= passThreshold) {
+    message = `Excellent! You scored ${quizScore}/${maxQuestions}. Word collection unlocked!`;
+    collectionBox.classList.remove('hidden');
+
+    // Animate words
+    setTimeout(() => {
+      const words = collectionBox.querySelectorAll('.collected-word');
+      words.forEach(w => {
+        const delay = parseInt(w.dataset.delay) || 0;
+        setTimeout(() => w.classList.add('show'), delay);
+      });
+    }, 100);
+  } else {
+    message = `You scored ${quizScore}/${maxQuestions}. You need ${passThreshold} to unlock the word collection. Try again!`;
+    // Re-enable quiz buttons for retry
+    document.querySelectorAll('.guess-btn').forEach(btn => {
+      btn.classList.remove('correct', 'incorrect');
+      btn.style.pointerEvents = 'auto';
+    });
+    document.querySelectorAll('.guess-feedback').forEach(f => f.classList.remove('show'));
+    quizScore = 0;
+    quizAnswered = 0;
+  }
+
+  resultDiv.textContent = message;
+  resultDiv.style.display = 'block';
+  resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 11;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

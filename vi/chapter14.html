@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 14: Die Druckerpresse</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --paper: #f5f1e8;
+    --paper-light: #fdfbf7;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0e1a 0%, #1a1410 15%, #8b5a2b 50%, #f5f1e8 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- LETTERFALL CANVAS --- */
+  #letterfall {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px;
+    padding: 20px clamp(20px, 5%, 60px);
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--fire), var(--fire-glow), var(--fire));
+    width: 0%;
+    z-index: 100;
+    transition: width 0.1s ease;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-size: 3.5rem;
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text-bright);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.8s forwards;
+    margin-bottom: 0.2em;
+    font-weight: 300;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    color: rgba(212, 202, 187, 0.5);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- DIVIDER --- */
+  .divider {
+    text-align: center;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.2rem;
+    margin: 60px 0;
+    opacity: 0.3;
+  }
+
+  /* --- CHAR DISPLAY --- */
+  .char-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.5rem;
+    color: var(--vietnamese);
+  }
+
+  .pinyin {
+    font-size: 0.9rem;
+    color: rgba(196, 154, 108, 0.7);
+    letter-spacing: 0.1em;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 0 32px;
+    margin: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .word-main {
+    font-size: 1.6rem;
+    color: var(--german);
+    font-weight: 600;
+  }
+
+  .word-pron {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-family: 'Noto Serif', serif;
+  }
+
+  .word-meaning {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.8);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .bridge {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.3); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.3); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.3); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.3); color: var(--vietnamese); }
+
+  .bridge-word {
+    color: var(--text-bright);
+    font-family: 'Noto Serif', serif;
+    font-weight: 500;
+  }
+
+  .bridge-word.vi {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+  }
+
+  .bridge-note {
+    color: rgba(212, 202, 187, 0.5);
+    font-size: 0.9rem;
+  }
+
+  .story {
+    background: rgba(232, 164, 74, 0.05);
+    padding: 16px;
+    border-left: 3px solid rgba(232, 164, 74, 0.2);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.9);
+    line-height: 1.7;
+    margin-top: 16px;
+  }
+
+  /* --- GUESS SECTION --- */
+  .guess-section {
+    background: rgba(19, 26, 46, 0.4);
+    border: 2px solid rgba(232, 164, 74, 0.3);
+    border-radius: 12px;
+    padding: 32px 24px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+
+  .guess-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--german);
+    padding: 14px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-weight: 500;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: rgba(232, 164, 74, 0.5);
+  }
+
+  .guess-btn.correct {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: rgba(244, 67, 54, 0.3);
+    color: rgba(244, 67, 54, 0.7);
+  }
+
+  .guess-feedback {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    height: 20px;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- ASIDE BOXES --- */
+  .aside {
+    background: rgba(140, 90, 43, 0.15);
+    border-left: 4px solid var(--fire);
+    padding: 20px;
+    margin: 40px 0;
+    border-radius: 4px;
+  }
+
+  .aside-title {
+    font-size: 1.1rem;
+    color: var(--fire);
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .aside-text {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.8);
+    line-height: 1.7;
+  }
+
+  /* --- COLLECTED WORDS GRID --- */
+  .collected-words {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 40px 0;
+  }
+
+  .collected-word {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    padding: 16px;
+    border-radius: 6px;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word-meaning {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.6);
+    margin-top: 6px;
+  }
+
+  /* --- SPEAK BUTTON --- */
+  .speak-btn {
+    background: transparent;
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--german);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
+    body {
+      font-size: 18px;
+      font-size: 1.125rem;
+      line-height: 1.75;
+    }
+
+    .title-screen h1 {
+      font-size: clamp(2rem, 8vw, 2.8rem);
+    }
+
+    .content { padding: 16px; }
+    .scene { margin-bottom: 60px; }
+    .narrative { font-size: 1.1rem; }
+
+    .ety-card { padding: 16px; margin: 24px 0; }
+    .word-main { font-size: 1.4rem; }
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 16px;
+      font-size: 0.95rem;
+    }
+    .guess-feedback { font-size: 0.9rem; }
+    .collected-words { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
+    .aside { padding: 16px; margin: 30px 0; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .title-screen .subtitle { font-size: 1.1rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (min-width: 900px) {
+    body { font-size: 1.3rem; }
+    .narrative { font-size: 1.3rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="letterfall"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Fourteen</div>
+    <h1>Die Druckerpresse</h1>
+    <div class="subtitle">The Printing Press</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: MAINZ ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Mainz, 1440. A goldsmith named Johannes Gutenberg sits in a workshop, surrounded by tiny pieces of metal. He is not making jewelry. He is making letters.
+    </p>
+
+    <p class="narrative">
+      Each letter — A, B, C, D — is cast in lead and tin, carved in reverse so that when pressed into ink and then onto paper, it reads forward. The typefaces are beautiful. The engineering is flawless. But what Gutenberg is really doing is solving a problem that no one knew existed.
+    </p>
+
+    <p class="narrative">
+      For a thousand years, books were copied by hand. Monks in scriptoriums sat hunched over manuscripts, copying word after word, letter after letter, their fingers stained with ink, their eyes blurring in candlelight. One book — a Bible, say — took months to copy. Sometimes years. There were fewer than 100,000 books in all of Europe in the year 1400. Almost all of them were in Latin. Almost all of them were in churches and monasteries. Almost none of them were owned by ordinary people.
+    </p>
+
+    <p class="narrative">
+      Then Gutenberg had an idea that would transform the world: <em>What if you could reuse the same metal letters over and over, arranging them into different words?</em>
+    </p>
+
+    <p class="narrative emphasis">
+      And what if you could press them all into paper at once?
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE EXPLOSION ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      By 1450, Gutenberg had built his <span class="german-word" data-card="druckerpresse">Druckerpresse</span> — his printing press. It was a mechanical frame, a bed of type, a lever, and a screw. You arranged metal letters in a frame. You rolled ink over them. You fed in paper. You pulled the lever. And instead of one copy taking months, you could print hundreds of copies in days.
+    </p>
+
+    <p class="narrative">
+      The first book Gutenberg printed was a Latin Bible. He printed 180 copies in 1455. Fifty years later, there were 20 million printed books in Europe. By 1500, the printing press had done what no invention had ever done before: it had democratized information.
+    </p>
+
+    <p class="narrative">
+      But here is the crisis that Gutenberg's invention created: <em>which language should be printed?</em>
+    </p>
+
+    <p class="narrative">
+      In the Holy Roman Empire, there was no single German language. There were dozens of dialects — Bavarian, Saxon, Swabian, Rhineland — all mutually unintelligible. A printer in Mainz could print a book in Rhine Franconian, but it would be worthless in Munich. A printer in Vienna could set type in Viennese, but no one in Berlin could read it.
+    </p>
+
+    <p class="narrative">
+      Before Gutenberg, this didn't matter. Before Gutenberg, most people couldn't read anyway. Written communication was for the clergy and nobility, and they used Latin. But now, with the printing press, the question became urgent: <em>If ordinary people can now read — which German are you going to give them?</em>
+    </p>
+
+    <!-- DRUCK etymology card -->
+    <div class="ety-card" id="card-druckerpresse">
+      <div class="word-header">
+        <span class="word-main">Druckerpresse</span>
+        <span class="word-pron">/ˈdrʊkɐˌprɛsə/</span>
+      </div>
+      <div class="word-meaning">printing press — the machine that changed civilization</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Druck</span>
+        <span class="bridge-note">— pressure, print, from drücken (to press)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Presse</span>
+        <span class="bridge-note">— press, from French "presse," from Latin "pressare"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">press</span>
+        <span class="bridge-note">— same Latin root, same meaning — to squeeze, to push</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">in ấn</span>
+        <span class="bridge-note">— In (stamp/imprint) + ấn (print/press). Vietnam's vocabulary for printing reflects its own history with woodblock printing and movable type.</span>
+      </div>
+      <div class="story">
+        Druck comes from the Proto-Germanic *drukkaną (to press, to squeeze), which gave rise to Old High German "druck" and Old English "preat" (pressure). The word captures the essence of printing: it is pressing. You press letters into ink. You press ink into paper. You press the lever. Pressure IS printing. And Presse itself is a borrowing from French, which took it from Latin pressare, the same root that gave English "press," "pressure," "compress," and "impress." All of these words are the children of a single ancient action: to push.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 3: THE STANDARDIZATION CRISIS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      A printer in Nuremberg needed to make a choice. Should I print my books in Bavarian? In Saxon? In Swabian? Each choice meant reaching a different market. Each choice meant excluding other regions.
+    </p>
+
+    <p class="narrative">
+      Then, around 1470, something remarkable happened. Printers in the eastern German-speaking lands began to follow the <span class="german-word" data-card="schrift">Schrift</span> — the writing system, the script — of the royal court in Meissen. The Kanzlei Saxonica — the Saxon Chancellery. It wasn't perfect. It wasn't the "best" German. But it was the German of power and prestige, used in official documents by the Saxon electors.
+    </p>
+
+    <p class="narrative">
+      And so, through the logic of capitalism and marketing, the <em>printing press created a standard German.</em> Printers couldn't ask their customers what they wanted. But they could ask: <em>What German will sell the most books?</em> The answer was: the German of the powerful. The German of the chancellery. The German that would be understood across the widest possible region.
+    </p>
+
+    <p class="narrative">
+      This is the opposite of how Latin worked. Latin was standardized by decree — from the Church, from Rome, from above. Standard German was standardized by the market — from below, by thousands of independent printer-merchants, each trying to maximize their profits by choosing the most widely-understood language variant.
+    </p>
+
+    <p class="narrative emphasis">
+      The printing press did not impose standard German. It revealed a demand for it. And printers, following profit, filled that demand.
+    </p>
+
+    <!-- SCHRIFT etymology card -->
+    <div class="ety-card" id="card-schrift">
+      <div class="word-header">
+        <span class="word-main">Schrift</span>
+        <span class="word-pron">/ʃrɪft/</span>
+      </div>
+      <div class="word-meaning">writing, script, typeface — the visible form of language</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">schreiben</span>
+        <span class="bridge-note">— to write, from Proto-Germanic *skrībaną</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">scribe</span>
+        <span class="bridge-note">— from Latin "scribere," same root originally from Germanic</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sker-</span>
+        <span class="bridge-note">— to cut, to scratch — writing as carving</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">thư</span>
+        <span class="bridge-note">— from classical Chinese; the Sino-Vietnamese cognate for "book." Originally meant a hand holding a brush for writing, reflecting the act of composition itself.</span>
+      </div>
+      <div class="story">
+        Schrift is the noun form of schreiben (to write). Both come from the Proto-Germanic *skrībaną, which originally meant "to cut" or "to scratch" — because writing, before ink and paper, meant carving into wood or stone. The English "scribe" is a borrowed Latin word that ultimately goes back to the same Germanic root. Schrift thus means both "the act of writing" and "the visible marks that result from writing" — script, typeface, the physical shape of language made visible. German distinguishes this from the broader concept of "language" (Sprache) — Schrift is specifically the written form, the technical rendering.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE GERMAN WORDS ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The printing press demanded 10 new words. Not because they didn't exist before — they did. But because these concepts became urgent, central, necessary to describe the world that Gutenberg's invention had created.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="buchstabe">Buchstabe</span> — letter of the alphabet. The word is pure Germanic poetry. It means "book-stick" — Buch (book) + Stab (staff, stick, rod). Why? Because before books were made of paper bound in leather, books were carved into beech-wood staves. The runes were cut into sticks. The sticks were the letters. This ghost of ancient writing technologies lives in the modern word for the abstract concept of a letter. When you print, you are still, in some sense, carving.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="papier">Papier</span> — paper. The word traveled from the Egyptian reed (papyrus) to Greek to Latin to German. Gutenberg's invention made papier demand explode. Before printing, paper was precious. After printing, it became a commodity. The word itself carries this history of travel and transformation.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="seite">Seite</span> — page, side. A page is, quite literally, a "side" of paper. The word contains a profound truth: before writing, there were no "sides." Or rather, all surfaces were equal. Writing gave surfaces directionality and meaning. One side became the front, the other the back. The word seite (from the Proto-Germanic *sīdō, meaning "side") captures this: a page is what a side becomes when it bears writing.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="buch">Buch</span> — book. As we've seen in Buchstabe, this word comes from the beech tree. The oldest books in Germanic culture were carved or written on beech bark — not papyrus, not palm leaves, but beech wood. The Runes were often cut into beech. So "book" literally means "made from beech." The word preserves a single technology, beech bark, which was eventually superseded by papyrus, paper, and print — but the name stayed. A German book, no matter what it's printed on today, still carries the ghost of beech wood in its name.
+    </p>
+
+    <!-- BUCHSTABE etymology card -->
+    <div class="ety-card" id="card-buchstabe">
+      <div class="word-header">
+        <span class="word-main">Buchstabe</span>
+        <span class="word-pron">/ˈbuːxˌʃtaːbə/</span>
+      </div>
+      <div class="word-meaning">letter of the alphabet — a single carved mark, standing for a sound</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Buch</span>
+        <span class="bridge-note">— book, from beech tree</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stab</span>
+        <span class="bridge-note">— staff, stick, rod — the rune-stick</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">staff, stab</span>
+        <span class="bridge-note">— the same Germanic root, meaning to stick or pierce</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">chữ</span>
+        <span class="bridge-note">— a Vietnamese word for character, emphasizing the written mark and its meaning as a distinct visual unit.</span>
+      </div>
+      <div class="story">
+        Buchstabe is a compound of Buch (beech tree / book) and Stab (stick / staff). It thus literally means "a stick from a beech-tree book" — in other words, one of the individual carved marks that make up a book written on wooden staves. The word is a perfect fossil of earlier Germanic writing technology. Even though modern German Buchstaben are printed on paper, the word still remembers them as individual sticks, individual carved marks. In Vietnamese, <em>chữ</em> similarly refers to a single written unit, but emphasizes the visual mark and its meaning. Two approaches to understanding writing: Germanic languages stress the physical object (the stick, the mark), while other traditions may emphasize meaning and visual form.
+      </div>
+    </div>
+
+    <!-- PAPIER etymology card -->
+    <div class="ety-card" id="card-papier">
+      <div class="word-header">
+        <span class="word-main">Papier</span>
+        <span class="word-pron">/paˈpiːɐ/</span>
+      </div>
+      <div class="word-meaning">paper — the material that made the printing press possible</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Papier</span>
+        <span class="bridge-note">— borrowed from French "papier"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">paper</span>
+        <span class="bridge-note">— same French origin as German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">papyrus</span>
+        <span class="bridge-note">— from Greek, from Egyptian — the reed plant</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">giấy</span>
+        <span class="bridge-note">— a Sino-Vietnamese word for paper, reflecting Vietnam's tradition with papermaking technology and craft.</span>
+      </div>
+      <div class="story">
+        Papier is a borrowing, showing how European languages took the concept of paper from southern Mediterranean trade routes. The word began in Egypt (papyrus, the reed), traveled through Greek into Latin, then into French, and from there into German. By the time Gutenberg was experimenting with printing, papier had been part of German for centuries — but it was expensive, rare, and not widely used. The printing press made papier essential. Germans borrowed the word from French rather than inventing a new one, showing how technology flows across languages. Meanwhile, Asian cultures developed their own papermaking technologies and terminology independently, creating thriving paper-making traditions that supported their own writing and printing systems for centuries before European contact.
+      </div>
+    </div>
+
+    <!-- SEITE etymology card -->
+    <div class="ety-card" id="card-seite">
+      <div class="word-header">
+        <span class="word-main">Seite</span>
+        <span class="word-pron">/ˈzaɪtə/</span>
+      </div>
+      <div class="word-meaning">page, side — a surface of paper bearing text</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Seite</span>
+        <span class="bridge-note">— from Proto-Germanic *sīdō (side)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">side</span>
+        <span class="bridge-note">— the English cognate, same root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sēt-</span>
+        <span class="bridge-note">— to sit, to be situated — a side is a surface on which things sit</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">trang</span>
+        <span class="bridge-note">— a Vietnamese word for page or leaf. Originally referred to a single leaf, then extended to mean a page of a book.</span>
+      </div>
+      <div class="story">
+        Seite is a simple word with deep roots. It comes from the Proto-Germanic *sīdō, meaning "side" — likely connected to the PIE root *sēt-, meaning "to sit" or "to be situated." So a Seite is literally "a side" — a surface on which something sits. But the word became crucial in the printing press era, where a single sheet of paper suddenly had two distinct surfaces: the front (Vorderseite) and the back (Rückseite). Writing gave surfaces directionality. The printing press made this directionality essential to how we conceptualize books. Different writing traditions developed their own conceptualizations of "pages" and "sides"—each language capturing a different understanding of the reading surface.
+      </div>
+    </div>
+
+    <!-- BUCH etymology card -->
+    <div class="ety-card" id="card-buch">
+      <div class="word-header">
+        <span class="word-main">Buch</span>
+        <span class="word-pron">/buːx/</span>
+      </div>
+      <div class="word-meaning">book — a bound collection of written pages, still carrying the ghost of beech-wood</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Buch</span>
+        <span class="bridge-note">— from Proto-Germanic *bōkō (beech tree)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">beech</span>
+        <span class="bridge-note">— the tree; "book" is related but through a different semantic path</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*bheh₂g-</span>
+        <span class="bridge-note">— beech tree — one of the few trees named in Proto-Indo-European</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">sách</span>
+        <span class="bridge-note">— a Vietnamese word for book, emphasizing the bound collection. Where Chinese focuses on the hand and brush, Vietnamese focuses on the material object.</span>
+      </div>
+      <div class="story">
+        Buch is one of the most profound etymologies in German. The word comes directly from the Proto-Germanic *bōkō, meaning "beech tree." Why? Because in ancient Germanic culture, writing (particularly runes) was often carved into beech bark and beech-wood staves. As this technology was gradually abandoned in favor of parchment and paper, the word Buch — which had originally meant "beech" — was reinterpreted as "that which is written on beech," and then generalized to mean "book" regardless of material. So every German book today carries in its name the memory of a technology that hasn't been used for over a thousand years. Different writing traditions developed different metaphors for "book"—some emphasizing materials, some emphasizing the act of writing or the written content itself.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: MORE WORDS ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="zeile">Zeile</span> — line of text. The word comes from the Proto-Germanic *taigla-, meaning "to pull" or "to draw." A line is something drawn. Before the printing press, scribes wrote in a continuous flowing script. But the printing press demanded discrete lines, rows of type set in a frame. The word Zeile captures this: it's something pulled or drawn into place.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="lesen">Lesen</span> — to read. This is perhaps the most surprising etymology. The word originally meant "to gather" or "to collect" — the same root as English "glean." When you read, you gather meaning from scattered letters. When you read a text, you collect its ideas. The word preserves the original sense of reading as an act of collection and assembly.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="wissen">Wissen</span> — knowledge, to know. From the Proto-Germanic *witaną, meaning "to see" — because knowledge is seeing. The same root gave English "wit," "wise," "wisdom." Knowledge is vision. To know is to have seen. Before the printing press, knowledge was scarce, difficult to access, locked in monasteries. After Gutenberg, knowledge became visible — you could see it on the page.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="sprache">Sprache</span> — language, speech. From the verb sprechen, meaning "to speak." Sprache is what is spoken. But after the printing press, language began to have a new dimension: it became visible, fixed, standardized on the page. The printing press changed the nature of language itself, turning it from something purely spoken and ephemeral into something written, permanent, reproducible.
+    </p>
+
+    <!-- ZEILE etymology card -->
+    <div class="ety-card" id="card-zeile">
+      <div class="word-header">
+        <span class="word-main">Zeile</span>
+        <span class="word-pron">/ˈtsaɪlə/</span>
+      </div>
+      <div class="word-meaning">line of text — a row of letters pulled into place</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Zeile</span>
+        <span class="bridge-note">— from Proto-Germanic *taigla- (to pull, to draw)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">tail</span>
+        <span class="bridge-note">— distantly related, from the sense of something drawn out or trailing</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*dh-aig-</span>
+        <span class="bridge-note">— to pull, to draw, to arrange in order</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">hàng</span>
+        <span class="bridge-note">— meaning line or row in Vietnamese. The word describes lines of text arranged and proceeding in orderly succession.</span>
+      </div>
+      <div class="story">
+        Zeile captures the printing press perfectly: it means a line that is "pulled" or "drawn" into place. The word comes from the Proto-Germanic *taigla-, meaning to pull or arrange. In the context of type-setting, this is deeply literal: each line of type must be pulled together, arranged, locked into the forme. Before printing, scribal manuscripts didn't have uniform lines — the text flowed more organically across the page. The printing press created the rigid line. The word Zeile, with its sense of arrangement and pulling-into-place, perfectly describes this enforced uniformity.
+      </div>
+    </div>
+
+    <!-- LESEN etymology card -->
+    <div class="ety-card" id="card-lesen">
+      <div class="word-header">
+        <span class="word-main">Lesen</span>
+        <span class="word-pron">/ˈleːzən/</span>
+      </div>
+      <div class="word-meaning">to read — to gather meaning from scattered marks</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">lesen</span>
+        <span class="bridge-note">— to read, originally "to gather, to collect"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">glean</span>
+        <span class="bridge-note">— to gather leftover grain, from the same root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*leg-</span>
+        <span class="bridge-note">— to gather, to collect, to arrange in order (also "to speak" — gathering words)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">đọc</span>
+        <span class="bridge-note">— a Sino-Vietnamese word for reading, essential to literacy and the foundation of accessing written knowledge.</span>
+      </div>
+      <div class="story">
+        Lesen is one of the most beautiful etymologies. The word originally meant "to gather" or "to collect" — the same root that gives English "glean" (to gather leftover grain from a harvested field). The metaphor is profound: reading is gleaning. You move through a text and gather its meaning, just as a gleaner moves through a field and gathers leftover grain. Every letter, every word, every image is gathered into your understanding. Before printing, this gathering was difficult — books were scarce, information scattered. After Gutenberg, there was suddenly more to gather. The word Lesen, with its original sense of collection and assembly, became even more apt: the reader is a gleaner in the vast field of the printed page.
+      </div>
+    </div>
+
+    <!-- WISSEN etymology card -->
+    <div class="ety-card" id="card-wissen">
+      <div class="word-header">
+        <span class="word-main">Wissen</span>
+        <span class="word-pron">/ˈvɪsən/</span>
+      </div>
+      <div class="word-meaning">knowledge, to know — to have seen, to have vision</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wissen</span>
+        <span class="bridge-note">— to know, from Proto-Germanic *witaną (to see)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wit, wise, wisdom</span>
+        <span class="bridge-note">— all from the same Germanic root meaning "to see"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wid-</span>
+        <span class="bridge-note">— to see, to perceive — also gives "video," "evident," "vision"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">kiến thức</span>
+        <span class="bridge-note">— Kiến (to know/perceive) + thức (consciousness/knowledge). Knowledge as recognizing and consciously understanding what you have encountered.</span>
+      </div>
+      <div class="story">
+        Wissen comes from the Proto-Germanic *witaną, which meant "to see" or "to perceive." So to know (wissen) is fundamentally to have seen. The same root gave English "wit" (which originally meant perceptiveness, quick sight), "wise" (one who sees clearly), and "wisdom" (the state of seeing well). This is profound: across Germanic languages, knowledge is conceived as vision. The printing press democratized knowledge by making it visible — literally, on the page. Before Gutenberg, knowledge was largely oral, local, difficult to see. After the press, knowledge became visible, stable, widely accessible. The word Wissen, with its root in sight and seeing, captures this transformation: printing made knowledge visible.
+      </div>
+    </div>
+
+    <!-- SPRACHE etymology card -->
+    <div class="ety-card" id="card-sprache">
+      <div class="word-header">
+        <span class="word-main">Sprache</span>
+        <span class="word-pron">/ˈʃpraːxə/</span>
+      </div>
+      <div class="word-meaning">language, speech — what is spoken</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">sprechen</span>
+        <span class="bridge-note">— to speak, to say</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">speak, speech</span>
+        <span class="bridge-note">— the English cognate from the same root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*sper-</span>
+        <span class="bridge-note">— to sprout, to spread out — speech spreading from the mouth like seeds</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">ngôn ngữ</span>
+        <span class="bridge-note">— Ngôn (words/utterances) + ngữ (language/words). Language as the collection and orchestration of utterances into meaningful systems.</span>
+      </div>
+      <div class="story">
+        Sprache comes directly from the verb sprechen (to speak). So Sprache literally means "that which is spoken" or "the act of speaking." This etymology reflects an ancient truth: language was primarily oral. Even after writing was invented, for most of human history, language was still fundamentally speech — writing was just a tool to record what was spoken. But the printing press changed this. For the first time, written language became standardized, stable, and widely accessible. Printed language developed its own rules, its own standards, almost independent of speech. From the printing press onward, Sprache would no longer mean just "what is spoken" — it would increasingly mean "what is written and printed." The word preserves the ancient conception even as the printing press transformed the reality.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: GUTENBERG'S GIFT ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      By 1500, a hundred years after Gutenberg, the printing press had produced one revolutionary consequence: German, in its printed forms, was consolidating toward a standard. Printers across the German lands were beginning to follow the Kanzlei Saxonica — the Saxon chancellery script — because it sold books.
+    </p>
+
+    <p class="narrative">
+      This is how Standard German was born. Not from a king's decree. Not from a church council. Not from a committee of grammarians. But from the logic of the market: printers wanting to sell books to the widest possible audience. The printing press had created a language.
+    </p>
+
+    <p class="narrative">
+      But here's the deeper truth: Before the printing press, there was no such thing as a "German" — there were dozens of mutually unintelligible dialects. The printing press didn't discover a pre-existing standard German. It created the possibility of one. By making books cheap and abundant, by putting the written word in the hands of ordinary people, the printing press made the question <em>urgent</em>: which German? And through centuries of market-driven choices, printers and readers together answered that question.
+    </p>
+
+    <p class="narrative emphasis">
+      The printing press didn't just reproduce language. It changed what language could be.
+    </p>
+  </div>
+
+  <!-- ==================== ASIDE 1: GUTENBERG'S WORKSHOP ==================== -->
+  <div class="aside">
+    <div class="aside-title">Gutenberg's Workshop: How Moveable Type Worked</div>
+    <div class="aside-text">
+      Each letter in Gutenberg's press was a small piece of metal — an alloy of lead, tin, and antimony — about 2 centimeters tall. The top surface of the letter was carved in reverse (mirror image), so that when pressed in ink, it would print forward. These letters were called "sorts" (from the Latin "sortis," a type or kind). A printer might have 100 copies of the letter "e" (the most common letter), but only 2 or 3 copies of "x." The individual sorts were placed into a wooden frame called a "forme." The forme was locked tight. Ink was rolled across the top. Paper was laid on top. A screw was turned (or a lever pressed), exerting tremendous pressure. The result: a page of printed text in a fraction of a second. One forme could print hundreds of pages before the letters wore out. This simple mechanism — moveable type locked in a forme, pressed into inked paper — revolutionized civilization.
+    </div>
+  </div>
+
+  <!-- ==================== ASIDE 2: ASIAN PRINTING TRADITIONS ==================== -->
+  <div class="aside">
+    <div class="aside-title">Printing in Asia: Multiple Routes to Written Knowledge</div>
+    <div class="aside-text">
+      Gutenberg did not invent printing. Asian cultures developed sophisticated printing technologies centuries earlier. Woodblock printing, where each page is carved as a single unit, emerged in Asia and enabled mass production of texts long before European printing. Different writing systems created different solutions: where an alphabet requires only 26 letters, character-based writing systems needed different technological approaches. Vietnamese encountered printing through both direct contact with Asian traditions and later through European influence. The linguistic diversity of Asia meant that printing technologies evolved in multiple forms—woodblock printing, moveable type, and regional innovations—each adapted to local writing systems and needs. This illustrates a profound truth: the same technological impulse—to capture language in permanent form—manifests differently across cultures. Language shapes technology as much as technology shapes language.
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: THE BRIDGE TO VIETNAMESE ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The Vietnamese language carries within it the echoes of printing technologies introduced through cultural contact. The Vietnamese word for printing is <em>in ấn</em> — a compound of in (stamp, imprint) and ấn (print, press). It emphasizes the tools and the action of pressing, much like the German Druck.
+    </p>
+
+    <p class="narrative">
+      The word for book is <em>sách</em> — emphasizing the bound collection of pages, the physical object. Where German Buch remembers beech wood, Vietnamese sách names the material reality of the bound book. Two linguistic traditions, two ways of conceptualizing the same technology.
+    </p>
+
+    <p class="narrative">
+      The word for knowledge — <em>kiến thức</em> — combines kiến (to perceive, to know) and thức (consciousness, awareness). Compare with the German Wissen, which comes from "to see." Both traditions connect knowledge with awareness and perception. But they emphasize different aspects: the external act of seeing versus the internal state of awareness and recognition.
+    </p>
+
+    <p class="narrative emphasis">
+      And so, across the Eurasian continent, from the printing press in Mainz to the traditions of printing in Asia, the same human imperative appears: to capture language in permanent form, to make knowledge visible, to transform the ephemeral into the eternal.
+    </p>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED IN THIS CHAPTER ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Print Standardisation</strong> — Printing froze spelling and spread one dialect across wide territories. Before print, every town wrote German differently. Print demanded consistency — one spelling, one grammar, one vocabulary.<br><br>
+    <strong style="color: var(--text-bright);">Compound Power</strong> — Druckerpresse (press+press), Buchstabe (beech+staff = letter, from runes carved on beech wood) — Germanic word-building combines simple elements into profound concepts. The printing vocabulary itself shows how German compounds capture technological innovation.<br><br>
+    <strong style="color: var(--text-bright);">Technology Vocabulary</strong> — Papier, Seite, Zeile — the tools of literacy. Each word carries history: Papier from Egyptian papyrus through Greek and Latin; Seite (page, side) from the physical arrangement of text; Zeile (line) from the sense of something pulled into place.<br><br>
+    <strong style="color: var(--text-bright);">Innovation Across Cultures</strong> — Bi Sheng invented moveable type ~1040 CE, nearly 400 years before Gutenberg. Yet the same innovation had vastly different impacts: in Chinese, it never became dominant (too many characters). In Europe, with only 26 letters, it was revolutionary. Technology and language evolve together across cultures.
+  </div>
+
+  <!-- ==================== WORDS GATHERED IN THIS CHAPTER ==================== -->
+  <div class="scene" id="scene-words-ch14" style="margin-top: 48px;">
+    <div class="scene-marker"></div>
+    <div class="word-collection" id="word-collection-box">
+    <h3 style="text-align: center; margin-bottom: 24px; color: var(--text-bright);">Words Gathered in Chapter 14</h3>
+    <div class="collected-words">
+      <div class="collected-word" data-delay="0"><span class="cw-german">Druckerpresse</span><span class="cw-english">printing press</span></div>
+      <div class="collected-word" data-delay="100"><span class="cw-german">Schrift</span><span class="cw-english">writing/script</span></div>
+      <div class="collected-word" data-delay="200"><span class="cw-german">Buchstabe</span><span class="cw-english">letter</span></div>
+      <div class="collected-word" data-delay="300"><span class="cw-german">Papier</span><span class="cw-english">paper</span></div>
+      <div class="collected-word" data-delay="400"><span class="cw-german">Seite</span><span class="cw-english">page</span></div>
+      <div class="collected-word" data-delay="500"><span class="cw-german">Buch</span><span class="cw-english">book</span></div>
+      <div class="collected-word" data-delay="600"><span class="cw-german">Zeile</span><span class="cw-english">line of text</span></div>
+      <div class="collected-word" data-delay="700"><span class="cw-german">Lesen</span><span class="cw-english">to read</span></div>
+      <div class="collected-word" data-delay="800"><span class="cw-german">Wissen</span><span class="cw-english">knowledge</span></div>
+      <div class="collected-word" data-delay="900"><span class="cw-german">Sprache</span><span class="cw-english">language</span></div>
+    </div>
+    </div>
+  </div>
+
+  <!-- ==================== CONCEPTS LEARNED IN THIS CHAPTER ==================== -->
+  <div class="scene" id="scene-concepts-ch14" style="margin-top: 48px;">
+    <div class="scene-marker"></div>
+    <h3 style="text-align: center; margin-bottom: 24px; color: var(--text-bright);">Concepts Learned in Chapter 14</h3>
+    <div class="collected-words">
+      <div class="collected-word" data-delay="0"><span class="cw-german" style="color:#9b8ec4;">Print Standardisation</span><span class="cw-english">printing froze spelling and spread one dialect</span></div>
+      <div class="collected-word" data-delay="100"><span class="cw-german" style="color:#9b8ec4;">Compound Power</span><span class="cw-english">Druckerpresse, Buchstabe — Germanic word-building</span></div>
+      <div class="collected-word" data-delay="200"><span class="cw-german" style="color:#9b8ec4;">Technology Vocabulary</span><span class="cw-english">Papier, Seite, Zeile — the tools of literacy</span></div>
+      <div class="collected-word" data-delay="300"><span class="cw-german" style="color:#9b8ec4;">Innovation Across Cultures</span><span class="cw-english">Bi Sheng invented moveable type ~1040 CE</span></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-section">
+      <h2 style="font-size: 1.4rem; color: var(--text-bright); margin-bottom: 24px; text-align: center;">Test Your Knowledge</h2>
+      <p style="text-align: center; color: var(--text); margin-bottom: 32px; font-style: italic;">Answer at least 2 of 3 to test your understanding.</p>
+
+      <!-- Q1 -->
+      <div class="guess-section" id="quiz-q1">
+        <div class="prompt">What does <strong style="color: var(--german);">Buchstabe</strong> originally mean (from Buch + Stabe)?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q1')">book-stick</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q1')">book-writing</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q1')">book-mark</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q1"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="guess-section" id="quiz-q2">
+        <div class="prompt">How did the printing press create Standard German?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q2')">printers chose one dialect to maximize book sales</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q2')">the king issued a decree</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q2')">scholars created a grammar</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q2"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="guess-section" id="quiz-q3">
+        <div class="prompt">Who invented moveable type printing first?</div>
+        <div class="guess-options">
+          <button class="guess-btn" onclick="quizGuess(this, true, 'q3')">Bi Sheng in China, ~1040 CE</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q3')">Johannes Gutenberg in Germany, 1440</button>
+          <button class="guess-btn" onclick="quizGuess(this, false, 'q3')">an Arab inventor in Baghdad</button>
+        </div>
+        <div class="guess-feedback" id="feedback-q3"></div>
+      </div>
+
+      <div id="quiz-result" style="text-align: center; margin-top: 32px; font-size: 1.1rem; color: var(--fire-glow); font-style: italic; display: none;"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">140 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(16%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:16%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Druckerpresse</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Printing press</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schrift</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Writing</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Buchstabe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Letter</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Papier</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Paper</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Seite</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Page</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Buch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Book</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zeile</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Line of text</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Lesen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">To read</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wissen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Knowledge</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sprache</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Language</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–13: ~130 more words · Scroll for full list</td></tr>
+</table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">33 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(23%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:23%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Print standardisation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Printing froze spelling across territories</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Compound power</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Druckerpresse, Buchstabe from beech-staff</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Technology vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Papier from Egyptian via Greek and Latin</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Chinese parallel</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Bi Sheng invented moveable type ~1040 CE</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">14</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–13: ~33 more patterns</td></tr>
+</table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end" style="text-align: center; margin: 64px 0;">
+    <div class="end-line"></div>
+    <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+      End of Chapter 14
+    </p>
+    <p class="narrative small" style="text-align: center;">
+      Ten words of the printing press. A vocabulary born from mechanical innovation.<br>
+      Gutenberg's printing press (~1450) did what no emperor or army could: it standardized the German language. Before print, every town wrote German differently. Print demanded consistency — one spelling, one grammar, one vocabulary.<br>
+      The printing vocabulary itself shows Germanic compound power: Druckerpresse (press+press), Buchstabe (beech+staff = letter, from runes carved on beech wood).<br>
+      And across the Eurasian continent, from Mainz to ancient China, the same human imperative appears: to capture language in permanent form, to make knowledge visible, to transform the ephemeral into the eternal.
+    </p>
+    <div class="next-chapter">
+      Chapter 15: Die Reformation — coming next
+    </div>
+  </div>
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <div class="nav-section">
+    <a href="chapter13.html" class="nav-btn">← Chapter 13</a>
+    <a href="chapter15.html" class="nav-btn next">Chapter 15 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- LETTERFALL CANVAS: Printing Press Theme ---
+const canvas = document.getElementById('letterfall');
+const ctx = canvas.getContext('2d');
+let letters = [];
+let printingPressFrame = null;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+class FallingLetter {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = -50;
+    this.letter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜSS'.charAt(Math.floor(Math.random() * 30));
+    this.size = Math.random() * 30 + 15;
+    this.opacity = Math.random() * 0.6 + 0.2;
+    this.rotation = Math.random() * Math.PI * 2;
+    this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.vy = Math.random() * 1.5 + 0.8;
+    this.life = 1;
+    this.maxLife = Math.random() * 3000 + 2000; // ms
+    this.age = 0;
+
+    // Color variation: golden/dark ink
+    const colors = ['rgba(232, 164, 74, ', 'rgba(200, 100, 50, ', 'rgba(139, 90, 43, '];
+    this.colorBase = colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  update(deltaTime) {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.rotation += this.rotationSpeed;
+    this.age += deltaTime;
+    this.life = 1 - (this.age / this.maxLife);
+
+    // Accelerate downward slightly (gravity)
+    this.vy += 0.1;
+  }
+
+  draw() {
+    const finalOpacity = this.opacity * this.life;
+    ctx.save();
+    ctx.globalAlpha = finalOpacity;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+
+    ctx.font = `bold ${this.size}px 'Cormorant Garamond'`;
+    ctx.fillStyle = this.colorBase + finalOpacity + ')';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(this.letter, 0, 0);
+
+    ctx.restore();
+  }
+
+  isAlive() {
+    return this.life > 0 && this.y < canvas.height;
+  }
+}
+
+function drawPrintingPress() {
+  // Simple printing press frame at bottom of screen
+  const frameWidth = Math.min(200, canvas.width * 0.3);
+  const frameHeight = 60;
+  const frameX = (canvas.width - frameWidth) / 2;
+  const frameY = canvas.height - frameHeight - 40;
+
+  // Frame outline
+  ctx.strokeStyle = 'rgba(200, 100, 50, 0.3)';
+  ctx.lineWidth = 3;
+  ctx.rect(frameX, frameY, frameWidth, frameHeight);
+  ctx.stroke();
+
+  // Lever
+  const leverX = frameX + frameWidth / 2;
+  const leverY = frameY - 20;
+  ctx.strokeStyle = 'rgba(200, 100, 50, 0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(leverX, frameY);
+  ctx.lineTo(leverX + 80, leverY);
+  ctx.stroke();
+
+  // Ink splash effects occasionally
+  if (Math.random() < 0.05) {
+    const splashX = frameX + Math.random() * frameWidth;
+    const splashY = frameY + Math.random() * frameHeight;
+    ctx.fillStyle = 'rgba(232, 164, 74, 0.15)';
+    ctx.beginPath();
+    ctx.arc(splashX, splashY, Math.random() * 15 + 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  printingPressFrame = { frameX, frameY, frameWidth, frameHeight };
+}
+
+function drawFrame(time) {
+  // Subtle background change as you scroll
+  const scrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+  const bgColor = `rgba(${10 + scrollRatio * 245}, ${14 + scrollRatio * 237}, ${26 + scrollRatio * 232}, 0.05)`;
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Update and draw letters
+  letters = letters.filter(l => l.isAlive());
+  letters.forEach(l => {
+    l.update(16); // rough delta time
+    l.draw();
+  });
+
+  // Spawn new letters more frequently as you scroll down
+  const spawnRate = 0.02 + scrollRatio * 0.08;
+  if (Math.random() < spawnRate) {
+    letters.push(new FallingLetter());
+  }
+
+  // Draw printing press frame at bottom
+  drawPrintingPress();
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', resizeCanvas);
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate collected words
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- EMPTY QUIZDATA FOR QUIZ-ENHANCER.JS COMPATIBILITY ---
+const quizData = [];
+
+// --- QUIZ INTERACTION (for new quiz format) ---
+let quizScore = 0;
+let quizAnswered = 0;
+const maxQuestions = 3;
+const passThreshold = 2;
+
+function quizGuess(btn, correct, questionId) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = '✓ Correct!';
+    feedback.classList.add('show');
+    quizScore++;
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+  } else {
+    const guesses = section.querySelectorAll('.guess-btn.incorrect').length;
+    if (guesses === 0) {
+      btn.classList.add('incorrect');
+      feedback.textContent = 'Not quite — try again.';
+      feedback.classList.add('show');
+    } else {
+      btn.classList.add('incorrect');
+      btn.style.pointerEvents = 'none';
+      allBtns.forEach(b => b.style.pointerEvents = 'none');
+      feedback.textContent = 'Better luck on the next one.';
+      feedback.classList.add('show');
+    }
+  }
+
+  quizAnswered++;
+  if (quizAnswered === maxQuestions) {
+    showQuizResult();
+  }
+}
+
+function showQuizResult() {
+  const resultDiv = document.getElementById('quiz-result');
+
+  let message = '';
+  if (quizScore >= passThreshold) {
+    message = `Excellent! You scored ${quizScore}/${maxQuestions}. The printing press revealed the power of standardization.`;
+  } else {
+    message = `You scored ${quizScore}/${maxQuestions}. You need ${passThreshold} to pass. Try again!`;
+    // Re-enable quiz buttons for retry
+    document.querySelectorAll('.guess-btn').forEach(btn => {
+      btn.classList.remove('correct', 'incorrect');
+      btn.style.pointerEvents = 'auto';
+    });
+    document.querySelectorAll('.guess-feedback').forEach(f => f.classList.remove('show'));
+    quizScore = 0;
+    quizAnswered = 0;
+  }
+
+  resultDiv.textContent = message;
+  resultDiv.style.display = 'block';
+  resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct! The printing press transformed how we think about language, knowledge, and communication.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — look closer at the etymology. You have one more guess.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 14;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

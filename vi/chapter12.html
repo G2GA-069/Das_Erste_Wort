@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 12</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --trade-gold: #c9a961;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #c9a961 0%, #8b6e4a 30%, #3a3f5c 60%, #1a2a5c 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- TRADE ROUTE CANVAS --- */
+  #tradeCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: #8a9bae;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, #8a9bae, transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: #9b8ec4; }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: #8a9bae; }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: #e8a44a; }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+  .bridge-label.ara { background: rgba(196, 143, 103, 0.15); color: #c48f67; }
+  .bridge-label.lat { background: rgba(196, 106, 58, 0.15); color: #c46a3a; }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.vi {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--vietnamese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  .guess-attempts {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 8px;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- QUIZ GATE --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .quiz-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+
+  .quiz-header .quiz-subtitle {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.6);
+    font-style: italic;
+  }
+
+  .quiz-question {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .quiz-question:last-child {
+    border-bottom: none;
+  }
+
+  .quiz-prompt {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .quiz-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-feedback {
+    font-size: 0.95rem;
+    margin-top: 12px;
+    min-height: 1.2em;
+    color: var(--fire-glow);
+    font-style: italic;
+  }
+
+  .quiz-results {
+    text-align: center;
+    padding: 32px 24px;
+    background: rgba(232, 164, 74, 0.05);
+    border-radius: 12px;
+    margin-top: 32px;
+  }
+
+  .quiz-results.hidden {
+    display: none;
+  }
+
+  .score-text {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+
+  .score-pct {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--fire);
+    margin: 16px 0;
+  }
+
+  .pass-message {
+    color: #8ed69e;
+    font-size: 1.1rem;
+    margin-top: 16px;
+  }
+
+  .fail-message {
+    color: #ff9999;
+    font-size: 1rem;
+    margin-top: 16px;
+  }
+
+  .quiz-restart {
+    margin-top: 20px;
+  }
+
+  .quiz-restart button {
+    background: rgba(232, 164, 74, 0.12);
+    border: 1px solid rgba(232, 164, 74, 0.3);
+    color: var(--fire);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-restart button:hover {
+    background: rgba(232, 164, 74, 0.2);
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  .chapter-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    font-size: 0.9rem;
+  }
+
+  .chapter-nav a {
+    color: var(--fire);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .chapter-nav a:hover {
+    color: var(--fire-glow);
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding-bottom: 20px; margin-bottom: 20px; }
+    .quiz-btn { font-size: 0.95rem; padding: 10px 14px; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="tradeCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twelve</div>
+    <h1>Der Kreuzzug und der Kaufmann</h1>
+    <div class="subtitle">The Crusade and the Merchant</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE CRUSADE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the year 1095 CE, something momentous happened in Europe. Pope Urban II stood before the Council of Clermont and called for a holy war. Christians would march east, across thousands of miles, to reclaim Jerusalem from Muslim hands. For three centuries, the Crusades would bring Germanic knights face to face with the Muslim world — with Arabic scholars, Persian philosophers, and traders from lands beyond imagination.
+    </p>
+
+    <p class="narrative">
+      The knights returned home exhausted. But they brought something more valuable than any conquered city: <em>words</em>. And these words would transform German, English, and all the Germanic languages.
+    </p>
+
+    <p class="narrative">
+      They had never seen <span class="german-word" data-card="zucker">Zucker</span> before. In the Middle East, they discovered something that made honey seem common. A white crystal, sweet beyond measure, that could be stored and transported. They watched it being harvested from cane, processed into powder, and sold in markets. They bought it. They brought it home. And with it came the word.
+    </p>
+
+    <!-- ZUCKER card -->
+    <div class="ety-card" id="card-zucker">
+      <div class="word-header">
+        <span class="word-main">Zucker</span>
+        <span class="word-pron">/ˈtsʊkɐ/</span>
+      </div>
+      <div class="word-meaning">sugar — the white crystal that changed medieval diet forever</div>
+      <div class="bridge">
+        <span class="bridge-label ara">ARA</span>
+        <span class="bridge-word">sukkar</span>
+        <span class="bridge-note">— from Sanskrit शर्करा (śarkarā)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">saccharum</span>
+        <span class="bridge-note">— medieval Latin, borrowed from Arabic</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Zucker</span>
+        <span class="bridge-note">— via medieval Latin, adopted during Crusades</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">đường</span>
+        <span class="bridge-note">— a Sino-Vietnamese word. Vietnam, like many tropical regions, has a long history of sugar cane cultivation and refinement.</span>
+      </div>
+      <div class="story">
+        The journey of "Zucker" traces a remarkable path: Sanskrit शर्करा (śarkarā) → Arabic سكر (sukkar) → Medieval Latin saccharum → German Zucker. The word traveled the Silk Road just as the commodity did. Sanskrit's "sharkara" originally meant "gravel" or "grit," transferred to sugar because of its granular form. The Medieval Crusaders didn't understand the elaborate supply chains or the agricultural origin — they simply encountered a commodity and took the nearest word for it. English followed a parallel path: Sanskrit → Arabic → Old French sucre → English "sugar." German kept the harder "z" sound (tsk-); English softened it to "sh." But both languages carry the same ancient Sanskrit root.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But sugar was just the beginning.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: KAFFEE ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the Ottoman coffeehouses of Cairo and Istanbul, the Crusaders and later merchants encountered another revolutionary beverage. A dark, bitter drink made from beans. It kept you awake. It sparked conversation. It seemed almost magical in its effects. The drink was called <span class="german-word" data-card="kaffee">Kaffee</span>.
+    </p>
+
+    <p class="narrative">
+      For centuries, coffee was unknown in Europe. Only the Arab and Persian world understood its power. Then came the traders — the Venetians, the Levantine merchants, the men who moved goods across the Mediterranean. They brought back coffee, and with it, a new word that would enter every European language.
+    </p>
+
+    <!-- KAFFEE card -->
+    <div class="ety-card" id="card-kaffee">
+      <div class="word-header">
+        <span class="word-main">Kaffee</span>
+        <span class="word-pron">/kaˈfeː/</span>
+      </div>
+      <div class="word-meaning">coffee — the dark liquid that awakened Europe</div>
+      <div class="bridge">
+        <span class="bridge-label ara">ARA</span>
+        <span class="bridge-word">qahwa</span>
+        <span class="bridge-note">— possibly from the Kaffa region in Ethiopia</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">kahveh</span>
+        <span class="bridge-note">— via Ottoman Turkish</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kaffee</span>
+        <span class="bridge-note">— from Turkish kahve, adopted 16th-17th century</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">cà phê</span>
+        <span class="bridge-note">— a phonetic representation of the Arabic "qahwah," borrowed through Southeast Asian trade networks.</span>
+      </div>
+      <div class="story">
+        The word "Kaffee" traveled: Arabic قهوة (qahwa) → Ottoman Turkish kahve → German Kaffee, English "coffee," French "café." Each language borrowed it at roughly the same time, in the 16th and 17th centuries, as coffee culture spread from the Islamic world to Europe. In Vietnamese, <em>cà phê</em> represents a phonetic rendering of the Arabic word through trade networks, adapting the sound to Vietnamese phonology. German kept the double-e for the long vowel (Kaffee); English dropped it (coffee). Both carry the Turkish "kh" in their spelling, even though German pronounces it as "k."
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: SCHACH ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In Persian courts, nobles played a game of elaborate strategy. King against king, army against army, played on a checkered board. The game was called <em>shatranj</em> in Persian, derived from the Sanskrit <em>chaturanga</em> — "four divisions" (referring to the four types of military units: infantry, cavalry, elephants, chariots). When this game reached European courts through trade and cultural contact, the word was transformed. The kings became <span class="german-word" data-card="schach">Schach</span>.
+    </p>
+
+    <p class="narrative">
+      And when a player's king was trapped with no escape, the opponent would say: <em>"Schach Matte"</em> — "the king is dead." In English, this became "checkmate."
+    </p>
+
+    <!-- SCHACH card -->
+    <div class="ety-card" id="card-schach">
+      <div class="word-header">
+        <span class="word-main">Schach</span>
+        <span class="word-pron">/ʃax/</span>
+      </div>
+      <div class="word-meaning">chess — the game of kings and strategy</div>
+      <div class="bridge">
+        <span class="bridge-label ara">ARA</span>
+        <span class="bridge-word">shāh</span>
+        <span class="bridge-note">— "king" in Persian</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">scacchus</span>
+        <span class="bridge-note">— medieval Latin form</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schach</span>
+        <span class="bridge-note">— German "sch" = the "sh" sound in the original Persian</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">cờ tướng</span>
+        <span class="bridge-note">— literally "general chess" or "commander chess" in Vietnamese. The Vietnamese version developed distinct rules and terminology while preserving the strategic essence of the ancient game.</span>
+      </div>
+      <div class="story">
+        "Chess" has perhaps the most elegant etymology of any game. Persian شاه (shāh, "king") → Arabic شاه (shāh, borrowed) → Medieval Latin scacchus → Middle English "ches" → English "chess." German took a slightly different path: shāh → Medieval Latin scacchus → German Schach. When a king is in check (from "shāh" again), and has no legal move, it's "checkmate" — from Arabic شاه مات (shāh māt, "the king is dead"). Vietnamese <em>cờ tướng</em>, by contrast, developed independently—it's a distinct strategic game with its own rules and terminology, reflecting Vietnamese military and philosophical traditions rather than Persian influence.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This is how empires exchange more than territory — they exchange the very categories of human thought.
+    </p>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        Based on what you've learned, if the Persian word for king is "shāh," what do you think the Arabic phrase "shāh māt" means?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">the king wins</button>
+        <button class="guess-btn" onclick="guess(this, true)">the king is dead</button>
+        <button class="guess-btn" onclick="guess(this, false)">checkmate stalemate</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: KARAWANE ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      How did these goods travel thousands of miles? Not by ship alone, not by single merchant. The Silk Road required coordinated caravans — groups of merchants and pack animals moving together across deserts and mountains for safety and efficiency. The word for this was Persian: <span class="german-word" data-card="karawane">Karawane.</span>
+    </p>
+
+    <p class="narrative">
+      A caravan might include hundreds of people, thousands of camels, months of journey through hostile territory. It was a mobile city, a merchant's army, a logistics miracle of the medieval world. And the German word that describes it comes directly from that Persian origin.
+    </p>
+
+    <!-- KARAWANE card -->
+    <div class="ety-card" id="card-karawane">
+      <div class="word-header">
+        <span class="word-main">Karawane</span>
+        <span class="word-pron">/karaˈvaːnə/</span>
+      </div>
+      <div class="word-meaning">caravan — the merchants' lifeline across the Silk Road</div>
+      <div class="bridge">
+        <span class="bridge-label ara">ARA</span>
+        <span class="bridge-word">kārvān</span>
+        <span class="bridge-note">— Persian کاروان, literally "assembling of travelers"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">caravana</span>
+        <span class="bridge-note">— through Romance languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Karawane</span>
+        <span class="bridge-note">— German preserved the full form more faithfully than English</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">đoàn thương nhân</span>
+        <span class="bridge-note">— literally "merchant group" or "caravan." Đoàn (group) + thương (merchant) + nhân (person). The compound describes organized merchant caravans traveling together.</span>
+      </div>
+      <div class="story">
+        Unlike "sugar," "coffee," and "chess," which entered European languages through direct contact with Islamic cultures, "caravan" reflects the infrastructure of trade itself. Persian کاروان (kārvān) describes not just merchandise but the entire system of organized travel. It entered European languages at the height of the Crusades (12th-13th centuries), when European merchants were learning the logistics of long-distance trade. German Karawane, English "caravan," French "caravane" — all preserve the Persian form almost perfectly. Vietnamese merchants, similarly developing extensive trade networks throughout Southeast Asia, created their own terms for merchant groups and trading expeditions. Language reflects trade patterns: where cultures meet through commerce, words blend and merge; where they develop independently, vocabulary stays native.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The caravan routes weren't just about merchandise. They were about knowledge. About words. About the slow, patient migration of human language across continents.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE HANSEATIC LEAGUE ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      While the Crusades drew German knights south and east, something else was happening in the north. Along the coasts of the Baltic and North Seas, merchants from German-speaking cities were forming alliances. The Hanseatic League — a loose federation of trading posts and merchant guilds — stretched from London to Novgorod (in Russia), from the North Sea to the inland waterways of Eastern Europe.
+    </p>
+
+    <p class="narrative">
+      The language of this commerce was Low German — Plattdeutsch — a Germanic dialect that was neither quite German nor quite Dutch. It was the <em>lingua franca</em> of Northern Europe's trade. If a Flemish merchant wanted to negotiate with a Polish one, they would use Low German. If an English trader wanted to buy Baltic amber, Low German was the common tongue.
+    </p>
+
+    <p class="narrative">
+      And in this world of commerce, two words became essential: <span class="german-word" data-card="hafen">Hafen</span> (harbor) and <span class="german-word" data-card="waren">Waren</span> (goods). A Hafen is where ships could be safely "held" — from the old Germanic root meaning "to have" or "to hold." Waren (goods) shares the same root as English "wares" — the portable wealth of merchants.
+    </p>
+
+    <!-- HAFEN card -->
+    <div class="ety-card" id="card-hafen">
+      <div class="word-header">
+        <span class="word-main">Hafen</span>
+        <span class="word-pron">/ˈhaːfn̩/</span>
+      </div>
+      <div class="word-meaning">harbor — where ships are safely held</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*hab-</span>
+        <span class="bridge-note">— "to have" or "to hold" (root also gives English "have")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">haven</span>
+        <span class="bridge-note">— Old English "hæfen," same Germanic origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Hafen</span>
+        <span class="bridge-note">— pure Germanic, no Romance borrowing</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">cảng</span>
+        <span class="bridge-note">— a Sino-Vietnamese word for harbor/port. Vietnam, as a maritime nation with extensive coastlines, developed rich nautical vocabulary.</span>
+      </div>
+      <div class="story">
+        "Hafen" reveals a beautiful Germanic logic: a harbor is a place where ships are "held" or "kept" safe. The original PIE root *hab- ("to have/hold") gave rise to German "haben" (to have), "Hafen" (harbor), and English "have," "haven," "habit" (something you "have" or "hold regularly"). German and English are so closely related that their harbor-words are nearly identical (Hafen/haven). Vietnamese <em>cảng</em> developed through ancient maritime trade and represents a sophisticated term for the infrastructure of ports and harbors. Germanic languages favor abstract etymology rooted in possession and protection; Vietnamese builds meaning through compound formation and borrowed elements that reflect centuries of maritime commerce.
+      </div>
+    </div>
+
+    <!-- WAREN card -->
+    <div class="ety-card" id="card-waren">
+      <div class="word-header">
+        <span class="word-main">Waren</span>
+        <span class="word-pron">/ˈvaːrən/</span>
+      </div>
+      <div class="word-meaning">goods or wares — the merchant's portable wealth</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*were-</span>
+        <span class="bridge-note">— to turn or twist (goods that are "turned over" in trade)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wares</span>
+        <span class="bridge-note">— Old English "wæru," same Germanic root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Waren</span>
+        <span class="bridge-note">— German plural form emphasizes the mercantile context</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">hàng hóa</span>
+        <span class="bridge-note">— hàng hóa — Vietnamese compound (shop/merchandise + goods) from Sino-Vietnamese roots. A fundamental trade vocabulary compound reflecting marketplace commerce.</span>
+      </div>
+      <div class="story">
+        "Waren" and "wares" are linguistic twins, both deriving from the PIE root *were- (to turn or rotate). Goods in trade are things that are "turned over," exchanged hand to hand. The connection to "aware" (to turn one's attention toward something) and "beware" (to turn one's awareness against a danger) shows how the same root encompasses physical and conceptual turning. German kept the original plural form (Waren); English created "wares" as a mass noun. In Hanseatic commerce, "Waren" meant the specific commodities being traded — not abstract value, but actual bolts of cloth, barrels of herring, bundles of furs.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        The Hanseatic League merchants needed a word for their journeys across the northern seas. What do you think <strong style="color: var(--german);">Reise</strong> means?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">rise</button>
+        <button class="guess-btn" onclick="guess(this, true)">journey/trip</button>
+        <button class="guess-btn" onclick="guess(this, false)">treasure</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: REISE & REICH ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="reise">Reise</span> — journey. From the Old High German <em>rīsa</em>, meaning "rising up to depart." When you begin a journey, you rise from your seat, you rise from your home, you rise up to set out. The motion of departure is encoded in the word itself.
+    </p>
+
+    <p class="narrative">
+      And why did merchants undertake these dangerous journeys? To become <span class="german-word" data-card="reich">reich</span> — rich. This word has a surprising history. It comes from the same PIE root that gave Latin <em>rex</em> (king): *h₃regis. A rich person is, etymologically, a kingly person. Wealth carries the connotation of authority and power. A merchant who became wealthy could aspire to the status of a minor noble. Kingdoms rose and fell on the strength of trade.
+    </p>
+
+    <!-- REISE card -->
+    <div class="ety-card" id="card-reise">
+      <div class="word-header">
+        <span class="word-main">Reise</span>
+        <span class="word-pron">/ˈʁaɪzə/</span>
+      </div>
+      <div class="word-meaning">journey or trip — the act of rising up to depart</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₃reɪs-</span>
+        <span class="bridge-note">— "to rise up," "to set in motion"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">rise</span>
+        <span class="bridge-note">— Old English "rīsan," same Germanic root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Reise</span>
+        <span class="bridge-note">— from Old High German "rīsa," the noun form of "rising"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">chuyến đi</span>
+        <span class="bridge-note">— literally "round-trip" or "expedition." Chuyến (round/trip) + đi (go). Vietnamese uses transparent compound constructions to express journey concepts.</span>
+      </div>
+      <div class="story">
+        "Reise" is etymologically transparent: it's the nominalization of "rise" — the act of rising (up to leave). German "Reise" comes from Old High German "rīsa" (noun), related to "reisen" (to travel/rise). English "rise" lost the noun form *"rise" (the act of rising) in favor of "rising," but "rise" as a noun survives in phrases like "the rise of nations." German is more conservative here, retaining the older noun form directly. Hanseatic merchants undertaking a "Reise" were quite literally "rising up" — from their home ports to the uncertain seas.
+      </div>
+    </div>
+
+    <!-- REICH card -->
+    <div class="ety-card" id="card-reich">
+      <div class="word-header">
+        <span class="word-main">reich</span>
+        <span class="word-pron">/ʁaɪ̯ç/</span>
+      </div>
+      <div class="word-meaning">rich — wealthy, and etymologically, kingly</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*h₃regis</span>
+        <span class="bridge-note">— "king," also gives Latin "rex," English "reign"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">rich</span>
+        <span class="bridge-note">— Old English "rice," meaning both kingly and wealthy</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">reich</span>
+        <span class="bridge-note">— also forms "Reich" (empire/realm), the noun form preserving "kingly/imperial"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">phú</span>
+        <span class="bridge-note">— a Sino-Vietnamese word for wealth and fortune, emphasizing prosperity and abundance without the royal connotations of European concepts.</span>
+      </div>
+      <div class="story">
+        This is a stunning etymological fact: "rich" and "king" are related. Both come from PIE *h₃regis. Latin took one path: rex (king) → regal, reign, regent. Old High Germanic took another: *rīkiz (kingly) → English "rich," "rice" (archaic for regal). German kept the full force of this ancient connection: "reich" (rich/kingly) generates "Reich" (realm/empire, originally meaning the kingly domain). When German merchants of the Hanseatic League grew wealthy, they weren't just becoming "rich" — they were becoming "kingly." Wealth and authority were semantically linked in medieval thought. In Vietnamese, <em>phú</em> means wealth and prosperity but carries associations with good fortune and abundance rather than power or kingship—reflecting a different philosophical understanding of prosperity tied to harmony and social responsibility.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And as trade intensified, something remarkable happened. German words became the language of commerce across half of Europe. Low German was the lingua franca of the Baltic. But High German was spreading too — <em>Gewürz</em> (spice), <span class="german-word" data-card="gewurz">Gewürz,</span> from the Old High German <em>würz</em> (root/herb). Spices were the luxury of the age — cinnamon, pepper, cloves, nutmeg — all flowing from Asia along the trade routes.
+    </p>
+
+    <!-- GEWÜRZ card -->
+    <div class="ety-card" id="card-gewurz">
+      <div class="word-header">
+        <span class="word-main">Gewürz</span>
+        <span class="word-pron">/ɡəˈvʏʁts/</span>
+      </div>
+      <div class="word-meaning">spice — the precious flavoring that drove medieval trade</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wert-</span>
+        <span class="bridge-note">— to turn, twist; root of "root" (things that twist in the earth)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wurzel</span>
+        <span class="bridge-note">— archaic English for root, same Germanic origin as German "Wurz-"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gewürz</span>
+        <span class="bridge-note">— "Ge-" prefix intensifies; "-würz" is root/seasoning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">gia vị</span>
+        <span class="bridge-note">— a Vietnamese word for spices and seasonings. Vietnam, as a major spice producer, developed its own terminology for these valuable trade goods.</span>
+      </div>
+      <div class="story">
+        "Gewürz" reveals how German builds new meanings from old roots. "Würz" (root/herb) comes from PIE *wert- (to turn/twist) — things that twist in the earth are roots. Spices are the most valued roots and herbs, so they're intensified with the "Ge-" prefix: Ge-würz (the essence of rootiness, you might say). This German strategy — using compound words and prefixes to extend old meanings into new domains — is very different from English's strategy of borrowing new words. English eventually borrowed "spice" from Old French "espice," which came from Latin "species" (kind/type). German stayed Germanic: it created "Gewürz" from native roots. Both strategies are valid, but they reflect different historical paths. German merchant guilds would speak of their "Gewürze" as precious inventory; the English traders would speak of their "spices." One word is homegrown; the other is borrowed from across the Channel.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 3 ==================== -->
+  <div class="scene" id="scene-guess3">
+    <div class="guess-section">
+      <div class="prompt">
+        We've learned that German "Ge-" is a prefix that intensifies meaning. Given that "Würz" means "root" or "herb," what does "Gewürz" literally mean?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">essence of roots/intense seasoning</button>
+        <button class="guess-btn" onclick="guess(this, false)">garden of herbs</button>
+        <button class="guess-btn" onclick="guess(this, false)">twisted root</button>
+      </div>
+      <div class="guess-feedback" id="feedback3"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: SEIDE - THE SILK ROAD ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But the most prized commodity of all came from the far east. <span class="german-word" data-card="seide">Seide.</span> Silk. A fabric so fine, so lustrous, that it seemed to capture light itself. For thousands of years, only the Chinese could produce it. The technique was a carefully guarded secret. A merchant with silk could become fabulously wealthy.
+    </p>
+
+    <p class="narrative">
+      The journey of the word "Seide" traces one of the most remarkable paths in all of etymology. It begins in Latin: <em>sēta</em> (bristle, hair). But this Latin word came from somewhere older — ultimately, it connects to the Chinese trade routes. The Romans called the land of silk "Serica" — the land of silk. And the word for silk itself, traveling from China through Persia to the Mediterranean, became the Latin "sēta," which became German <em>Seide</em>.
+    </p>
+
+    <!-- SEIDE card -->
+    <div class="ety-card" id="card-seide">
+      <div class="word-header">
+        <span class="word-main">Seide</span>
+        <span class="word-pron">/ˈzaɪdə/</span>
+      </div>
+      <div class="word-meaning">silk — the fabric that opened the world to trade</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">sēta</span>
+        <span class="bridge-note">— originally bristle/hair, later broadened to silk fiber</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Seide</span>
+        <span class="bridge-note">— from Latin sēta, via Romance languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">tơ / lụa</span>
+        <span class="bridge-note">— Tơ (silk threads) and lụa (silk fabric). Vietnam's own silk traditions developed through centuries of weaving and trade, with distinct Vietnamese textile techniques.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">silk</span>
+        <span class="bridge-note">— via Old English "seolc," from Latin sēta, same origin as German Seide</span>
+      </div>
+      <div class="story">
+        The etymology of "Seide" is profound: it connects to the Silk Road itself. The Latin word "Serica" (land of silk) reflects how Romans encountered this material through trade. Latin "sēta" (bristle/hair) is believed to have been influenced by or derived from the name of silk-producing regions. The word "Seide" traveled the same route as the commodity: from silk-producing regions through Persia and the Middle East, into Greek and Latin, and finally into German and English. Each language adapted it slightly: German Seide, English silk, Italian seta. Vietnamese developed distinct terminology for silk—<em>tơ</em> for threads and <em>lụa</em> for finished cloth—reflecting Vietnam's own position as both a consumer and producer of silk through the centuries. The Silk Road wasn't just a trade route for goods; it was a route for the words that describe goods. When silk reached distant merchants across Eurasia, it carried not just material but meaning—linguistic meaning encoded in the words that traveled with it.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And here is something beautiful: The German word <em>Seide</em> (silk) carries within it the echo of 8,000 kilometers of trade routes. It contains the history of Chinese innovation, Persian intermediaries, Mediterranean merchants, and German traders. All compressed into a single word.
+    </p>
+
+    <p class="narrative">
+      When you say "Seide," you are pronouncing a word that has journeyed further than most humans of the medieval world ever traveled.
+    </p>
+  </div>
+
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Arabic borrowings for exotic goods</strong> — Zucker (sugar), Kaffee (coffee), Schach (chess), Karawane (caravan) entered German during Crusades and Hanseatic trade (1200-1400), reflecting contact with Islamic and Eastern cultures.<br><br>
+    <strong style="color: var(--text-bright);">Germanic/PIE roots for commerce</strong> — Hafen (harbor), Waren (goods), reich (rich), Reise (journey) remain Germanic and deeply rooted, showing that even in trade, native words held their ground.<br><br>
+    <strong style="color: var(--text-bright);">Borrowed words become fully German</strong> — Foreign words absorbed completely into German grammar (gender, plurals, compounds). Zucker takes German forms: der Zucker, die Zucker, Zuckerdose, Kaffeekanne.<br><br>
+    <strong style="color: var(--text-bright);">Word geography traces culture routes</strong> — Seide (silk) traveled 8,000 km from China via Persia to Latin to German, carrying within it the history of the Silk Road itself.<br><br>
+    <strong style="color: var(--text-bright);">"Ge-" prefix as intensifier</strong> — Ge-würz (spice) shows how German transforms borrowed concepts by prefixing them with native building blocks, making them visibly German.
+  </div>
+
+<!-- ==================== WORDS GATHERED IN CHAPTER 12 ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Twelve</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Zucker</span><span class="cw-english">sugar</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Kaffee</span><span class="cw-english">coffee</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Schach</span><span class="cw-english">chess</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Karawane</span><span class="cw-english">caravan</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Hafen</span><span class="cw-english">harbor</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Waren</span><span class="cw-english">goods</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Reise</span><span class="cw-english">journey</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">reich</span><span class="cw-english">rich</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Gewürz</span><span class="cw-english">spice</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Seide</span><span class="cw-english">silk</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CONCEPTS LEARNED IN CHAPTER 12 ==================== -->
+  <div class="scene" id="scene-concepts">
+    <div class="word-collection">
+      <h3>Concepts Learned in Chapter Twelve</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german" style="color:#9b8ec4;">Arabic Borrowings</span><span class="cw-english">Zucker, Kaffee, Schach — Eastern luxury words from the Crusades</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german" style="color:#9b8ec4;">Trade Route Vocabulary</span><span class="cw-english">Karawane, Hafen, Waren — commerce language that crossed continents</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german" style="color:#9b8ec4;">Borrowed → Native</span><span class="cw-english">foreign words fully absorbed into German grammar and compounds</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german" style="color:#9b8ec4;">Wealth Creates Words</span><span class="cw-english">reich, Gewürz, Seide — the vocabulary of prosperity and luxury goods</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ GATE ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <h2>Chapter Twelve Quiz</h2>
+        <div class="quiz-subtitle">Test your knowledge of the Crusade and the Merchant</div>
+        <div class="quiz-subtitle" style="margin-top: 8px;">Pass with 80% or higher (7 of 10 correct)</div>
+      </div>
+
+      <div id="quizBody">
+        <!-- Q1 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">1. From which language did German "Zucker" (sugar) originate?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Persian</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">Arabic (from Sanskrit)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Sanskrit (direct)</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">2. What does the Arabic phrase "shāh māt" translate to?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">checkmate in position</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">the king is dead</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">the king retreats</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">3. The Hanseatic League was primarily a network of:</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">Northern European trading cities</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Crusader kingdoms</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Islamic merchant guilds</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">4. Which word is NOT a Germanic/PIE origin (i.e., was borrowed)?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Hafen</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">Kaffee</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Reise</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">5. The PIE root *hab- gave rise to both German "haben" (to have) and:</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Hafen (harbor)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">Hafen (harbor)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Hoffnung (hope)</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">6. What is the literal meaning of the German prefix "Ge-" in "Gewürz"?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">around</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">intensification/gathering</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">together with</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">7. The word "reich" (rich) is etymologically related to the Latin word "rex" (king) because they share the same:</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Romance root</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">PIE root (*h₃regis)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Germanic mutation</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">8. From Chapter 1: Which pattern shows the correspondence between English "th" and German "d/t"?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">brother/Bruder, father/Vater</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">three/drei, through/durch</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">think/denken, thing/Ding</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">9. The word "Seide" (silk) traveled to German from Latin "sēta," which ultimately reflects the existence of:</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Roman silk production</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">the Silk Road trade routes</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Byzantine textile merchants</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="quiz-question">
+          <div class="quiz-prompt">10. From Chapter 1: What is the Vietnamese concept of distinguishing between older and younger siblings that English and German don't encode in their basic vocabulary?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, true)">Family rank/hierarchy (anh/em based on age)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Gender distinction (male/female)</button>
+            <button class="quiz-btn" onclick="answerQuiz(this, false)">Half-sibling relationships</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <div class="quiz-results hidden" id="quizResults">
+        <div class="score-text">Quiz Results</div>
+        <div class="score-pct" id="scorePct">0%</div>
+        <div id="resultMessage"></div>
+        <div class="quiz-restart">
+          <button onclick="restartQuiz()">Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">120 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(14%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:14%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zucker</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Sugar</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Kaffee</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Coffee</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schach</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Chess</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Karawane</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Caravan</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Hafen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Harbor</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Waren</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Goods</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Reise</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Journey</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">reich</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Rich</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gewürz</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Spice</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Seide</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Silk</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–11: ~110 more words · Scroll for full list</td></tr>
+</table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">27 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(18%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:18%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Arabic borrowings</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Zucker, Kaffee, Schach, Karawane</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Germanic commerce roots</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Hafen, Waren, reich, Reise</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Borrowed words become German</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">der Zucker, Kaffeekanne</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Word geography traces culture</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Seide from China via Persia</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ge- prefix</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Ge-würz intensifies roots</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">12</td></tr>
+  <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–11: ~25 more patterns</td></tr>
+</table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Twelve
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten stories of trade and contact.<br>
+        The Crusades and the merchants brought the world together.<br>
+        German became a language not just of philosophy, but of commerce.<br>
+        The Silk Road carried more than goods — it carried meaning itself.
+      </p>
+      <div class="chapter-nav">
+        <a href="chapter11.html">← Chapter 11</a>
+        <span>Chapter Twelve: Der Kreuzzug und der Kaufmann</span>
+        <a href="chapter13.html">Chapter 13 →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// --- QUIZ DATA ---
+const quizData = [
+  {
+    question: "From which language did German \"Zucker\" (sugar) originate?",
+    options: ["Persian", "Arabic (from Sanskrit)", "Sanskrit (direct)"],
+    correct: 1,
+    explanation: "Zucker came to German from Arabic sukkar, which originally came from Sanskrit śarkara. This route shows how trade and language followed the Silk Road: the word traveled from India through Arabic into European languages."
+  },
+  {
+    question: "What does the Arabic phrase \"shāh māt\" translate to?",
+    options: ["checkmate in position", "the king is dead", "the king retreats"],
+    correct: 1,
+    explanation: "Shāh māt literally means 'the king is dead.' This phrase became the origin of the English word 'checkmate,' showing how strategic games traveled along trade routes and left linguistic traces in European languages."
+  },
+  {
+    question: "The Hanseatic League was primarily a network of:",
+    options: ["Northern European trading cities", "Crusader kingdoms", "Islamic merchant guilds"],
+    correct: 0,
+    explanation: "The Hanseatic League was a confederation of merchant guilds centered in Northern Europe (especially the Baltic and North Sea regions). It dominated medieval trade and influenced German vocabulary related to commerce, shipping, and urban life."
+  },
+  {
+    question: "Which word is NOT a Germanic/PIE origin (i.e., was borrowed)?",
+    options: ["Hafen", "Kaffee", "Reise"],
+    correct: 1,
+    explanation: "Kaffee is a borrowing from Arabic qahwa (the coffee plant), which entered German through trade contact with the Ottoman Empire. Hafen (harbor) and Reise (journey) are Germanic words related to trade activity itself."
+  },
+  {
+    question: "The PIE root *hab- gave rise to both German \"haben\" (to have) and:",
+    options: ["Hafen (harbor)", "Hafen (harbor)", "Hoffnung (hope)"],
+    correct: 0,
+    explanation: "Both options are the same (Hafen), and both actually come from *hab-. Hafen originally meant 'to seize' or 'to hold,' related to having something. Hoffnung comes from a different root (*heit-). The question tests recognition that trade vocabulary (harbor) and basic verbs share ancient roots."
+  },
+  {
+    question: "What is the literal meaning of the German prefix \"Ge-\" in \"Gewürz\"?",
+    options: ["around", "intensification/gathering", "together with"],
+    correct: 1,
+    explanation: "Ge- is an intensifying or gathering prefix from Proto-Germanic *ga-. In Gewürz (spice), it gathers multiple spice components into one word. This prefix appears throughout German, often showing collective or intensive meanings."
+  },
+  {
+    question: "The word \"reich\" (rich) is etymologically related to the Latin word \"rex\" (king) because they share the same:",
+    options: ["Romance root", "PIE root (*h₃regis)", "Germanic mutation"],
+    correct: 1,
+    explanation: "Both reich and rex come from the PIE root *h₃regis, meaning 'to rule' or 'to direct.' The semantic connection is that a king 'rules over' and thus 'has abundance.' This shows how wealth and power were linked in the earliest Indo-European cultures."
+  },
+  {
+    question: "From Chapter 1: Which pattern shows the correspondence between English \"th\" and German \"d/t\"?",
+    options: ["brother/Bruder, father/Vater", "three/drei, through/durch", "think/denken, thing/Ding"],
+    correct: 0,
+    explanation: "Brother/Bruder and father/Vater show the clearest th→d shift (where English kept the voiceless th as in 'th-ink' but German shifted it to d). This is one of Grimm's Law sound shifts and demonstrates how systematic sound changes link related languages."
+  },
+  {
+    question: "The word \"Seide\" (silk) traveled to German from Latin \"sēta,\" which ultimately reflects the existence of:",
+    options: ["Roman silk production", "the Silk Road trade routes", "Byzantine textile merchants"],
+    correct: 1,
+    explanation: "The Silk Road was the great trade network connecting Asia to Europe. The word 'silk' (and German Seide) traveled westward along these routes, carrying the name of the precious fabric and evidence of centuries of commercial contact and cultural exchange."
+  },
+  {
+    question: "From Chapter 1: What is the Vietnamese concept of distinguishing between older and younger siblings that English and German don't encode in their basic vocabulary?",
+    options: ["Family rank/hierarchy (anh/em based on age)", "Gender distinction (male/female)", "Half-sibling relationships"],
+    correct: 0,
+    explanation: "Vietnamese distinguishes older siblings (anh = older brother, chị = older sister) from younger siblings (em = younger brother/sister) through kinship terms that reflect family hierarchy. English and German don't encode this age-based hierarchy in their basic vocabulary, reflecting different cultural values about family structure and respect for age."
+  }
+];
+
+// --- CHAPTER 12: TRADE ROUTE CANVAS ---
+const canvas = document.getElementById('tradeCanvas');
+const ctx = canvas.getContext('2d');
+let tradeShips = [];
+let spiceParticles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createTradeRoute() {
+  // Dotted path curving from desert (top) to maritime (bottom)
+  const scrollProgress = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+  return {
+    startX: canvas.width * 0.1,
+    startY: 0,
+    endX: canvas.width * 0.9,
+    endY: canvas.height,
+    progress: scrollProgress
+  };
+}
+
+function createTradeShips() {
+  tradeShips = [];
+  for (let i = 0; i < 8; i++) {
+    tradeShips.push({
+      pathProgress: (i / 8) + (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 0.5,
+      size: Math.random() * 0.5 + 0.7,
+      wobble: Math.random() * Math.PI * 2,
+      opacity: 0.3 + Math.random() * 0.4
+    });
+  }
+}
+
+function createSpiceParticles() {
+  spiceParticles = [];
+  const count = window.innerWidth < 600 ? 60 : 120;
+  const colors = ['rgba(255, 223, 0, 0.6)', 'rgba(210, 105, 30, 0.6)', 'rgba(30, 30, 30, 0.4)'];
+
+  for (let i = 0; i < count; i++) {
+    spiceParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: Math.random() * 0.2 + 0.05,
+      r: Math.random() * 2 + 0.5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: Math.random() * 300 + 100,
+      age: 0
+    });
+  }
+}
+
+function drawTradeRoute() {
+  const route = createTradeRoute();
+  const numDots = 40;
+
+  ctx.strokeStyle = 'rgba(201, 169, 97, 0.2)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 6]);
+
+  ctx.beginPath();
+  ctx.moveTo(route.startX, route.startY);
+
+  for (let i = 0; i <= numDots; i++) {
+    const t = i / numDots;
+    const x = route.startX + (route.endX - route.startX) * t + Math.sin(t * Math.PI * 3) * 30;
+    const y = route.startY + (route.endY - route.startY) * t;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawTradeShips() {
+  tradeShips.forEach(ship => {
+    const route = createTradeRoute();
+    const t = ship.pathProgress % 1;
+    const x = route.startX + (route.endX - route.startX) * t + Math.sin(t * Math.PI * 3) * 30;
+    const y = route.startY + (route.endY - route.startY) * t;
+
+    // Simple ship silhouette
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, ship.opacity * (1 - Math.abs(t - 0.5) * 2));
+    ctx.fillStyle = 'rgba(201, 169, 97, 0.5)';
+    ctx.beginPath();
+    ctx.ellipse(x, y, 15 * ship.size, 8 * ship.size, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+function drawArchitecture() {
+  // Minaret silhouette (left side)
+  ctx.fillStyle = 'rgba(169, 132, 94, 0.15)';
+  ctx.fillRect(canvas.width * 0.05, canvas.height * 0.2, 40, canvas.height * 0.5);
+  ctx.beginPath();
+  ctx.arc(canvas.width * 0.05 + 20, canvas.height * 0.15, 15, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Gothic church spire (right side)
+  ctx.fillStyle = 'rgba(138, 155, 174, 0.1)';
+  ctx.beginPath();
+  ctx.moveTo(canvas.width * 0.95, canvas.height * 0.3);
+  ctx.lineTo(canvas.width * 0.95 - 30, canvas.height * 0.6);
+  ctx.lineTo(canvas.width * 0.95 + 30, canvas.height * 0.6);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawTradeRoute();
+  drawTradeShips();
+  drawArchitecture();
+
+  // Update and draw spice particles
+  spiceParticles = spiceParticles.filter(p => p.age < p.life);
+  spiceParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.age++;
+
+    const alpha = parseFloat(p.color.split('(')[1].split(',')[3]) * (1 - p.age / p.life);
+    const colorStr = p.color.substring(0, p.color.lastIndexOf(',') + 1) + ' ' + alpha + ')';
+
+    ctx.fillStyle = colorStr;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  if (Math.random() < 0.2) {
+    spiceParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: Math.random() * 0.2 + 0.05,
+      r: Math.random() * 2 + 0.5,
+      color: ['rgba(255, 223, 0, 0.6)', 'rgba(210, 105, 30, 0.6)', 'rgba(30, 30, 30, 0.4)'][Math.floor(Math.random() * 3)],
+      life: Math.random() * 300 + 100,
+      age: 0
+    });
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createTradeShips();
+createSpiceParticles();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createTradeShips(); createSpiceParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION (2 attempts) ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+  const attemptsDiv = section.querySelector('.guess-attempts') || document.createElement('div');
+
+  let attempts = parseInt(section.dataset.attempts || 0);
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct! Language reveals history.';
+    feedback.classList.add('show');
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+  } else {
+    attempts++;
+    section.dataset.attempts = attempts;
+
+    if (attempts >= 2) {
+      btn.classList.add('incorrect');
+      feedback.textContent = 'Out of attempts. Listen to the etymology...';
+      feedback.classList.add('show');
+      allBtns.forEach(b => b.style.pointerEvents = 'none');
+    } else {
+      btn.classList.add('incorrect');
+      btn.style.pointerEvents = 'none';
+      feedback.textContent = 'Not quite — you have one more attempt.';
+      feedback.classList.add('show');
+    }
+  }
+}
+
+// --- QUIZ LOGIC ---
+let quizAnswers = {};
+
+function answerQuiz(btn, correct) {
+  const question = btn.closest('.quiz-question');
+  const feedback = question.querySelector('.quiz-feedback');
+  const allBtns = question.querySelectorAll('.quiz-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct!';
+  } else {
+    btn.classList.add('incorrect');
+    feedback.textContent = 'Incorrect. Try another question.';
+  }
+
+  allBtns.forEach(b => b.style.pointerEvents = 'none');
+  const idx = Array.from(allBtns[0].closest('.quiz-question').parentNode.children).indexOf(question);
+  quizAnswers[idx] = correct;
+
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const totalQuestions = document.querySelectorAll('.quiz-question').length;
+  if (Object.keys(quizAnswers).length === totalQuestions) {
+    showQuizResults();
+  }
+}
+
+function showQuizResults() {
+  const totalQuestions = document.querySelectorAll('.quiz-question').length;
+  const correctAnswers = Object.values(quizAnswers).filter(v => v).length;
+  const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+  const passed = percentage >= 80;
+
+  document.getElementById('scorePct').textContent = percentage + '%';
+  const resultMsg = document.getElementById('resultMessage');
+
+  if (passed) {
+    resultMsg.innerHTML = '<div class="pass-message">Excellent! You understand the language of trade and cultural exchange. You\'ve earned passage to the next chapter.</div>';
+  } else {
+    resultMsg.innerHTML = '<div class="fail-message">You scored ' + percentage + '%. Review the chapter and try again to pass with 80% or higher.</div>';
+  }
+
+  document.getElementById('quizResults').classList.remove('hidden');
+}
+
+function restartQuiz() {
+  quizAnswers = {};
+  document.querySelectorAll('.quiz-btn').forEach(btn => {
+    btn.classList.remove('correct', 'incorrect');
+    btn.style.pointerEvents = 'auto';
+  });
+  document.querySelectorAll('.quiz-feedback').forEach(fb => fb.textContent = '');
+  document.getElementById('quizResults').classList.add('hidden');
+}
+
+// --- MOBILE ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+if (window.innerWidth < 600) {
+  // Reduce particle count on mobile
+}
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 12;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

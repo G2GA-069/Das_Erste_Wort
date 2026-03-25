@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 5: Die Grenze</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --amber: #d4a574;
+    --amber-glow: #e8b896;
+    --silver: #c0c8d8;
+    --silver-glow: #e0e8f8;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #d4a574;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #b8860b 0%, #8b6914 30%, #1a2030 70%, #0a1020 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- PARTICLE FLOW CANVAS --- */
+  #particleFlow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--amber);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--amber), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(212, 165, 116, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--amber-glow);
+    border-bottom-color: var(--amber-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(212, 165, 116, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(212, 165, 116, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(212, 165, 116, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+  .bridge-label.lat { background: rgba(212, 165, 116, 0.15); color: var(--amber); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(212, 165, 116, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--vietnamese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(212, 165, 116, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(212, 165, 116, 0.08);
+    border: 1px solid rgba(212, 165, 116, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(212, 165, 116, 0.15);
+    border-color: var(--amber);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--amber-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(212, 165, 116, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(212, 165, 116, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(212, 165, 116, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(212, 165, 116, 0.06);
+    border: 1px solid rgba(212, 165, 116, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--amber);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--silver), var(--amber), var(--amber-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- QUIZ --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+  .quiz-title {
+    text-align: center;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 32px;
+  }
+  .quiz-question {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(212, 202, 187, 0.06);
+  }
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+  .quiz-question .q-num {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.3);
+    margin-bottom: 4px;
+  }
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: rgba(232, 164, 74, 0.04);
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 6px 0;
+    transition: all 0.3s ease;
+  }
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.1); border-color: rgba(232, 164, 74, 0.3); }
+  .quiz-option.selected { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); color: var(--text-bright); }
+  .quiz-option.correct { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.wrong { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.4); }
+  .quiz-submit {
+    display: block;
+    margin: 24px auto 0;
+    background: rgba(232, 164, 74, 0.15);
+    border: 1px solid var(--fire);
+    color: var(--fire);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .quiz-submit:hover { background: rgba(232, 164, 74, 0.25); }
+  .quiz-result {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 1.2rem;
+    color: var(--text-bright);
+    display: none;
+  }
+  .quiz-result.pass { color: #8ed69e; }
+  .quiz-result.fail { color: #e88a8a; }
+  .quiz-retry {
+    display: none;
+    margin: 16px auto 0;
+    background: rgba(180, 74, 74, 0.15);
+    border: 1px solid rgba(180, 74, 74, 0.4);
+    color: #e88a8a;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .quiz-explanation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(212, 202, 187, 0.85);
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    border-radius: 4px;
+  }
+  .quiz-explanation.correct-exp {
+    border-left-color: rgba(74, 180, 100, 0.4);
+    background: rgba(74, 180, 100, 0.06);
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(212, 165, 116, 0.25);
+    border-radius: 50%;
+    background: rgba(212, 165, 116, 0.08);
+    color: var(--amber, #d4a574);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(212, 165, 116, 0.2); border-color: rgba(212, 165, 116, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(212, 165, 116, 0.3); border-color: #d4a574; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="particleFlow"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Five</div>
+    <h1>Die Grenze</h1>
+    <div class="subtitle">The Border</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE LIMES ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The year is roughly 50 CE, and the Rhine River marks the frontier of the Roman Empire. On one side: the organized legions, the stone fortifications, the concrete aqueducts, the institutional machinery of civilization. On the other side: the forests of what is now Germany and the rolling plains of the Germanic tribes — peoples whom the Romans called <em>barbarians</em>, which simply meant "those who speak a language we don't understand."
+    </p>
+
+    <p class="narrative">
+      But here, at this boundary, something unexpected was happening. The barrier was not impenetrable. The frontier was not a wall of hatred. Instead, it became something far more interesting: a zone of constant, intimate contact. Trade flowed across it. Ideas flowed across it. And most importantly for our story — language flowed across it, in both directions.
+    </p>
+
+    <p class="narrative">
+      Roman soldiers stood watch in wooden and stone fortresses, watching the forests and waiting for an attack that, for most of a century, never came. They traded with the peoples beyond the border. They learned enough Germanic to curse, to joke, to barter. They married Germanic women. Some even deserted and lived out their lives beyond the frontier, in the forests of the Germanic peoples.
+    </p>
+
+    <p class="narrative">
+      And the Germanic tribespeople — the Marcomanni, the Quadi, the Semnones — watched this strange civilization across the river. Some of them worked as soldiers themselves, hired by Rome. Some became merchants, learning Latin, learning the Roman way of handling coin and measuring distance. Children grew up bilingual, listening to their mother speak one language and watching Roman traders speak another, understanding both.
+    </p>
+
+    <p class="narrative emphasis">
+      This is what happens at borders: not the clash of swords, but the mixing of tongues.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 2: THE FLOW ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Imagine particles flowing across the Rhine. On one bank, amber particles move from right to left — the river of Roman influence, carried by soldiers, traders, administrators, the weight of empire. On the other bank, cool silver particles move from left to right — Germanic influence, flowing back: resources, furs, amber itself, iron, the knowledge of forests that no Roman map could capture.
+    </p>
+
+    <p class="narrative">
+      Where they cross, in the middle of the river, something new happens. The colors swirl. They don't merge into a uniform gray — instead, they create patterns, eddies, zones where amber and silver dance together. This is not fusion. This is bilingualism in its purest form: two complete systems, touching but distinct, each changing the other simply by proximity.
+    </p>
+
+    <p class="narrative">
+      The Germanic peoples did not need to borrow abstract Latin words. They had no need for Latin philosophy, Latin poetry, Latin rhetoric. These were luxuries of a settled empire. But they did need practical things: the words for what Rome brought. Building materials. Infrastructure. The technology of organized trade. The concept of systematized law and order.
+    </p>
+
+    <p class="narrative">
+      So while thousands of abstract Latin words would eventually enter European languages through the Christian Church, the universities, and the long prestige of Roman civilization — most of those came later, through different channels. At the limes, in the first century CE, the borrowing was concrete. Physical. Visible.
+    </p>
+
+    <p class="narrative">
+      The Romans brought <span class="german-word" data-card="munze">Münze</span> — the word for coin, derived from the Latin mint itself, <em>moneta</em>, the place where money was made. And the Germanic peoples, looking at these strange metal discs that represented value, borrowed the word. They needed coin because Rome needed to pay its soldiers. Trade in coin meant a new kind of economy.
+    </p>
+
+    <p class="narrative">
+      They brought <span class="german-word" data-card="keller">Keller</span> — the cellar. The Romans built underground storage rooms, sophisticated structures to keep wine and grain cool, to preserve food through the winter in ways the Germanic peoples had not perfected. Latin <em>cellārium</em> became the German word for this new technology. You cannot borrow what you don't need. The existence of the word proves that these underground storerooms were not a Germanic invention — they came from Rome, and so did the word for them.
+    </p>
+
+    <!-- MUNZE etymology card -->
+    <div class="ety-card" id="card-munze">
+      <div class="word-header">
+        <span class="word-main">Münze</span>
+        <span class="word-pron">/ˈmʏntsə/</span>
+      </div>
+      <div class="word-meaning">coin — metal money, the visible proof of empire's reach</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">moneta</span>
+        <span class="bridge-note">— the place where coins were minted, Rome</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Münze</span>
+        <span class="bridge-note">— via the Roman limes, into Germanic languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">mint</span>
+        <span class="bridge-note">— English took the Latin directly; German took it through sound-change</span>
+      </div>
+      <div class="story">
+        Moneta was originally the title of the Roman goddess Juno — <em>Juno Moneta</em>, Juno the Warner. Her temple housed the Roman mint, so <em>moneta</em> came to mean "the place of coinage," then "coined money" itself. From this single root came French <em>monnaie</em>, Italian <em>moneta</em>, Spanish <em>moneda</em>, and English <em>monetary</em>, <em>money</em>, <em>mint</em>. The Germanic languages took the same Latin root but transformed it through their own sound rules: Latin "moneta" → Germanic "munita" → German "Münze," English "mint." Each language heard the same word and reshaped it according to its own phonetic patterns. Trade forced the vocabulary across the border; the languages then made it their own.
+      </div>
+    </div>
+
+    <!-- KELLER etymology card -->
+    <div class="ety-card" id="card-keller">
+      <div class="word-header">
+        <span class="word-main">Keller</span>
+        <span class="word-pron">/ˈkɛlɐ/</span>
+      </div>
+      <div class="word-meaning">cellar — underground room, Roman engineering made German</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">cellārium</span>
+        <span class="bridge-note">— from cella, a small room; cellarium, a storage room</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Keller</span>
+        <span class="bridge-note">— pronounced with a hard 'K' — the Germanic language claimed it</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">cellar</span>
+        <span class="bridge-note">— English kept the Latin form more directly</span>
+      </div>
+      <div class="story">
+        The history of "Keller" traces the history of Germanic peoples learning Roman technology. Before Rome, there is no evidence of systematic underground storage in northern Europe. The climate was colder — natural ice and snow could serve. But as Roman trade intensified, Germanic peoples adopted Roman methods of food preservation. The word came with the technology. Latin cellārium → Old High German kellāri → Middle High German keller → Modern German Keller. You can trace the sound changes across centuries: the Latin "c" became a hard "k," the Latin ending "-ārium" collapsed to "-er." The word was remade in the Germanic phonetic image, yet it remained recognizably Latin at its root. This is linguistic conquest in reverse: the conqueror's language is adopted by the conquered, but remade in their own image.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: MILITARY TECHNOLOGY ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The Roman limes was first and foremost a military institution. So it makes sense that some of the most important borrowings were weapons and military terms.
+    </p>
+
+    <p class="narrative">
+      Roman soldiers threw a javelin called a <em>pilum</em> — a long, heavy spear designed to break on impact, preventing enemies from reusing it. The Germanic peoples did not have an equivalent weapon in their arsenal. When they encountered it in combat, when they fought alongside Roman soldiers as auxiliaries, when they studied the Roman art of war — they borrowed the word.
+    </p>
+
+    <p class="narrative">
+      Latin <em>pīlum</em> became Germanic <em>*pīl</em>, which eventually became the German word <span class="german-word" data-card="pfeil">Pfeil</span> — arrow. It's a fascinating shift: the Romans had a word for a Roman weapon. The Germanic peoples transformed it, adapted it, and eventually used it for their own projectiles. The word migrated, and in migrating, changed meaning. A javelin became an arrow.
+    </p>
+
+    <!-- PFEIL etymology card -->
+    <div class="ety-card" id="card-pfeil">
+      <div class="word-header">
+        <span class="word-main">Pfeil</span>
+        <span class="word-pron">/pfaɪ̯l/</span>
+      </div>
+      <div class="word-meaning">arrow — a Germanic adaptation of Roman military technology</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">pīlum</span>
+        <span class="bridge-note">— the Roman javelin, a legendary weapon</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Pfeil</span>
+        <span class="bridge-note">— the Germanic peoples remade the weapon in their own image</span>
+      </div>
+      <div class="story">
+        The pilum was not merely a weapon; it was a symbol of Roman military superiority. Made of iron and wood, weighing 2-3 kg, it had a small barbed head designed to penetrate armor or shields. Once thrown, the shank would often bend, making it useless to the enemy. Roman soldiers trained extensively to throw it effectively. The Germanic tribes had their own weapons — the spear, the axe — but the pilum represented Roman innovation. When they borrowed the word, they were borrowing military prestige. The semantic shift from "javelin" to "arrow" shows how languages naturalize foreign concepts: the Germanic peoples heard "pilum" and reinterpreted it through their own weapon taxonomy. In their minds, a pilum was just another projectile — hence, Pfeil, arrow. One word, two cultures, centuries of war and contact collapsing into a single linguistic trace.
+      </div>
+    </div>
+
+    <div class="divider">· · ·</div>
+
+    <p class="narrative">
+      But Rome brought more than weapons. It brought healers. The Roman army traveled with physicians — a revolutionary concept for peoples who relied on shamans and folk knowledge. The Germanic tribes, seeing the effectiveness of Roman medical practice, began to borrow not just the knowledge but the words.
+    </p>
+
+    <p class="narrative">
+      Greek <em>archiatros</em> — "chief healer" — became Latin <em>medicus</em>, but the Germanic peoples also took the Greek form, which had entered Latin as <em>archiāter</em>. The word transformed through the Germanic languages, and eventually emerged as German <span class="german-word" data-card="arzt">Arzt</span>.
+    </p>
+
+    <!-- ARZT etymology card -->
+    <div class="ety-card" id="card-arzt">
+      <div class="word-header">
+        <span class="word-main">Arzt</span>
+        <span class="word-pron">/aʁtst/</span>
+      </div>
+      <div class="word-meaning">doctor — the healer from across the border, trusted by Rome</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">archiatros</span>
+        <span class="bridge-note">— Greek archi (chief) + iatros (healer)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">archiāter</span>
+        <span class="bridge-note">— the Latin form adopted from Greek prestige</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Arzt</span>
+        <span class="bridge-note">— the Germanic pronunciation transformed it completely</span>
+      </div>
+      <div class="story">
+        "Arzt" is one of the most heavily disguised Latin borrowings in German. You would never guess that this common word for "doctor" comes from Greek "archiatros" unless you knew the sound transformations that occurred. The Latin "ch" became a guttural "ach" sound in Germanic, which eventually simplified. The "-tros" ending became "-tz." Centuries of sound change compressed the Greek "chief healer" into the simple German "Arzt." This word demonstrates how deeply Latin penetrated Germanic society — not through prestige alone, but through necessity. The Germanic peoples needed Roman knowledge about the body, about healing, about medicine. And so they took the word, remade it in their own phonetic image, and made it their own. Today, when a German speaks to their "Arzt," they are unknowingly invoking ancient Greece, Rome, and the medical knowledge that flowed across the limes two thousand years ago.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        The Romans brought formal expertise and organization to the Germanic tribes.<br><br>
+        Can you guess what <strong style="color: var(--german);">Meister</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: someone who has mastered a skill, at the highest level.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">mistake</button>
+        <button class="guess-btn" onclick="guess(this, true)">master</button>
+        <button class="guess-btn" onclick="guess(this, false)">mixture</button>
+        <button class="guess-btn" onclick="guess(this, false)">measure</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 4: MASTERY & WRITING ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Across the limes came not just tools and weapons, but concepts — the very idea of formal, systematic mastery. The Romans believed in training: the craftsman, the builder, the military officer who had been formally taught and proven competent. They had a word for this: <em>magister</em>, literally "master," someone who had mastered a craft or discipline.
+    </p>
+
+    <p class="narrative">
+      Latin <em>magister</em> → German <span class="german-word" data-card="meister">Meister.</span> Not just a word — but an entire philosophy of skill and authority encoded in a single term. The Germans didn't have guild systems initially. But as they adopted them, adopted Roman and later medieval European craft traditions, they adopted this word. And it stuck. Today, a German "Meister" is one of the highest qualifications you can hold in a craft — a carpenter who is a Meister, an electrician who is a Meister, has passed formal examinations and proven mastery.
+    </p>
+
+    <p class="narrative">
+      But the most profound borrowing across the limes was not of weapons or coins or even the concept of mastery. It was of writing itself.
+    </p>
+
+    <p class="narrative">
+      The Roman soldiers wrote reports. They kept records. They left graffiti on walls and papyrus documents in archives. The Germanic peoples, in their oral culture, had no widespread system of writing. They had runes — mysterious symbols of profound meaning — but not an alphabet for everyday communication, for administration, for record-keeping.
+    </p>
+
+    <p class="narrative">
+      When the Romans arrived, when the Germanic peoples began to adopt Roman administrative practices, when they wanted to keep records and send written messages — they borrowed not just the concept of alphabetic writing, but the word for the act itself.
+    </p>
+
+    <p class="narrative">
+      Latin <em>scrībere</em> — to write, originally to scratch or inscribe. It became Germanic <em>*skriban</em>, and eventually German <span class="german-word" data-card="schreiben">schreiben</span> — to write. When you write in German, you are performing an act with a Latin name, using an alphabet that Rome spread, encoding information in the way Rome taught.
+    </p>
+
+    <!-- MEISTER etymology card -->
+    <div class="ety-card" id="card-meister">
+      <div class="word-header">
+        <span class="word-main">Meister</span>
+        <span class="word-pron">/ˈmaɪ̯stɐ/</span>
+      </div>
+      <div class="word-meaning">master — one who has proven mastery of a skill, from Roman formalism</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">magister</span>
+        <span class="bridge-note">— from magnus (great); originally a school teacher or military commander</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Meister</span>
+        <span class="bridge-note">— the sound transformation is clear: mag- → mei-, -ister → -ster</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">master</span>
+        <span class="bridge-note">— English took the Latin root through Romance language channels</span>
+      </div>
+      <div class="story">
+        The history of "Meister" is the history of Germanic adoption of European formal systems. In medieval times, as craft guilds formed across German-speaking lands, the "Meister" became a formal rank: journeymen worked toward becoming Masters. A Master had to produce a "Masterwork" — a Meisterwerk — proving their skill. This institution, the Meister system, became so central to German culture that the word carried enormous weight. A German Meister is not just "good at something" — the title implies formal certification, achievement, respect. The Roman magister brought with him a whole philosophy of authorized expertise. The Germanic peoples transformed that philosophy into the Meister system, which persists to this day. A German baker who earns the title "Bäckermeister" (master baker) carries centuries of tradition and formal training in that single word.
+      </div>
+    </div>
+
+    <!-- SCHREIBEN etymology card -->
+    <div class="ety-card" id="card-schreiben">
+      <div class="word-header">
+        <span class="word-main">schreiben</span>
+        <span class="word-pron">/ˈʃʁaɪ̯bən/</span>
+      </div>
+      <div class="word-meaning">to write — an act that Rome brought, encoding language in marks</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">scrībere</span>
+        <span class="bridge-note">— originally to scratch, inscribe, or mark; the basis of all Western writing</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">schreiben</span>
+        <span class="bridge-note">— through the limes, into the Germanic world of literacy</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">scribe</span>
+        <span class="bridge-note">— English kept a more formal version; German made it everyday</span>
+      </div>
+      <div class="story">
+        "Schreiben" is more than a word — it's proof that the Germanic peoples did not invent alphabetic writing independently. The Latin root scrībere shows up across all Germanic languages: English "scribe," "inscribe," "describe"; German "schreiben"; Dutch "schrijven"; Scandinavian languages "skrive," "skriva." This is not coincidence. It's evidence of the limes, of the border where Roman literacy met Germanic oral culture. Before this contact, Germanic languages had runes — deeply meaningful symbols used for magical and sacred purposes, not everyday communication. Roman scrībere brought alphabetic writing, administrative documentation, the entire apparatus of written culture. The Germanic peoples did not just adopt writing; they adopted the word for writing itself. Every time a German person "schreibt," they are unknowingly continuing an act that begins with a Roman soldier scratching marks on wax tablets two thousand years ago.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But something remarkable happened: German took this Latin root and did something Rome never did. It took the verb "schreiben" and combined it with Germanic prefixes to create an explosion of meanings:
+    </p>
+
+    <p class="narrative emphasis">
+      beschreiben — to describe<br>
+      verschreiben — to prescribe, to write away<br>
+      aufschreiben — to write down<br>
+      abschreiben — to copy, to write off<br>
+      umschreiben — to rewrite, to circumscribe
+    </p>
+
+    <p class="narrative">
+      One Latin root. One Germanic verb. Infinite German expansion. This is the true power of the Germanic languages: they take a foreign root and, using their own grammatical machinery — their own system of prefixes — they multiply its meanings, branch it into dozens of related words. Rome gave the word. The Germans gave it a thousand lives.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: TRADE & MARKET ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      At the heart of the limes was trade. Merchants from both sides crossed the river. They needed a common language — not Germanic, not Latin, but something in between, the pidgin of commerce that springs up wherever people with different tongues must do business.
+    </p>
+
+    <p class="narrative">
+      Trade requires infrastructure: organized places to sell, systems of exchange, storage facilities. The Romans had a word for the organized marketplace: <em>mercātus</em>, from <em>merx</em> (goods, merchandise). A <em>mercātus</em> was not a random gathering of traders — it was a formal, often permanent, regulated space. An institution.
+    </p>
+
+    <p class="narrative">
+      The Germanic peoples borrowed this word too. Latin <em>mercātus</em> became German <span class="german-word" data-card="markt">Markt</span> — market. And with the word came the concept: a regulated, permanent place of exchange. Not just bartering under trees, but a real marketplace with rules, with authorized traders, with Roman-style order.
+    </p>
+
+    <!-- MARKT etymology card -->
+    <div class="ety-card" id="card-markt">
+      <div class="word-header">
+        <span class="word-main">Markt</span>
+        <span class="word-pron">/maʁkt/</span>
+      </div>
+      <div class="word-meaning">market — organized trade, regulated by Roman law and Germanic custom</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">mercātus</span>
+        <span class="bridge-note">— from merx (goods, merchandise); a formal marketplace</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Markt</span>
+        <span class="bridge-note">— the Germanic peoples regularized trade through Roman words</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">market</span>
+        <span class="bridge-note">— English borrowed from Romance languages, not directly from Latin</span>
+      </div>
+      <div class="story">
+        "Markt" is the word of the limes itself — the place where two worlds touched. The Latin mercātus brought with it the Roman concept of regulated, formal commerce. Before this, Germanic trade had been barter, direct exchange, or gift-economy relationships. The mercātus introduced the idea of a permanent space, rules, authorized merchants, regular trading days. Every German town with a "Marktplatz" carries this legacy: the market square where merchants are licensed, where hours are set, where order is kept. The word entered German centuries before Germany existed as a nation. It is one of the oldest Latin words in the German language, proof of how early and how thoroughly Roman institutional knowledge penetrated Germanic society through the everyday vocabulary of commerce.
+      </div>
+    </div>
+
+    <div class="divider">· · ·</div>
+
+    <p class="narrative">
+      Not all the borrowings at the limes came from Latin. The border was not unidirectional. While Rome was the dominant imperial power, the Germanic tribes had knowledge, resources, and power of their own. They did not simply receive. They also gave.
+    </p>
+
+    <p class="narrative">
+      But there was another border, to the east, that proved equally important in shaping German vocabulary. The Slavic peoples — the Wends and other groups who lived in what is now Poland, Bohemia, and further east — had contact with the Germanic tribes. And from this contact came words that today seem as German as any other.
+    </p>
+
+    <p class="narrative">
+      The word "Grenze" itself — the very word we use for border — does not come from Latin. It comes from Slavic. From <em>granica</em>, the Slavic word for boundary. The Germanic peoples, living on their eastern frontier as much as their western one, borrowed the word from their Slavic neighbors.
+    </p>
+
+    <p class="narrative">
+      This is the hidden story of the limes: Germany had two frontiers. The western one, with Rome, brought concrete things — coins, cellars, weapons, writing, markets, the whole apparatus of empire. The eastern one, with Slavic peoples, brought other words: the very concept of <span class="german-word" data-card="grenze">Grenze</span> — the border itself.
+    </p>
+
+    <!-- GRENZE etymology card -->
+    <div class="ety-card" id="card-grenze">
+      <div class="word-header">
+        <span class="word-main">Grenze</span>
+        <span class="word-pron">/ˈɡʁɛntsə/</span>
+      </div>
+      <div class="word-meaning">border — the line that separates, but also connects, two worlds</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">Slavic granica</span>
+        <span class="bridge-note">— NOT from Latin; from German's eastern neighbors</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Grenze</span>
+        <span class="bridge-note">— the Germanic peoples took the word from the Slavic world</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">border</span>
+        <span class="bridge-note">— English has no direct Slavic borrowing for this concept</span>
+      </div>
+      <div class="story">
+        "Grenze" is perhaps the most important borrowing we encounter in this chapter, because it reveals the limits of the Roman limes. The Germans borrowed their word for "border" not from Latin but from Slavic — a reminder that Rome's influence was powerful but not universal. The Slavic peoples did not face Rome directly; they faced the Germans. And the Germans, living in the middle, adopted Slavic terminology for the eastern frontier just as they adopted Latin terminology for the western one. The history of "Grenze" is the history of a people caught between empires, borrowing from both, making something new. When modern German speakers use the word "Grenze," they are unknowingly speaking a Slavic word, carved into German consciousness by centuries of contact on the eastern frontier. It's a reminder that the limes was not just Rome's border — it was Germany's window into the world.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And still more borrowings came from this eastern contact. The frontier brought challenges unknown to the settled south: winter so harsh that preserved food meant the difference between life and death. The Germanic peoples borrowed words not just from Rome but from their Eastern neighbors, building a vocabulary that reflected their position between civilizations.
+    </p>
+
+    <p class="narrative">
+      And finally, the border brought something else: the concept of the cross. Not the cross of geometry or mathematics, but the cross of Christianity — the symbol that would, centuries later, define European civilization. Latin <em>crux</em> came from the Romans, but it came slowly. Christianity, when it reached the Germanic peoples, came through many channels.
+    </p>
+
+    <p class="narrative">
+      And so the Germanic peoples learned the word for this sacred symbol: <span class="german-word" data-card="kreuz">Kreuz.</span> Latin <em>crux</em> → German <em>Kreuz</em>. A word that would reshape the entire history of German civilization.
+    </p>
+
+    <!-- KREUZ etymology card -->
+    <div class="ety-card" id="card-kreuz">
+      <div class="word-header">
+        <span class="word-main">Kreuz</span>
+        <span class="word-pron">/kʁɔɪ̯ts/</span>
+      </div>
+      <div class="word-meaning">cross — the symbol of Christianity, arriving at the frontier</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">crux</span>
+        <span class="bridge-note">— the cross, the instrument of execution, the symbol of redemption</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kreuz</span>
+        <span class="bridge-note">— Christianity's most powerful symbol, entering through the limes</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">cross</span>
+        <span class="bridge-note">— English took a different root; Germanic took the Latin</span>
+      </div>
+      <div class="story">
+        "Kreuz" marks a turning point in the history of Germanic languages. The word arrived with Christianity — and Christianity arrived through Rome, through missionaries, through the slow dissolution of the limes as political boundaries gave way to religious ones. By the time the word "Kreuz" had fully embedded itself in German consciousness, the Roman Empire in the West was already falling. But the Church would outlast Rome. And "Kreuz" would become one of the most central words in German consciousness — not just a geometric shape, but a symbol of faith, of meaning, of the entire spiritual universe that Christianity created. When a German child sees a Kreuz on a church steeple, they are looking at a Latin word that entered Germanic consciousness at the frontier, a word born of empire but reborn in faith.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And finally — perhaps the most mysterious of all the limes borrowings — comes the word for what you hold in your hand when you sit down to eat:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="tisch">Tisch.</span> The table.
+    </p>
+
+    <!-- TISCH etymology card -->
+    <div class="ety-card" id="card-tisch">
+      <div class="word-header">
+        <span class="word-main">Tisch</span>
+        <span class="word-pron">/tɪʃ/</span>
+      </div>
+      <div class="word-meaning">table — a simple object that changed how humans ate together</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">discus</span>
+        <span class="bridge-note">— literally a disk; came to mean a dining table, especially a round one</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Tisch</span>
+        <span class="bridge-note">— the simple table became central to Germanic culture</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">disk</span>
+        <span class="bridge-note">— English kept the Latin more directly; German remade it</span>
+      </div>
+      <div class="story">
+        Latin "discus" originally meant a disk — a round object. It came to mean a round dining table, the place where people sat to share food. When the Germanic peoples encountered Roman dining customs, they encountered the table as a social institution — a place where formal conversation happened, where the family gathered, where the shared meal bound people together. They borrowed the word: discus → Tisch. The sound transformation is less obvious than with some other borrowings, but it's there: the Latin "discus" lost its ending, and the "c" became "ch." The word became naturalized in Germanic, so much so that "Tisch" feels like a native German word. But it's a Latin word, adopted at the frontier, remade in the Germanic image. Every German table carries this history — a simple word that carries with it the entire social transformation that Rome brought: the concept of the formal shared meal, the table as a place of human connection, the domestication of the wild frontier into ordered civilization.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        The Romans brought their civilization to the frontier, piece by piece.<br><br>
+        What do you think German speakers call the object where they sit to eat their meals?<br>
+        <strong style="color: var(--german);">Tisch</strong>?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, true)">table</button>
+        <button class="guess-btn" onclick="guess(this, false)">bench</button>
+        <button class="guess-btn" onclick="guess(this, false)">chair</button>
+        <button class="guess-btn" onclick="guess(this, false)">timber</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 6: THE SILK ROAD MIRROR ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      On the other side of the world, China faced an opposite but parallel situation. While Rome was at its western frontier, China was consolidating trade routes to the west, across mountains and deserts. These routes became known as the Silk Road — though silk was only one of many goods that traveled along them.
+    </p>
+
+    <p class="narrative">
+      And just as the Germanic peoples borrowed Latin words for Roman goods, Vietnamese civilization absorbed vocabulary from trade routes that connected it to both China and the wider world. The Vietnamese word for silk — <em>lụa</em> — is native Austroasiatic, but the Sino-Vietnamese word <em>tơ</em> was also inherited from contact with Chinese civilization. These words traveled the same routes that connected Vietnam, China, Persia, and Rome — the Silk Road that passed through multiple empires and languages.
+    </p>
+
+    <p class="narrative">
+      A single word — or multiple words carrying the same concept — traveling thousands of miles along trade routes, borrowed by empire after empire, language after language. Vietnamese traders and scholars encountered silk through contact with China, which had inherited the product and vocabulary from the ancient world. The word proves that Vietnam was not isolated. It was connected — through China, through the Silk Road, through centuries of trade and cultural exchange — to the entire ancient world.
+    </p>
+
+    <p class="narrative">
+      And so the Vietnamese words "lụa" and "tơ" are proof of something remarkable: that Vietnam, positioned between the Indian Ocean trade routes and continental Asian networks, was itself a frontier of the global ancient trade network. Contact with China became contact with the entire world, mediated through Sino-Vietnamese vocabulary, shaped by the encounters at crossroads of empire and commerce.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE PATTERNS ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      All ten words from this chapter follow a single pattern: they are practical things, visible things, technologies or institutions that Rome brought to the Germanic frontier. There are almost no abstract Latin words here. No philosophy. No poetry. No legal theory. Only the concrete, the material, the useful.
+    </p>
+
+    <p class="narrative">
+      Münze — coin — the technology of monetary exchange<br>
+      Keller — cellar — the technology of food preservation<br>
+      Pfeil — arrow — the adaptation of Roman military technology<br>
+      Arzt — doctor — Roman medical knowledge<br>
+      Meister — master — the concept of formal, proven expertise<br>
+      schreiben — to write — alphabetic literacy itself<br>
+      Markt — market — organized, regulated commerce<br>
+      Tisch — table — the social ritual of shared meals<br>
+      Kreuz — cross — the symbol of Christianity arriving from the west<br>
+      Grenze — border — the Slavic word that defined the eastern frontier
+    </p>
+
+    <p class="narrative">
+      Each word is a small story of contact, conflict, and cultural transmission. Each word proves that the limes was not a wall — it was a membrane. Ideas, goods, people, and yes, words, passed through it constantly. The Germanic peoples were not passive recipients of Roman civilization. They were active translators, adapters, transformers. They took Roman words and remade them in the Germanic image. They took a Roman weapon and called it by a Roman name, but used it in Germanic ways. They took the Roman table and made it the center of Germanic domestic life.
+    </p>
+
+    <p class="narrative emphasis">
+      The border created the perfect condition for vocabulary mixing: close contact, constant need for communication, mutual respect for practical knowledge.
+    </p>
+
+    <p class="narrative">
+      This is the deep truth about linguistic frontiers: they are not places where languages die. They are places where languages grow, where they steal from each other, where they become enriched by contact. German did not become Latin by borrowing these ten words. Instead, German became more German — it became a language that could express Roman concepts using Germanic sounds, Germanic prefixes, Germanic grammar. It became a bridge language, a translation language, a language of the frontier.
+    </p>
+
+    <p class="narrative">
+      And centuries later, when Germanic speakers migrated, when they invaded new lands, when they became the English speakers of Britain, these words came with them. They were hidden inside the Germanic vocabulary like seeds. And in Britain, in the forests of what is now England, they would be reborn, transformed again, integrated with other waves of borrowing, other frontiers, other empires.
+    </p>
+
+    <p class="narrative">
+      But that is a story for another chapter.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(212, 165, 116, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--amber);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Frontier Borrowing</strong> — 400 years of contact along the limes created a linguistic laboratory where words crossed the border constantly.<br><br>
+    <strong style="color: var(--text-bright);">Slavic Influence</strong> — Grenze itself comes from Slavic granica, showing Germany's eastern linguistic frontier too.<br><br>
+    <strong style="color: var(--text-bright);">Multiple Contact Zones</strong> — German absorbed from Latin, Slavic, and Greek — not just one source of borrowing.<br><br>
+    <strong style="color: var(--text-bright);">Cultural Exchange</strong> — Trade vocabulary flows across borders: Markt, Münze, Arzt all show practical contact and cultural transmission.<br><br>
+    <strong style="color: var(--text-bright);">The Limes as Membrane</strong> — The Roman frontier was porous, not a wall — a place where languages grew richer through contact.
+  </div>
+
+  <!-- ==================== WORDS & CONCEPTS ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Five</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Grenze</span><span class="cw-english">border</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Münze</span><span class="cw-english">coin</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Keller</span><span class="cw-english">cellar</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Pfeil</span><span class="cw-english">arrow</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Arzt</span><span class="cw-english">doctor</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Meister</span><span class="cw-english">master</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">schreiben</span><span class="cw-english">to write</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Markt</span><span class="cw-english">market</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Tisch</span><span class="cw-english">table</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Kreuz</span><span class="cw-english">cross</span></div>
+      </div>
+
+      <h3 style="margin-top:32px;">Concepts Learned in Chapter Five</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="1000" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Frontier Borrowing</span><span class="cw-english">400 years of contact along the limes</span></div>
+        <div class="collected-word" data-delay="1100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Slavic Influence</span><span class="cw-english">Grenze from Slavic granica</span></div>
+        <div class="collected-word" data-delay="1200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Multiple Contact Zones</span><span class="cw-english">German absorbed from Latin, Slavic, Greek</span></div>
+        <div class="collected-word" data-delay="1300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Cultural Exchange</span><span class="cw-english">trade vocabulary flows across borders</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container" id="quiz">
+    <div class="quiz-title">Test Your Knowledge</div>
+
+    <div class="quiz-question" data-q="0">
+      <div class="q-num">Question 1</div>
+      <div class="q-text">The German word <em>Grenze</em> (border) came into German from which language?</div>
+      <button class="quiz-option" data-q="0" data-correct="0" onclick="selectQuizOption(this)">Latin</button>
+      <button class="quiz-option" data-q="0" data-correct="1" onclick="selectQuizOption(this)">Slavic (Polish/Czech granica)</button>
+      <button class="quiz-option" data-q="0" data-correct="0" onclick="selectQuizOption(this)">French</button>
+      <button class="quiz-option" data-q="0" data-correct="0" onclick="selectQuizOption(this)">Greek</button>
+    </div>
+
+    <div class="quiz-question" data-q="1">
+      <div class="q-num">Question 2</div>
+      <div class="q-text">What does <em>Meister</em> mean, and where did it come from?</div>
+      <button class="quiz-option" data-q="1" data-correct="0" onclick="selectQuizOption(this)">Minister — from Germanic *mēstaz</button>
+      <button class="quiz-option" data-q="1" data-correct="1" onclick="selectQuizOption(this)">Master — from Latin magister</button>
+      <button class="quiz-option" data-q="1" data-correct="0" onclick="selectQuizOption(this)">Merchant — from French maître</button>
+      <button class="quiz-option" data-q="1" data-correct="0" onclick="selectQuizOption(this)">Mayor — from Latin maior</button>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div class="q-num">Question 3</div>
+      <div class="q-text">The word <em>Arzt</em> (doctor) traces back to which Latin word?</div>
+      <button class="quiz-option" data-q="2" data-correct="0" onclick="selectQuizOption(this)">artis (of art)</button>
+      <button class="quiz-option" data-q="2" data-correct="1" onclick="selectQuizOption(this)">archiater (chief physician)</button>
+      <button class="quiz-option" data-q="2" data-correct="0" onclick="selectQuizOption(this)">ardor (burning/fever)</button>
+      <button class="quiz-option" data-q="2" data-correct="0" onclick="selectQuizOption(this)">arcus (bow/arch)</button>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div class="q-num">Question 4</div>
+      <div class="q-text">Why do so many Latin words in German relate to building, cooking, and trade?</div>
+      <button class="quiz-option" data-q="3" data-correct="0" onclick="selectQuizOption(this)">Romans conquered all of Germany</button>
+      <button class="quiz-option" data-q="3" data-correct="0" onclick="selectQuizOption(this)">Germanic tribes had no language of their own</button>
+      <button class="quiz-option" data-q="3" data-correct="1" onclick="selectQuizOption(this)">Germans adopted words for Roman technologies they didn't have</button>
+      <button class="quiz-option" data-q="3" data-correct="0" onclick="selectQuizOption(this)">Latin was the only written language in Europe</button>
+    </div>
+
+    <div class="quiz-question" data-q="4">
+      <div class="q-num">Question 5</div>
+      <div class="q-text">The German <em>Münze</em> (coin) comes from Latin <em>moneta</em>. Which English word shares the same root?</div>
+      <button class="quiz-option" data-q="4" data-correct="0" onclick="selectQuizOption(this)">mount</button>
+      <button class="quiz-option" data-q="4" data-correct="0" onclick="selectQuizOption(this)">minute</button>
+      <button class="quiz-option" data-q="4" data-correct="1" onclick="selectQuizOption(this)">money</button>
+      <button class="quiz-option" data-q="4" data-correct="0" onclick="selectQuizOption(this)">month</button>
+    </div>
+
+    <div class="quiz-question" data-q="5">
+      <div class="q-num">Question 6 — Review</div>
+      <div class="q-text">From Chapter 1: The silent "gh" in English <em>night</em> corresponds to what sound in German <em>Nacht</em>?</div>
+      <button class="quiz-option" data-q="5" data-correct="0" onclick="selectQuizOption(this)">g</button>
+      <button class="quiz-option" data-q="5" data-correct="1" onclick="selectQuizOption(this)">ch (a soft throaty sound)</button>
+      <button class="quiz-option" data-q="5" data-correct="0" onclick="selectQuizOption(this)">sh</button>
+      <button class="quiz-option" data-q="5" data-correct="0" onclick="selectQuizOption(this)">It is also silent in German</button>
+    </div>
+
+    <button class="quiz-submit" onclick="submitQuiz(6, 80)">Check Answers</button>
+    <div class="quiz-result" id="quiz-result"></div>
+    <button class="quiz-retry" id="quiz-retry" onclick="retryQuiz()">Try Again</button>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <!-- WORDS BAR (clickable) -->
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">49 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(5%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:5%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words ▾</div>
+    </div>
+
+    <!-- WORDS DETAIL TABLE (hidden, expands on click) -->
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Grenze</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">border</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Münze</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">coin</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Keller</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">cellar</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Pfeil</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">arrow</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Arzt</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">doctor</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Meister</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">master</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">schreiben</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">to write</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Markt</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">market</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Tisch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">table</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Kreuz</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">cross</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–4: 39 words</td></tr>
+      </table>
+    </div>
+
+    <!-- PATTERNS BAR (clickable) -->
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">19 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(13%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:13%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns ▾</div>
+    </div>
+
+    <!-- PATTERNS DETAIL TABLE (hidden, expands on click) -->
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Frontier Borrowing</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">400 years of contact along the limes</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Slavic Influence</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Grenze from Slavic granica</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Multiple Contact Zones</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">German from Latin, Slavic, and Greek</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Cultural Exchange</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Trade vocabulary crosses borders</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">5</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–4: 15 patterns</td></tr>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Five
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten stories from the frontier.<br>
+        Latin bringing concrete things — coins, cellars, tables, markets, writing itself.<br>
+        Slavic bringing the very concept of borders.<br>
+        Christianity bringing the cross, transforming the spiritual landscape.<br>
+        A single language, enriched by contact, remade at the edges of empire.
+      </p>
+      <div class="next-chapter">
+        <a href="chapter6.html">Chapter Six: The Great Migration — coming next</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter4.html" class="nav-btn">← Chapter 4</a>
+    <a href="chapter6.html" class="nav-btn next">Chapter 6 →</a>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 5: ROMAN BORDER - ROAD & TRADE FLOW ---
+const canvas = document.getElementById('particleFlow');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let roadDots = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createRoadDots();
+}
+
+function createRoadDots() {
+  roadDots = [];
+  const count = Math.floor(canvas.width / 20);
+  for (let i = 0; i < count; i++) {
+    const progress = i / count;
+    roadDots.push({
+      x: progress * canvas.width,
+      y: canvas.height * 0.35 + Math.sin(progress * Math.PI * 2) * 15,
+      progress: progress
+    });
+  }
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 12000) :
+    Math.floor((canvas.width * canvas.height) / 7000);
+
+  for (let i = 0; i < count; i++) {
+    const progress = Math.random();
+    const x = progress * canvas.width;
+    const y = canvas.height * 0.35 + Math.sin(progress * Math.PI * 2) * 15;
+
+    particles.push({
+      progress: progress,
+      x: x,
+      y: y,
+      vx: Math.random() * 0.8 + 0.5,
+      size: Math.random() * 2.5 + 1,
+      alpha: Math.random() * 0.5 + 0.15,
+      color: ['#d4af37', '#e8a44a', '#9b8c4a'][Math.floor(Math.random() * 3)]
+    });
+  }
+}
+
+function drawFortifications() {
+  // Roman wall at top
+  ctx.fillStyle = 'rgba(180, 140, 80, 0.15)';
+  ctx.fillRect(0, canvas.height * 0.1, canvas.width, 40);
+
+  // Crenellations
+  ctx.strokeStyle = 'rgba(200, 160, 100, 0.2)';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < canvas.width; i += 30) {
+    ctx.strokeRect(i, canvas.height * 0.08, 15, 15);
+  }
+
+  // Watchtower
+  ctx.fillStyle = 'rgba(150, 110, 60, 0.15)';
+  ctx.fillRect(canvas.width * 0.15, canvas.height * 0.05, 50, 80);
+
+  // Market stalls further down
+  const stallY = canvas.height * 0.6;
+  for (let i = 0; i < 5; i++) {
+    const stallX = canvas.width * 0.2 + i * 120;
+    ctx.fillStyle = 'rgba(100, 80, 60, 0.1)';
+    ctx.fillRect(stallX, stallY, 100, 60);
+    ctx.strokeStyle = 'rgba(120, 100, 80, 0.15)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(stallX, stallY, 100, 60);
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 20, 30, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawFortifications();
+
+  // Draw road as glowing dots
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  const roadGlow = 0.08 + scroll * 0.04;
+
+  roadDots.forEach(dot => {
+    ctx.beginPath();
+    ctx.arc(dot.x, dot.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(184, 160, 120, ${roadGlow})`;
+    ctx.fill();
+  });
+
+  particles.forEach(p => {
+    p.progress += p.vx * 0.001;
+
+    if (p.progress > 1.1) {
+      p.progress = -0.1;
+    }
+
+    p.x = p.progress * canvas.width;
+    p.y = canvas.height * 0.35 + Math.sin(p.progress * Math.PI * 2) * 15;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Slight glow
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * 1.8, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha * 0.2;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate collected words
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      // Close all cards first
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      // Toggle this one
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Yes — contact at the border brought not just weapons, but the stuff of daily life.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — listen to the sound, think of daily life at the frontier...';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE: prevent double-tap zoom on interactive elements ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- MOBILE: reduce particle count on small screens for performance ---
+if (window.innerWidth < 600) {
+  particles = particles.slice(0, Math.floor(particles.length / 2));
+}
+
+// --- AUDIO PRONUNCIATION (Web Speech API) ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    // Try to find a German voice
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+// Preload voices (some browsers need this)
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- QUIZ DATA WITH EXPLANATIONS ---
+const quizData = [
+  {
+    question: "The German word Grenze (border) came into German from which language?",
+    options: ["Latin", "Slavic (Polish/Czech granica)", "French", "Greek"],
+    correct: 1,
+    explanation: "Grenze comes from Slavic granica, reflecting the long frontier contact between Germanic and Slavic-speaking peoples. This shows how languages borrow words from neighbors in contact zones."
+  },
+  {
+    question: "What does Meister mean, and where did it come from?",
+    options: ["Minister — from Germanic *mēstaz", "Master — from Latin magister", "Merchant — from French maître", "Mayor — from Latin maior"],
+    correct: 1,
+    explanation: "Meister (master) comes from Latin magister, adopted by Germanic peoples during Roman contact. This word entered many Germanic languages, showing Roman influence on trade and hierarchy."
+  },
+  {
+    question: "The word Arzt (doctor) traces back to which Latin word?",
+    options: ["artis (of art)", "archiater (chief physician)", "ardor (burning/fever)", "arcus (bow/arch)"],
+    correct: 1,
+    explanation: "Arzt comes from Latin archiater (chief physician), combining 'archi-' (chief) and '-ater' (healer). Germans borrowed this medical title directly from the Romans who had formal medical practice."
+  },
+  {
+    question: "Why do so many Latin words in German relate to building, cooking, and trade?",
+    options: ["Romans conquered all of Germany", "Germanic tribes had no language of their own", "Germans adopted words for Roman technologies they didn't have", "Latin was the only written language in Europe"],
+    correct: 2,
+    explanation: "Romans had advanced technologies and trade networks that Germanic peoples adopted along with their words. Borrowing vocabulary for new concepts (wine, streets, walls) reflects cultural exchange, not conquest."
+  },
+  {
+    question: "The German Münze (coin) comes from Latin moneta. Which English word shares the same root?",
+    options: ["mount", "minute", "money", "month"],
+    correct: 2,
+    explanation: "Münze and money both derive from Latin moneta (the goddess of coinage and the place where coins were made). This word traveled from Latin into both German and English through trade and commerce."
+  },
+  {
+    question: "From Chapter 1: The silent 'gh' in English night corresponds to what sound in German Nacht?",
+    options: ["g", "ch (a soft throaty sound)", "sh", "It is also silent in German"],
+    correct: 1,
+    explanation: "English 'gh' is silent but represents an old sound that German preserved as 'ch'. This is Grimm's First Shift in action — the 'gh' sound underwent different changes in English (silence) and German (preserved as ch)."
+  }
+];
+
+// --- QUIZ SYSTEM ---
+function selectQuizOption(btn) {
+  const qDiv = btn.closest('.quiz-question');
+  qDiv.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitQuiz(total, threshold) {
+  let correct = 0;
+  let qIndex = 0;
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const selected = q.querySelector('.quiz-option.selected');
+    const qData = quizData[qIndex];
+    q.querySelectorAll('.quiz-option').forEach((o, oIdx) => {
+      o.style.pointerEvents = 'none';
+      if (o.dataset.correct === '1') o.classList.add('correct');
+      if (o.classList.contains('selected') && o.dataset.correct !== '1') o.classList.add('wrong');
+    });
+
+    // Add explanation below the question
+    if (qData && !q.querySelector('.quiz-explanation')) {
+      const explDiv = document.createElement('div');
+      explDiv.className = 'quiz-explanation';
+      if (selected && selected.dataset.correct === '1') {
+        explDiv.classList.add('correct-exp');
+      }
+      explDiv.innerHTML = '<em>' + qData.explanation + '</em>';
+      q.appendChild(explDiv);
+    }
+
+    if (selected && selected.dataset.correct === '1') correct++;
+    qIndex++;
+  });
+  const pct = Math.round((correct / total) * 100);
+  const result = document.getElementById('quiz-result');
+  const retry = document.getElementById('quiz-retry');
+  const postQuiz = document.getElementById('post-quiz');
+  document.querySelector('.quiz-submit').style.display = 'none';
+  result.style.display = 'block';
+  if (pct >= threshold) {
+    result.className = 'quiz-result pass';
+    result.innerHTML = correct + '/' + total + ' correct (' + pct + '%) — Well done! Your words are unlocked below.';
+    if (postQuiz) postQuiz.style.display = 'block';
+  } else {
+    result.className = 'quiz-result fail';
+    result.innerHTML = correct + '/' + total + ' correct (' + pct + '%) — You need ' + threshold + '% to unlock your words. Review and try again.';
+    retry.style.display = 'block';
+  }
+}
+
+function retryQuiz() {
+  document.querySelectorAll('.quiz-option').forEach(o => {
+    o.classList.remove('selected', 'correct', 'wrong');
+    o.style.pointerEvents = '';
+  });
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-retry').style.display = 'none';
+  document.querySelector('.quiz-submit').style.display = 'block';
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 5;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

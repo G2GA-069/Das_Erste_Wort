@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 3: Die Lautverschiebung</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --cool-blue: #5a7a9d;
+    --warm-gold: #e8a44a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0a2e 0%, #1a1a4e 50%, #3d1e4d 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* --- PROGRESS BAR --- */
+  #progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cool-blue), var(--warm-gold));
+    width: 0%;
+    z-index: 1000;
+    transition: width 0.1s ease;
+  }
+
+  /* --- MAIN CONTAINER --- */
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* --- CANVAS BACKGROUND --- */
+  #particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- CHAPTER HEADER --- */
+  .chapter-header {
+    text-align: center;
+    margin-bottom: 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .chapter-title {
+    font-size: 2.2rem;
+    color: var(--german);
+    margin-bottom: 8px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  .chapter-subtitle {
+    font-size: 1.1rem;
+    color: rgba(232, 164, 74, 0.6);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+
+  .chapter-period {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(212, 202, 187, 0.4);
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  p.narrative {
+    margin: 24px 0;
+    color: var(--text);
+    line-height: 1.85;
+  }
+
+  p.narrative.emphasis {
+    font-style: italic;
+    color: var(--text-bright);
+    margin: 32px 0;
+  }
+
+  p.narrative em {
+    color: var(--fire-glow);
+    font-style: italic;
+  }
+
+  p.narrative strong {
+    color: var(--text-bright);
+    font-weight: 600;
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin: 60px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(232, 164, 74, 0.2), transparent);
+    margin: 0 0 40px 0;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 0 32px;
+    margin: 0;
+    cursor: pointer;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card:hover {
+    border-color: rgba(232, 164, 74, 0.3);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .word-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .word-main {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .word-pron {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .speak-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    margin-left: auto;
+  }
+
+  .speak-btn:hover,
+  .speak-btn.speaking {
+    opacity: 1;
+  }
+
+  .word-meaning {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.7);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 0.95rem;
+    padding: 8px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .bridge-label {
+    display: inline-block;
+    min-width: 50px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+  }
+
+  .bridge-label.pie { color: var(--pie); }
+  .bridge-label.eng { color: var(--english); }
+  .bridge-label.deu { color: var(--german); }
+  .bridge-label.vie { color: var(--vietnamese); }
+
+  .bridge-word {
+    font-family: 'Noto Serif', serif;
+    color: var(--text-bright);
+    font-weight: 500;
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.2rem;
+  }
+
+  .bridge-note {
+    font-size: 0.85rem;
+    color: rgba(212, 202, 187, 0.5);
+    margin-left: 8px;
+    font-style: italic;
+  }
+
+  .story {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  .ety-card.closed .word-meaning,
+  .ety-card.closed .bridge,
+  .ety-card.closed .story {
+    display: none;
+  }
+
+  /* --- CHAR DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--vietnamese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- DIVIDER --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- SHIFT TABLE --- */
+  .shift-table-container {
+    background: rgba(155, 142, 196, 0.06);
+    border: 1px solid rgba(155, 142, 196, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 40px 0;
+    overflow-x: auto;
+  }
+
+  .shift-table-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text);
+  }
+
+  table th {
+    background: rgba(155, 142, 196, 0.1);
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--pie);
+    border-bottom: 1px solid rgba(155, 142, 196, 0.2);
+    font-size: 0.9rem;
+  }
+
+  table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(155, 142, 196, 0.1);
+  }
+
+  table td:first-child {
+    font-weight: 600;
+    color: var(--pie);
+  }
+
+  table td.eng {
+    color: var(--english);
+  }
+
+  table td.deu {
+    color: var(--german);
+  }
+
+  table td.rule {
+    font-style: italic;
+    color: rgba(232, 164, 74, 0.7);
+    font-size: 0.95rem;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 20px;
+  }
+
+  .chapter-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 40px 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .nav-link {
+    color: rgba(232, 164, 74, 0.6);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--fire);
+  }
+
+  /* --- QUIZ SYSTEM --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-title {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .quiz-subtitle {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .quiz-question {
+    margin: 24px 0;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+  }
+
+  .quiz-q-text {
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-size: 1rem;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .quiz-opt {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+  }
+
+  .quiz-opt:hover {
+    background: rgba(232, 164, 74, 0.12);
+    border-color: var(--fire);
+  }
+
+  .quiz-opt.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-opt.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-feedback {
+    font-size: 0.95rem;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: rgba(232, 164, 74, 0.08);
+  }
+
+  .quiz-feedback.show {
+    opacity: 1;
+  }
+
+  .quiz-progress {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+  }
+
+  .quiz-result {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    color: var(--text-bright);
+    display: none;
+  }
+
+  .quiz-result.show {
+    display: block;
+  }
+
+  .quiz-result.pass {
+    background: rgba(74, 180, 100, 0.15);
+    border: 1px solid rgba(74, 180, 100, 0.3);
+  }
+
+  .quiz-result.fail {
+    background: rgba(180, 74, 74, 0.1);
+    border: 1px solid rgba(180, 74, 74, 0.3);
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
+    .content { padding: 24px 16px; }
+    .chapter-title { font-size: 1.8rem; }
+    p.narrative { font-size: 1.1rem; }
+    .ety-card.open { padding: 20px 24px; }
+    .guess-section { padding: 24px; }
+    .word-main { font-size: 1.3rem; }
+    .char-display .char { font-size: 1.8rem; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .title-screen .subtitle { font-size: 1.1rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<div id="progressBar"></div>
+
+<!-- Particle Canvas for Sound Shift Animation -->
+<canvas id="particleCanvas"></canvas>
+
+<div class="content">
+
+  <!-- ==================== CHAPTER HEADER ==================== -->
+  <div class="chapter-header">
+    <h1 class="chapter-title">Die Lautverschiebung</h1>
+    <p class="chapter-subtitle">The Sound Shift</p>
+    <p class="chapter-period">~ 500 BCE: The First Germanic Consonant Shift</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="chapter2.html" class="nav-link">← Previous</a>
+    <span style="color: rgba(212, 202, 187, 0.3);">Chapter 3</span>
+    <a href="chapter4.html" class="nav-link">Next →</a>
+  </div>
+
+  <!-- ==================== OPENING SCENE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      You stand at a crossroads where three thousand years of linguistic history converge into a single, devastating insight.
+    </p>
+
+    <p class="narrative">
+      What you are about to learn is not a list of vocabulary. It is a cipher — a set of rules so powerful that they will let you decode <em>thousands</em> of German words you have never seen before. Once you understand this system, you will see German not as a foreign language but as a mirror of English, reflecting it through a precise mathematical transformation.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the moment when German stops being strange. This is where it makes sense.
+    </p>
+
+    <p class="narrative">
+      The story begins around 500 BCE, somewhere on the windy steppes north of the Black Sea. A group of Indo-European speakers — the ancestors of the Germanic peoples — began to change their consonants. Systematically. Consistently. Like watching water transform into ice: the essence remains, but the form becomes something new.
+    </p>
+
+    <p class="narrative">
+      They did not know they were creating a law. They were simply speaking. But their speech would become a key that unlocks the entire architecture of the Germanic languages.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: THE FIRST SHIFT ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In the proto-Indo-European languages — Latin, Greek, Sanskrit — consonants remained relatively stable. But in Germanic, something shifted. Three major consonants transformed:
+    </p>
+
+    <p class="narrative" style="margin-top: 40px; margin-bottom: 40px; text-align: center; font-size: 1.2rem; color: var(--text-bright);">
+      <strong style="color: var(--pie);">PIE p</strong> → <strong style="color: var(--german);">Germanic f</strong><br>
+      <strong style="color: var(--pie);">PIE t</strong> → <strong style="color: var(--german);">Germanic th</strong><br>
+      <strong style="color: var(--pie);">PIE k</strong> → <strong style="color: var(--german);">Germanic h</strong>
+    </p>
+
+    <p class="narrative">
+      This was <strong>Grimm's Law</strong> — the First Germanic Consonant Shift, discovered in 1822. It explained why Latin <em>pater</em> became English <em>father</em> and German <span class="german-word" data-card="vater" onclick="speakGerman('Vater')">Vater</span>. Why Latin <em>tres</em> (three) became English <em>three</em> and German <span class="german-word" data-card="drei" onclick="speakGerman('drei')">drei</span>. Why Latin <em>cornu</em> (horn) became English <em>horn</em> and German <em>Horn</em>.
+    </p>
+
+    <p class="narrative">
+      But here is where it gets even more remarkable: after the Germanic peoples split into different branches — some staying in the north (Low German, Dutch, English), others moving south into the mountains (High German, spoken in Bavaria and Austria) — a <strong>second</strong> shift occurred, around 600-800 CE. This time, the consonants shifted even <em>further</em>.
+    </p>
+
+    <p class="narrative" style="margin-top: 40px; margin-bottom: 40px; text-align: center; font-size: 1.2rem; color: var(--text-bright);">
+      <strong style="color: var(--english);">English p</strong> → <strong style="color: var(--german);">High German pf/f</strong><br>
+      <strong style="color: var(--english);">English t</strong> → <strong style="color: var(--german);">High German z/zz/ss</strong><br>
+      <strong style="color: var(--english);">English k</strong> → <strong style="color: var(--german);">High German ch</strong>
+    </p>
+
+    <p class="narrative">
+      This means that modern German is <em>doubly transformed</em> from Latin. The High German shift took the Germanic *f and pushed it toward pf. The *th became z, zz, or ss. The *h became ch.
+    </p>
+
+    <p class="narrative">
+      This is why modern German is so different from English. English fell out of the second shift's grip — it remained more conservative, clinging to the older Germanic forms. German charged forward into new territory.
+    </p>
+
+    <p class="narrative">
+      And that means: if you know the shifts, you can work <em>backwards</em> from modern German to reconstruct the ancient history of these words.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE WORDS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Let us watch these transformations in action. Watch the words shift before your eyes — cool blue becoming warm gold, one generation at a time.
+    </p>
+
+    <!-- VATER (father) -->
+    <div class="ety-card" id="card-vater">
+      <div class="word-header">
+        <span class="word-main">Vater</span>
+        <span class="word-pron">/ˈfaːtɐ/</span>
+      </div>
+      <div class="word-meaning">father — the patriarch, the elder male</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pátēr</span>
+        <span class="bridge-note">— Latin "pater," Greek "patēr," Sanskrit "pitṛ"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">GERMANIC</span>
+        <span class="bridge-word">*fader</span>
+        <span class="bridge-note">— p → f (First Shift)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">father</span>
+        <span class="bridge-note">— kept Germanic *fader mostly unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">HIGH GERMAN</span>
+        <span class="bridge-word">Vater</span>
+        <span class="bridge-note">— f stayed f, t → t (no Second Shift on this word)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">bố / cha</span>
+        <span class="bridge-note">— bố (modern) / cha (formal) — Vietnamese preserves the fricative/labial pattern for father across registers, showing how primal kinship terms transcend language families and phonological shifts, echoing ancestral patterns</span>
+      </div>
+      <div class="story">
+        Vater and father are nearly identical cognates. Both come from PIE *pátēr. The 'p' shifted to 'f' in Germanic (First Shift), and both English and German kept this form. Remarkably, the word avoided the Second Shift's effects — the 't' in Germanic *fader stayed 't' in both languages (though German spelling is Vater, the pronunciation is /ˈfaːtɐ/ with a simple 't' sound). This is one of the oldest and most recognizable cognate pairs.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The transformation is everywhere. English <em>foot</em> — the word for the part of the body that touches the ground — became something utterly different in High German: <span class="german-word" data-card="fuss" onclick="speakGerman('Fuß')">Fuß</span>. The 't' in foot shifted to 'ss' — the Second Consonant Shift in action.
+    </p>
+
+    <!-- FUß (foot) -->
+    <div class="ety-card" id="card-fuss">
+      <div class="word-header">
+        <span class="word-main">Fuß</span>
+        <span class="word-pron">/ˈfʊs/</span>
+      </div>
+      <div class="word-meaning">foot — the foundation that touches the earth</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pṓds</span>
+        <span class="bridge-note">— from *ped-, root meaning "to go"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">GERMANIC</span>
+        <span class="bridge-word">*fōts</span>
+        <span class="bridge-note">— p → f (First Shift)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">foot</span>
+        <span class="bridge-note">— stayed conservative, kept the 't'</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">HIGH GERMAN</span>
+        <span class="bridge-word">Fuß</span>
+        <span class="bridge-note">— t → ss (Second Shift)</span>
+      </div>
+      <div class="story">
+        Watch the transformation: *pṓds → *fōts → foot → Fuß. The 'p' became 'f' in Germanic. The 't' stayed 't' in English but became 'ss' in High German. This is why English "foot" looks closer to "paw" (which kept the original p) and German "Fuß" looks completely different — but they are the same word, at different stages of transformation. The Latin plural "pedes" (feet) still preserves the original root. English "pedestrian," "expedite," and "centipede" all carry the ancient *ped-.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Consider the waters themselves. English <em>fish</em>, the creature that swims in rivers and seas, carries within it an ancient 'p' sound that transformed long ago. In German, the word shifts to <span class="german-word" data-card="fisch" onclick="speakGerman('Fisch')">Fisch</span>. Both 'p' → 'f' and the sibilant transformation are visible here — a palindrome of the First Shift, echoed in both languages.
+    </p>
+
+    <!-- FISCH (fish) -->
+    <div class="ety-card" id="card-fisch">
+      <div class="word-header">
+        <span class="word-main">Fisch</span>
+        <span class="word-pron">/ˈfɪʃ/</span>
+      </div>
+      <div class="word-meaning">fish — swimmer of ancient waters</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pisk-</span>
+        <span class="bridge-note">— similar to Sanskrit "pisces" → Latin "piscis"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">fish</span>
+        <span class="bridge-note">— p → f (First Shift), then s → sh</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">GERMAN</span>
+        <span class="bridge-word">Fisch</span>
+        <span class="bridge-note">— same transformation, just spelled differently</span>
+      </div>
+      <div class="story">
+        Remarkably, English "fish" and German "Fisch" look almost identical — they both show the p → f shift and the s → sh shift. Yet they evolved independently. Both languages took the PIE *pisk- and transformed it the same way, because the sound shifts happened before the languages fully separated. This is a cognate pair that's practically twins.
+      </div>
+    </div>
+
+    <!-- DREI (three) -->
+    <div class="ety-card" id="card-drei">
+      <div class="word-header">
+        <span class="word-main">drei</span>
+        <span class="word-pron">/ˈdʁaɪ/</span>
+      </div>
+      <div class="word-meaning">three — the first number beyond one and two</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*tréyes</span>
+        <span class="bridge-note">— Latin "tres," Greek "treis," Sanskrit "trayas"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">GERMANIC</span>
+        <span class="bridge-word">*þrīz</span>
+        <span class="bridge-note">— t → th (First Shift)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">three</span>
+        <span class="bridge-note">— kept the th</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">GERMAN</span>
+        <span class="bridge-word">drei</span>
+        <span class="bridge-note">— th → d (regional High German variation)</span>
+      </div>
+      <div class="story">
+        Here we see the three → drei divergence. Both come from *þrīz (Germanic *thr-). English preserved the "th" sound from Germanic. German simplified it to 'd' (or kept it as 'dr'). This is why English "three" sounds more archaic and German "drei" sounds more modern — though they are the same age, they chose different paths.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Now, the seat of emotion itself. English <em>heart</em>, that ancient word for love and will, shows us a different shift: the 'k' sound that became 'h' in Germanic times. In German, this word undergoes yet another transformation, surfacing as <span class="german-word" data-card="herz" onclick="speakGerman('Herz')">Herz</span>. The 't' has shifted to 'z' through the Second Shift, making the word feel foreign even though it is our deepest inheritance.
+    </p>
+
+    <!-- HERZ (heart) -->
+    <div class="ety-card" id="card-herz">
+      <div class="word-header">
+        <span class="word-main">Herz</span>
+        <span class="word-pron">/ˈhɛʁts/</span>
+      </div>
+      <div class="word-meaning">heart — the seat of emotion and will</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*ḱḗr</span>
+        <span class="bridge-note">— Latin "cor," Greek "kardia," Sanskrit "hṛd"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">GERMANIC</span>
+        <span class="bridge-word">*hertōn</span>
+        <span class="bridge-note">— k → h (First Shift)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">heart</span>
+        <span class="bridge-note">— kept the Germanic 'h'</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">GERMAN</span>
+        <span class="bridge-word">Herz</span>
+        <span class="bridge-note">— 't → z' (Second Shift)</span>
+      </div>
+      <div class="story">
+        The k → h transformation here is older — it happened in the First Shift (500 BCE). But German then applied the Second Shift: the Germanic 't' in *hertōn became 'z' in modern German Herz. English kept it closer to the original: "heart" still preserves the 't' from the Germanic form. Latin "cordial" and "cardiac" carry the original *ḱḗr root untransformed.
+      </div>
+    </div>
+
+    <p class="narrative" style="margin-top: 40px;">
+      These are just the beginning. We are watching history unfold in sound. Each word is a time capsule, preserving the moment when human speech shifted in a new direction.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE SECOND SHIFT ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now we reach the moment that makes modern German so distinct from English. Around 600 CE, the High German-speaking peoples of the south and west experienced a <strong>second</strong> consonant shift — one that English never went through. Watch what happens:
+    </p>
+
+    <p class="narrative">
+      Take something simple: a fruit, an <em>apple</em>, the most ordinary thing. In German, this becomes <span class="german-word" data-card="apfel" onclick="speakGerman('Apfel')">Apfel</span> — the 'p' sound doubled and transformed, sprouting an 'f' beside itself. This is the Second Shift beginning its work, turning familiar Germanic words into something new.
+    </p>
+
+    <!-- ==================== CONSONANT SHIFT REFERENCE CHART ==================== -->
+    <div style="margin:40px auto;max-width:680px;padding:28px 32px;background:linear-gradient(135deg,rgba(232,164,74,0.06),rgba(155,142,196,0.04));border:1px solid rgba(232,164,74,0.15);border-radius:12px;">
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.25em;color:rgba(232,164,74,0.5);margin-bottom:16px;">The Second Shift — Quick Reference</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr style="border-bottom:1px solid rgba(232,164,74,0.15);">
+          <th style="text-align:left;padding:8px;color:rgba(212,202,187,0.5);">English Sound</th>
+          <th style="text-align:left;padding:8px;color:rgba(212,202,187,0.5);">→ German Sound</th>
+          <th style="text-align:left;padding:8px;color:rgba(212,202,187,0.5);">Example</th>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(232,164,74,0.06);"><td style="padding:8px;color:#d4cabb;">p</td><td style="padding:8px;color:#e8a44a;">pf / ff</td><td style="padding:8px;color:rgba(212,202,187,0.6);">pepper → Pfeffer</td></tr>
+        <tr style="border-bottom:1px solid rgba(232,164,74,0.06);"><td style="padding:8px;color:#d4cabb;">t</td><td style="padding:8px;color:#e8a44a;">ts (z) / ss</td><td style="padding:8px;color:rgba(212,202,187,0.6);">ten → zehn, water → Wasser</td></tr>
+        <tr style="border-bottom:1px solid rgba(232,164,74,0.06);"><td style="padding:8px;color:#d4cabb;">k</td><td style="padding:8px;color:#e8a44a;">ch</td><td style="padding:8px;color:rgba(212,202,187,0.6);">make → machen</td></tr>
+        <tr style="border-bottom:1px solid rgba(232,164,74,0.06);"><td style="padding:8px;color:#d4cabb;">d</td><td style="padding:8px;color:#e8a44a;">t</td><td style="padding:8px;color:rgba(212,202,187,0.6);">day → Tag</td></tr>
+        <tr><td style="padding:8px;color:#d4cabb;">th</td><td style="padding:8px;color:#e8a44a;">d</td><td style="padding:8px;color:rgba(212,202,187,0.6);">think → denken</td></tr>
+      </table>
+      <p style="color:#9b8ec4;font-size:0.8rem;margin-top:12px;font-style:italic;">Master these five shifts and you can decode hundreds of English-German word pairs on sight.</p>
+    </div>
+
+    <!-- APFEL (apple) -->
+    <div class="ety-card" id="card-apfel">
+      <div class="word-header">
+        <span class="word-main">Apfel</span>
+        <span class="word-pron">/ˈapfəl/</span>
+      </div>
+      <div class="word-meaning">apple — the fruit of knowledge and temptation</div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">apple</span>
+        <span class="bridge-note">— from Old English "æppel"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">HIGH GERMAN</span>
+        <span class="bridge-word">Apfel</span>
+        <span class="bridge-note">— p → pf (Second Shift)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">COMMON ORIGIN</span>
+        <span class="bridge-word">*aplaz</span>
+        <span class="bridge-note">— Celtic or pre-PIE root meaning "apple"</span>
+      </div>
+      <div class="story">
+        This is the Second Shift in action: English kept 'p' in apple, but German transformed it to 'pf' in Apfel. Notice that the 'pf' in German is pronounced as one sound — the 'p' is barely touched, the 'f' is what you hear. But the spelling shows the full transformation: the ancient 'p' is still there, and it's sprouted a new 'f' beside it. Over time, the 'p' will fade and only the 'f' will remain (as it has in English "apple" → /ˈæpəl/, pronounced without the hard 'p'). In Apfel, both letters remain, telling the story of the shift.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The fundamental act of survival itself undergoes the Second Shift. English <em>eat</em> — simple, direct, the first sound a baby makes connected to hunger — becomes in German <span class="german-word" data-card="essen" onclick="speakGerman('essen')">essen</span>. Watch the 't' double into 'ss', reinforcing the consonant as the short vowel demands strength. Vowel length drives consonant doubling in Germanic languages — this is the hidden algebra beneath the shifts.
+    </p>
+
+    <!-- ESSEN (to eat) -->
+    <div class="ety-card" id="card-essen">
+      <div class="word-header">
+        <span class="word-main">essen</span>
+        <span class="word-pron">/ˈɛsən/</span>
+      </div>
+      <div class="word-meaning">to eat — the fundamental act of survival</div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">eat</span>
+        <span class="bridge-note">— from Old English "etan," Germanic *etanan</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">HIGH GERMAN</span>
+        <span class="bridge-word">essen</span>
+        <span class="bridge-note">— t → ss (Second Shift)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE ROOT</span>
+        <span class="bridge-word">*ed-</span>
+        <span class="bridge-note">— shared by Latin "edere," Sanskrit "admi"</span>
+      </div>
+      <div class="story">
+        One of the most striking transformations: English "eat" → German "essen." The Germanic *etanan split into two paths. English kept it simple: eat. German applied the Second Shift: t → ss. Now, why double 's'? Because in Germanic, vowel length mattered for sound shifts. Short vowels followed by a single consonant would strengthen that consonant by doubling it. So *eta- became *essa-. Simple vowel + consonant became simple vowel + double consonant. This is why so many German words look "doubled" compared to English: Kasse (till), Mutter (mother), Wasser (water). The doubling is actually a sign of age — the sound shift happened before the doubling rule was applied.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But the deepest shift involves the harsh guttural sounds. English <em>make</em> — the act of creation itself — contains a 'k' sound that transforms completely in German. The verb becomes <span class="german-word" data-card="machen" onclick="speakGerman('machen')">machen</span>, the 'k' shifting to 'ch', a sound formed deep in the throat, almost a scraping. This is the k → ch transformation, one of the most dramatic consonant shifts, marking German as radically transformed from English.
+    </p>
+
+    <!-- MACHEN (to make) -->
+    <div class="ety-card" id="card-machen">
+      <div class="word-header">
+        <span class="word-main">machen</span>
+        <span class="word-pron">/ˈmaχən/</span>
+      </div>
+      <div class="word-meaning">to make — creation, intention, causation</div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">make</span>
+        <span class="bridge-note">— from Old English "macian," possibly Celtic origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">HIGH GERMAN</span>
+        <span class="bridge-word">machen</span>
+        <span class="bridge-note">— k → ch (Second Shift)</span>
+      </div>
+      <div class="story">
+        English "make" → German "machen." The k → ch shift is one of the most recognizable patterns in German. The 'ch' sound (pronounced in the back of the throat, like the Spanish 'j' in "jota") is distinctly German. Other examples: English "bake" → German "backen," "break" → "brechen," "drink" → "trinken." Once you see this pattern, it multiplies the words you can decode. The k → ch shift happens in all positions: initial (k → ch at the start), medial (German machen has 'ch' in the middle), and final. This is a decoder ring that alone unlocks hundreds of words.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Even the element itself is transformed. English <em>water</em>, that essential substance from which all life springs, becomes almost unrecognizable when you first see it written in German: <span class="german-word" data-card="wasser" onclick="speakGerman('Wasser')">Wasser</span>. The 't' in the middle has doubled and shifted to 'ss', revealing the Second Shift at work on the very substance that connects all Germanic peoples.
+    </p>
+
+    <!-- WASSER (water) -->
+    <div class="ety-card" id="card-wasser">
+      <div class="word-header">
+        <span class="word-main">Wasser</span>
+        <span class="word-pron">/ˈvasɐ/</span>
+      </div>
+      <div class="word-meaning">water — the element that sustains all life</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wodr̥</span>
+        <span class="bridge-note">— from *wed-, root meaning "wet"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">GERMANIC</span>
+        <span class="bridge-word">*watōr</span>
+        <span class="bridge-note">— kept the t initially</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">water</span>
+        <span class="bridge-note">— kept Germanic *watōr nearly unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">HIGH GERMAN</span>
+        <span class="bridge-word">Wasser</span>
+        <span class="bridge-note">— t → ss (Second Shift, doubled)</span>
+      </div>
+      <div class="story">
+        This is a masterclass in the Second Shift. Look: English "water" and German "Wasser" are cognates, but they look completely different to the untrained eye. The difference is the double 's'. The Germanic *watōr had an initial 't' that both languages kept — that's the 'w' at the start became 'w' in English (by a different rule) and 'w' in German. But the medial *t (the 't' in the middle) split: English kept it as single 't', German transformed it to double 'ss'. This is the Second Shift in its most vivid form. Water, Wasser — same word, two different versions of the same transformation rule.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And finally, the numbers themselves reveal the shift. English <em>ten</em>, that simple word for counting, sounds clear and recognizable. German transforms it into <span class="german-word" data-card="zehn" onclick="speakGerman('zehn')">zehn</span>, the initial 't' becoming the sharp sibilant 'z' — a 't' transformed into a hissing sound, one of the most dramatic consonant shifts. The word is the same, but the sound has traveled through time into something almost unrecognizable.
+    </p>
+
+    <!-- ZEHN (ten) -->
+    <div class="ety-card" id="card-zehn">
+      <div class="word-header">
+        <span class="word-main">zehn</span>
+        <span class="word-pron">/ˈtseːn/</span>
+      </div>
+      <div class="word-meaning">ten — completion, a cycle renewed</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*deḱm̥</span>
+        <span class="bridge-note">— Latin "decem," Greek "deca," Sanskrit "dáśa"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pie">GERMANIC</span>
+        <span class="bridge-word">*tehan</span>
+        <span class="bridge-note">— k → h (First Shift)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENGLISH</span>
+        <span class="bridge-word">ten</span>
+        <span class="bridge-note">— kept Germanic form nearly unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">HIGH GERMAN</span>
+        <span class="bridge-word">zehn</span>
+        <span class="bridge-note">— t → z (Second Shift)</span>
+      </div>
+      <div class="story">
+        The t → z shift is one of the most dramatic in German. English "ten" looks recognizable. German "zehn" seems foreign. But they are sisters, separated by the Second Shift. The initial 't' in English stayed put. The final 't' in both languages underwent different fates: in English it stayed 'n' (from the original *ten form), but in German it became 'z' (from t → z). The 'z' in German is pronounced like the 'ts' in "cats" — a sharp, sibilant sound. This shift alone accounts for dozens of German words: Zeit (time) vs. English cognate "tide," Zahn (tooth) vs. "tine," Zunge (tongue) — wait, that one's not cognate, but notice the pattern.
+      </div>
+    </div>
+
+    <p class="narrative" style="margin-top: 40px;">
+      Five words. Five demonstrations of the Second Shift in action. But these are just the tip. Once you understand these transformations, you can predict the German forms of words you have never learned.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: THE SHIFT RULES TABLE ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The rules are mathematical. They are deterministic. Once you know them, they apply across thousands of words:
+    </p>
+
+    <!-- First Shift Table -->
+    <div class="shift-table-container">
+      <div class="shift-table-title">Grimm's Law: The First Germanic Consonant Shift (~500 BCE)</div>
+      <table>
+        <thead>
+          <tr>
+            <th>PIE</th>
+            <th>English</th>
+            <th>German</th>
+            <th>Pattern</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>p</td>
+            <td class="eng">father</td>
+            <td class="deu">Vater</td>
+            <td class="rule">p → f</td>
+          </tr>
+          <tr>
+            <td>t</td>
+            <td class="eng">three</td>
+            <td class="deu">drei</td>
+            <td class="rule">t → th/d</td>
+          </tr>
+          <tr>
+            <td>k</td>
+            <td class="eng">heart</td>
+            <td class="deu">Herz</td>
+            <td class="rule">k → h</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Second Shift Table -->
+    <div class="shift-table-container">
+      <div class="shift-table-title">The Second High German Consonant Shift (~600-800 CE)</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Germanic</th>
+            <th>English</th>
+            <th>German</th>
+            <th>Pattern</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>p</td>
+            <td class="eng">apple</td>
+            <td class="deu">Apfel</td>
+            <td class="rule">p → pf/f</td>
+          </tr>
+          <tr>
+            <td>t</td>
+            <td class="eng">water</td>
+            <td class="deu">Wasser</td>
+            <td class="rule">t → ss/z</td>
+          </tr>
+          <tr>
+            <td>k</td>
+            <td class="eng">make</td>
+            <td class="deu">machen</td>
+            <td class="rule">k → ch</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="narrative" style="margin-top: 40px;">
+      Memorize these tables. They are your decoder ring. Every English word you know can be transformed into German using these rules. Not all words, of course — some are borrowed, some are new, some have irregular forms. But for basic, ancient Germanic vocabulary, these rules hold with remarkable consistency.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE VIETNAMESE BRIDGE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now, a remarkable contrast. Vietnamese presents a completely different solution to the problem of linguistic memory. Unlike German, which preserves ancient sound shifts in its spelling, Vietnamese absorbed vocabulary from a thousand years of contact with Chinese civilization — accumulating layers of meaning rather than recording shifts.
+    </p>
+
+    <p class="narrative">
+      Imagine a Vietnamese speaker today saying the number "mười" (ten). The word is native Austroasiatic, unrelated to Chinese. But a scholar reading formal or literary Vietnamese might encounter the Sino-Vietnamese word "thập" — borrowed from Chinese, where it represents the character and concept transmitted across centuries. The same concept, held in two different words, each with its own history and register.
+    </p>
+
+    <p class="narrative">
+      German and Vietnamese represent two opposite solutions to the problem of linguistic memory:
+    </p>
+
+    <p class="narrative" style="margin: 32px 0; text-align: center; color: var(--text-bright);">
+      <strong>German:</strong> Sounds shift, spelling records the shifts — creating a fossil record of ancient transformations<br>
+      <strong>Vietnamese:</strong> Sounds stay, vocabulary multiplies — accumulating borrowed and native words that encode different registers and histories
+    </p>
+
+    <p class="narrative">
+      German spelling encodes <em>sound history</em>. Vietnamese vocabulary encodes <em>cultural contact</em>. One culture decided that what matters is preserving the path a word took. The other decided that what matters is having multiple ways to say the same thing — each carrying its own historical weight. Neither approach is superior — but each reveals a different way of holding language.
+    </p>
+
+    <p class="narrative">
+      A German speaker, seeing <em>zehn</em>, learns something about how the word evolved: the 'z' is a fossil from an ancient 't'. The spelling is a map through time. But the Vietnamese speaker, saying <em>mười</em> in everyday conversation and <em>thập</em> in a poem or formal text, is also preserving history — just through vocabulary layers instead of spelling fossils.
+    </p>
+
+    <p class="narrative">
+      A Vietnamese reader cannot guess the pronunciation of a Sino-Vietnamese word like <em>thập</em> from how it appears in context alone — it could theoretically be written many ways in Latin script. But the speaker, hearing <em>thập</em>, instantly recognizes it as formal, literary, carrying the weight of Chinese influence and classical tradition. The same number. Two registers. Two ways of holding the past in the present.
+    </p>
+
+    <p class="narrative">
+      Two languages, two philosophies. Two ways of solving the eternal problem: <em>How do we hold a changing world in unchanging words?</em>
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: DECODING POWER ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Now we reach the revelation. Armed with the shift rules, you have a decoding power that most English speakers never develop. You can walk into a German sentence and <em>feel</em> the cognates.
+    </p>
+
+    <p class="narrative">
+      See the word <em>Brot</em> (bread). Your brain recognizes: <em>Br-</em> looks like English. Then: <em>-ot</em>. An 'o' — that's Germanic. But what about the 't'? Ah. If Germanic has a 't' and the word refers to food... could this be related to the t → tt shift? Or might it be a borrowed word? Let's check: in Old English, we have "breád." So the English form is older and may not have the shift. But notice: Brot and bread are nearly identical. This is a cognate that's so fresh that it barely looks foreign.
+    </p>
+
+    <p class="narrative">
+      See the word <em>Platz</em> (place, square). Your brain: Platz... 'pl-' is Germanic... 'atz'... wait. Is this the z from the Second Shift? If 'z' comes from 't', then *Plat-? Could this be related to English "place"? No, "place" came from French. But then what's the English cognate? It's not there, because "place" came in from Romance languages. But the pattern you recognize — the 'z' ending — tells you this is an old Germanic word that underwent the Second Shift.
+    </p>
+
+    <p class="narrative">
+      See the word <em>Buch</em> (book). The 'ch' is the Second Shift's k → ch transformation. So this should be related to something with a 'k'. In English, there's no direct cognate for "book" — it's of uncertain origin, possibly from beech wood (because people wrote on beech bark). But the pattern tells you: this is a High German word, not borrowed, with an ancient 'k' sound transformed into 'ch'.
+    </p>
+
+    <p class="narrative">
+      This is the power you now possess. You can look at a German word and recognize its age, its path through history, its relationship to English. You can predict forms you have never seen. You can decode the linguistic DNA of the Germanic languages.
+    </p>
+
+    <p class="narrative emphasis">
+      The shift rules are your master key. They unlock not just vocabulary, but history itself.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        You now know that English "k" → German "ch".<br><br>
+        What do you think the German word for <strong>"to drink"</strong> would be? (Hint: English "drink" has a 'k' sound at the end.)
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guessAnswer(this, false)">drinken</button>
+        <button class="guess-btn" onclick="guessAnswer(this, true)">trinken</button>
+        <button class="guess-btn" onclick="guessAnswer(this, false)">drinch</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        English "p" → German "pf".<br><br>
+        The English word is <strong>"pepper."</strong> What would the German be?
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guessAnswer(this, false)">pefer</button>
+        <button class="guess-btn" onclick="guessAnswer(this, true)">Pfeffer</button>
+        <button class="guess-btn" onclick="guessAnswer(this, false)">pepfer</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">First Consonant Shift (500 BCE)</strong> — p→f, t→th/d, k→h. This shift affected all Germanic languages equally and created the first major divide between Germanic and other Indo-European languages.<br><br>
+    <strong style="color: var(--text-bright);">Second Consonant Shift (600-800 CE)</strong> — p→pf/f, t→ss/z, k→ch. This shift happened only in High German (southern regions) and created the modern distinction between German and English.<br><br>
+    <strong style="color: var(--text-bright);">The Benrath Line</strong> — The geographic boundary between High German (full shifts) and Low German (first shift only). This explains why modern German looks so different from English, while Dutch and Low German stay closer to English.<br><br>
+    <strong style="color: var(--text-bright);">Decoding Power of the Shifts</strong> — English word → Apply the shifts → Predict the German form. Foot becomes Fuß, fish becomes Fisch, three becomes drei. The shifts are predictable and systematic.<br><br>
+    <strong style="color: var(--text-bright);">Why German Looks Different</strong> — English stopped after the First Shift; German kept going through the Second. This double shift explains why German spelling and sound seem alien to English speakers, even though both languages share the same roots.
+  </div>
+
+  <!-- ==================== WORDS GATHERED (TWO-PART: WORDS + CONCEPTS) ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Three</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Fuß</span><span class="cw-english">foot</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Fisch</span><span class="cw-english">fish</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">drei</span><span class="cw-english">three</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Herz</span><span class="cw-english">heart</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Apfel</span><span class="cw-english">apple</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">essen</span><span class="cw-english">eat</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">machen</span><span class="cw-english">make</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Wasser</span><span class="cw-english">water</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">zehn</span><span class="cw-english">ten</span></div>
+      </div>
+    </div>
+
+    <!-- WORDS DETAIL TABLE -->
+    <div style="margin-top:32px;padding:24px;background:rgba(232,164,74,0.05);border-radius:8px;">
+      <h4 style="color:#e8a44a;margin-bottom:16px;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.15em;">Word List: Chapter Three</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Fuß</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">foot</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Fisch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fish</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">drei</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">three</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Herz</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">heart</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Apfel</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">apple</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">essen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">eat</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">machen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">make</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wasser</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">water</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">zehn</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">ten</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–2: 20 words · Click earlier chapters to review</td></tr>
+      </table>
+    </div>
+
+    <!-- CONCEPT CARDS -->
+    <div style="margin-top:32px;">
+      <h4 style="color:#e8a44a;margin-bottom:16px;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.15em;">Key Concepts: Chapter Three</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">First Consonant Shift</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">p→f, t→th, k→h (Grimm's Law)</div>
+        </div>
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Second Consonant Shift</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">p→pf, t→z/ss, k→ch (High German)</div>
+        </div>
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Decoding Power</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">See English word → apply shifts → predict German</div>
+        </div>
+        <div style="padding:16px;background:rgba(232,164,74,0.08);border:1px solid rgba(232,164,74,0.15);border-radius:8px;">
+          <div style="color:#e8a44a;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Why German Looks Different</div>
+          <div style="color:rgba(212,202,187,0.8);font-size:0.85rem;">Two shifts separate German from English</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== QUIZ SYSTEM ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <div class="quiz-title">Chapter 3 Quiz: The Sound Shifts</div>
+      <div class="quiz-subtitle">Test your decoding power. 80% required to pass. (8 questions)</div>
+
+      <div id="quizContent"></div>
+
+      <div class="quiz-progress" id="quizProgress"></div>
+      <div class="quiz-result" id="quizResult"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+  <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <!-- WORDS BAR (clickable) -->
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">29 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(3%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:3%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words ▾</div>
+    </div>
+
+    <!-- WORDS DETAIL TABLE (hidden, expands on click) -->
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Fuß</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">foot</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Fisch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fish</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">drei</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">three</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Herz</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">heart</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Apfel</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">apple</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">essen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">eat</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">machen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">make</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wasser</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">water</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">zehn</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">ten</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–2: 20 words · Click earlier chapters to review</td></tr>
+      </table>
+    </div>
+
+    <!-- PATTERNS BAR (clickable) -->
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">9 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(6%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:6%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns ▾</div>
+    </div>
+
+    <!-- PATTERNS DETAIL TABLE (hidden, expands on click) -->
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">gh = ch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">night/Nacht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">sw = schw</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">swim/schwimmen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">th = d/t</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">brother/Bruder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">V = F</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Vater = "Fahter"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">st/sp = sht/shp</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Stern = "shtern"</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">p = f (1st shift)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Fuß = foot</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">p = pf (2nd shift)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Pfeffer = pepper</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">t = z/ss (2nd shift)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Zeit = time</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">3</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–2: 4 patterns · Click earlier chapters to review</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Three
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        The decoder ring is now in your hands.<br>
+        Nine words. Two great shifts. The key to thousands more.<br>
+        You can now predict German words from English and understand why they differ.<br>
+        <br>
+        Cumulative: 18 words. 5 patterns. The intellectual foundation is complete.
+      </p>
+      <div class="chapter-nav" style="margin-top: 40px; text-align: center; justify-content: center;">
+        <a href="chapter2.html" class="nav-link">← Chapter 2</a>
+        <span style="color: rgba(212, 202, 187, 0.3); margin: 0 20px;">Chapter 3</span>
+        <a href="chapter4.html" class="nav-link">Chapter 4 →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+// ===== CHAPTER 3: SOUND SHIFTS - WAVE RINGS & MORPHING TEXT PARTICLES =====
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let ripples = [];
+let textParticles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createRipples() {
+  ripples = [];
+  const count = window.innerWidth < 600 ? 4 : 7;
+  for (let i = 0; i < count; i++) {
+    ripples.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: 0,
+      maxRadius: Math.random() * 250 + 150,
+      width: 2,
+      alphaStart: Math.random() * 0.6 + 0.3,
+      speed: Math.random() * 1.2 + 0.8,
+      startColor: Math.random() > 0.5 ? '#9b5ee8' : '#7b68ee',
+      endColor: Math.random() > 0.5 ? '#ff69b4' : '#ff8c42',
+      delay: Math.random() * 2000
+    });
+  }
+}
+
+function createTextParticles() {
+  textParticles = [];
+  const words = ['wort', 'word', 'sund', 'sound', 'laut', 'klang', 'ton'];
+  const count = window.innerWidth < 600 ? 10 : 20;
+  for (let i = 0; i < count; i++) {
+    textParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      word: words[Math.floor(Math.random() * words.length)],
+      morphIndex: 0,
+      opacity: Math.random() * 0.4 + 0.2,
+      size: Math.random() * 14 + 10
+    });
+  }
+}
+
+function lerpColor(color1, color2, t) {
+  const c1 = parseInt(color1.slice(1), 16);
+  const c2 = parseInt(color2.slice(1), 16);
+
+  const r1 = (c1 >> 16) & 255, g1 = (c1 >> 8) & 255, b1 = c1 & 255;
+  const r2 = (c2 >> 16) & 255, g2 = (c2 >> 8) & 255, b2 = c2 & 255;
+
+  const r = Math.round(r1 + (r2 - r1) * t);
+  const g = Math.round(g1 + (g2 - g1) * t);
+  const b = Math.round(b1 + (b2 - b1) * t);
+
+  return `rgb(${r},${g},${b})`;
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(10, 10, 46, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Update and draw ripples with color shifts
+  ripples.forEach(r => {
+    r.radius += r.speed;
+
+    const fade = Math.max(0, 1 - (r.radius / r.maxRadius));
+    const alpha = r.alphaStart * fade;
+    const colorT = r.radius / r.maxRadius;
+    const color = lerpColor(r.startColor, r.endColor, colorT);
+
+    ctx.beginPath();
+    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = r.width;
+    ctx.stroke();
+
+    // Glow effect
+    ctx.beginPath();
+    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha * 0.3;
+    ctx.lineWidth = r.width * 3;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    if (r.radius > r.maxRadius) {
+      r.radius = 0;
+      r.x = Math.random() * canvas.width;
+      r.y = Math.random() * canvas.height;
+      r.maxRadius = Math.random() * 250 + 150;
+      r.alphaStart = Math.random() * 0.6 + 0.3;
+      r.startColor = Math.random() > 0.5 ? '#9b5ee8' : '#7b68ee';
+      r.endColor = Math.random() > 0.5 ? '#ff69b4' : '#ff8c42';
+    }
+  });
+
+  // Draw text particles
+  textParticles.forEach(tp => {
+    tp.x += tp.vx;
+    tp.y += tp.vy;
+
+    if (tp.x < -50) tp.x = canvas.width + 50;
+    if (tp.x > canvas.width + 50) tp.x = -50;
+    if (tp.y < -50) tp.y = canvas.height + 50;
+    if (tp.y > canvas.height + 50) tp.y = -50;
+
+    tp.morphIndex = (tp.morphIndex + 0.01) % 1;
+
+    ctx.font = `${tp.size}px 'Cormorant Garamond', serif`;
+    ctx.fillStyle = `rgba(155, 94, 232, ${tp.opacity})`;
+    ctx.globalAlpha = tp.opacity * 0.6;
+    ctx.fillText(tp.word, tp.x, tp.y);
+    ctx.globalAlpha = 1;
+  });
+
+  // Spawn new ripples occasionally
+  if (Math.random() < 0.015) {
+    ripples.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: 0,
+      maxRadius: Math.random() * 250 + 150,
+      width: 2,
+      alphaStart: Math.random() * 0.6 + 0.3,
+      speed: Math.random() * 1.2 + 0.8,
+      startColor: Math.random() > 0.5 ? '#9b5ee8' : '#7b68ee',
+      endColor: Math.random() > 0.5 ? '#ff69b4' : '#ff8c42'
+    });
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createRipples();
+createTextParticles();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createRipples(); createTextParticles(); });
+
+// ===== SCROLL REVEAL =====
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// ===== PROGRESS BAR =====
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// ===== ETYMOLOGY CARDS =====
+document.querySelectorAll('.ety-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const isOpen = card.classList.contains('open');
+    document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+    if (!isOpen) {
+      card.classList.add('open');
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+  });
+});
+
+// ===== GERMAN WORDS (CLICKABLE) =====
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// ===== GUESS INTERACTION =====
+function guessAnswer(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Exactly! You have mastered the pattern.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite. Review the shift rules above...';
+    feedback.classList.add('show');
+  }
+}
+
+// ===== AUDIO PRONUNCIATION =====
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// ===== ADD SPEAKER BUTTONS =====
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// ===== QUIZ DATA & STATE =====
+const quizData = [
+  {
+    question: "Which shift rule explains why English 'heart' becomes German 'Herz'?",
+    options: ["t → z", "k → h (then h → z)", "p → f"],
+    correct: 0,
+    explanation: "The Second Consonant Shift changed t to z/s, so English 'heart' (with t) became German 'Herz' (with z sound). This shift happened around 600-800 CE in southern Germanic regions."
+  },
+  {
+    question: "English 'make' → German 'machen'. Which shift created this?",
+    options: ["First Shift (500 BCE)", "Second Shift (600-800 CE)", "Both shifts"],
+    correct: 1,
+    explanation: "The Second Shift (600-800 CE) transformed k to ch, turning English 'make' into German 'machen'. The k sound underwent this dramatic change in the southern German-speaking regions."
+  },
+  {
+    question: "What is the most likely German form of English 'clock'? (Hint: k → ch)",
+    options: ["klok", "Klack", "Glocke"],
+    correct: 2,
+    explanation: "English 'clock' has a k-sound, which the Second Shift changed to 'ch' in German. This explains why we get 'Glocke' (bell/clock) instead of a form matching English more closely."
+  },
+  {
+    question: "English 'apple' → German 'Apfel'. What does the 'pf' pattern show?",
+    options: ["Original 'p' fading, 'f' replacing it", "Random spelling variation", "First Shift corruption"],
+    correct: 0,
+    explanation: "The 'pf' shows the Second Shift in action: 'p' is becoming 'f', and both sounds appear together as a transition. This is how sound changes evolve—old and new sounds coexist briefly before one fully replaces the other."
+  },
+  {
+    question: "Why German 'Wasser' has double 's' while English 'water' has single 't'?",
+    options: ["German always doubles consonants", "Second Shift t → ss, short vowels required doubling", "Different word origins"],
+    correct: 1,
+    explanation: "The Second Shift changed t to z/s. In German 'Wasser', the short vowel caused consonant doubling (a grammar rule of German), so we get 'ss' instead of English 'water' with its single 't'."
+  },
+  {
+    question: "Predict: If English 'pack' exists, what would High German be?",
+    options: ["Packen", "Backen", "Packe"],
+    correct: 1,
+    explanation: "English 'pack' has 'p'; the Second Shift changes 'p' to 'pf' or 'f'. However, in this case (after a vowel), the shift becomes 'ck → ck' rule applies differently, and we get 'Backen' from a related root."
+  },
+  {
+    question: "English 'ten' → German 'zehn'. Which shift created the 'z'?",
+    options: ["First Shift", "Second Shift (t → z)", "Chinese influence"],
+    correct: 1,
+    explanation: "The Second Consonant Shift specifically changed 't' to 'ts' or 'z' (pronounced 'tsay-hun' in modern German). This dramatic change is one of the clearest markers separating German from English."
+  },
+  {
+    question: "How do German and Vietnamese preserve language history differently?",
+    options: ["German: sound history in spelling; Vietnamese: meaning through vocabulary layers", "Vietnamese is older and more primitive", "German changes constantly, Vietnamese stays same"],
+    correct: 0,
+    explanation: "German spelling reveals sound history—shifts like p→pf or t→z are frozen in spelling, showing ancient sound changes. Vietnamese preserves history through multiple vocabulary registers: native words alongside borrowed Sino-Vietnamese terms, encoding cultural contact and literary tradition instead of phonetic shifts."
+  }
+];
+
+let quizState = { currentQuestion: 0, score: 0, answered: false, selectedAnswer: -1 };
+
+function initializeQuiz() {
+  document.getElementById('quizContent').innerHTML = '';
+  quizState = { currentQuestion: 0, score: 0, answered: false, selectedAnswer: -1 };
+  displayQuestion();
+}
+
+function displayQuestion() {
+  const q = quizData[quizState.currentQuestion];
+  const quizContent = document.getElementById('quizContent');
+  const progress = `Question ${quizState.currentQuestion + 1} of ${quizData.length}`;
+
+  let html = `<div class="quiz-question">
+    <div class="quiz-q-text">${q.question}</div>
+    <div class="quiz-options">`;
+
+  q.options.forEach((opt, idx) => {
+    html += `<button class="quiz-opt" onclick="answerQuestion(${idx})" id="opt-${idx}">${opt}</button>`;
+  });
+
+  html += `</div><div class="quiz-feedback" id="qfeedback"></div></div>`;
+  quizContent.innerHTML = html;
+  document.getElementById('quizProgress').textContent = progress;
+}
+
+function answerQuestion(idx) {
+  if (quizState.answered) return;
+
+  quizState.answered = true;
+  quizState.selectedAnswer = idx;
+
+  const q = quizData[quizState.currentQuestion];
+  const isCorrect = idx === q.correct;
+
+  if (isCorrect) {
+    quizState.score++;
+    document.getElementById(`opt-${idx}`).classList.add('correct');
+    document.getElementById('qfeedback').innerHTML = `<strong style="color: #8ed69e;">Correct!</strong><br><em>${q.explanation}</em>`;
+    document.getElementById('qfeedback').classList.add('show');
+  } else {
+    document.getElementById(`opt-${idx}`).classList.add('incorrect');
+    const correctIdx = q.correct;
+    document.getElementById(`opt-${correctIdx}`).classList.add('correct-reveal');
+    document.getElementById('qfeedback').innerHTML = `<strong style="color: #e88a8a;">Not quite.</strong> The correct answer is "<strong>${q.options[correctIdx]}</strong>"<br><em>${q.explanation}</em>`;
+    document.getElementById('qfeedback').classList.add('show');
+  }
+
+  setTimeout(() => {
+    quizState.currentQuestion++;
+    if (quizState.currentQuestion < quizData.length) {
+      quizState.answered = false;
+      quizState.selectedAnswer = -1;
+      displayQuestion();
+    } else {
+      showQuizResult();
+    }
+  }, 3000);
+}
+
+function showQuizResult() {
+  const percentage = Math.round((quizState.score / quizData.length) * 100);
+  const passed = percentage >= 80;
+  const resultEl = document.getElementById('quizResult');
+  resultEl.className = `quiz-result show ${passed ? 'pass' : 'fail'}`;
+  resultEl.innerHTML = `<strong>Quiz Complete!</strong><br>Score: ${quizState.score} / ${quizData.length} (${percentage}%)<br>${passed ? 'Mastery achieved!' : 'Review and try again.'}`;
+  document.getElementById('quizContent').innerHTML = `<div style="text-align: center; padding: 20px;"><button onclick="initializeQuiz()" style="background: rgba(232, 164, 74, 0.15); border: 1px solid rgba(232, 164, 74, 0.3); color: var(--text-bright); padding: 10px 24px; border-radius: 8px; cursor: pointer; font-family: 'Cormorant Garamond', serif; font-size: 1rem;">Retake Quiz</button></div>`;
+}
+
+document.addEventListener('DOMContentLoaded', initializeQuiz);
+
+if (window.innerWidth < 600) {
+  particles = particles.slice(0, Math.floor(particles.length / 2));
+}
+
+document.querySelectorAll('.guess-btn, .ety-card').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 3;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

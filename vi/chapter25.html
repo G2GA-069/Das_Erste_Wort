@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 25: Die Mauer</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --east: #3a4a5a;
+    --west: #c4894a;
+    --wall: #2a2a2a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #0a0e1a 0%, #1a1410 40%, #8b5a2b 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  canvas {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  #content {
+    position: relative;
+    z-index: 10;
+  }
+
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  @media (max-width: 768px) {
+    .content { padding: 40px 20px; }
+    body { font-size: 18px; font-size: 1.125rem; }
+  }
+
+  /* --- HEADING STYLES --- */
+  h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--fire);
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--fire-glow);
+    margin: 80px 0 40px;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--german);
+    margin: 40px 0 24px;
+  }
+
+  .chapter-meta {
+    text-align: center;
+    font-style: italic;
+    color: rgba(212, 202, 187, 0.5);
+    margin-bottom: 60px;
+    font-size: 1.05rem;
+  }
+
+  /* --- NARRATIVE STYLES --- */
+  p.narrative {
+    margin: 24px 0;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+  p.narrative.emphasis {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--text-bright);
+    margin: 32px 0;
+  }
+
+  p.narrative.small {
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.65);
+  }
+
+  em { color: var(--fire-glow); font-style: italic; }
+  strong { color: var(--text-bright); font-weight: 600; }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  /* --- GERMAN WORD EMPHASIS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    text-shadow: 0 0 8px rgba(232, 164, 74, 0.5);
+  }
+
+  .german-word.revealed {
+    color: var(--fire-glow);
+  }
+
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    cursor: pointer;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+  .bridge-label.odt { background: rgba(90, 130, 150, 0.15); color: #7ab0d0; }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- COMPARISON TABLE --- */
+  .comparison-table {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    overflow-x: auto;
+  }
+
+  .comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+  }
+
+  .comparison-table th {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    padding: 12px;
+    text-align: left;
+    color: var(--fire-glow);
+    font-weight: 600;
+  }
+
+  .comparison-table td {
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    padding: 12px;
+    color: var(--text);
+  }
+
+  .comparison-table tr:nth-child(even) {
+    background: rgba(232, 164, 74, 0.04);
+  }
+
+  .east-word { color: #7ab0d0; font-weight: 600; }
+  .west-word { color: var(--west); font-weight: 600; }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: linear-gradient(135deg, rgba(30, 45, 60, 0.85), rgba(20, 30, 45, 0.85));
+    border-left: 4px solid rgba(232, 164, 74, 0.25);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 40px 0;
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .aside-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.92), rgba(12, 16, 28, 0.92));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+    display: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .quiz-section.show {
+    display: block;
+  }
+
+  .quiz-section.locked {
+    display: block;
+    opacity: 1;
+  }
+
+  .quiz-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--fire);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .quiz-subtitle {
+    text-align: center;
+    color: rgba(212, 202, 187, 0.65);
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+
+  .quiz-question {
+    margin: 36px 0;
+    padding: 24px;
+    background: rgba(232, 164, 74, 0.05);
+    border-left: 3px solid rgba(232, 164, 74, 0.2);
+    border-radius: 6px;
+  }
+
+  .quiz-question.answered {
+    background: rgba(74, 180, 100, 0.08);
+    border-left-color: #4ab464;
+  }
+
+  .question-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+  }
+
+  .question-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .option-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateX(4px);
+  }
+
+  .option-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .option-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .quiz-progress {
+    text-align: center;
+    color: rgba(212, 202, 187, 0.6);
+    font-size: 0.95rem;
+    margin-top: 12px;
+  }
+
+  .quiz-gate-message {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    color: var(--fire-glow);
+    margin-bottom: 40px;
+    font-weight: 500;
+  }
+
+  .quiz-submit {
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.2), rgba(244, 198, 122, 0.15));
+    border: 1px solid rgba(232, 164, 74, 0.4);
+    color: var(--fire-glow);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    padding: 14px 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 30px;
+    width: 100%;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.3), rgba(244, 198, 122, 0.25));
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .quiz-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* --- POST-QUIZ CONTENT (HIDDEN UNTIL PASSED) --- */
+  .post-quiz {
+    display: none;
+  }
+
+  .post-quiz.unlocked {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(30, 45, 60, 0.85), rgba(20, 30, 45, 0.85));
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 12px;
+    padding: 40px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    margin: 0 0 40px;
+    font-size: 2rem;
+  }
+
+  .collected-words {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .collected-word {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    animation: slideIn 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .cw-german {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--german);
+    margin-bottom: 8px;
+  }
+
+  .cw-english {
+    display: block;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.65);
+    font-style: italic;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+    margin: 80px 0 40px;
+  }
+
+  .end-line {
+    width: 60px;
+    height: 2px;
+    background: rgba(232, 164, 74, 0.3);
+    margin: 0 auto 40px;
+  }
+
+  .next-chapter {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1.1rem;
+    color: var(--german);
+  }
+
+  /* --- DIVIDER --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    padding: 40px 0;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .divider-symbol {
+    font-size: 1.5rem;
+    color: rgba(232, 164, 74, 0.5);
+    margin: 0 12px;
+  }
+
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: #e8a44a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) {
+    .title-screen h1 { font-size: 2.5rem; }
+    .title-screen .subtitle { font-size: 1.1rem; }
+    .narrative { font-size: 1.1rem; }
+    .ety-card { padding: 20px 16px; }
+    .guess-section { padding: 20px 16px; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .word-collection { padding: 28px 16px; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="wallcanvas"></canvas>
+
+<div id="content" class="content">
+
+  <!-- ==================== CHAPTER TITLE ==================== -->
+  <div class="chapter-header">
+    <h1>Die Mauer</h1>
+    <p class="chapter-meta">Chapter 25: The Wall (1945–1989)</p>
+  </div>
+
+  <!-- ==================== OPENING NARRATIVE ==================== -->
+  <div class="narrative-section">
+    <p class="narrative">
+      Six thousand years ago, you stood at a campfire on the steppe, listening to a mother speak the first language. The words she spoke — <em>Mutter, Vater, Wasser, Feuer</em> — carried across continents and centuries. They split and shifted and scattered across the world, but the roots remained. The patterns held. The family tree grew, but the trunk never broke.
+    </p>
+
+    <p class="narrative">
+      Until history decided to cut it.
+    </p>
+
+    <p class="narrative emphasis">
+      In 1945, Germany lay in ruins. The Third Reich had collapsed into ash. The victorious Allies — the Soviet Union, the United States, and Britain — faced a question that had no answer: <em>Who owned Germany?</em>
+    </p>
+
+    <div style="margin:20px auto;max-width:640px;padding:16px 20px;background:rgba(155,142,196,0.05);border-left:3px solid rgba(155,142,196,0.3);border-radius:0 8px 8px 0;font-size:0.82rem;color:rgba(212,202,187,0.6);line-height:1.6;">
+      <span style="color:#9b8ec4;font-weight:600;">Historical Context:</span> After Germany's defeat in 1945, the country was divided: West Germany (democratic, allied with the USA) and East Germany (communist, allied with the Soviet Union). In 1961, East Germany built the Berlin Wall to stop citizens fleeing west. It stood for 28 years until it fell on 9 November 1989, leading to German reunification in 1990.
+    </div>
+
+    <p class="narrative">
+      They could not agree. So they divided it. The Soviet Union took the east. The Americans and British took the west. Between them, Berlin itself was split into four zones. For a few years, they pretended it might work — that a divided country could somehow heal.
+    </p>
+
+    <p class="narrative">
+      But the <span class="german-word" data-card="mauer" onclick="speakGerman('Mauer')">Wall</span> was coming. The <span class="german-word" data-card="grenze" onclick="speakGerman('Grenze')">border</span> would soon become concrete and barbed wire.
+    </p>
+
+    <p class="narrative">
+      Then the Cold War began.
+    </p>
+
+    <p class="narrative">
+      In the east, the Soviets imposed their vision: central planning, collective farms, state control. Russian became fashionable in schools and offices. Soviet bureaucracy created new words at an industrial pace. The Communist ideology was not just a political system — it was a vocabulary, and it needed to be spoken.
+    </p>
+
+    <p class="narrative">
+      In the west, the Americans rebuilt. Markets opened. English flooded in with American goods and American culture. A radio played jazz. A teenager wore jeans. The West German vocabulary absorbed new words: <em>Computer, cool, Job, Jazz</em> — all English loans that would never sound the same in East German mouths.
+    </p>
+
+    <p class="narrative">
+      For sixteen years, the border between East and West remained merely a line on a map. Germans could still cross. Families could still visit. But every year, the vocabularies drifted a little further apart. The living language was still German — still grammatically Germanic, still rooted in the same ancestral soil — but the words were beginning to tell different stories.
+    </p>
+
+    <p class="narrative">
+      Then, on the night of August 13, 1961, everything changed.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 1: MAUER ==================== -->
+  <div class="ety-card" id="card-mauer" data-word="1" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Mauer</div>
+      <div class="word-pron">MAOW-er</div>
+    </div>
+    <div class="word-meaning">Wall; a barrier of stone or concrete</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">Mauer</span>
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*maurá (wall)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">English</span>
+      <span class="bridge-word">mortar, mural</span>
+      <span class="bridge-note">(Latin loans into Germanic languages)</span>
+    </div>
+    <div class="story">
+      Mauer appears in <strong>Chapter 5</strong> as a simple word for an ancient boundary. It meant protection, fortification, a line drawn by civilization. But on August 13, 1961, a Mauer became something else: a weapon. Soviet tanks rolled into Berlin in the night. Within hours, barbed wire ran through the city. Concrete blocks rose in a matter of days. Families woke to find their neighbors unreachable. The wall that was meant to protect the Communist state became a prison. Over the next 28 years, 140 people would die trying to cross it. But the word itself—<em>Mauer</em>—carried all of that weight. In the West, Germans spoke of "die Berliner Mauer" with horror. In the East, the regime called it "Antifaschistischer Schutzwall" (anti-fascist protective wall) — a bureaucratic lie wrapped in bureaucratic language.
+    </div>
+  </div>
+
+  <!-- ==================== WORD 2: GRENZE ==================== -->
+  <div class="ety-card" id="card-grenze" data-word="2" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Grenze</div>
+      <div class="word-pron">GREN-tseh</div>
+    </div>
+    <div class="word-meaning">Border, boundary, frontier</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">Grenze</span>
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*grenH- (to grind, separate)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">English</span>
+      <span class="bridge-word">grind, grain</span>
+      <span class="bridge-note">(Same root: to grind means to separate wheat from chaff)</span>
+    </div>
+    <div class="story">
+      Grenze was introduced in <strong>Chapter 5</strong> as a frontier — a place where one kingdom ended and another began, marked by geography. Mountains, rivers, forests. But with the Wall, Grenze became something new: <em>concrete</em>. In October 1961, the Wall became even more literal. The regime issued a travel ban. Grenze was no longer a line you might cross — it was a sentence you could not survive crossing. In the West, the phrase "die Grenze" meant yearning, danger, separation. In the East, Grenze-Übertritt (border crossing) was a crime. The same word developed entirely different emotional weight on each side, even as its German structure remained identical.
+    </div>
+  </div>
+
+  <!-- ==================== WORD 3: FREIHEIT ==================== -->
+  <div class="ety-card" id="card-freiheit" data-word="3" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Freiheit</div>
+      <div class="word-pron">FRAY-hite</div>
+    </div>
+    <div class="word-meaning">Freedom, liberty</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">Freiheit</span>
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*pry- (to love, favor)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">English</span>
+      <span class="bridge-word">friend, free, friday</span>
+      <span class="bridge-note">(Originally: those whom one favors, loves, feels bond with)</span>
+    </div>
+    <div class="story">
+      You encountered Freiheit in <strong>Chapter 15</strong>, as an Enlightenment ideal, a philosophical concept. But by the 1980s, Freiheit had become something that could be shouted. In Leipzig, on October 9, 1989, seventy thousand people marched through the streets. They carried candles. They chanted one phrase, over and over: <em>"Wir sind das Volk!"</em> (We are the people!) and <em>"Freiheit! Freiheit!"</em> The regime had enough tanks and guns to shoot them. But it didn't. The moment had come. Freiheit was no longer a word to read in philosophy books — it was breath, voice, collective will made audible.
+    </div>
+  </div>
+
+  <!-- ==================== DIVIDER ==================== -->
+  <div class="divider">
+    <span class="divider-symbol">◆</span>
+    <span class="divider-symbol">◆</span>
+    <span class="divider-symbol">◆</span>
+  </div>
+
+  <!-- ==================== COMPARISON: EAST VS WEST VOCABULARY ==================== -->
+  <div class="aside-box">
+    <div class="aside-title" style="color: var(--fire);">The Language Split: 28 Years of Divergence</div>
+    <p style="margin-bottom: 24px; font-size: 1rem;">
+      While the Wall stood, German remained German. The grammar did not change. The core vocabulary did not fracture. But the living language — the words people used every day — began to tell radically different stories. Here are words that developed on opposite sides of the same barrier:
+    </p>
+    <div class="comparison-table">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 30%;">MEANING</th>
+            <th style="width: 35%;">EAST GERMAN</th>
+            <th style="width: 35%;">WEST GERMAN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Roasted chicken</strong></td>
+            <td><span class="east-word">Broiler</span> (Soviet influence)</td>
+            <td><span class="west-word">Brathähnchen</span> (traditional)</td>
+          </tr>
+          <tr>
+            <td><strong>Weekend cottage</strong></td>
+            <td><span class="east-word">Datsche</span> (from Russian)</td>
+            <td><span class="west-word">Wochenendhaus</span> (literal: weekend house)</td>
+          </tr>
+          <tr>
+            <td><strong>Plastic/polymer</strong></td>
+            <td><span class="east-word">Plaste</span> (Soviet abbreviation)</td>
+            <td><span class="west-word">Kunststoff</span> (traditional German compound)</td>
+          </tr>
+          <tr>
+            <td><strong>Personal computer</strong></td>
+            <td><span class="east-word">Rechner</span> (calculator) — technology was restricted</td>
+            <td><span class="west-word">Computer</span> (English loan)</td>
+          </tr>
+          <tr>
+            <td><strong>Christmas ornament (angel)</strong></td>
+            <td><span class="east-word">Jahresendflügelfigur</span> (year-end-wing-figure — because "Christmas" was ideologically suspect)</td>
+            <td><span class="west-word">Christbaumengel</span> (Christmas-tree-angel, traditional)</td>
+          </tr>
+          <tr>
+            <td><strong>Cool/fashionable</strong></td>
+            <td><span class="east-word">Toll</span> (generic good)</td>
+            <td><span class="west-word">Cool</span> (English, especially from American music)</td>
+          </tr>
+          <tr>
+            <td><strong>Jeans</strong></td>
+            <td><span class="east-word">Nietenhose</span> (rivet-pants — derisive term for Western decadence)</td>
+            <td><span class="west-word">Jeans</span> (English loan, symbol of freedom)</td>
+          </tr>
+          <tr>
+            <td><strong>Job/occupation</strong></td>
+            <td><span class="east-word">Beruf</span> (traditional calling)</td>
+            <td><span class="west-word">Job</span> (English, market-oriented)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top: 20px; font-size: 0.95rem; color: rgba(212, 202, 187, 0.65);">
+      These are not typos or dialectal variations. These are the same people, speaking the same language, whose vocabularies grew so different that by 1989, there were whole sections of daily life where East and West Germans needed translation dictionaries to understand each other. But beneath it all — beneath the borrowed Russian words and the English loans — the deep structure remained German. The grammar was still German. The word order was still German. The roots were still Germanic. And that is what made reunification possible.
+    </p>
+  </div>
+
+  <!-- ==================== WORD 4: WIEDERVEREINIGUNG ==================== -->
+  <div class="ety-card" id="card-wiedervereinigung" data-word="4" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Wiedervereinigung</div>
+      <div class="word-pron">VEED-er-fer-EYN-ee-goong</div>
+    </div>
+    <div class="word-meaning">Reunification; coming together again</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">Wieder-</span>
+      <span class="bridge-note">(again) +</span>
+      <span class="bridge-word">Vereinigung</span>
+      <span class="bridge-note">(unification)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">Eins</span>
+      <span class="bridge-note">(one) → Einigung (unification)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*oinos (one)</span>
+      <span class="bridge-note">(appears in: one, unit, union, onion)</span>
+    </div>
+    <div class="story">
+      This compound word did not exist in 1961. It was unnecessary. Germany was already one country that had been divided. But by the 1980s, Wiedervereinigung became the most politically charged word in all of German language. In the East, to speak of Wiedervereinigung openly was subversive — it admitted that the division was unnatural, that the border was temporary, that unity was desirable. In the West, it was hope. In 1989, when the Wall fell, this single word — this perfect Germanic compound that could only be fully pronounced in German — became the name of the moment. On October 3, 1990, when the Federal Republic and the German Democratic Republic merged back into one state, the official term was: <em>Wiedervereinigung</em>. A compound word from a language that had never stopped being one language, even when it had been two.
+    </div>
+  </div>
+
+  <!-- ==================== WORD 5: OSTALGIE ==================== -->
+  <div class="ety-card" id="card-ostalgie" data-word="5" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Ostalgie</div>
+      <div class="word-pron">OST-ahl-ghee</div>
+    </div>
+    <div class="word-meaning">Nostalgia for the East; longing for East Germany</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">Ost</span>
+      <span class="bridge-note">(East) +</span>
+      <span class="bridge-word">-algie</span>
+      <span class="bridge-note">(from Nostalgie, nostalgia)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">English</span>
+      <span class="bridge-word">Nostalgia</span>
+      <span class="bridge-note">(Greek: nostos [homecoming] + algos [pain])</span>
+    </div>
+    <div class="story">
+      This word was invented <em>after</em> the Wall fell. It did not exist during the Cold War — because you cannot be nostalgic for something you cannot yet have lost. But in the months and years after 1989, East Germans experienced something strange and contradictory: they had fought for freedom, they had won reunification, they had access to markets and choice and Western goods — and yet many of them missed aspects of the East. The predictability. The sense of community. The cheap apartments and free childcare. Ostalgie emerged as a word to describe this sensation, and it became a phenomenon. Museums were built. Restaurants served authentic East German food. Television shows aired retro East German humor. The Wall had divided them, but now the language was doing something surprising: it was using this newly coined word to allow Easterners to process their own loss and displacement. Ostalgie was grief and irony mixed together, made visible in a single German compound.
+    </div>
+  </div>
+
+  <!-- ==================== WORD 6: WENDE ==================== -->
+  <div class="ety-card" id="card-wende" data-word="6" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Wende</div>
+      <div class="word-pron">VEN-duh</div>
+    </div>
+    <div class="word-meaning">The turning point; the peaceful revolution of 1989</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">wenden</span>
+      <span class="bridge-note">(to turn)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*wenH- (to turn, bend)</span>
+      <span class="bridge-note">(appears in: wand, wend, wind)</span>
+    </div>
+    <div class="story">
+      The simplest word, the most powerful. Wende literally means "turning" — but in German political language, it refers specifically to the months between September and November 1989 when the Wall fell and everything turned. Demonstrations in Leipzig. Pressure from Hungary, which had opened its border. Gorbachev's refusal to order Soviet tanks into East Berlin. On November 9, a confused East German official announced that travel restrictions would be lifted. Citizens assumed it meant immediately. Tens of thousands rushed to the Wall. Guards, unsure of their orders, simply opened the gates. By midnight, Germans from both sides were standing on top of the Wall with hammers and champagne. Wende is not a revolution in the traditional sense — no violent uprising, no storming of government buildings (though the Stasi headquarters were stormed). It was a <em>turning</em>, a peaceful reversal, a moment when history bent. The word itself captures that: <em>Wende</em>. A turn. A pivot. The moment the language remembered it had always been one language.
+    </div>
+  </div>
+
+  <!-- ==================== DIVIDER ==================== -->
+  <div class="divider">
+    <span class="divider-symbol">◆</span>
+    <span class="divider-symbol">◆</span>
+    <span class="divider-symbol">◆</span>
+  </div>
+
+  <!-- ==================== WORD 7: FLUCHT ==================== -->
+  <div class="ety-card" id="card-flucht" data-word="7" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Flucht</div>
+      <div class="word-pron">FLOOKHT</div>
+    </div>
+    <div class="word-meaning">Escape, flight, the act of fleeing</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">Flucht</span>
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*pleuk- (to flow, run away)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label eng">English</span>
+      <span class="bridge-word">flight, flee</span>
+      <span class="bridge-note">(Same root, same meaning across 6,000 years)</span>
+    </div>
+    <div class="story">
+      You first encountered Flucht in <strong>Chapter 17</strong>, in the context of migration and movement — an ancient Germanic instinct to migrate, to seek new lands. But between 1961 and 1989, Flucht acquired a new meaning for millions: escape from the German Democratic Republic. Over 3.5 million East Germans fled. Some paid human smugglers. Some hid in car trunks. Some built hot-air balloons. The most famous escapes — the families who made it to the West, the Stasi informants who defected — became legend. Flucht ceased to be merely a word about physical movement. It became a word about the fundamental human desire for freedom, about choosing to leave everything familiar in hope of something better. The Wall itself was built specifically to prevent Flucht. But the word, the concept, the drive — these were too deep in the Germanic psyche to ever be stopped by concrete.
+    </div>
+  </div>
+
+  <!-- ==================== WORD 8: HOFFNUNG ==================== -->
+  <div class="ety-card" id="card-hoffnung" data-word="8" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Hoffnung</div>
+      <div class="word-pron">HAWF-noong</div>
+    </div>
+    <div class="word-meaning">Hope; expectation of something good</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">hoffen</span>
+      <span class="bridge-note">(to hope) →</span>
+      <span class="bridge-word">Hoffnung</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*hop- (to leap, spring)</span>
+      <span class="bridge-note">(Metaphor: the heart leaps with hope)</span>
+    </div>
+    <div class="story">
+      You have met Hoffnung before — in <strong>Chapter 11</strong>, as an Enlightenment virtue; in <strong>Chapter 13</strong>, as a medieval concept. But in the autumn of 1989, Hoffnung took on a specific, lived form. In Leipzig, churches opened their doors. Thousands filled the streets with candles — thousands of small flames, each one representing Hoffnung. No speeches. No slogans. Just the medieval image of light against darkness, of hope made visible. The Stasi tried to repress the demonstrations, but something stopped them. Maybe it was the sheer numbers. Maybe it was the deep German reverence for order and rule of law, which even the secret police could not completely override. But maybe it was also the word itself — <em>Hoffnung</em> — echoing through centuries of German literature, of German philosophy, of German culture. A word that had meant something sacred for hundreds of years, now being lived out in real time, in the streets, in the moment.
+    </div>
+  </div>
+
+  <!-- ==================== WORD 9: ZUSAMMENWACHSEN ==================== -->
+  <div class="ety-card" id="card-zusammenwachsen" data-word="9" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Zusammenwachsen</div>
+      <div class="word-pron">tsoo-ZAH-men-VAHKS-en</div>
+    </div>
+    <div class="word-meaning">Growing together; organic integration and reunion</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">zusammen</span>
+      <span class="bridge-note">(together) +</span>
+      <span class="bridge-word">wachsen</span>
+      <span class="bridge-note">(to grow)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*seme (together)</span>
+      <span class="bridge-note">(Proto-Germanic: sam-a)</span>
+    </div>
+    <div class="story">
+      On November 10, 1989, the day after the Wall fell, West German Chancellor Willy Brandt stood at the Brandenburg Gate. He had spent decades advocating for better relations with the East. As he looked at the falling Wall, he spoke a phrase that would define everything that followed: <em>"Jetzt wächst zusammen, was zusammen gehört."</em> (Now what belongs together is growing together.) The word Zusammenwachsen is not like Wiedervereinigung. Wiedervereinigung implies a forceful, political act — two states merging into one. But Zusammenwachsen means something slower, deeper, more organic: the process of growing together, like two trees whose roots intertwine, like a forest healing after a fire. It acknowledged that reunification would not happen instantly, that it would require time, effort, and the difficult work of allowing two separate identities to gradually become one. Twenty years later, German national identity still contained traces of both East and West. But the language knew what to call this process: Zusammenwachsen. Growing together. Still happening. Still alive.
+    </div>
+  </div>
+
+  <!-- ==================== WORD 10: AUFBRUCH ==================== -->
+  <div class="ety-card" id="card-aufbruch" data-word="10" data-toggle="true">
+    <div class="word-header" onclick="toggleCard(this)">
+      <div class="word-main">Aufbruch</div>
+      <div class="word-pron">OWFF-brookh</div>
+    </div>
+    <div class="word-meaning">Breaking upward; departure; new beginning; a surge of energy</div>
+    <div class="bridge">
+      <span class="bridge-label deu">German</span>
+      <span class="bridge-word">auf</span>
+      <span class="bridge-note">(up) +</span>
+      <span class="bridge-word">Bruch</span>
+      <span class="bridge-note">(break)</span>
+    </div>
+    <div class="bridge">
+      <span class="bridge-label pie">PIE</span>
+      <span class="bridge-word">*epi (up) + *bhreg (to break)</span>
+      <span class="bridge-note">(Metaphorically: breaking upward, as a plant breaks through soil)</span>
+    </div>
+    <div class="story">
+      In the months after the Wall fell, the word everyone was using was <em>Aufbruch</em>. Not just reunification — something more. A sense of breaking free, of upward momentum, of new possibilities opening. It was used to describe the energy of the reunification process, the optimism about a new Germany, the sense that history was finally moving in the right direction. Aufbruch contains both breaking and rising — you break open something old so that something new can grow upward. It is perhaps the most Germanic way to describe what happened in 1989 and 1990: not just politics, not just bureaucracy, but a literal and metaphorical breaking open, a moment where the past cracked apart and the future surged upward through the fissure. Twenty-five chapters into your journey — from the steppe campfire to the falling Wall — you have learned to recognize how German handles transformation. It is always about compound words, about holding multiple meanings simultaneously. Aufbruch is the breaking and the rising, both at once, captured in a single word that has carried meaning in German for centuries.
+    </div>
+  </div>
+
+  <!-- ==================== NARRATIVE: VIETNAM BRIDGE ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(196, 154, 108, 0.3);">
+    <div class="aside-title" style="color: var(--vietnamese);">Vietnam's Division: A Parallel Story</div>
+    <p>
+      As Germany divided and reunified through language, an almost identical division was unfolding in Vietnam. From 1954 to 1975, the 17th parallel split one country into two: the Democratic Republic in the North, the Republic of Vietnam in the South. Two governments. Two political systems. One language — Vietnamese — but two evolving vocabularies. The North adopted Soviet and Chinese loanwords; the South absorbed American and French terms. The Vietnamese word for reunification is <span style="color: var(--vietnamese); font-weight: 600;">thống nhất</span> (thống = unite, nhất = one) — a Sino-Vietnamese compound that, like the German <span class="german-word" onclick="speakGerman('Wiedervereinigung')">Wiedervereinigung</span>, contains the dream in its structure: making one from two. When reunification came in 1975, the linguistic scars healed faster than the political ones — just as they did in Germany after 1989.
+    </p>
+  </div>
+
+  <!-- ==================== DIVIDER ==================== -->
+  <div class="divider">
+    <span class="divider-symbol">◆</span>
+    <span class="divider-symbol">◆</span>
+    <span class="divider-symbol">◆</span>
+  </div>
+
+  <!-- ==================== REFLECTION ==================== -->
+  <div class="narrative-section">
+    <p class="narrative emphasis">
+      In 1989, when you heard East and West Germans speaking to each other for the first time in 28 years, something remarkable happened: they understood each other. Despite the ideologies and walls and decades of <span class="german-word" data-card="flucht" onclick="speakGerman('Flucht')">escape</span> attempts and <span class="german-word" data-card="hoffnung" onclick="speakGerman('Hoffnung')">hope</span> kept alive, the language endured.
+    </p>
+
+    <p class="narrative">
+      The accents had diverged. The vocabulary had split. The ways of speaking had become alien. But the grammar was still the same. The word order was still the same. The roots were still the same Germanic soil from which they had all grown. <span class="german-word" data-card="freiheit" onclick="speakGerman('Freiheit')">Freedom</span> was not just a political concept—it was a linguistic reclamation.
+    </p>
+
+    <p class="narrative">
+      Political division could not break the language. Economic systems could not remake it. Ideologies could not destroy it. The Wall fell, and the language immediately began to heal — not because governments willed it, but because language is deeper than politics. Language is memory. Language is continuity. Language is the inherited sound of belonging. The <span class="german-word" data-card="wende" onclick="speakGerman('Wende')">turning point</span> of 1989 was more than historical—it was linguistic.
+    </p>
+
+    <p class="narrative">
+      You started this journey hearing a mother speak the first words by a campfire 6,000 years ago. You watched that language split and scatter. You followed it into Greek, into Latin, into Sanskrit. You saw it conquered by empires, absorbed into new cultures, and carried across oceans. You learned how vowels shift and consonants soften, how meaning drifts and words transform. And you witnessed <span class="german-word" data-card="wiedervereinigung" onclick="speakGerman('Wiedervereinigung')">reunification</span>—not just political, but linguistic.
+    </p>
+
+    <p class="narrative">
+      And now you have watched history reach a moment where language and politics collided, where a wall attempted to divide not just a nation but a language itself. For 28 years, the experiment continued. And when the wall fell, the language <span class="german-word" data-card="zusammenwachsen" onclick="speakGerman('Zusammenwachsen')">grew together</span> again, speaking its verdict: <em>We were never truly divided. We were always one.</em> This moment marked the <span class="german-word" data-card="aufbruch" onclick="speakGerman('Aufbruch')">new beginning</span> for a reunited language and people. Yet some would carry <span class="german-word" data-card="ostalgie" onclick="speakGerman('Ostalgie')">Ostalgie</span>—nostalgia for the East—forward into the future.
+    </p>
+
+    <p class="narrative emphasis">
+      The words remember. The words always remember.
+    </p>
+  </div>
+
+
+  <!-- ==================== POST-QUIZ CONTENT ==================== -->
+  <div class="post-quiz" id="post-quiz-content">
+
+<!-- ==================== PATTERNS DISCOVERED ==================== -->
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+      <strong style="color: var(--text-bright);">Wieder- prefix for return and repetition</strong> — Wiedervereinigung (re+unification), Wiedersehen (seeing again). The prefix wieder encodes the hope of return, of things coming back together.<br><br>
+      <strong style="color: var(--text-bright);">Zusammen- prefix for togetherness</strong> — Zusammenwachsen (together+growing) captures the slow organic process of reunification. Not a sudden event but a gradual growing-together.<br><br>
+      <strong style="color: var(--text-bright);">Auf- prefix for upward movement</strong> — Aufbruch (up+break = new beginning, departure). When you break upward, you start something new. Aufstieg (rise), Aufklärung (enlightenment) follow the same pattern.<br><br>
+      <strong style="color: var(--text-bright);">Ostalgie: a neologism from history</strong> — Ost (east) + Nostalgie (nostalgia) = a word that could only exist after the Wall fell, capturing longing for a vanished world.
+    </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Twenty-Five</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Mauer</span><span class="cw-english">wall</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Grenze</span><span class="cw-english">border</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Freiheit</span><span class="cw-english">freedom</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Wiedervereinigung</span><span class="cw-english">reunification</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Ostalgie</span><span class="cw-english">nostalgia for the East</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Wende</span><span class="cw-english">the turning point</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Flucht</span><span class="cw-english">escape</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Hoffnung</span><span class="cw-english">hope</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Zusammenwachsen</span><span class="cw-english">growing together</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Aufbruch</span><span class="cw-english">new beginning</span></div>
+      </div>
+    </div>
+
+<!-- ==================== CONCEPTS LEARNED ==================== -->
+    <h3 style="margin-top:32px;">Concepts Learned in Chapter Twenty-Five</h3>
+    <div class="collected-words">
+      <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Wieder- Prefix</span><span class="cw-english">Wiedervereinigung, Wiedersehen — the hope of return</span></div>
+      <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Language Division</span><span class="cw-english">28 years of separation created two German vocabularies</span></div>
+      <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Neologisms from History</span><span class="cw-english">Ostalgie, Wende — new words for unprecedented events</span></div>
+      <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Auf- Prefix</span><span class="cw-english">Aufbruch, Aufklärung — breaking upward into something new</span></div>
+    </div>
+  <!-- ==================== QUIZ GATE (80% REQUIRED) ==================== -->
+  <div class="quiz-section locked" id="quiz-section">
+    <div class="quiz-title">Chapter 25 Knowledge Check</div>
+    <div class="quiz-subtitle">Answer at least 10 of 12 questions correctly (80%) to unlock the final word collection and continue.</div>
+    <div class="quiz-gate-message">Test your understanding of the words that divided and reunited a nation.</div>
+
+    <div id="quiz-container">
+      <!-- Questions will be inserted here by JavaScript -->
+    </div>
+
+    <button class="quiz-submit" onclick="submitQuiz()">Submit Quiz</button>
+  </div>
+
+<!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">250 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(29%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:29%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mauer</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">wall</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Grenze</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">border</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Freiheit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">freedom</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wiedervereinigung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">reunification</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ostalgie</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">nostalgia for East</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wende</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">turning point</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Flucht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">escape, flight</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Hoffnung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">hope</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zusammenwachsen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">growing together</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Aufbruch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">new beginning, departure</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~239 more words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–24</td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">53 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(36%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:36%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wieder- prefix return</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Wiedervereinigung (re+unification), Wiedersehen (seeing again)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Zusammen- togetherness</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Zusammenwachsen (together+growing)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Auf- upward direction</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Aufbruch (up+break = new beginning)</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Ostalgie neologism</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Ost + Nostalgie; only possible after the Wall</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">25</td></tr>
+      <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Earlier chapters</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~79 more patterns</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">1–24</td></tr>
+      </table>
+    </div>
+  </div>
+
+    <!-- ==================== CHAPTER END ==================== -->
+    <div class="scene" id="scene-end">
+      <div class="chapter-end">
+        <div class="end-line"></div>
+        <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+          End of Chapter Twenty-Five
+        </p>
+        <p class="narrative small" style="text-align: center;">
+          Ten words. The vocabulary of division and reunion.<br>
+          Twenty-five chapters. From the steppe to the falling Wall.<br>
+          Fifty-four patterns. One unbroken Germanic lineage.<br>
+          The wall is falling. The language is healing. The words remember.
+        </p>
+        <div class="next-chapter">
+          Chapter Twenty-Six: Die Gegenwart
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter24.html" class="nav-btn">← Chapter 24</a>
+    <a href="chapter26.html" class="nav-btn next">Chapter 26 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 25: DIVIDED GERMANY, FALLING WALL ---
+const canvas = document.getElementById('wallcanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let wallBlocks = [];
+let barbed = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createWallBlocks() {
+  wallBlocks = [];
+  const blockSize = 30;
+  const centerY = canvas.height / 2;
+  const wallStartX = canvas.width / 4;
+  const wallEndX = (3 * canvas.width) / 4;
+
+  for (let x = wallStartX; x < wallEndX; x += blockSize) {
+    for (let y = centerY - 150; y < centerY + 150; y += blockSize) {
+      wallBlocks.push({
+        x: x + (Math.random() - 0.5) * 5,
+        y: y + (Math.random() - 0.5) * 5,
+        w: blockSize - 2,
+        h: blockSize - 2,
+        vx: 0,
+        vy: 0,
+        rotation: 0,
+        rotationVel: 0,
+        life: 1,
+        maxLife: 1
+      });
+    }
+  }
+}
+
+function createParticles(eastSide) {
+  const count = window.innerWidth < 600 ? 15 : 30;
+  const side = eastSide ? 'east' : 'west';
+
+  for (let i = 0; i < count; i++) {
+    const x = eastSide ? Math.random() * (canvas.width / 2) : canvas.width / 2 + Math.random() * (canvas.width / 2);
+    const y = Math.random() * canvas.height;
+
+    particles.push({
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 2 + 1,
+      alpha: Math.random() * 0.5 + 0.3,
+      side: side,
+      life: 0.5
+    });
+  }
+}
+
+function createBarbedWire() {
+  barbed = [];
+  const centerY = canvas.height / 2;
+  const spacing = 50;
+
+  for (let x = 0; x < canvas.width; x += spacing) {
+    barbed.push({
+      x: x,
+      y: centerY,
+      amplitude: 10,
+      frequency: 0.05,
+      phase: Math.random() * Math.PI * 2,
+      offset: Math.random() * 20
+    });
+  }
+}
+
+function drawGuardTower(x, y, scale) {
+  const size = 40 * scale;
+
+  ctx.fillStyle = 'rgba(100, 100, 100, 0.3)';
+  ctx.fillRect(x - size / 2, y - size * 1.5, size, size * 2);
+
+  ctx.fillStyle = 'rgba(120, 120, 120, 0.25)';
+  ctx.beginPath();
+  ctx.moveTo(x - size / 3, y - size * 1.5);
+  ctx.lineTo(x + size / 3, y - size * 1.5);
+  ctx.lineTo(x + size / 4, y - size * 2);
+  ctx.lineTo(x - size / 4, y - size * 2);
+  ctx.fill();
+}
+
+function drawFrame(time) {
+  const scroll = window.scrollY / window.innerHeight;
+  const wallFallFactor = Math.max(0, Math.min(1, scroll - 0.8) * 5);
+
+  // Background split
+  const splitPoint = canvas.height / 2;
+
+  // East side (cool grey, top)
+  ctx.fillStyle = 'rgba(58, 74, 90, 0.3)';
+  ctx.fillRect(0, 0, canvas.width, splitPoint);
+
+  // West side (warm amber, bottom)
+  ctx.fillStyle = 'rgba(196, 137, 74, 0.2)';
+  ctx.fillRect(0, splitPoint, canvas.width, canvas.height);
+
+  // Draw uniform geometric particles (East)
+  ctx.fillStyle = 'rgba(122, 176, 208, 0.15)';
+  for (let i = 0; i < 40; i++) {
+    const x = ((i * 37) % canvas.width);
+    const y = (Math.sin(time * 0.001 + i) * 20 + (canvas.height * 0.25));
+    ctx.fillRect(x, y, 4, 4);
+  }
+
+  // Draw varied colorful particles (West)
+  const colors = ['rgba(232, 164, 74, 0.15)', 'rgba(244, 198, 122, 0.15)', 'rgba(196, 137, 74, 0.15)', 'rgba(232, 200, 150, 0.15)'];
+  for (let i = 0; i < 40; i++) {
+    const x = canvas.width / 2 + ((i * 37) % (canvas.width / 2));
+    const y = (Math.sin(time * 0.0008 + i) * 30 + (canvas.height * 0.75));
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.beginPath();
+    ctx.arc(x, y, 3 + Math.sin(time * 0.002 + i) * 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Draw main wall (cracks as scroll increases)
+  if (wallFallFactor < 1) {
+    drawWall(canvas.width / 2, splitPoint, wallFallFactor, time);
+  }
+
+  // Guard tower
+  drawGuardTower(canvas.width / 4, splitPoint - 60, 1);
+  drawGuardTower((3 * canvas.width) / 4, splitPoint - 60, 1);
+
+  // Barbed wire
+  drawBarbedWire();
+  ctx.strokeStyle = 'rgba(100, 80, 60, 0.3)';
+  ctx.lineWidth = 2;
+  for (let wire of barbed) {
+    ctx.beginPath();
+    for (let x = 0; x < canvas.width; x += 10) {
+      const y = wire.y + Math.sin(x * wire.frequency + wire.phase + wallFallFactor * Math.PI) * wire.amplitude;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // Wall falling particles
+  if (wallFallFactor > 0) {
+    drawFallingParticles(wallFallFactor, time);
+  }
+
+  // Merge particles at the end
+  if (wallFallFactor > 0.7) {
+    drawMergingParticles((wallFallFactor - 0.7) / 0.3);
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+function drawWall(x, y, fallFactor, time) {
+  const blockSize = 30;
+  const wallStartX = canvas.width / 4;
+  const wallEndX = (3 * canvas.width) / 4;
+
+  ctx.strokeStyle = 'rgba(80, 80, 80, 0.4)';
+  ctx.lineWidth = 1;
+
+  for (let bx = wallStartX; bx < wallEndX; bx += blockSize) {
+    for (let by = y - 150; by < y + 150; by += blockSize) {
+      const distFromCenter = Math.abs(bx - x);
+      const crackAmount = Math.pow(Math.max(0, 1 - distFromCenter / 200), 2) * fallFactor;
+
+      if (crackAmount > Math.random()) {
+        continue;
+      }
+
+      ctx.fillStyle = `rgba(60, 60, 60, ${0.4 - crackAmount * 0.3})`;
+      ctx.fillRect(bx + (Math.random() - 0.5) * crackAmount * 10, by + (Math.random() - 0.5) * crackAmount * 10, blockSize - 2, blockSize - 2);
+      ctx.strokeRect(bx, by, blockSize - 2, blockSize - 2);
+    }
+  }
+}
+
+function drawFallingParticles(fallFactor, time) {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+
+  const particleCount = Math.floor(fallFactor * 50);
+  for (let i = 0; i < particleCount; i++) {
+    const angle = (i / particleCount) * Math.PI * 2;
+    const distance = 50 + fallFactor * 150;
+    const x = centerX + Math.cos(angle) * distance;
+    const y = centerY + Math.sin(angle) * distance;
+
+    ctx.fillStyle = `rgba(100, 100, 100, ${0.6 * (1 - fallFactor)})`;
+    ctx.beginPath();
+    ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawMergingParticles(mergeFactor) {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+
+  // East particles (blue) moving toward center
+  ctx.fillStyle = `rgba(122, 176, 208, ${0.4 * mergeFactor})`;
+  for (let i = 0; i < 30; i++) {
+    const startX = (i * 30) % (canvas.width / 2);
+    const x = startX + (centerX - startX) * mergeFactor;
+    const y = centerY + (Math.sin(i) * 50) * (1 - mergeFactor);
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // West particles (amber) moving toward center
+  ctx.fillStyle = `rgba(232, 164, 74, ${0.4 * mergeFactor})`;
+  for (let i = 0; i < 30; i++) {
+    const startX = canvas.width / 2 + ((i * 30) % (canvas.width / 2));
+    const x = startX - (startX - centerX) * mergeFactor;
+    const y = centerY + (Math.sin(i + 10) * 50) * (1 - mergeFactor);
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "In what year was the Berlin Wall built?",
+    options: ["1957", "1961", "1965", "1968"],
+    correct: 1,
+    explanation: "The Berlin Wall was built in 1961 by the East German government to prevent citizens from fleeing to West Berlin. It became the physical symbol of the Cold War division and the 'Iron Curtain' separating communist Eastern Europe from democratic Western Europe."
+  },
+  {
+    question: "What does 'Wende' specifically refer to?",
+    options: ["The wall construction", "The peaceful revolution of 1989", "The Cold War", "East German army"],
+    correct: 1,
+    explanation: "Wende (literally 'turning point' or 'turning') refers to the peaceful revolution of 1989 that led to the fall of the Berlin Wall and German reunification. It represents a historical turning point—the moment when an entire nation changed direction."
+  },
+  {
+    question: "Which of these is an East German word that doesn't have a West German equivalent?",
+    options: ["Computer", "Datsche", "Freiheit", "Hoffnung"],
+    correct: 1,
+    explanation: "Datsche (from Russian dacha) is a dacha or summer cottage—a word that arose in East Germany due to Soviet influence. While 'Freiheit' (freedom), 'Hoffnung' (hope), and 'Computer' existed in both Germanies, 'Datsche' was distinctly Eastern European."
+  },
+  {
+    question: "What does 'Ostalgie' mean?",
+    options: ["Eastern anger", "Nostalgia for the East", "Eastern politics", "Eastern music"],
+    correct: 1,
+    explanation: "Ostalgie (Ost = East + Nostalgie = nostalgia) is nostalgia for the East—the complex mixture of longing and sadness that some East Germans felt after reunification. It's a neologism that could only emerge AFTER the Wall fell."
+  },
+  {
+    question: "Which word means 'reunification' in German?",
+    options: ["Grenze", "Wiedervereinigung", "Zusammenwachsen", "Wende"],
+    correct: 1,
+    explanation: "Wiedervereinigung (wieder- = again + Vereinigung = unification) literally means 're-unification'—returning to a united state. This official term emphasized that Germany had once been whole and was becoming whole again after decades of division."
+  },
+  {
+    question: "Why did the Wall stand for 28 years?",
+    options: ["To prevent migration from West to East", "To prevent East Germans from fleeing West", "To facilitate trade", "To unite the German people"],
+    correct: 1,
+    explanation: "The Wall was built to stop East Germans from escaping to the West. East Germany was losing population as people risked their lives to flee to freedom. The Wall was meant to trap people inside the communist state."
+  },
+  {
+    question: "What does 'Zusammenwachsen' mean?",
+    options: ["Breaking apart", "Growing together", "Falling down", "Mixing up"],
+    correct: 1,
+    explanation: "Zusammenwachsen (zusammen- = together + wachsen = to grow) literally means 'to grow together.' This poetic term described the hoped-for process of East and West Germans integrating and healing after decades of separation and painful history."
+  },
+  {
+    question: "Which statement about German after the Wall fell is TRUE?",
+    options: ["East and West Germans could not understand each other", "The grammar had changed completely", "The deep structure of the language remained the same", "The languages had become completely different"],
+    correct: 2,
+    explanation: "Despite 28 years of separation, the deep structure of German—cases, genders, grammar, word order—remained unchanged. East and West Germans could understand each other because the core architecture of the language had survived intact; only surface vocabulary and usage had diverged."
+  },
+  {
+    question: "REVIEW: What does 'Flucht' mean (from Chapter 17)?",
+    options: ["Flight/escape", "Border", "Peace", "Gathering"],
+    correct: 0,
+    explanation: "Flucht means 'flight' or 'escape'—it describes the desperate journeys of people fleeing East Germany. Many died attempting this Flucht across the Wall, the minefields, and the border guards' bullets."
+  },
+  {
+    question: "REVIEW: What does 'Freiheit' mean (from Chapter 15)?",
+    options: ["Wall", "Freedom", "Border", "Movement"],
+    correct: 1,
+    explanation: "Freiheit (from free/frei + -heit, a noun suffix) means 'freedom.' For those in East Germany, Freiheit was not abstract—it meant the ability to travel freely, speak freely, think freely, and not be imprisoned by the state."
+  },
+  {
+    question: "What does the metaphor 'Aufbruch' suggest about change?",
+    options: ["It is sudden and violent", "It is slow and painful", "It is natural, organic growth breaking upward", "It is imposed from outside"],
+    correct: 2,
+    explanation: "Aufbruch (auf- = up + Bruch = break) suggests change as natural, organic growth—like a seed breaking upward through soil toward light. It implies that change is inevitable, vital, and part of nature's process, not something imposed from outside."
+  },
+  {
+    question: "Which word was invented AFTER the Wall fell?",
+    options: ["Mauer", "Grenze", "Ostalgie", "Wende"],
+    correct: 2,
+    explanation: "Ostalgie is a neologism that could only be created after the Wall fell—it requires both the existence of East Germany AND the perspective of looking back at it with nostalgia. The word itself is evidence of historical change and linguistic creativity after reunification."
+  }
+];
+
+function initQuiz() {
+  const quizContainer = document.getElementById('quiz-container');
+  quizContainer.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'quiz-question';
+    qDiv.id = `q-${idx}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = `${idx + 1}. ${q.question}`;
+    qDiv.appendChild(qText);
+
+    const optDiv = document.createElement('div');
+    optDiv.className = 'question-options';
+
+    q.options.forEach((opt, optIdx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(idx, optIdx, btn);
+      btn.dataset.questionIdx = idx;
+      btn.dataset.optionIdx = optIdx;
+      optDiv.appendChild(btn);
+    });
+
+    qDiv.appendChild(optDiv);
+    quizContainer.appendChild(qDiv);
+  });
+}
+
+function selectAnswer(questionIdx, optionIdx, button) {
+  const qDiv = document.getElementById(`q-${questionIdx}`);
+  const allBtns = qDiv.querySelectorAll('.option-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (parseInt(b.dataset.optionIdx) === quizData[questionIdx].correct) {
+      b.classList.add('correct');
+    }
+  });
+
+  if (optionIdx === quizData[questionIdx].correct) {
+    button.classList.add('correct');
+    qDiv.classList.add('answered');
+  } else {
+    button.classList.add('incorrect');
+  }
+}
+
+function submitQuiz() {
+  let correct = 0;
+  quizData.forEach((q, idx) => {
+    const qDiv = document.getElementById(`q-${idx}`);
+    const selected = qDiv.querySelector('.option-btn.correct');
+    if (selected) correct++;
+  });
+
+  const percentage = Math.round((correct / quizData.length) * 100);
+
+  if (percentage >= 80) {
+    document.getElementById('quiz-section').style.display = 'none';
+    document.getElementById('post-quiz-content').classList.add('unlocked');
+    animateWordCollection();
+  } else {
+    alert(`Score: ${percentage}% (${correct}/${quizData.length}). You need 80% (10 of 12 questions) to continue. Please review and try again.`);
+  }
+}
+
+function animateWordCollection() {
+  const words = document.querySelectorAll('.collected-word');
+  words.forEach(w => {
+    const delay = parseInt(w.dataset.delay) || 0;
+    w.style.animationDelay = `${delay}ms`;
+  });
+}
+
+function toggleCard(header) {
+  const card = header.closest('.ety-card');
+  card.classList.toggle('open');
+}
+
+// Initialize
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+initQuiz();
+drawFrame(0);
+
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(u);
+  }
+}
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+
+// --- ADD SPEAKER BUTTONS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '\u{1F50A}';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); speakGerman(wordEl.textContent.trim(), btn); });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+// --- ETYMOLOGY CARDS (CLICKABLE GERMAN WORDS) ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 25;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

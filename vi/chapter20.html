@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 20: Der Wanderer</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --forest-deep: #1a2428;
+    --forest-mid: #2d3e35;
+    --forest-light: #4a5f52;
+    --forest-accent: #7a9b8e;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(180deg,
+      #0f1a2a 0%,
+      #1a2d3a 15%,
+      #2a3f35 35%,
+      #3d5045 55%,
+      #5a6850 75%,
+      #8b7a40 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- FOREST CANVAS --- */
+  #forestCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .title-screen .chapter-period {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(232, 164, 74, 0.5);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.5s forwards;
+    margin-top: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 45, 55, 0.95), rgba(15, 32, 40, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 900px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--vietnamese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 35, 45, 0.9), rgba(12, 24, 32, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  .quiz-gate {
+    background: linear-gradient(135deg, rgba(50, 40, 60, 0.8), rgba(30, 20, 45, 0.8));
+    border: 1px solid rgba(155, 142, 196, 0.2);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .quiz-gate .gate-title {
+    font-size: 1.5rem;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+
+  .quiz-gate .gate-message {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.7);
+    margin-bottom: 24px;
+  }
+
+  .quiz-gate .quiz-question {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .quiz-question .quiz-prompt {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-btn {
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-btn:hover {
+    background: rgba(232, 164, 74, 0.12);
+    border-color: var(--fire);
+  }
+
+  .quiz-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.4);
+  }
+
+  .quiz-feedback {
+    font-size: 0.95rem;
+    margin-top: 12px;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .quiz-feedback.show { opacity: 1; }
+
+  .gate-result {
+    font-size: 1.2rem;
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .gate-result.show { opacity: 1; }
+
+  .gate-result.passed {
+    background: rgba(74, 180, 100, 0.1);
+    color: #8ed69e;
+  }
+
+  .gate-result.failed {
+    background: rgba(180, 74, 74, 0.1);
+    color: rgba(212, 202, 187, 0.7);
+  }
+
+  /* --- QUIZ SYSTEM --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .quiz-container h3 {
+    font-size: 1.4rem;
+    color: var(--text-bright);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .quiz-question {
+    margin-bottom: 24px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(232, 164, 74, 0.2);
+    border-color: var(--fire);
+    color: var(--text-bright);
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    background: rgba(232, 164, 74, 0.04);
+    border-color: rgba(232, 164, 74, 0.1);
+    color: rgba(212, 202, 187, 0.3);
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--fire-glow);
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.1);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(232, 164, 74, 0.05);
+    border: 1px solid rgba(232, 164, 74, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: rgba(212, 202, 187, 0.8);
+    line-height: 1.7;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+  }
+
+  .post-quiz-summary.show {
+    max-height: 400px;
+    opacity: 1;
+  }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- GRIMM BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-gate { padding: 24px 16px; }
+    .quiz-question { padding: 18px 14px; }
+    .quiz-btn { font-size: 0.95rem; padding: 10px 12px; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+  /* --- POST-QUIZ CONTENT --- */
+  .post-quiz {
+    display: none;
+  }
+
+  .post-quiz.revealed {
+    display: block;
+    animation: fadeUp 1s ease;
+  }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="forestCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Twenty</div>
+    <h1>Der Wanderer</h1>
+    <div class="subtitle">The Wanderer</div>
+    <div class="chapter-period">~1780–1830 CE</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE FOREST ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      It is 1815. A man walks through a forest at dusk, his coat pulled tight against autumn wind. He is not thinking. He is moving — not toward a destination, but away from the world that has demanded everything from him: reason, order, explanation, <em>use</em>.
+    </p>
+
+    <p class="narrative">
+      His name is Johann Wolfgang von Goethe, the greatest German writer of his age, and he is fleeing.
+    </p>
+
+    <p class="narrative">
+      Two generations earlier, the Enlightenment had promised that reason would perfect the world. Descartes said: <em>I think, therefore I am.</em> Kant mapped the mind like surveyors mapping a kingdom — borders, categories, rules. The philosophes in Paris and Berlin reduced the human heart to mechanics, the human soul to mathematics.
+    </p>
+
+    <p class="narrative">
+      And it had worked. Remarkably well. The world was more orderly, more logical, more comprehensible than ever before.
+    </p>
+
+    <p class="narrative">
+      But something had broken in the breaking-down. Something had been lost in the explanation.
+    </p>
+
+    <p class="narrative">
+      The Enlightenment had forgotten that humans feel.
+    </p>
+
+    <p class="narrative">
+      And now, in the early years of the nineteenth century, a reaction was rising — not against reason itself, but against reason <em>alone</em>. If the Enlightenment asked "What can we think?" then the Romantics asked a different question: "What do we feel? What do we long for? What yearns in us?"
+    </p>
+
+    <p class="narrative">
+      Germany, more than any other nation, became the crucible of this transformation. And the German language — with its depth, its philosophy, its ability to compress entire emotions into single words — became the voice of Romanticism.
+    </p>
+
+    <p class="narrative">
+      The Romantics discovered something that the language had been holding all along: words that had no translation. Words that could not be borrowed or borrowed back. Words that expressed feelings so specifically German, so specific to the Romantic imagination, that other languages could only stammer around them.
+    </p>
+
+    <p class="narrative emphasis">
+      These were the words that would define an age. And they still speak today.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 2: SEHNSUCHT ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The forest deepens. The light is failing. And in Goethe's chest, a feeling swells that he cannot name in French, nor in Italian, nor in the English of Shakespeare and Milton. It is not quite desire. It is not quite sadness. It is not longing for a place he has been, nor yearning for a person he knows.
+    </p>
+
+    <p class="narrative">
+      It is a hunger for something he has never had and might never find. A ache so fundamental that it has become the ache itself, the hunger that hungers for hunger, the seeking that seeks for seeking.
+    </p>
+
+    <p class="narrative">
+      He thinks the German word: <span class="german-word" data-card="sehnsucht">Sehnsucht.</span>
+    </p>
+
+    <p class="narrative">
+      Sehnsucht. The closest English can offer is "yearning" or "longing" — but these are thin words compared to the thing itself. "Yearning" is an emotion. Sehnsucht is an addiction. A sickness. A craving that creates itself, feeding on itself, becoming more desperate precisely because it cannot be satisfied.
+    </p>
+
+    <p class="narrative">
+      In 1774, young Goethe had published <em>The Sorrows of Young Werther</em>, a novel so soaked in Sehnsucht that it drove readers across Europe to suicide. They called it the "Werther Fever." Young men wore blue coats and yellow waistcoats, Werther's costume, and shot themselves in imitation of his despair. The novel was banned in several countries. People feared it.
+    </p>
+
+    <p class="narrative">
+      And yet: Sehnsucht was exactly what millions of souls felt and could not express. The word gave shape to the shapeless. It validated the ache.
+    </p>
+
+    <!-- SEHNSUCHT etymology card -->
+    <div class="ety-card" id="card-sehnsucht">
+      <div class="word-header">
+        <span class="word-main">Sehnsucht</span>
+        <span class="word-pron">/ˈzeːnzʊxt/</span>
+      </div>
+      <div class="word-meaning">an addictive yearning for something you've never had and might never find — the hunger that creates itself</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Sehnen (to yearn) + Sucht (addiction/seeking)</span>
+        <span class="bridge-note">— a compound that is greater than its parts</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">yearning / longing</span>
+        <span class="bridge-note">— pale shadows of the German intensity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Tưởng nhớ</span>
+        <span class="bridge-note">— longing/nostalgia (tưởng = think, nhớ = miss; for what is lost in time)</span>
+      </div>
+      <div class="story">
+        Sehnsucht cannot be translated because the English Enlightenment and Vietnamese philosophy both valued different things than German Romanticism. English prefers concrete nouns and simple verbs — yearning is an action, a thing you do. Vietnamese understands longing as tied to temporal loss and harmony with nature — you miss someone or something that was, or you seek balance with the cosmos. But Sehnsucht is neither. It is a permanent condition of the soul. It is the hunger for something that may never have existed. The Romantics felt that no English or Vietnamese concept could capture it, and they were right. This is what happens when a culture creates emotions before it has words — then the words come, and they are untranslatable.
+      </div>
+    </div>
+
+    <p class="narrative">
+      The word entered European consciousness as a distinctly Germanic contribution to human feeling. If the English had given the world empiricism and Parliament, if the French had given the world revolution and reason, then Germany was giving the world the knowledge of longing itself — the philosophical understanding that desire can be more real, more true, more worthy of attention than satisfaction ever could be.
+    </p>
+
+    <p class="narrative">
+      Sehnsucht was not something to cure. It was something to cultivate.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: WANDERLUST & WELTSCHMERZ ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      If Sehnsucht is the feeling, then <span class="german-word" data-card="wanderlust">Wanderlust</span> is its expression. <em>Wandern</em> (to wander) + <em>Lust</em> (desire, appetite). The itch to move. The need to be elsewhere.
+    </p>
+
+    <p class="narrative">
+      This is not the tourist's desire to see sights. It is not ambition, not exploration for knowledge. It is the deep, irrational compulsion to put one foot in front of the other, to watch the landscape change, to feel the world press against you from all sides and know that you are small and the world is vast and that is the most important truth.
+    </p>
+
+    <p class="narrative">
+      The Romantics walked. They walked mountains. They walked forests. They walked across Europe with nothing but a notebook and a dream. Some, like the poet Heinrich Heine, walked so far that they never came home. Wanderlust was not a vacation. It was a calling. A compulsion. Sometimes a sickness.
+    </p>
+
+    <!-- WANDERLUST etymology card -->
+    <div class="ety-card" id="card-wanderlust">
+      <div class="word-header">
+        <span class="word-main">Wanderlust</span>
+        <span class="word-pron">/ˈvandɐlʊst/</span>
+      </div>
+      <div class="word-meaning">not just desire to travel, but an aching NEED to move, to be elsewhere, forever</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wandern (to hike) + Lust (desire/appetite)</span>
+        <span class="bridge-note">— the compound word native to German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wanderlust</span>
+        <span class="bridge-note">— English borrowed this directly and completely, unable to make one itself</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Lêu lổn / Dạo phượng</span>
+        <span class="bridge-note">— wandering/vagrancy (lêu lổn = wander aimlessly; more external than internal)</span>
+      </div>
+      <div class="story">
+        Wanderlust is one of the great German exports to English. The English borrowed it wholesale because they did not have an equivalent for this specifically Romantic feeling — the need not to travel TO somewhere but to travel AWAY from somewhere, to be perpetually in motion as a philosophy of life. The word has become so naturalized in English that many English speakers believe it is English. It is not. It is German, born in the early 1800s, when Romanticism declared that the greatest human virtue was restlessness. Vietnamese has words for wandering but not for this psychological state — the need to wander as an answer to an internal yearning.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And yet: even as the Romantics celebrated the beauty of longing and movement, another emotion grew alongside it. With eyes opened to feeling, they felt despair as never before. They felt the gap between how the world was and how it should be. And they named this gap:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="weltschmerz">Weltschmerz.</span> <em>Welt</em> (world) + <em>Schmerz</em> (pain).
+    </p>
+
+    <p class="narrative">
+      Weltschmerz is not sadness. It is not depression. It is the fundamental pain of consciousness itself — the awareness that the world will never be good enough, that suffering is inherent to existence, that even beauty contains the seed of its own destruction. It is the ache of enlightenment, the burden of seeing clearly.
+    </p>
+
+    <p class="narrative">
+      In 1818, Arthur Schopenhauer published <em>The World as Will and Representation</em>, a philosophical bombshell that declared: the world is fundamentally suffering, and enlightenment consists in recognizing this. The book was a masterpiece of despair, and it would influence thinkers for the next century. Wagner, Nietzsche, Sigmund Freud — all drew from Schopenhauer's vision of a world-pain that goes deeper than happiness, deeper than meaning.
+    </p>
+
+    <!-- WELTSCHMERZ etymology card -->
+    <div class="ety-card" id="card-weltschmerz">
+      <div class="word-header">
+        <span class="word-main">Weltschmerz</span>
+        <span class="word-pron">/ˈvɛltʃmɛʁts/</span>
+      </div>
+      <div class="word-meaning">the profound pain of consciousness — the gap between how the world is and how it should be</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Welt (world) + Schmerz (pain)</span>
+        <span class="bridge-note">— a compound that expresses cosmic despair</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">world-weariness / cosmic despair</span>
+        <span class="bridge-note">— English must use clunky phrases where German uses one word</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Nỗi đau thế gian</span>
+        <span class="bridge-note">— world-pain (nỗi = sorrow, đau = pain, thế gian = world; descriptive, not unified concept)</span>
+      </div>
+      <div class="story">
+        Weltschmerz entered English in the 1800s as a loan word, just like Wanderlust. Again, English lacked a native word for this specifically German Romantic feeling. But notice the difference: Wanderlust is movement, energy, a sickness that propels. Weltschmerz is stasis, knowing, a sickness that paralyzes. Together they form the Romantic paradox: the need to move in search of something that consciousness tells you will never be found. Walk forever in a world that is fundamentally broken. This is Romanticism in a nutshell.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: GEMÜTLICHKEIT & HEIMWEH ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But the Romantics, for all their celebration of restlessness and pain, also treasured something its opposite: warmth, belonging, the feeling of home.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="gemütlichkeit">Gemütlichkeit.</span>
+    </p>
+
+    <p class="narrative">
+      Say it aloud: ge-MYOO-tlich-kite. It is almost untranslatable, and yet its meaning is deeply clear: the sense of coziness, warmth, comfort, and belonging that comes from being in a room with people you love, around a fire, with wine and conversation and the knowledge that the world outside can wait.
+    </p>
+
+    <p class="narrative">
+      <em>Gemüt</em> means "disposition" or "soul." Add the suffix <em>-lich</em> (like) and then <em>-keit</em> (condition) and you get: the state of having your soul in the right condition. The feeling of rightness. Of fitting.
+    </p>
+
+    <p class="narrative">
+      English tries: coziness, comfort, conviviality, camaraderie. But none of these capture the full sense. Gemütlichkeit is not just physical warmth. It is not just social connection. It is a state of the whole being — a recognition that you are in the right place, with the right people, and this rightness is almost sacred.
+    </p>
+
+    <p class="narrative">
+      The Romantics loved Gemütlichkeit because they needed it as a counterweight to their wandering. Wanderlust pulls you out into the world. Gemütlichkeit calls you home. And tension between them — the need to move and the need to belong — became the central emotional dynamic of German Romantic literature.
+    </p>
+
+    <!-- GEMÜTLICHKEIT etymology card -->
+    <div class="ety-card" id="card-gemütlichkeit">
+      <div class="word-header">
+        <span class="word-main">Gemütlichkeit</span>
+        <span class="word-pron">/ɡəˈmyːtlɪçkaɪt/</span>
+      </div>
+      <div class="word-meaning">coziness, warmth, belonging — the soul in right condition</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gemüt (disposition/soul) + -lich (like) + -keit (condition)</span>
+        <span class="bridge-note">— untranslatable because it fuses soul + comfort + rightness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">coziness / comfort / conviviality</span>
+        <span class="bridge-note">— all partial, none complete</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Thoải mái / Ấm áp</span>
+        <span class="bridge-note">— comfort/warmth (thoải mái = comfortable, ấm áp = warm; more physical than spiritual)</span>
+      </div>
+      <div class="story">
+        Gemütlichkeit represents a distinctly German value: the cultivation of inner harmony and social warmth as a philosophy of life. It is not hedonism (seeking pleasure) but rather the seeking of right harmony. This concept emerged from German living patterns — long winters, cozy inns, communities bound together by shared culture. The English prefer "comfort" and "coziness" as external states; Germans see Gemütlichkeit as a state of being. Even today, it defines German culture in a way that no single English word can match.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But if Gemütlichkeit is the love of home, then the Romantics also knew its opposite: the ache of being away from it.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="heimweh">Heimweh.</span> <em>Heim</em> (home) + <em>Weh</em> (pain, woe).
+    </p>
+
+    <p class="narrative">
+      English has "homesickness." But again, the English word is weaker. To be sick is to be ill temporarily, waiting to recover. Heimweh is not a sickness to recover from. It is a fundamental condition of separation. It is the understanding that there is a place where you belong, and you are not there, and something in you will always ache from this distance.
+    </p>
+
+    <p class="narrative">
+      When Goethe left Weimar for Rome in 1786, seeking the classical beauty of Italy, he suffered intense Heimweh. He had built a home in Weimar, and leaving it — even for Rome — was to experience a pain of displacement that no physical ailment could explain.
+    </p>
+
+    <!-- HEIMWEH etymology card -->
+    <div class="ety-card" id="card-heimweh">
+      <div class="word-header">
+        <span class="word-main">Heimweh</span>
+        <span class="word-pron">/ˈhaɪmveː/</span>
+      </div>
+      <div class="word-meaning">homesickness as a deep, existential pain — the ache of displacement</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Heim (home) + Weh (pain/woe)</span>
+        <span class="bridge-note">— the compound is more than temporary illness</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">homesickness</span>
+        <span class="bridge-note">— implies temporary condition, recovery possible</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Nhớ nhung quê hương</span>
+        <span class="bridge-note">— homesickness (literal: village sorrow; tied to past, nostalgic rather than present)</span>
+      </div>
+      <div class="story">
+        Heimweh emerged as a concept in an age of increasing mobility, when people could actually leave home permanently for the first time. Medieval peasants stayed put. Romantics traveled. And Romantics invented a word for the pain of discovery that you could be away from home and still alive, conscious, suffering. This is tied to Romanticism's broader concern: the alienation of the self from the world, and the search for wholeness through feeling.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: FERNWEH ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But there is one more word, one that captures the paradox of the Romantic soul more perfectly than any other:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="fernweh">Fernweh.</span> <em>Fern</em> (far, distant) + <em>Weh</em> (pain).
+    </p>
+
+    <p class="narrative">
+      If Heimweh is homesickness — the pain of being away from a place you have known — then Fernweh is its mirror image: the sickness for distance. The ache for places you have never been and might never see. The longing for the far.
+    </p>
+
+    <p class="narrative">
+      Fernweh is Wanderlust's pain. It is Sehnsucht directed outward. It is the hunger that makes you stare at maps and dream of mountains you will never climb, peoples you will never meet, lives you will never live.
+    </p>
+
+    <p class="narrative">
+      No other language had a word for this — not English, not French, not Vietnamese. Because no other culture at that moment had theorized quite so thoroughly the psychology of longing for what you do not have and cannot possess.
+    </p>
+
+    <!-- FERNWEH etymology card -->
+    <div class="ety-card" id="card-fernweh">
+      <div class="word-header">
+        <span class="word-main">Fernweh</span>
+        <span class="word-pron">/ˈfɛʁnveː/</span>
+      </div>
+      <div class="word-meaning">the opposite of homesickness — longing for places you've never been</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Fern (far, distant) + Weh (pain)</span>
+        <span class="bridge-note">— the mirror of Heimweh, outward instead of inward</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">[no equivalent]</span>
+        <span class="bridge-note">— English has no single word for this feeling</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Khao khát vùng xa</span>
+        <span class="bridge-note">— longing for distance (khao khát = desire, vùng xa = distant place; descriptive, not unified)</span>
+      </div>
+      <div class="story">
+        Fernweh is perhaps the most perfectly Romantic word. It captures the central Romantic insight: that humans suffer not only from what we lack but from the very knowledge that we lack it. The imagination makes us capable of longing for anything, anywhere. Once you know that other places and lives exist, you cannot unknow it. Fernweh is the pain of infinite possibility — all the lives you might live and never will. German named this pain. English has only the description. Vietnamese has only the practical concern of distance and harmony. But in German, Fernweh holds the whole Romantic philosophy in two syllables.
+      </div>
+    </div>
+
+    <p class="narrative">
+      This is the central paradox of Romanticism, captured in two words: Heimweh (the pain of distance from home) and Fernweh (the pain of distance from elsewhere). The Romantic is caught between them, unable to fully settle anywhere because everywhere else is calling.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: THE BROTHERS GRIMM ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      In 1806, two brothers named Jacob and Wilhelm Grimm were teenagers in the German state of Hesse. France had just defeated Prussia at the Battle of Jena, and Napoleon's armies were sweeping across German lands. The old German order — kingdoms, principalities, the Holy Roman Empire itself — was collapsing.
+    </p>
+
+    <p class="narrative">
+      And the brothers were gripped by a fear that was entirely new: that German culture itself would be lost. That the language, the stories, the traditions that made Germans German would be absorbed into French, replaced, forgotten.
+    </p>
+
+    <p class="narrative">
+      So they began to collect. They walked through villages, sat by firesides, and wrote down the stories they heard: tales that had been passed down for centuries, mouth to ear, generation to generation. <em>Cinderella. Snow White. Hansel and Gretel. Rapunzel.</em> These were not written fairy tales. They were <span class="german-word" data-card="märchen">Märchen</span> — stories of the folk, stories of the Volk, the people.
+    </p>
+
+    <p class="narrative">
+      <em>Märchen</em> comes from an old German word for "story" or "news" — <em>Mär</em> — which is related to the English "mare" (as in "nightmare" — literally a "mare," a demon that sits on your chest while you sleep and tells you terrible stories).
+    </p>
+
+    <p class="narrative">
+      The brothers published their collection in 1812. <em>Kinder- und Hausmärchen</em> (Children's and Household Tales) became a bestseller across Europe. They had preserved German culture in amber — or so they hoped.
+    </p>
+
+    <!-- MÄRCHEN etymology card -->
+    <div class="ety-card" id="card-märchen">
+      <div class="word-header">
+        <span class="word-main">Märchen</span>
+        <span class="word-pron">/ˈmɛʁçən/</span>
+      </div>
+      <div class="word-meaning">fairy tale — specifically a folk tale, story of the people</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Mär (old word for story/news) + -chen (diminutive)</span>
+        <span class="bridge-note">— a small story, a folk tale</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">fairy tale / folk tale</span>
+        <span class="bridge-note">— related to "mare" in nightmare (a demon telling stories)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Chuyện cổ tích</span>
+        <span class="bridge-note">— fairy tale (chuyện = story, cổ tích = fairy tale; focuses on audience, not form)</span>
+      </div>
+      <div class="story">
+        Märchen is the German word that best captures the form of story the Brothers Grimm were preserving: not fantasy literature (which came later), not written fables, but the living oral tradition of common people. The word carries in it a sense of something ancient, something from below, something democratic. When you say "Märchen," you are claiming these as the treasures of the ordinary people, not the elite. This is very German Romantic — the celebration of folk tradition against aristocratic refinement.
+      </div>
+    </div>
+
+    <p class="narrative">
+      But the brothers Grimm were not done. In fact, their fairy tales were just the beginning.
+    </p>
+
+    <div class="aside-box">
+      <div class="aside-title">The Grimm Dictionary: Preservation as Philosophy</div>
+      In 1838, Jacob Grimm began what would be the work of his life: the <em>Deutsches Wörterbuch</em>, or German Dictionary. It was not a book of definitions. It was an attempt to capture the entire history of German language in one place — every word, every meaning, every usage, documented from the earliest texts to the present. He wanted to create a comprehensive record of German linguistic culture before industrialization destroyed it. The first volume was published in 1854. The project continued until 1961. For over a century, scholars worked on it, tracing every word back to its roots, documenting every shift in meaning, every evolution of form. The message was clear: Language itself is a treasure. The words we inherit are the accumulated wisdom of our ancestors. To study language is to study culture, history, memory itself.
+    </div>
+
+    <p class="narrative">
+      This was not academic work in the modern sense. This was <em>preservation</em>. This was the Romantic insistence that cultural memory mattered, that language itself was a form of collective consciousness that needed to be protected and honored.
+    </p>
+
+    <p class="narrative">
+      And in the process, Jacob Grimm was revealing something extraordinary: that German contained words and patterns of meaning that no other language quite replicated. That to understand German was to understand not just a tool of communication but a philosophy of feeling, a way of being human.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE UNTRANSLATABLE ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      By the mid-1800s, it was becoming clear that German had produced a cluster of words that seemed to express feelings no other language had named. Sehnsucht. Weltschmerz. Wanderlust. Gemütlichkeit. These were not accidental neologisms or slang. They were systematic products of how German thought worked — its tendency to compound words, to fuse concepts, to create complex meanings from simple roots.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="stimmung">Stimmung</span> is one of them. It means "mood," yes, but more deeply than English "mood." <em>Stimmen</em> means "to tune" — as you tune a musical instrument. So Stimmung is the tuning of the soul. It is the state a person enters when they are attuned to the world around them. It is attunement itself.
+    </p>
+
+    <!-- STIMMUNG etymology card -->
+    <div class="ety-card" id="card-stimmung">
+      <div class="word-header">
+        <span class="word-main">Stimmung</span>
+        <span class="word-pron">/ˈʃtɪmʊŋ/</span>
+      </div>
+      <div class="word-meaning">mood / atmosphere / attunement — a tuning of the soul to the world</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stimmen (to tune) + -ung (condition)</span>
+        <span class="bridge-note">— not just feeling, but tuning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">mood / atmosphere</span>
+        <span class="bridge-note">— English loses the sense of active attunement</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Tâm trạng / Bầu không khí</span>
+        <span class="bridge-note">— mood/atmosphere (tâm trạng = heart-feeling, bầu không khí = atmosphere; separate concepts)</span>
+      </div>
+      <div class="story">
+        Stimmung is crucial to German Romanticism. The idea that you can be "tuned" to a place or a moment, that your soul can find the right frequency with the world — this is deeply Romantic. It suggests that consciousness is not separate from the world but can be synchronized with it. When German Romantics talk about finding the right Stimmung, they are talking about achieving harmony with existence itself. This is a fundamentally different philosophy than the English Enlightenment's separation of observer from observed.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And perhaps most beautiful of all: <span class="german-word" data-card="waldeinsamkeit">Waldeinsamkeit.</span> <em>Wald</em> (forest) + <em>Einsamkeit</em> (solitude).
+    </p>
+
+    <p class="narrative">
+      Waldeinsamkeit is the specific peace of being alone in a forest. Not loneliness — the word is precise. It is the solitude that is also a kind of belonging. To be in the forest alone is to be part of something vast and ancient and indifferent to your existence, and this recognition of your smallness is not terrifying but liberating. Your individual sorrows dissolve into the greater sorrow of existence itself.
+    </p>
+
+    <p class="narrative">
+      Every Romantic painter understood Waldeinsamkeit. Caspar David Friedrich painted it — lone figures standing in mist-shrouded forests, their backs to the viewer, contemplating infinities. When you look at Friedrich's paintings, you are looking at Waldeinsamkeit made visible.
+    </p>
+
+    <!-- WALDEINSAMKEIT etymology card -->
+    <div class="ety-card" id="card-waldeinsamkeit">
+      <div class="word-header">
+        <span class="word-main">Waldeinsamkeit</span>
+        <span class="word-pron">/ˈvaltaɪnzamkaɪt/</span>
+      </div>
+      <div class="word-meaning">the specific peace of being alone in a forest — solitude that is also belonging</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Wald (forest) + Einsamkeit (solitude)</span>
+        <span class="bridge-note">— a compound that exists in no other language</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">[no equivalent]</span>
+        <span class="bridge-note">— "solitude in nature" or "forest solitude" — descriptive, not felt</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Cô độc giữa rừng</span>
+        <span class="bridge-note">— forest solitude (cô độc = loneliness, rừng = forest; sadness, not peace)</span>
+      </div>
+      <div class="story">
+        Waldeinsamkeit may be the most poetic of all German Romantic words. It captures something that no single word in any other major language can express: the profound peace that comes from recognizing your solitude in the context of nature's vastness. You are alone, yes, but you are small in a forest that is enormous and old and will endure after you. This recognition is not depressing — it is liberating. Your personal loneliness becomes a participation in something greater. This is mysticism, but mysticism without religion, spirituality without dogma.
+      </div>
+    </div>
+
+    <p class="narrative">
+      Finally: <span class="german-word" data-card="dichtung">Dichtung.</span> Poetry.
+    </p>
+
+    <p class="narrative">
+      But Dichtung is more than poetry. <em>Dicht</em> means "dense" or "thick." Dichtung is dense speech. Speech so compressed that every word is heavy with meaning. Speech that is packed, concentrated, distilled down to its essence. To write Dichtung is to write so that every word matters, so that nothing can be removed or changed without destroying the whole.
+    </p>
+
+    <!-- DICHTUNG etymology card -->
+    <div class="ety-card" id="card-dichtung">
+      <div class="word-header">
+        <span class="word-main">Dichtung</span>
+        <span class="word-pron">/ˈdɪçtʊŋ/</span>
+      </div>
+      <div class="word-meaning">poetry / literature — speech made dense with meaning</div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Dicht (dense, thick) + -ung (condition)</span>
+        <span class="bridge-note">— poetry as density of meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">poetry</span>
+        <span class="bridge-note">— English loses the sense of compression and density</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">Thơ ca / Văn học</span>
+        <span class="bridge-note">— poetry/literature (thơ ca = poetry, văn học = literature; categories, not qualities)</span>
+      </div>
+      <div class="story">
+        Dichtung is a Germanic word that reflects a Germanic philosophy of literature: that poetry is not a category (modern literature broken into genres) but a quality — the quality of speech made dense with meaning. To be a Dichter (poet) is not to belong to a social class but to have the ability to compress significance into sound and symbol. Goethe was Germany's greatest Dichter, and later generations of Germans understood that Dichtung was not something you read — it was something you experienced, something that reorganized consciousness itself.
+      </div>
+    </div>
+
+    <div class="aside-box">
+      <div class="aside-title">The Untranslatables: Why These Words Exist Only in German</div>
+      There is a philosophical reason why German produced these untranslatable words while English and Vietnamese did not. The English Enlightenment was optimistic and empirical — it asked: "What can we know?" The German Romantic movement was introspective and philosophical — it asked: "What do we feel? What is the texture of consciousness itself?" English builds words for things and actions. German builds words for states and conditions. Sehnsucht, Waldeinsamkeit, Stimmung — these are all attempts to name internal psychological states that had no previous names. The German language, with its capacity for compounding words and stacking suffixes, gave poets and philosophers the tools to create these words precisely when they needed them. By contrast, Vietnamese philosophy, shaped by 1000 years of Chinese rule and its own Confucian heritage, was concerned with harmony between person and society — producing concepts like hòa hợp (harmony) and bổn phận (duty) that express social order rather than individual alienation. English was concerned with political order and empirical fact. German was concerned with the texture of human consciousness. Different concerns produce different vocabularies.
+    </aside-box>
+
+    <p class="narrative">
+      These ten words — Sehnsucht, Wanderlust, Weltschmerz, Gemütlichkeit, Heimweh, Fernweh, Märchen, Stimmung, Waldeinsamkeit, Dichtung — form the vocabulary of German Romanticism. They are the words that transformed how humans understand themselves. Before Romanticism, the European intellectual tradition was largely French and English: rational, empirical, outward-looking. After Romanticism, the German tradition of inwardness and philosophical intensity began to reshape European thought.
+    </p>
+
+    <p class="narrative">
+      Hegel, Marx, Wagner, Freud, Nietzsche — all were shaped by this Romantic linguistic revolution. All wrote in German. All used these words and built upon them. German became the language of depth, of psychology, of the interior landscape that Enlightenment reason had mapped but never inhabited.
+    </p>
+
+    <p class="narrative emphasis">
+      The Romantics did not just feel new feelings. They created words for feelings that humans might never have named before. And in naming them, they changed what it was possible to feel.
+    </p>
+  </div>
+
+  <!-- ==================== INTERACTIVE: QUIZ GATE ==================== -->
+  <div class="scene" id="scene-quiz-gate">
+    <div class="quiz-gate">
+      <div class="gate-title">The Path Forward</div>
+      <div class="gate-message">
+        You have walked through the forest with the Romantics. Now, before the mist clears, test whether these untranslatable words have taken root in your understanding. You must answer at least 8 of 10 questions correctly to proceed beyond the forest.
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">1. Sehnsucht is best understood as:</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) Ordinary homesickness for a familiar place</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) An addictive yearning for something never had and possibly never to be found</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) The scientific study of human emotion</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-1"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">2. What is the opposite of Heimweh?</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, true)">A) Fernweh — longing for places you've never been</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">B) Wanderlust — the simple desire to travel</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) Stimmung — emotional attunement</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-2"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">3. Weltschmerz means:</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) The physical pain of travel and wandering</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) The fundamental pain of consciousness — the gap between how the world is and how it should be</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) Sadness caused by weather changes</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-3"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">4. Which word is most closely related to musical tuning?</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, true)">A) Stimmung — from "stimmen" (to tune)</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">B) Dichtung — from "dicht" (dense)</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) Märchen — from "Mär" (story)</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-4"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">5. Gemütlichkeit emphasizes:</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) Physical luxury and wealth</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) The soul in right condition — warmth, belonging, and spiritual rightness</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) Intellectual superiority</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-5"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">6. English and other languages borrowed "Wanderlust" directly because:</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) German was the most powerful nation in Europe</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) They had no native word for this specific psychological need to move and wander</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) It is easier to pronounce than its English equivalent</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-6"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">7. What did the Brothers Grimm contribute to German linguistic preservation?</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) They invented the German language</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) They collected folk tales and later compiled the comprehensive German Dictionary to preserve language and culture</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) They created a system to teach German to foreigners</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-7"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">8. Waldeinsamkeit is best characterized as:</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) The fear of being lost in a dark forest</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) The specific peace of being alone in a forest — solitude that is also belonging</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) The desire to own property in a forest</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-8"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">9. Why did Romanticism produce these untranslatable words?</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) Germans were intentionally hiding from other cultures</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) German philosophy was introspective and psychological, asking "What do we feel?" while others asked "What can we know?"</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) German is inherently superior to other languages</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-9"></div>
+      </div>
+
+      <div class="quiz-question">
+        <div class="quiz-prompt">10. Dichtung means poetry, but more specifically emphasizes:</div>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="quizGuess(this, false)">A) Poetry written for public performance</button>
+          <button class="quiz-btn" onclick="quizGuess(this, true)">B) Speech so dense with meaning that every word is essential and cannot be removed</button>
+          <button class="quiz-btn" onclick="quizGuess(this, false)">C) Poetry that rhymes in a specific pattern</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-10"></div>
+      </div>
+
+      <div class="gate-result" id="gate-result"></div>
+    </div>
+  </div>
+
+  <!-- ==================== POST-QUIZ CONTENT ==================== -->
+  <div class="post-quiz" id="post-quiz-content">
+
+    <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+      <strong style="color: var(--text-bright);">Untranslatable Words</strong> — Sehnsucht (yearning+addiction = an aching desire for something you may never find), Weltschmerz (world+pain = the gap between how things are and how they should be), Waldeinsamkeit (forest+solitude = the specific peace of being alone in nature). These words have no English equivalent because they name feelings English speakers never needed to name.<br><br>
+      <strong style="color: var(--text-bright);">Opposite Pairs</strong> — Heimweh (home+woe = homesickness) and its mirror Fernweh (far+woe = the longing to be elsewhere). German creates emotional opposites through systematic construction.<br><br>
+      <strong style="color: var(--text-bright);">Grimm's Dictionary</strong> — The Brothers Grimm began their dictionary in 1838 to preserve this extraordinary vocabulary. It wasn't completed until 1961, 123 years later. They understood that German's compound power was worth protecting.<br><br>
+      <strong style="color: var(--text-bright);">Romantic Compounds</strong> — Waldeinsamkeit, Wanderlust — these are feeling-words. German compounds that capture entire emotional states in a single word. This is why German became the language of Romanticism.
+    </div>
+
+    <div class="scene" id="scene-collection">
+      <div class="word-collection">
+        <h3>Words Gathered in Chapter Twenty</h3>
+        <div class="collected-words">
+          <div class="collected-word" data-delay="0"><span class="cw-german">Sehnsucht</span><span class="cw-english">yearning</span></div>
+          <div class="collected-word" data-delay="100"><span class="cw-german">Wanderlust</span><span class="cw-english">desire to wander</span></div>
+          <div class="collected-word" data-delay="200"><span class="cw-german">Weltschmerz</span><span class="cw-english">world-pain</span></div>
+          <div class="collected-word" data-delay="300"><span class="cw-german">Gemütlichkeit</span><span class="cw-english">cozy warmth</span></div>
+          <div class="collected-word" data-delay="400"><span class="cw-german">Heimweh</span><span class="cw-english">homesickness</span></div>
+          <div class="collected-word" data-delay="500"><span class="cw-german">Fernweh</span><span class="cw-english">distance-sickness</span></div>
+          <div class="collected-word" data-delay="600"><span class="cw-german">Märchen</span><span class="cw-english">fairy tale</span></div>
+          <div class="collected-word" data-delay="700"><span class="cw-german">Stimmung</span><span class="cw-english">attunement</span></div>
+          <div class="collected-word" data-delay="800"><span class="cw-german">Waldeinsamkeit</span><span class="cw-english">forest solitude</span></div>
+          <div class="collected-word" data-delay="900"><span class="cw-german">Dichtung</span><span class="cw-english">dense poetry</span></div>
+        </div>
+      </div>
+
+      <!-- ==================== CONCEPTS LEARNED (THIS CHAPTER) ==================== -->
+      <div style="margin-top: 32px;">
+        <h3 style="text-align: center; color: rgba(212, 202, 187, 0.8); font-size: 1.1rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.2em;">Concepts Learned in Chapter Twenty</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+          <div class="collected-word" data-delay="0" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Untranslatable Words</span><span class="cw-english">Sehnsucht, Weltschmerz — no English equivalent</span></div>
+          <div class="collected-word" data-delay="100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Opposite Pairs</span><span class="cw-english">Heimweh/Fernweh — homesick vs farsick</span></div>
+          <div class="collected-word" data-delay="200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Grimm's Dictionary</span><span class="cw-english">Preservation of German's full vocabulary</span></div>
+          <div class="collected-word" data-delay="300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Romantic Compounds</span><span class="cw-english">Waldeinsamkeit, Wanderlust — feeling-words</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== QUIZ ==================== -->
+    <div class="quiz-container">
+      <h3>Test Your Understanding</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+
+    <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+      <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+      <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+          <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">200 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(23%)</span></span>
+        </div>
+        <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+          <div style="height:100%;width:23%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+        </div>
+        <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+      </div>
+      <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Sehnsucht</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">yearning, longing</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wanderlust</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">desire to wander</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Weltschmerz</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">world-pain, cosmic despair</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gemütlichkeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">cozy warmth, comfort</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Heimweh</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">homesickness</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Fernweh</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">distance-sickness, wanderlust</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Märchen</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">fairy tale</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stimmung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">attunement, mood, atmosphere</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Waldeinsamkeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">forest solitude</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Dichtung</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">poetry, dense expression</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td colspan="3" style="padding:8px 10px;text-align:center;color:rgba(212,202,187,0.4);font-size:0.8rem;border-top:1px solid rgba(232,164,74,0.08);">Chapters 1–19: ~190 more words</td></tr>
+</table>
+      </div>
+
+      <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+          <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">43 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(29%)</span></span>
+        </div>
+        <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+          <div style="height:100%;width:29%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+        </div>
+        <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+      </div>
+      <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Untranslatable words</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Sehnsucht, Weltschmerz, Waldeinsamkeit</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Opposite pairs</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Heimweh↔Fernweh systematic emotional opposites</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Grimm's Dictionary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">123 years preserving compound vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Romantic compounds</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Waldeinsamkeit, Wanderlust capture emotional states</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">20</td></tr>
+<tr><td colspan="3" style="padding:8px 10px;text-align:center;color:rgba(212,202,187,0.4);font-size:0.8rem;border-top:1px solid rgba(155,142,196,0.08);">Chapters 1–19: ~59 more patterns</td></tr>
+</table>
+      </div>
+    </div>
+
+    <!-- ==================== CHAPTER END ==================== -->
+    <div class="scene" id="scene-end">
+      <div class="chapter-end">
+        <div class="end-line"></div>
+        <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+          End of Chapter Twenty
+        </p>
+        <p class="narrative small" style="text-align: center;">
+          Ten words. Ten untranslatable moments of consciousness.<br>
+          Goethe still walks through the forest. The mist has not cleared.<br>
+          But now you speak his language.
+        </p>
+        <div class="next-chapter">
+          Chapter Twenty-One: The Modern World
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter19.html" class="nav-btn">← Chapter 19</a>
+    <a href="chapter21.html" class="nav-btn next">Chapter 21 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 20: ROMANTIC FOREST SCENE ---
+const canvas = document.getElementById('forestCanvas');
+const ctx = canvas.getContext('2d');
+let trees = [];
+let fireflies = [];
+let leaves = [];
+let mist = [];
+let wolfSilhouette = null;
+let moon = {};
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createForest() {
+  trees = [];
+  const treeCount = window.innerWidth < 600 ? 8 : 16;
+  for (let i = 0; i < treeCount; i++) {
+    trees.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height * 0.5 + Math.random() * canvas.height * 0.4,
+      height: Math.random() * 200 + 150,
+      width: Math.random() * 80 + 40,
+      type: Math.random() > 0.5 ? 'oak' : 'pine',
+      parallax: Math.random() * 0.3 + 0.1,
+      opacity: Math.random() * 0.4 + 0.2
+    });
+  }
+}
+
+function createFireflies() {
+  fireflies = [];
+  const count = window.innerWidth < 600 ? 20 : 40;
+  for (let i = 0; i < count; i++) {
+    fireflies.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height * 0.3 + Math.random() * canvas.height * 0.5,
+      pulseSpeed: Math.random() * 0.02 + 0.005,
+      pulseOffset: Math.random() * Math.PI * 2,
+      moveSpeed: Math.random() * 0.2 + 0.05,
+      movePhase: Math.random() * Math.PI * 2,
+      glowRadius: Math.random() * 3 + 2
+    });
+  }
+}
+
+function createFallingLeaves() {
+  leaves = [];
+  const count = window.innerWidth < 600 ? 15 : 30;
+  for (let i = 0; i < count; i++) {
+    leaves.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * 0.6 - 100,
+      vx: Math.random() * 0.3 - 0.15,
+      vy: Math.random() * 0.5 + 0.2,
+      rotation: Math.random() * Math.PI * 2,
+      spinSpeed: Math.random() * 0.02 - 0.01,
+      size: Math.random() * 4 + 2,
+      color: ['#c45d2c', '#e8a44a', '#7a5c3a', '#a67c52'][Math.floor(Math.random() * 4)]
+    });
+  }
+}
+
+function createMist() {
+  mist = [];
+  const count = 5;
+  for (let i = 0; i < count; i++) {
+    mist.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height * 0.6 + Math.random() * canvas.height * 0.3,
+      width: Math.random() * 400 + 200,
+      height: Math.random() * 80 + 60,
+      speed: Math.random() * 0.05 + 0.02,
+      opacity: Math.random() * 0.15 + 0.05
+    });
+  }
+}
+
+function drawTrees() {
+  trees.sort((a, b) => a.y - b.y);
+
+  trees.forEach(tree => {
+    const scroll = (window.scrollY / window.innerHeight) * tree.parallax;
+    const screenY = tree.y - scroll * 100;
+
+    ctx.fillStyle = `rgba(50, 60, 45, ${tree.opacity})`;
+
+    if (tree.type === 'pine') {
+      // Pine tree silhouette
+      ctx.beginPath();
+      ctx.moveTo(tree.x, screenY);
+      ctx.lineTo(tree.x - tree.width / 2, screenY + tree.height * 0.6);
+      ctx.lineTo(tree.x - tree.width / 3, screenY + tree.height * 0.5);
+      ctx.lineTo(tree.x - tree.width / 1.5, screenY + tree.height);
+      ctx.lineTo(tree.x + tree.width / 1.5, screenY + tree.height);
+      ctx.lineTo(tree.x + tree.width / 3, screenY + tree.height * 0.5);
+      ctx.lineTo(tree.x + tree.width / 2, screenY + tree.height * 0.6);
+      ctx.fill();
+    } else {
+      // Oak tree silhouette (rounded crown)
+      ctx.beginPath();
+      ctx.ellipse(tree.x, screenY + tree.height * 0.3, tree.width / 2, tree.height * 0.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillRect(tree.x - tree.width * 0.15, screenY + tree.height * 0.3, tree.width * 0.3, tree.height * 0.7);
+    }
+  });
+}
+
+function drawWindingPath() {
+  ctx.strokeStyle = 'rgba(80, 70, 60, 0.3)';
+  ctx.lineWidth = 80;
+  ctx.beginPath();
+  ctx.moveTo(canvas.width / 2, canvas.height);
+  for (let i = 0; i < 5; i++) {
+    const offset = Math.sin(Date.now() * 0.0003 + i) * 30;
+    ctx.lineTo(canvas.width / 2 + offset, canvas.height - (i + 1) * (canvas.height / 5));
+  }
+  ctx.stroke();
+}
+
+function drawFireflies(time) {
+  fireflies.forEach(ff => {
+    const pulse = Math.sin(time * ff.pulseSpeed + ff.pulseOffset) * 0.5 + 0.5;
+    const glow = Math.cos(time * ff.moveSpeed + ff.movePhase) * 30;
+
+    const gradient = ctx.createRadialGradient(ff.x, ff.y, 0, ff.x, ff.y, ff.glowRadius * 3);
+    gradient.addColorStop(0, `rgba(232, 200, 100, ${pulse * 0.8})`);
+    gradient.addColorStop(0.5, `rgba(232, 164, 74, ${pulse * 0.4})`);
+    gradient.addColorStop(1, `rgba(232, 164, 74, 0)`);
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(ff.x, ff.y, ff.glowRadius * 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = `rgba(255, 240, 150, ${pulse})`;
+    ctx.beginPath();
+    ctx.arc(ff.x, ff.y, ff.glowRadius * pulse, 0, Math.PI * 2);
+    ctx.fill();
+
+    ff.x += Math.cos(time * ff.moveSpeed + ff.movePhase) * 0.1;
+    if (ff.x < 0) ff.x = canvas.width;
+    if (ff.x > canvas.width) ff.x = 0;
+  });
+}
+
+function drawLeaves(time) {
+  leaves.forEach((leaf, i) => {
+    leaf.x += leaf.vx;
+    leaf.y += leaf.vy;
+    leaf.rotation += leaf.spinSpeed;
+
+    if (leaf.y > canvas.height + 50 || leaf.x < -50 || leaf.x > canvas.width + 50) {
+      leaves[i] = {
+        x: Math.random() * canvas.width,
+        y: -50,
+        vx: Math.random() * 0.3 - 0.15,
+        vy: Math.random() * 0.5 + 0.2,
+        rotation: Math.random() * Math.PI * 2,
+        spinSpeed: Math.random() * 0.02 - 0.01,
+        size: Math.random() * 4 + 2,
+        color: ['#c45d2c', '#e8a44a', '#7a5c3a', '#a67c52'][Math.floor(Math.random() * 4)]
+      };
+      leaf = leaves[i];
+    }
+
+    ctx.save();
+    ctx.translate(leaf.x, leaf.y);
+    ctx.rotate(leaf.rotation);
+    ctx.fillStyle = leaf.color;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, leaf.size, leaf.size * 0.7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+function drawMist(time) {
+  mist.forEach(m => {
+    m.x += m.speed;
+    if (m.x > canvas.width + m.width) m.x = -m.width;
+
+    const gradient = ctx.createLinearGradient(m.x, 0, m.x + m.width, 0);
+    gradient.addColorStop(0, `rgba(100, 120, 110, 0)`);
+    gradient.addColorStop(0.3, `rgba(100, 120, 110, ${m.opacity})`);
+    gradient.addColorStop(0.7, `rgba(100, 120, 110, ${m.opacity})`);
+    gradient.addColorStop(1, `rgba(100, 120, 110, 0)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(m.x, m.y, m.width, m.height);
+  });
+}
+
+function drawWolfSilhouette(time) {
+  if (!wolfSilhouette) {
+    wolfSilhouette = {
+      x: -200,
+      y: canvas.height * 0.7,
+      speed: 0.15,
+      visible: false,
+      nextAppear: Math.random() * 30000 + 10000
+    };
+  }
+
+  wolfSilhouette.nextAppear -= 16;
+  if (wolfSilhouette.nextAppear < 0) {
+    wolfSilhouette.visible = true;
+    wolfSilhouette.x += wolfSilhouette.speed;
+    if (wolfSilhouette.x > canvas.width + 200) {
+      wolfSilhouette.visible = false;
+      wolfSilhouette.nextAppear = Math.random() * 30000 + 10000;
+    }
+  }
+
+  if (wolfSilhouette.visible) {
+    ctx.fillStyle = 'rgba(40, 35, 30, 0.6)';
+    // Wolf silhouette
+    ctx.beginPath();
+    ctx.ellipse(wolfSilhouette.x, wolfSilhouette.y, 50, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Head
+    ctx.beginPath();
+    ctx.ellipse(wolfSilhouette.x + 40, wolfSilhouette.y - 15, 25, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Ears
+    ctx.beginPath();
+    ctx.ellipse(wolfSilhouette.x + 50, wolfSilhouette.y - 30, 10, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(wolfSilhouette.x + 30, wolfSilhouette.y - 28, 10, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Tail
+    ctx.strokeStyle = 'rgba(40, 35, 30, 0.6)';
+    ctx.lineWidth = 15;
+    ctx.beginPath();
+    ctx.moveTo(wolfSilhouette.x - 40, wolfSilhouette.y + 10);
+    ctx.quadraticCurveTo(wolfSilhouette.x - 60, wolfSilhouette.y - 20, wolfSilhouette.x - 50, wolfSilhouette.y - 35);
+    ctx.stroke();
+  }
+}
+
+function drawMoon(time) {
+  const scroll = window.scrollY / window.innerHeight;
+  const moonY = 60 + scroll * 100;
+
+  ctx.fillStyle = 'rgba(255, 240, 200, 0.9)';
+  ctx.beginPath();
+  ctx.arc(canvas.width - 80, moonY, 40, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(50, 70, 80, 0.8)';
+  ctx.beginPath();
+  ctx.arc(canvas.width - 70, moonY - 10, 35, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = `rgba(100, 140, 160, ${0.3 + Math.sin(time * 0.0003) * 0.1})`;
+  const halo = ctx.createRadialGradient(canvas.width - 80, moonY, 40, canvas.width - 80, moonY, 100);
+  halo.addColorStop(0, `rgba(100, 140, 160, 0.2)`);
+  halo.addColorStop(1, `rgba(100, 140, 160, 0)`);
+  ctx.fillStyle = halo;
+  ctx.fillRect(canvas.width - 180, moonY - 60, 200, 120);
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(15, 26, 42, 0.02)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawMoon(time);
+  drawMist(time);
+  drawTrees();
+  drawWindingPath();
+  drawLeaves(time);
+  drawFireflies(time);
+  drawWolfSilhouette(time);
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createForest();
+createFireflies();
+createFallingLeaves();
+createMist();
+drawMoon(0);
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  createForest();
+  createFireflies();
+  createFallingLeaves();
+  createMist();
+});
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- QUIZ INTERACTION ---
+let quizScore = 0;
+let quizAnswered = 0;
+
+function quizGuess(btn, correct) {
+  const section = btn.closest('.quiz-question');
+  const feedback = section.querySelector('.quiz-feedback');
+  const allBtns = section.querySelectorAll('.quiz-btn');
+
+  allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+  if (correct) {
+    btn.classList.add('correct');
+    quizScore++;
+    feedback.textContent = 'Correct! You understand the Romantic soul.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    allBtns.forEach(b => { if (b !== btn && !b.classList.contains('correct')) b.classList.add('incorrect'); });
+    feedback.textContent = 'Not quite right. The Romantics would have felt differently.';
+    feedback.classList.add('show');
+  }
+
+  quizAnswered++;
+
+  if (quizAnswered === 10) {
+    setTimeout(() => {
+      const gateResult = document.getElementById('gate-result');
+      const passed = quizScore >= 8;
+
+      gateResult.classList.add('show');
+      gateResult.classList.add(passed ? 'passed' : 'failed');
+
+      if (passed) {
+        gateResult.innerHTML = `
+          <strong>✓ The Mist Clears</strong><br><br>
+          You scored ${quizScore}/10. You have walked through the forest with understanding.
+          The untranslatable words have taken root in your consciousness.
+          You may proceed beyond.
+        `;
+        setTimeout(() => {
+          document.getElementById('post-quiz-content').classList.add('revealed');
+          gateResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 500);
+      } else {
+        gateResult.innerHTML = `
+          <strong>⚠ The Forest Holds You Still</strong><br><br>
+          You scored ${quizScore}/10. The path remains closed.
+          Reflect on the Sehnsucht, the Weltschmerz, the Waldeinsamkeit.
+          Re-read the stories. The Romantics demand deep feeling, not surface understanding.
+        `;
+      }
+    }, 800);
+  }
+}
+
+// --- MOBILE ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-btn').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+if (window.innerWidth < 600) {
+  fireflies = fireflies.slice(0, Math.floor(fireflies.length / 2));
+}
+
+// --- CHAPTER 20: ROMANTIC GERMAN WORDS QUIZ ---
+const quizData = [
+  {
+    question: "What does 'Sehnsucht' literally mean as a compound?",
+    options: ["to want + certainty", "to yearn + addiction", "to desire + softness", "to feel + sorrow"],
+    correct: 1,
+    explanation: "Sehnsucht comes from Sehnen (to yearn) + Sucht (addiction/seeking). It describes an addictive yearning for something you've never had and might never find."
+  },
+  {
+    question: "What was the 'Werther Fever'?",
+    options: ["A historical disease", "A political uprising", "A wave of suicides inspired by Goethe's novel about Sehnsucht", "A romantic poetry movement"],
+    correct: 2,
+    explanation: "Goethe's 1774 novel 'The Sorrows of Young Werther' expressed Sehnsucht so powerfully that readers across Europe were driven to suicide in imitation of the protagonist."
+  },
+  {
+    question: "What is the relationship between 'Wanderlust' and 'Sehnsucht'?",
+    options: ["They are synonyms", "Wanderlust is the action, Sehnsucht is the feeling that drives it", "Sehnsucht is ancient, Wanderlust is modern", "There is no relationship"],
+    correct: 1,
+    explanation: "If Sehnsucht is the deep yearning for the unreachable, Wanderlust is its expression — the itch to move, to be elsewhere, driven by that same longing."
+  },
+  {
+    question: "What does 'Heimweh' mean?",
+    options: ["A German home", "Homesickness — pain from being far from home", "Home + ache", "All of the above"],
+    correct: 3,
+    explanation: "'Heimweh' literally means 'home + pain' (Heim + Weh), expressing homesickness — the ache of being separated from a place you have known."
+  },
+  {
+    question: "What is 'Fernweh' in relation to 'Heimweh'?",
+    options: ["An older version", "The opposite — longing for distant places you've never been", "A mispronounciation", "A French borrowing"],
+    correct: 1,
+    explanation: "'Fernweh' is the mirror image of Heimweh: the pain of distance from elsewhere. While Heimweh is the pain of separation from home, Fernweh is the hunger for places far away."
+  },
+  {
+    question: "Who were the Brothers Grimm and what did they preserve?",
+    options: ["Philosophers who wrote about reason", "Collectors of German folk tales and creators of a comprehensive German dictionary", "Military leaders during the Napoleonic Wars", "Music composers of the Romantic era"],
+    correct: 1,
+    explanation: "Jacob and Wilhelm Grimm collected German folk tales (Märchen) published as 'Kinder- und Hausmärchen' and created the 'Deutsches Wörterbuch' to document German linguistic culture."
+  },
+  {
+    question: "What does 'Märchen' mean?",
+    options: ["A march or procession", "A type of music", "A fairy tale or folk story — literally 'small stories'", "A German holiday"],
+    correct: 2,
+    explanation: "'Märchen' comes from Mär (old word for story/news) + -chen (diminutive), meaning 'small stories' or folk tales. It captures the sense of living oral traditions from the common people."
+  },
+  {
+    question: "What did Jacob Grimm's German Dictionary attempt to preserve?",
+    options: ["Only modern German words", "The entire history of German language — every word, meaning, and usage from earliest texts to present", "Military terminology", "Latin roots only"],
+    correct: 1,
+    explanation: "The 'Deutsches Wörterbuch' was a comprehensive attempt to document all of German linguistic history, capturing cultural memory and the accumulated wisdom of ancestors."
+  },
+  {
+    question: "What does 'Stimmung' mean more deeply than the English word 'mood'?",
+    options: ["Depression", "The tuning of the soul to the world; attunement itself", "A musical piece", "A type of weather"],
+    correct: 1,
+    explanation: "'Stimmung' comes from 'stimmen' (to tune, as you tune an instrument). It means more than 'mood' — it's the soul being attuned to the world, a state of attunement."
+  },
+  {
+    question: "Why were German Romantic words like Sehnsucht considered untranslatable?",
+    options: ["They were too complicated", "No other culture had theorized such specific emotions or developed words to express them", "They were invented only for literature", "Translation technology didn't exist"],
+    correct: 1,
+    explanation: "The Romantic feeling-words were untranslatable because other languages (English, French, Vietnamese) had not conceptualized these emotions in the same way. German Romanticism created specific philosophical understandings of human longing that were unique to German culture."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Chapter 20 Insights</strong>
+      <p style="margin-top: 8px;">You have mastered the vocabulary of German Romanticism. Sehnsucht, Wanderlust, Heimweh, Fernweh, Stimmung, Gemütlichkeit — these words represent more than just feelings. They represent a philosophy of the soul. The Romantics believed that German possessed a unique capacity to express human longing, melancholy, and connection to place and possibility.</p>
+      <p style="margin-top: 8px;">The Brothers Grimm preserved these words and the stories that contained them, creating a German cultural archive. Through fairy tales and dictionary, they ensured that the Romantic understanding of the German soul would survive into the modern age. These untranslatable words remain uniquely German.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the summary.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+</script>
+
+</div><!-- end content -->
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 20;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

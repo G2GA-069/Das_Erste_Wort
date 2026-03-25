@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 6: The Great Migration</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --migration: #d9a77a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0e1a 40%, #3d2f1a 70%, #5a4a3a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- MIGRATION PARTICLES CANVAS --- */
+  #migration-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.zh {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- WORD DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    color: var(--vietnamese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOXES --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- QUIZ SECTION --- */
+  .quiz-container {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(12, 16, 28, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+  }
+
+  .quiz-container h3 {
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .quiz-question {
+    background: rgba(26, 35, 55, 0.6);
+    border: 1px solid rgba(232, 164, 74, 0.08);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .quiz-question.hidden {
+    display: none;
+  }
+
+  .quiz-question .q-text {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .quiz-option:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-option.selected {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+  }
+
+  .quiz-option.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-nav button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-nav button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .quiz-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .quiz-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--fire-glow);
+    margin: 24px 0;
+    font-weight: 500;
+  }
+
+  .quiz-reset {
+    text-align: center;
+  }
+
+  .quiz-reset button {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-reset button:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+  }
+
+  .post-quiz-summary {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(232, 164, 74, 0.3);
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+    display: none;
+  }
+
+  .post-quiz-summary.show {
+    display: block;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+    display: none;
+  }
+
+  .word-collection.show {
+    display: block;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="migration-canvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Six</div>
+    <h1>Die Völkerwanderung</h1>
+    <div class="subtitle">The Great Migration</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE FIRES IN THE DISTANCE ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Stand with me on a hill. Around the year 300 of the Common Era. The Roman Empire still casts its long shadow across the Mediterranean, its legions still march the roads of Europe, its eagles still fly. But something is moving in the darkness beyond the frontier. Something vast and unstoppable.
+    </p>
+
+    <p class="narrative">
+      Look to the north and east. Across the Rhine, beyond the Danube — the tribes are on the move. Thousands of them. Tens of thousands. The Gothic people, the Vandals, the Franks, the Saxons, the Lombards, the Angles, the Burgundians. They are not invading in the military sense — not yet. They are <em>wandering</em>. Migrating. Moving across the continent like water seeking its level, like a slow tide that cannot be stopped because there is no wall high enough, no army disciplined enough, no defense that can hold forever against the sheer weight of human need.
+    </p>
+
+    <p class="narrative">
+      See the fires? Thousands of them, moving slowly but inexorably westward across the landscape. Cooking fires. Torches in the darkness. Signal fires atop hills. The fires of people on the move — sometimes fleeing, sometimes seeking, always moving. This is the <span class="german-word" data-card="volk">Völkerwanderung</span> — the folk-wandering, the migration of peoples, one of the most consequential mass movements in the history of Europe.
+    </p>
+
+    <p class="narrative">
+      And in this chaos — in this reshuffling of peoples and borders — the Germanic languages will splinter into dozens of separate tongues. One voice, spoken around the fires of a united people, will divide into many voices, each growing stranger to the other with each passing generation.
+    </p>
+
+    <p class="narrative emphasis">
+      This is the chapter of separation. Of languages becoming foreigners to each other.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 2: WULFILA'S BIBLE ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But before the scattering, there is a gift. A moment of crystallization. It is the year 350, somewhere in the Balkans, and a man named Wulfila — a Goth, grandson of Cappadocian Christians — sits down with quill in hand. He has made a decision that will give us something precious: the first substantial text written in any Germanic language.
+    </p>
+
+    <p class="narrative">
+      Wulfila is translating the Bible from Latin into his native Gothic. Word by word. <em>Amen</em> becomes <em>amen</em> — the word passes directly into Gothic, unchanged. When he needs a word for "church," he borrows the Greek <em>kyriakón</em> — the Lord's house — and it becomes <em>kirka</em> in Gothic. From there, it will travel forward through the centuries, becoming <span class="german-word" data-card="kirche">Kirche</span> in German. From Gothic to German to English. A chain of transmission.
+    </p>
+
+    <p class="narrative">
+      And we have fragments of Wulfila's Gothic Bible. Tatters of text, preserved in medieval manuscripts. We can actually read what a Gothic person of the year 350 wrote. We can see the words they used. We can hear, across sixteen centuries, the sound of their voices.
+    </p>
+
+    <p class="narrative">
+      This is remarkable. For Latin and Greek and Sanskrit, we have thousands of texts spanning millennia. But for most Germanic languages, we have nothing this old. No written records from the steppe. No inscriptions from the Bronze Age. Gothic — the language of a people now vanished from history — gives us the earliest window into the Germanic world. And it shows us something crucial: the Germanic languages were not unchanging fossils, waiting in darkness. They were alive. They were being spoken, written, adapted, used to translate sacred texts. They were real.
+    </p>
+
+    <!-- VOLK card -->
+    <div class="ety-card" id="card-volk">
+      <div class="word-header">
+        <span class="word-main">Volk</span>
+        <span class="word-pron">/fɔlk/</span>
+      </div>
+      <div class="word-meaning">people — a collective of persons bound together, a folk, a nation</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pulkos</span>
+        <span class="bridge-note">— unclear original meaning, possibly "multitude"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">folk</span>
+        <span class="bridge-note">— Old English "folc"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Volk</span>
+        <span class="bridge-note">— the "V" is pronounced like "F"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">dân tộc</span>
+        <span class="bridge-note">— dân tộc (people + tribe) — Vietnamese preserves the Sino-Vietnamese cognate in formal registers, mirroring Volk's sense of collective identity through borrowed administrative vocabulary</span>
+      </div>
+      <div class="story">
+        The word <em>Volk</em> carries a weight in German that "folk" no longer carries in English. In German, it means not just "people" but "a people" — a nation, an ethnic group, a collective identity. "Volkslied" is a folk song, a song of the people. "Volksmärchen" is a folk tale, a story that belongs to the people. And in darker times, the word would be misused terribly by nationalist ideology. But at its core, it simply means: the people as a unified whole. German "V" is always pronounced like English "F," so "Volk" sounds like "folk" — they are the same word, just wearing different alphabets. English kept the word plain. German kept it laden with meaning.
+      </div>
+    </div>
+
+    <!-- KIRCHE card -->
+    <div class="ety-card" id="card-kirche">
+      <div class="word-header">
+        <span class="word-main">Kirche</span>
+        <span class="word-pron">/ˈkɪrçə/</span>
+      </div>
+      <div class="word-meaning">church — the building where Christians gather to worship</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— not Proto-Indo-European, but Greek origin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">church</span>
+        <span class="bridge-note">— from Greek kyriakós, via Old English "cirice"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kirche</span>
+        <span class="bridge-note">— the "ch" is that soft, guttural sound from German pronunciation</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">nhà thờ</span>
+        <span class="bridge-note">— nhà thờ (house + temple) — Vietnamese composites natively, while formal registers prefer the Sino-Vietnamese giáo-đường, showing how Vietnamese describes function through vernacular composition</span>
+      </div>
+      <div class="story">
+        <em>Kirche</em> is not an old Germanic word. It is a <em>loan word</em> — a word borrowed from another language. It comes from Greek <em>kyriakós</em>, meaning "of the Lord." The Greek word came with Christianity itself. When missionaries arrived in Germanic lands with the message of Christ, they brought the Greek word with them. <em>Kirche, church</em> — English and German both adopted it, both shaping it to fit their native sounds. But notice the Vietnamese approach: <em>nhà thờ</em> (nhà = house + thờ = worship) is not a borrowed word but a compound meaning "worship house." It describes what the church does rather than borrowing the name. Both strategies work. Both are honest about how language changes.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE WANDERERS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And then the wandering truly begins. By 380, the Visigothic tribes have settled in what is now Romania and Bulgaria, granted land within the Roman Empire itself as a buffer against invaders from the north. By 410, a Gothic warrior named Alaric marches into Rome and sacks the capital city that has ruled the world for five centuries. It feels like the end of everything. And in some ways, it is.
+    </p>
+
+    <p class="narrative">
+      But it is also a beginning. The Goths scatter. Some stay in the Balkans. Some move to Spain and eventually North Africa. Some go to Italy. Within a few generations, a Goth in Spain cannot easily understand a Goth in the Balkans. The language has already begun to change. Sounds shift. New words enter. Old words fall away.
+    </p>
+
+    <p class="narrative">
+      This is the engine of linguistic diversity. When a people is united, their language stays roughly unified. But when they split — when distance separates them, when they encounter new peoples and new landscapes, when they intermarry and trade and gradually adapt to new surroundings — the language begins to fragment. And this fragmentation is not a tragedy. It is the natural process by which one language becomes many.
+    </p>
+
+    <p class="narrative">
+      The Franks move westward and northwestward into what is now France and Germany. They do not erase the Roman culture — they adopt it, adapt it, marry into it. Within a few centuries, their language will blend with the Latin of the Roman peoples they have conquered, giving birth to Old French. The Angles and Saxons sail westward across the North Sea into Britain, displacing the Latin-speaking Britons and bringing their Germanic speech to a new island. That speech will become Old English. The Vandals sail to North Africa. The Lombards to Italy. The Burgundians to the Rhone valley.
+    </p>
+
+    <p class="narrative">
+      Each tribe, each migration, creates distance. Each distance creates linguistic change. Within four or five centuries, the Germanic languages that began as nearly identical tongues have become mutually unintelligible. And the word for this restless movement? <span class="german-word" data-card="wandern" onclick="speakGerman('wandern')">Wandern</span> — to wander, to migrate, to walk the earth in search of something better.
+    </p>
+
+    <!-- WANDERN card -->
+    <div class="ety-card" id="card-wandern">
+      <div class="word-header">
+        <span class="word-main">Wandern</span>
+        <span class="word-pron">/ˈvandɐn/</span>
+      </div>
+      <div class="word-meaning">to wander — to walk without a fixed destination, to migrate, to roam</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*wend-</span>
+        <span class="bridge-note">— to turn, to go, originally a simple direction word</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">wend</span>
+        <span class="bridge-note">— still in the archaic phrase "wend one's way"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">wandern</span>
+        <span class="bridge-note">— the verb that gave a name to an entire era of history</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">lênh đênh</span>
+        <span class="bridge-note">— lênh đênh — Vietnamese expresses rootlessness through reduplication rather than Sino-Vietnamese composition, showing how native linguistic patterns capture the same sense of wandering</span>
+      </div>
+      <div class="story">
+        <em>Wandern</em> in German means something richer than the English "wander." It has connotations of hiking, of walking through landscapes, of a leisurely but purposeful movement through the world. But in the 3rd and 4th centuries, when the Germanic tribes began their great migrations, <em>wandern</em> took on an epic meaning. The <em>Völkerwanderung</em> was not a casual journey — it was the movement of entire peoples across a continent, driven by necessity, hunger, conquest, and the endless human need to seek something better. The word contains both senses: the peaceful ramble and the desperate flight, the tourism and the exile, all bound together.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: HEIMAT ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But there is a cost to this migration. A cost written into the language itself. When you leave your home — truly leave it, not as a vacation but as a permanent shift — something inside you changes. The word for this feeling, this strange ache, exists in German: <span class="german-word" data-card="heimat">Heimat.</span>
+    </p>
+
+    <p class="narrative">
+      English has "homeland," but it is a political word, a geographical designation. <em>Heimat</em> is emotional. It means the home you came from. The place where you belong, even if you can never return. The Goths who settled in Spain hundreds of miles from the Rhine forests where their people originated — they had a word for what they had lost. <em>Heimat</em>. The comfort of familiar things. The safety of knowing where you are and being known by the land.
+    </p>
+
+    <p class="narrative">
+      This word appears nowhere in the surviving Gothic texts of Wulfila — the oldest Germanic writing we have. But by the time German was fully established as a language, the word was there. <em>Heimat</em>. Home-place. The thing you carry with you when you are forced to leave.
+    </p>
+
+    <!-- HEIMAT card -->
+    <div class="ety-card" id="card-heimat">
+      <div class="word-header">
+        <span class="word-main">Heimat</span>
+        <span class="word-pron">/ˈhaɪmaːt/</span>
+      </div>
+      <div class="word-meaning">homeland — the place where you belong, emotionally and spiritually</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*koiwos</span>
+        <span class="bridge-note">— home, village, from the root of "heim" (home)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">home</span>
+        <span class="bridge-note">— Old English "hām"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Heimat</span>
+        <span class="bridge-note">— "Heim" (home) + "-at" (state or place) — the state of being at home</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">quê hương</span>
+        <span class="bridge-note">— quê hương (village + incense/homeland) — Vietnamese combines native quê with Sino-Vietnamese hương, capturing the emotional weight of distance through linguistic layering</span>
+      </div>
+      <div class="story">
+        <em>Heimat</em> is a German word that has no exact English equivalent, though many languages have tried to capture its sense. The "-at" suffix (similar to "-state" in English) transforms <em>Heim</em> into something more abstract — not just "home" but "the condition of home," "the essence of home." In the Völkerwanderung period, as Germanic peoples scattered across Europe, this word took on profound meaning. It represents the psychological anchor point for displaced peoples — the memory of where you came from, the ideal you carry with you. Vietnamese expresses something similar through <em>quê hương</em> (quê = village + hương = incense/fragrance of home): both words together evoke the emotional weight of one's ancestral home, something deeply rooted in memory and longing. Both languages recognize that the most powerful homes are the ones we have left behind.
+      </div>
+    </div>
+
+    <p class="narrative">
+      And this emotion — this sense of separation, of belonging to a place you can no longer reach — becomes embedded in the very structure of the Germanic languages that descend from these wandering peoples. The languages themselves carry the memory of migration.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 5: WORDS REMAIN, PEOPLE SCATTER ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But here is the miraculous part: even as the languages diverge, the deepest words remain the same. A Gothic warrior in 400 CE, dying on a Spanish battlefield far from the forests of his ancestors, would have known these words. So would a Saxon farmer in northern Britain in 500 CE. So would a Frank in what would become France. The words for the most fundamental realities survived the migration, survived the splitting, survived the divergence into separate tongues.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="krieg">Krieg.</span> War. The struggle. The necessity that drove many of these migrations in the first place. When Germanic tribes moved, it was often because they were fleeing something — the Huns pressing from the east, the Roman legions on the frontier, the exhaustion of resources. War, or the threat of war, was often the engine of movement.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="weg">Weg.</span> Way. Path. The roads across Europe, the routes through valleys and forests, the constant movement from place to place. Every migrating tribe walked their <em>Weg</em>.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="koenig">König.</span> King. The leader at the head of each tribe, the one who decided which way to go, where to settle, when to move again. The king who held the fragile unity of a people together as they scattered across the continent.
+    </p>
+
+    <!-- KRIEG card -->
+    <div class="ety-card" id="card-krieg">
+      <div class="word-header">
+        <span class="word-main">Krieg</span>
+        <span class="word-pron">/kriːk/</span>
+      </div>
+      <div class="word-meaning">war — armed conflict, the struggle of peoples</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kwer-</span>
+        <span class="bridge-note">— to make, to produce, originally meaning effort or exertion</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">— (no direct equivalent)</span>
+        <span class="bridge-note">— English borrowed "war" from Old Norse "verr"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Krieg</span>
+        <span class="bridge-note">— from Middle High German "kriec," originally meaning "effort, exertion"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">chiến tranh</span>
+        <span class="bridge-note">— chiến tranh (battle + war) — Vietnamese borrows directly from Sino-Vietnamese forms to describe the dual nature of conflict, showing how formal vocabulary enters through migration and contact</span>
+      </div>
+      <div class="story">
+        <em>Krieg</em> is a fascinating case because it shows how Germanic languages diverged even in their word choices. The oldest meaning of the root *kwer- was "effort" or "exertion" — the effort required to make something, to create something. Over time, in German, this became specifically the effort of warfare, the exertion of combat. English took a different path, borrowing "war" from Old Norse. Both languages recognized warfare as a defining reality of the Migration Period — it simply named it differently. The word captures the original sense: war is the ultimate exertion of effort, the most demanding form of human labor.
+      </div>
+    </div>
+
+    <!-- WEG card -->
+    <div class="ety-card" id="card-weg">
+      <div class="word-header">
+        <span class="word-main">Weg</span>
+        <span class="word-pron">/veːk/</span>
+      </div>
+      <div class="word-meaning">way — a path, a road, a route from one place to another</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*weǵh-</span>
+        <span class="bridge-note">— to go, to move, to drive a vehicle</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">way</span>
+        <span class="bridge-note">— Old English "wǽg" — identical root</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Weg</span>
+        <span class="bridge-note">— also related to German "wagen" (to dare, to venture) — the same root of movement and risk</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">đường</span>
+        <span class="bridge-note">— đường — Vietnamese word for road; a Sino-Vietnamese cognate inherited from classical Chinese. Đường dominates in everyday navigation and migration routes, while more formal geography preserves older classical variants</span>
+      </div>
+      <div class="story">
+        <em>Weg</em> and <em>way</em> are so close they are nearly identical. Say them aloud and you hear the same word, shaped slightly differently by the phonetic changes that separated English and German. The root *weǵh- also gave us English "wagon" and "vehicle" — anything that moves. The Völkerwanderung was, in essence, the great Weg — the way that millions of people walked, rode, and drove across Europe, seeking new homes. Every refugee, every migrant, every displaced person in history has walked their Weg.
+      </div>
+    </div>
+
+    <!-- KÖNIG card -->
+    <div class="ety-card" id="card-koenig">
+      <div class="word-header">
+        <span class="word-main">König</span>
+        <span class="word-pron">/ˈkøːnɪk/</span>
+      </div>
+      <div class="word-meaning">king — the supreme ruler of a people or nation</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*kuningaz</span>
+        <span class="bridge-note">— literally "the one who comes from the people" (kin + -ing = descendant)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">king</span>
+        <span class="bridge-note">— Old English "cyning" — related to "kin," family</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">König</span>
+        <span class="bridge-note">— the "ö" gives it that distinctive German sound</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">vua</span>
+        <span class="bridge-note">— vua — Vietnamese word for king; the Sino-Vietnamese quốc-vương preserves the territorial emphasis in formal registers, while vua emerges from proto-Austroasiatic roots for chieftain authority</span>
+      </div>
+      <div class="story">
+        Here is something beautiful embedded in the etymology of <em>König</em>: the word does not mean "the all-powerful one" or "the mighty one." It means "the one from the people," "the one descended from the people." The Germanic concept of kingship was different from the Mediterranean concept. A Germanic king was not a distant god-emperor ruling by divine right. He was of the people, from the people, responsible to the people. The root *kuningaz combines *kun- (kin, family) with the suffix -ing (descendant, one who belongs to). A king, in the Germanic understanding, was a descendant of the people, their representative, their leader chosen from among them. This philosophy would survive the Migration Period and shape the development of Germanic legal traditions for centuries.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 6: STAMM AND ERBE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      <span class="german-word" data-card="stamm">Stamm.</span> Tribe. Family. In German, this word has a double life. It means both "tribe" — a group of people united by blood and culture — and "tree trunk," the woody root system of a tree. This is not accidental. The Germanic peoples understood their unity through the image of a tree. You have roots — your ancestors. You have a trunk — your people. You have branches — your descendants. You are rooted in the earth of your homeland, your <em>Heimat</em>. When you are uprooted, forced to migrate, to wander, you carry something with you: the memory of your roots. The sense of your place in the great tree of generations.
+    </p>
+
+    <p class="narrative">
+      And when a tribe splits — when some go to Spain and some stay in the Balkans, when some sail to Britain and others move to Gaul — they carry with them their inheritance. <span class="german-word" data-card="erbe">Erbe.</span> Inheritance. Heritage. What you pass down. The words your grandmother taught you. The stories your grandfather told. The songs your mother sang. Even as the languages diverge, they carry forward the memory of their common ancestor. The Erbe. The inheritance.
+    </p>
+
+    <!-- STAMM card -->
+    <div class="ety-card" id="card-stamm">
+      <div class="word-header">
+        <span class="word-main">Stamm</span>
+        <span class="word-pron">/ʃtam/</span>
+      </div>
+      <div class="word-meaning">tribe — a group of people united by kinship and culture; also: tree trunk</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*stebh-</span>
+        <span class="bridge-note">— to stand firm, to establish, possibly related to "staff" or "stem"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">stem</span>
+        <span class="bridge-note">— Old English "stemn" — the trunk of a plant or tree</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Stamm</span>
+        <span class="bridge-note">— carries both meanings: tribe and tree trunk</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">bộ lạc</span>
+        <span class="bridge-note">— bộ lạc (part + clan) — Vietnamese preserves the Sino-Vietnamese composite meaning "the settled people," showing how borrowed vocabulary expresses the concept of tribal settlement</span>
+      </div>
+      <div class="story">
+        <em>Stamm</em> is one of those words that reveals deep cultural values. In German, a tribe is not an administrative unit or a military formation — it is a <em>Stamm</em>, a rooted thing, like a tree. You belong to your tribe the way a branch belongs to a trunk. You grow from it. The root *stebh- means "to stand firm," to establish something permanent. Germanic peoples saw themselves as rooted in their lands, growing from them, part of an ancient continuity. When the Völkerwanderung forced them to migrate, to replant themselves in new soil, the metaphor held. You carry your Stamm within you — your origins, your identity, your connection to the past. Vietnamese expresses a similar idea through <em>dòng dõi</em> (dòng = lineage, dõi = followed), emphasizing the ancestral chain and community formed through family descent and shared kinship rather than rootedness in land, but reaching the same truth about human belonging and identity.
+      </div>
+    </div>
+
+    <!-- ERBE card -->
+    <div class="ety-card" id="card-erbe">
+      <div class="word-header">
+        <span class="word-main">Erbe</span>
+        <span class="word-pron">/ˈɛʁbə/</span>
+      </div>
+      <div class="word-meaning">inheritance — what is passed down from one generation to the next</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*orbh-</span>
+        <span class="bridge-note">— orphan, from the sense of "one without inheritance"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">orphan</span>
+        <span class="bridge-note">— Old English, from the same root — one who has lost their inheritance</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Erbe</span>
+        <span class="bridge-note">— also "Erbe" without the final "e" means "heir," the one who inherits</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">di sản</span>
+        <span class="bridge-note">— di sản (heritage + property) — Vietnamese compound from Sino-Vietnamese roots to express what migration leaves behind; di originally meant "to abandon" in classical vocabulary, carrying the weight of history and displacement</span>
+      </div>
+      <div class="story">
+        <em>Erbe</em> (inheritance) is connected to <em>Erbe</em> (heir), which comes from the same root as English "orphan." The root *orbh- originally meant something like "bereft" or "without." An orphan is someone without inheritance, without protection, without the goods and knowledge their parents would have passed to them. By inversion, an <em>Erbe</em> is one who <em>has</em> inheritance. In the Völkerwanderung, the greatest inheritance the Germanic peoples carried was not gold or silver but language itself — the words, the stories, the way of speaking that connected them to their ancestors. Even as the languages diverged, each fragment carried forward the Erbe, the inheritance from the common speech of the steppe.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: FREMDER ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And with migration comes another word, another painful reality. <span class="german-word" data-card="fremder">Fremder.</span> Stranger. Foreigner. The person from outside. When you migrate, when you arrive in a new land, you are a <em>Fremder</em>. Not a native. Not one of them. The outsider.
+    </p>
+
+    <p class="narrative">
+      But here is the irony: the Germanic peoples who arrived in new lands during the Migration Period were themselves strangers. And yet, over centuries, they became native. The Franks in Gaul were strangers, but their descendants wrote French. The Angles and Saxons in Britain were strangers, but they eventually became English. The Goths in Spain were strangers, but they built a civilization that would last for centuries. The stranger becomes native. The foreign becomes familiar. And the language adapts, changes, absorbs the new reality of a new land.
+    </p>
+
+    <!-- FREMDER card -->
+    <div class="ety-card" id="card-fremder">
+      <div class="word-header">
+        <span class="word-main">Fremder</span>
+        <span class="word-pron">/ˈfʁɛmdɐ/</span>
+      </div>
+      <div class="word-meaning">stranger — one who is foreign, unfamiliar, not of this place</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*prem-</span>
+        <span class="bridge-note">— forward, hence "the one who is separate from the group"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">strange</span>
+        <span class="bridge-note">— from Old French "estrange," but with similar roots meaning "foreign"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">fremd</span>
+        <span class="bridge-note">— (adjective) "foreign, strange"; Fremder (noun) "a foreigner"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">người xa lạ</span>
+        <span class="bridge-note">— người xa lạ (person + distant + strange) — Vietnamese expresses the stranger through native composition, while Sino-Vietnamese bạch-nhân preserves the formal register, showing linguistic stratification</span>
+      </div>
+      <div class="story">
+        <em>Fremder</em> comes from the root *prem-, which means "forward," "forth," "separate." It carries the sense of "the one who stands apart," "the one who is not part of this group." In the context of the Migration Period, <em>Fremder</em> took on profound meaning. The Germanic migrants were Fremden in the lands they entered — strangers in Spain, strangers in Britain, strangers in Gaul. But over time, their descendants became native. The word persisted, but its application changed. What is remarkable is that the language they spoke — the words they taught their children — gradually transformed the place itself. The speech of strangers became the speech of the land. German, English, Spanish — all are descendants of the languages spoken by those ancient Fremden.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 8: LAND ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      And finally, the simplest and most profound word of all: <span class="german-word" data-card="land">Land.</span> Land. Territory. The earth beneath your feet. The physical reality of where you are.
+    </p>
+
+    <p class="narrative">
+      In German and English, this word is nearly identical. <em>Land. Land.</em> No difference except the smallest shift in pronunciation. It is one of the oldest words in the Germanic languages, appearing in Gothic texts from the 4th century. And it would remain essentially unchanged through all the centuries of migration and linguistic divergence that followed. When a Goth spoke of <em>land</em>, a Saxon spoke of <em>land</em>, and an Anglo spoke of <em>land</em>, they were all using the same word. A connection that remained even as everything else changed.
+    </p>
+
+    <p class="narrative">
+      In the Völkerwanderung, land was everything. The search for land drove migrations. Wars were fought for land. Alliances were made over land. When the Germanic peoples scattered across Europe, they were searching for land where they could settle, where they could plant crops, where they could build homes for their children. The word <em>Land</em> became the goal of the entire epoch.
+    </p>
+
+    <!-- LAND card -->
+    <div class="ety-card" id="card-land">
+      <div class="word-header">
+        <span class="word-main">Land</span>
+        <span class="word-pron">/lant/</span>
+      </div>
+      <div class="word-meaning">land — territory, earth, the physical place of habitation</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">— not certain, possibly from "to lay down"</span>
+        <span class="bridge-note">— the word is very old and its origin is obscure</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">land</span>
+        <span class="bridge-note">— Old English "lond" — identical in meaning and very similar in sound</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Land</span>
+        <span class="bridge-note">— one of the most stable words across all Germanic languages</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">đất</span>
+        <span class="bridge-note">— đất — Vietnamese word for earth; carries the primal sense of physical foundation that grounds migration and settlement, while Sino-Vietnamese địa appears in formal geographic discourse</span>
+      </div>
+      <div class="story">
+        <em>Land</em> is a word so fundamental that it appears in our earliest texts. Wulfila, translating the Bible into Gothic around 350 CE, used the word <em>land</em>. Eleven hundred years later, when German was fully established as a language, the word was still <em>Land</em>, essentially unchanged. In English, it is <em>land</em>, pronounced almost identically. Few words can claim such continuity across so many centuries and so many changes. In the Völkerwanderung, the word took on special significance. To migrate was to seek new land. Every tribe was looking for <em>Land</em> — fertile earth, good water, defensible territory. The migrations were, at their core, a competition for land. And this reality shaped European history for the next millennium.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ASIDE BOX: WULFILA'S GOTHIC BIBLE ==================== -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">The Gothic Bible of Wulfila</div>
+      <p>
+        Around 350 CE, the Gothic bishop Wulfila translated portions of the Bible into his native Gothic language. We have fragments preserved in medieval manuscripts. Here is a sample, showing how close Gothic was to other Germanic languages:
+      </p>
+      <p style="margin-top: 12px; font-family: monospace; font-size: 0.95rem; color: rgba(212, 202, 187, 0.6);">
+        <strong style="color: var(--german);">Gothic:</strong> "In fruma was waurd" (In the beginning was the word)<br>
+        <strong style="color: var(--english);">Old English:</strong> "In fruman wæs word" (virtually identical)<br>
+        <strong style="color: var(--text-bright);">Modern German:</strong> "Im Anfang war das Wort" (the meaning preserved, the form evolved)
+      </p>
+      <p style="margin-top: 12px; font-size: 0.95rem;">
+        This is our clearest window into how the Germanic languages were spoken in the 4th century. These are not reconstructed words written in asterisks — these are actual texts. Real people wrote them. Real Gothic speakers read them. And we can still read them today, nearly 1,700 years later.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== ASIDE BOX: WHERE DID THEY GO? ==================== -->
+  <div class="scene">
+    <div class="aside-box">
+      <div class="aside-title">Where Did They Go? A Map in Words</div>
+      <p>
+        The Germanic tribes scattered across the continent during the Völkerwanderung. By 500 CE, the landscape of Europe had been fundamentally remade:
+      </p>
+      <p style="margin-top: 12px; font-size: 0.95rem;">
+        <strong style="color: var(--text-bright);">Goths:</strong> Spain (Visigoths) and Italy/Balkans (Ostrogoths) — their kingdoms lasted until the 6th century when Byzantine armies reconquered the territories.<br><br>
+        <strong style="color: var(--text-bright);">Vandals:</strong> North Africa — conquered the Roman provinces, controlled the Mediterranean, eventually destroyed by Byzantine forces.<br><br>
+        <strong style="color: var(--text-bright);">Franks:</strong> Gaul (France) and western Germania — their kingdom survived and eventually became the Carolingian Empire, reshaping western Europe.<br><br>
+        <strong style="color: var(--text-bright);">Angles, Saxons, Jutes:</strong> Britain — displaced the Roman-descended Britons, brought Old English speech to the island.<br><br>
+        <strong style="color: var(--text-bright);">Burgundians:</strong> Rhone valley and eastern Gaul — eventually absorbed into the Frankish kingdoms.<br><br>
+        <strong style="color: var(--text-bright);">Lombards:</strong> Northern Italy — ruled for two centuries before being conquered by the Franks.
+      </p>
+      <p style="margin-top: 12px; font-size: 0.95rem;">
+        Each migration created a new linguistic center. The Franks' language would become French. The Anglo-Saxons' would become English. The Germanic tribes left in the lands east of the Rhine would eventually develop the many dialects that would become Modern German. One people, one language. Then many peoples, many languages, forever changed by the scattering of the Völkerwanderung.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        The Germanic migrants arrived in new lands and had to adapt. They borrowed words, created new meanings, transformed their speech to fit new realities.<br><br>
+        Can you guess what <strong style="color: var(--german);">Sprache</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(Hint: you're learning one right now.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">prayer</button>
+        <button class="guess-btn" onclick="guess(this, true)">language</button>
+        <button class="guess-btn" onclick="guess(this, false)">journey</button>
+        <button class="guess-btn" onclick="guess(this, false)">strength</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        From Chapter 1, you learned that <strong style="color: var(--english);">Stern</strong> means "star."<br><br>
+        So what would <strong style="color: var(--german);">Müde</strong> mean?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(This is a tricky one. Think about how tired you'd be after walking across Europe.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">angry</button>
+        <button class="guess-btn" onclick="guess(this, false)">brave</button>
+        <button class="guess-btn" onclick="guess(this, true)">tired</button>
+        <button class="guess-btn" onclick="guess(this, false)">far away</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">The Power of Migration</strong> — When peoples scatter, languages diverge. The same word spoken in different lands evolves differently. One voice becomes many.<br><br>
+    <strong style="color: var(--text-bright);">The Loan Word</strong> — When cultures meet, languages borrow from each other. Kirche comes from Greek kyriakón, brought by Christian missionaries.<br><br>
+    <strong style="color: var(--text-bright);">The Core Vocabulary</strong> — The most ancient words survive the longest. Mutter, Feuer, Wasser, Weg, Land — these words were spoken in Gothic in 350 CE and are still spoken in German today.<br><br>
+    <strong style="color: var(--text-bright);">The Emotional Vocabulary</strong> — Some words capture the spirit of an era. Heimat carries the ache of displacement. Fremder carries the identity crisis of migration. Language remembers what history experiences.
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection" id="word-collection-box">
+      <h3>Words Gathered in Chapter Six</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Volk</span><span class="cw-english">people</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Wandern</span><span class="cw-english">to wander</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Heimat</span><span class="cw-english">homeland</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Kirche</span><span class="cw-english">church</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Krieg</span><span class="cw-english">war</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Weg</span><span class="cw-english">way/path</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">König</span><span class="cw-english">king</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Stamm</span><span class="cw-english">tribe</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Erbe</span><span class="cw-english">inheritance</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Fremder</span><span class="cw-english">stranger</span></div>
+        <div class="collected-word" data-delay="1000"><span class="cw-german">Land</span><span class="cw-english">land</span></div>
+      </div>
+
+      <h3 style="margin-top:32px;">Concepts Learned in Chapter Six</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="1100" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Migration Vocabulary</span><span class="cw-english">Wandern, Volk, Heimat — movement words</span></div>
+        <div class="collected-word" data-delay="1200" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Gothic Bible</span><span class="cw-english">Wulfila's 350 CE translation preserved Germanic</span></div>
+        <div class="collected-word" data-delay="1300" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Tribal Dispersal</span><span class="cw-english">each migration created new linguistic centers</span></div>
+        <div class="collected-word" data-delay="1400" style="min-width:140px;"><span class="cw-german" style="color:#9b8ec4;">Identity Words</span><span class="cw-english">König, Stamm, Erbe — power and belonging</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="scene" id="scene-quiz">
+    <div class="quiz-container">
+      <h3>Test Your Knowledge</h3>
+      <div id="quiz-questions"></div>
+      <div class="quiz-nav">
+        <button id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="quiz-reset" id="quiz-reset"></div>
+      <div class="post-quiz-summary" id="post-quiz-summary"></div>
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">60 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(7%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:7%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Volk</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">people</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Wandern</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">to wander</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Heimat</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">homeland</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Kirche</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">church</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Krieg</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">war</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Weg</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">way/path</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">König</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">king</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Stamm</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">tribe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Erbe</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">inheritance</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Fremder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">stranger</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Land</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">land</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–5: ~49 more words · Scroll for full list</td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">15 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(10%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:10%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">The Power of Migration</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Peoples scatter, languages diverge</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">The Loan Word</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Kirche from Greek kyriakón</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">The Core Vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Ancient words survive longest</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">The Emotional Vocabulary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">Heimat, Fremder: words of era</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">6</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–5: ~11 more patterns</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Six
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Eleven words. Eleven stories of separation and survival. The Germanic peoples scattered, but their words remained.<br>
+        The Völkerwanderung reshaped Europe. But it was the languages — the inheritance of speech — that would determine the continent's future.<br>
+        Within five hundred years, the mutually intelligible dialects of the steppe had become the distinct languages we know today.<br>
+        And yet, the deepest words still remembered each other.
+      </p>
+      <div class="next-chapter">
+        Chapter Seven: The Monastery — where the written word becomes sacred
+      </div>
+    </div>
+  </div>
+
+
+  <div class="nav-section">
+    <a href="chapter5.html" class="nav-btn">← Chapter 5</a>
+    <a href="chapter7.html" class="nav-btn next">Chapter 7 →</a>
+  </div>
+
+</div>
+
+<script>
+
+// --- CHAPTER 6: VÖLKERWANDERUNG - MIGRATING PEOPLES & FIRE ---
+const canvas = document.getElementById('migration-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let buildingSilhouettes = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createBuildings();
+}
+
+function createBuildings() {
+  buildingSilhouettes = [];
+  for (let i = 0; i < 4; i++) {
+    buildingSilhouettes.push({
+      x: canvas.width * 0.1 + i * (canvas.width * 0.2),
+      y: canvas.height * 0.5,
+      width: 60,
+      height: 80
+    });
+  }
+}
+
+function createParticles() {
+  particles = [];
+  const count = window.innerWidth < 600 ?
+    Math.floor((canvas.width * canvas.height) / 7000) :
+    Math.floor((canvas.width * canvas.height) / 5000);
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 0.8,
+      alpha: Math.random() * 0.6 + 0.2,
+      speed: Math.random() * 0.25 + 0.15,
+      isTorch: Math.random() < 0.08,
+      torchAlpha: Math.random() * 0.5 + 0.25,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: Math.random() * 0.015 + 0.005
+    });
+  }
+}
+
+function drawParticles(time) {
+  ctx.fillStyle = 'rgba(10, 14, 26, 0.12)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  const tilt = Math.sin(scroll * Math.PI) * 0.02;
+
+  // Draw burning buildings
+  buildingSilhouettes.forEach(b => {
+    ctx.fillStyle = `rgba(80, 40, 20, ${0.15 + scroll * 0.1})`;
+    ctx.fillRect(b.x, b.y, b.width, b.height);
+
+    // Flames on top
+    const flameOpacity = 0.2 + scroll * 0.3;
+    ctx.fillStyle = `rgba(232, 100, 40, ${flameOpacity})`;
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+    ctx.lineTo(b.x + b.width * 0.3, b.y - 30);
+    ctx.lineTo(b.x + b.width * 0.7, b.y - 20);
+    ctx.lineTo(b.x + b.width, b.y);
+    ctx.closePath();
+    ctx.fill();
+  });
+
+  particles.forEach((p, idx) => {
+    // Movement left to right
+    p.x -= p.speed + scroll * 0.3;
+
+    // Wobble with increasing intensity
+    p.wobble += p.wobbleSpeed;
+    p.y += Math.sin(p.wobble) * 0.4 + Math.sin(time * 0.002 + idx) * (scroll * 0.2);
+
+    // Add tilt effect
+    p.y += tilt * 50;
+
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    if (p.isTorch) {
+      const flicker = Math.sin(time * 0.008 + p.wobble) * 0.3 + 0.7;
+      const sparkle = Math.sin(time * 0.02 + idx) * 0.4 + 0.6;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(244, 140, 60, ${p.torchAlpha * flicker * sparkle})`;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(244, 180, 100, ${p.torchAlpha * flicker * 0.3})`;
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 120, 80, ${p.alpha})`;
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+resizeCanvas();
+createParticles();
+requestAnimationFrame(drawParticles);
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate collected words
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'You understand the pattern of migration and meaning.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — think about what this era of history was about.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- QUIZ SYSTEM ---
+const quizData = [
+  {
+    question: "Which bishop translated the Bible into Gothic around 350 CE?",
+    options: ["Ulfilas (Wulfila)", "Augustine", "Jerome", "Ambrose"],
+    correct: 0,
+    explanation: "Wulfila (also spelled Ulfilas) was a Gothic bishop who created the first substantial text in any Germanic language."
+  },
+  {
+    question: "What does Völkerwanderung literally mean?",
+    options: ["war of peoples", "folk-wandering", "great empire", "tribal conquest"],
+    correct: 1,
+    explanation: "Völkerwanderung = Völker (peoples) + Wanderung (wandering). It describes the great migration of Germanic tribes across Europe."
+  },
+  {
+    question: "Which Germanic tribe settled primarily in Spain?",
+    options: ["Franks", "Saxons", "Visigoths", "Angles"],
+    correct: 2,
+    explanation: "The Visigoths settled in Spain and ruled there for nearly three centuries until the Byzantine reconquest."
+  },
+  {
+    question: "What does the word Heimat emotionally represent?",
+    options: ["a trading post", "the home you have left behind", "a military fortress", "a merchant ship"],
+    correct: 1,
+    explanation: "Heimat captures the emotional sense of homeland — the place you belong to, even when far away."
+  },
+  {
+    question: "Why did the Germanic languages begin to diverge during the Völkerwanderung?",
+    options: ["Roman armies forced language changes", "Different tribes migrated to separate lands, creating linguistic isolation", "New languages were invented by leaders", "Christian missionaries replaced Germanic with Latin"],
+    correct: 1,
+    explanation: "Geographic separation is the primary driver of linguistic divergence. When peoples split apart, their languages evolve differently."
+  },
+  {
+    question: "Which of these words appears in Wulfila's Gothic Bible from 350 CE?",
+    options: ["Farbe (color)", "Land (land)", "Fenster (window)", "Telefon (telephone)"],
+    correct: 1,
+    explanation: "Land is one of the most ancient and stable words in Germanic languages, appearing in the earliest texts."
+  },
+  {
+    question: "From Chapter 1: What does the word Mutter mean?",
+    options: ["bread", "mother", "matter", "speech"],
+    correct: 1,
+    explanation: "Mutter (German) = mother (English). The same ancient word for the first person in a child's life."
+  },
+  {
+    question: "From Chapter 1: What is the Proto-Germanic root for fire?",
+    options: ["*fur", "*watar", "*sternōn", "*nahts"],
+    correct: 0,
+    explanation: "*fur is the Proto-Germanic root for fire. This ancient word is the ancestor of German 'Feuer' and English 'fire' — a sound shift transforms the original *f into modern pronunciation."
+  }
+];
+
+let currentQuestion = 0;
+let answers = new Array(quizData.length).fill(null);
+let quizStarted = false;
+let quizComplete = false;
+
+function initializeQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+
+  quizData.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question' + (idx === 0 ? '' : ' hidden');
+    div.id = 'q-' + idx;
+
+    let html = `<div class="q-text">${idx + 1}. ${q.question}</div><div class="quiz-options">`;
+    q.options.forEach((opt, optIdx) => {
+      html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})">${opt}</div>`;
+    });
+    html += '</div>';
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  updateQuizNav();
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (quizComplete) return;
+  answers[qIdx] = optIdx;
+
+  const options = document.querySelectorAll(`#q-${qIdx} .quiz-option`);
+  options.forEach((opt, i) => {
+    opt.classList.remove('selected', 'incorrect');
+    if (i === optIdx) opt.classList.add('selected');
+  });
+
+  updateQuizNav();
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizData.length - 1) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion++;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  } else if (!quizComplete) {
+    completeQuiz();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    document.getElementById('q-' + currentQuestion).classList.add('hidden');
+    currentQuestion--;
+    document.getElementById('q-' + currentQuestion).classList.remove('hidden');
+    updateQuizNav();
+  }
+}
+
+function updateQuizNav() {
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  prevBtn.disabled = currentQuestion === 0;
+
+  if (currentQuestion === quizData.length - 1) {
+    nextBtn.textContent = 'Submit Quiz';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function completeQuiz() {
+  quizComplete = true;
+  let score = 0;
+
+  answers.forEach((ans, idx) => {
+    if (ans === quizData[idx].correct) {
+      score++;
+    }
+  });
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.textContent = `Your Score: ${score}/${quizData.length} (${percentage}%)`;
+
+  document.getElementById('prev-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+
+  if (percentage >= 80) {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #8ed69e;">You have unlocked the word collection! ✓</p>';
+    document.getElementById('word-collection-box').classList.add('show');
+
+    const summary = document.getElementById('post-quiz-summary');
+    summary.innerHTML = `
+      <strong style="color: var(--text-bright); font-size: 1.1rem;">Cumulative Progress</strong>
+      <p style="margin-top: 8px;">You have now learned <strong>59 words</strong> across six chapters. These words span from the Proto-Indo-European steppe (6,000 years ago) to the migration period of the Germanic peoples (300-500 CE). Each word carries a story — of ancient peoples, linguistic evolution, cultural collision, and the slow transformation of human language across centuries.</p>
+      <p style="margin-top: 8px;"><strong>Pattern Recognition Unlocked:</strong> You can now see how English and German share the same deep roots (night/Nacht, fire/Feuer, water/Wasser), how borrowed words enter languages through contact (Kirche from Greek), and how geographic separation transforms a single language into many (the Völkerwanderung fracturing Proto-Germanic into Gothic, Old English, Old High German, Old Norse, etc.).</p>
+      <p style="margin-top: 8px;">The next chapter takes us into the monasteries of early medieval Europe, where monks will begin the careful work of writing down the languages of the people. The spoken word becomes sacred. The wandering is over. Now comes the recording.</p>
+    `;
+    summary.classList.add('show');
+  } else {
+    scoreDiv.innerHTML += '<p style="margin-top: 12px; font-size: 1rem; color: #e0a070;">Try again to reach 80% and unlock the word collection.</p>';
+
+    const resetDiv = document.getElementById('quiz-reset');
+    resetDiv.innerHTML = '<button onclick="resetQuiz()">Reset Quiz</button>';
+  }
+}
+
+function resetQuiz() {
+  currentQuestion = 0;
+  answers = new Array(quizData.length).fill(null);
+  quizComplete = false;
+
+  document.querySelectorAll('.quiz-question').forEach((q, idx) => {
+    q.classList.toggle('hidden', idx !== 0);
+  });
+
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'incorrect');
+  });
+
+  document.getElementById('quiz-score').textContent = '';
+  document.getElementById('post-quiz-summary').classList.remove('show');
+  document.getElementById('word-collection-box').classList.remove('show');
+  document.getElementById('quiz-reset').innerHTML = '';
+
+  document.getElementById('prev-btn').disabled = false;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next →';
+
+  updateQuizNav();
+}
+
+// Initialize quiz on page load
+window.addEventListener('DOMContentLoaded', initializeQuiz);
+
+// --- MOBILE: prevent double-tap zoom ---
+document.querySelectorAll('.guess-btn, .german-word, .quiz-option').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- AUDIO PRONUNCIATION ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 6;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

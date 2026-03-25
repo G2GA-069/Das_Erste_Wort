@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>The First Word — Chapter 8</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --fire: #e8a44a;
+    --fire-glow: #f4c67a;
+    --ember: #c45d2c;
+    --night: #0a0e1a;
+    --night-mid: #131a2e;
+    --night-light: #1c2640;
+    --star: #e8dcc8;
+    --text: #d4cabb;
+    --text-bright: #efe8db;
+    --german: #e8a44a;
+    --vietnamese: #c49a6c;
+    --english: #8a9bae;
+    --pie: #9b8ec4;
+    --steppe: #2a1f14;
+    --candlelight: #f4d89f;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #0a0e1a;
+    background: var(--night);
+  }
+
+  body {
+    background: linear-gradient(to bottom, #2a1f10 0%, #1a1610 50%, #3a2a1a 100%);
+    background-attachment: fixed;
+    color: #d4cabb;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- CANDLELIGHT PARTICLES CANVAS --- */
+  #candlelight {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* --- MAIN CONTENT --- */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+  }
+
+  /* --- TITLE SCREEN --- */
+  .title-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .title-screen h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 2s ease 0.5s forwards;
+  }
+
+  .title-screen .subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fire);
+    opacity: 0;
+    animation: fadeUp 2s ease 1.2s forwards;
+    margin-bottom: 2em;
+  }
+
+  .title-screen .chapter-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(212, 202, 187, 0.4);
+    opacity: 0;
+    animation: fadeUp 2s ease 0.2s forwards;
+    margin-bottom: 0.5em;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 2s ease 2s forwards;
+    color: rgba(212, 202, 187, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+  }
+
+  .scroll-hint span {
+    display: inline-block;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SCENES --- */
+  .scene {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .scene.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scene-marker {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--fire), transparent);
+    margin: 0 auto 40px;
+  }
+
+  /* --- NARRATIVE TEXT --- */
+  .narrative {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 1.5em;
+    color: var(--text);
+  }
+
+  .narrative.emphasis {
+    font-size: 1.35rem;
+    color: var(--text-bright);
+    text-align: center;
+    font-style: italic;
+    margin: 2em 0;
+  }
+
+  .narrative.small {
+    font-size: 1.05rem;
+    color: rgba(212, 202, 187, 0.6);
+    line-height: 1.7;
+  }
+
+  /* --- GERMAN WORDS --- */
+  .german-word {
+    color: var(--german);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(232, 164, 74, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .german-word:hover {
+    color: var(--fire-glow);
+    border-bottom-color: var(--fire-glow);
+  }
+
+  .german-word.revealed {
+    border-bottom-color: transparent;
+  }
+
+  /* --- ETYMOLOGY CARDS --- */
+  .ety-card {
+    background: linear-gradient(135deg, rgba(26, 35, 55, 0.95), rgba(15, 20, 35, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(232, 164, 74, 0.08);
+  }
+
+  .ety-card.open {
+    max-height: 800px;
+    opacity: 1;
+    padding: 28px 32px;
+    margin: 24px 0 32px;
+  }
+
+  .ety-card .word-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ety-card .word-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--german);
+  }
+
+  .ety-card .word-pron {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .word-meaning {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(232, 164, 74, 0.1);
+  }
+
+  .ety-card .bridge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .bridge-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Serif', serif;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  .bridge-label.pie { background: rgba(155, 142, 196, 0.15); color: var(--pie); }
+  .bridge-label.eng { background: rgba(138, 155, 174, 0.15); color: var(--english); }
+  .bridge-label.deu { background: rgba(232, 164, 74, 0.15); color: var(--german); }
+  .bridge-label.vie { background: rgba(196, 154, 108, 0.15); color: var(--vietnamese); }
+
+  .bridge-word {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .bridge-word.vi {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+  }
+
+  .bridge-note {
+    font-size: 0.9rem;
+    color: rgba(212, 202, 187, 0.5);
+    font-style: italic;
+  }
+
+  .ety-card .story {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232, 164, 74, 0.1);
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.75);
+    line-height: 1.7;
+  }
+
+  /* --- CHARACTER DISPLAY --- */
+  .char-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(196, 154, 108, 0.08);
+    border: 1px solid rgba(196, 154, 108, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 4px 8px;
+    vertical-align: middle;
+  }
+
+  .char-display .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.2rem;
+    color: var(--vietnamese);
+    line-height: 1.2;
+  }
+
+  .char-display .pinyin {
+    font-size: 0.8rem;
+    color: rgba(196, 154, 108, 0.7);
+    margin-top: 2px;
+  }
+
+  /* --- INTERACTIVE GUESS SECTIONS --- */
+  .guess-section {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.9), rgba(12, 16, 28, 0.9));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .guess-section .prompt {
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .guess-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .guess-btn {
+    background: rgba(232, 164, 74, 0.08);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    color: var(--text-bright);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .guess-btn:hover {
+    background: rgba(232, 164, 74, 0.15);
+    border-color: var(--fire);
+    transform: translateY(-2px);
+  }
+
+  .guess-btn.correct {
+    background: rgba(74, 180, 100, 0.15);
+    border-color: #4ab464;
+    color: #8ed69e;
+    pointer-events: none;
+  }
+
+  .guess-btn.incorrect {
+    background: rgba(180, 74, 74, 0.1);
+    border-color: rgba(180, 74, 74, 0.3);
+    color: rgba(212, 202, 187, 0.3);
+    pointer-events: none;
+  }
+
+  .guess-feedback {
+    font-size: 1rem;
+    margin-top: 12px;
+    min-height: 1.5em;
+    color: var(--fire-glow);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .guess-feedback.show { opacity: 1; }
+
+  /* --- SECTION DIVIDERS --- */
+  .divider {
+    text-align: center;
+    margin: 60px 0;
+    color: rgba(232, 164, 74, 0.3);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* --- ASIDE BOX --- */
+  .aside-box {
+    background: rgba(155, 142, 196, 0.06);
+    border-left: 2px solid rgba(155, 142, 196, 0.3);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(212, 202, 187, 0.8);
+  }
+
+  .aside-box .aside-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--pie);
+    margin-bottom: 8px;
+  }
+
+  /* --- WORD COLLECTION --- */
+  .word-collection {
+    background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95));
+    border: 1px solid rgba(232, 164, 74, 0.12);
+    border-radius: 16px;
+    padding: 40px 32px;
+    margin: 60px 0;
+    text-align: center;
+  }
+
+  .word-collection h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(232, 164, 74, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .collected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .collected-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(232, 164, 74, 0.06);
+    border: 1px solid rgba(232, 164, 74, 0.15);
+    border-radius: 10px;
+    padding: 14px 20px;
+    min-width: 90px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .collected-word.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .collected-word .cw-german {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--german);
+  }
+
+  .collected-word .cw-english {
+    font-size: 0.8rem;
+    color: rgba(212, 202, 187, 0.4);
+    margin-top: 2px;
+  }
+
+  /* --- CHAPTER END --- */
+  .chapter-end {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .chapter-end .end-line {
+    width: 60px;
+    height: 1px;
+    background: var(--fire);
+    margin: 0 auto 30px;
+    opacity: 0.4;
+  }
+
+  .chapter-end .next-chapter {
+    font-size: 1rem;
+    color: rgba(212, 202, 187, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 40px;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ember), var(--fire), var(--fire-glow));
+    z-index: 100;
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+
+  /* Force readable size on all mobile */
+  @media (max-width: 768px) {
+    html { font-size: 16px !important; }
+    body { font-size: 18px !important; min-width: 0 !important; width: 100% !important; }
+  }
+
+  /* --- RESPONSIVE / MOBILE --- */
+  @media (max-width: 600px) {
+    body { font-size: 18px !important; -webkit-text-size-adjust: 100%; }
+    .content { padding: 40px 16px 100px; }
+    .title-screen { min-height: 90vh; min-height: 90dvh; padding: 30px 16px; }
+    .title-screen h1 { font-size: 2.2rem; letter-spacing: 0.04em; }
+    .title-screen .subtitle { font-size: 1.15rem; }
+    .narrative { font-size: 1.1rem; line-height: 1.8; }
+    .narrative.emphasis { font-size: 1.2rem; }
+
+    .ety-card { padding: 20px 16px; border-radius: 10px; }
+    .ety-card .word-main { font-size: 1.6rem; }
+    .ety-card .bridge { gap: 8px; }
+    .bridge-label { font-size: 0.7rem; min-width: 45px; padding: 2px 6px; }
+    .bridge-word { font-size: 1.05rem; }
+    .bridge-note { font-size: 0.82rem; }
+    .ety-card .story { font-size: 0.95rem; }
+
+    .german-word { padding: 2px 0; }
+
+    .char-display { padding: 10px 16px; margin: 4px 4px; }
+    .char-display .char { font-size: 1.8rem; }
+
+    .guess-section { padding: 24px 16px; border-radius: 10px; }
+    .guess-options { gap: 10px; }
+    .guess-btn {
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .guess-feedback { font-size: 0.95rem; }
+
+    .aside-box { padding: 16px 18px; font-size: 0.98rem; }
+
+    .word-collection { padding: 28px 16px; }
+    .collected-words { gap: 8px; }
+    .collected-word { padding: 10px 14px; min-width: 80px; }
+    .collected-word .cw-german { font-size: 1.1rem; }
+
+    .scene { margin-bottom: 60px; }
+    .divider { margin: 40px 0; }
+    .scene-marker { height: 30px; margin-bottom: 30px; }
+    .title-screen h1 { font-size: 2.5rem; }
+    .quiz-container { padding: 24px 16px; }
+    .quiz-question { padding: 16px; }
+    .quiz-option { padding: 10px 14px; font-size: 0.95rem; }
+    .collected-words { grid-template-columns: 1fr; }
+    .nav-section { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .title-screen h1 { font-size: 1.9rem; }
+    .narrative { font-size: 1.05rem; }
+    .ety-card .word-main { font-size: 1.4rem; }
+    .guess-btn { padding: 12px 16px; font-size: 1.05rem; }
+    .collected-word { min-width: 70px; padding: 8px 10px; }
+  }
+
+  /* iOS safe areas */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .content { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+
+  /* --- QUIZ --- */
+  .quiz-container { background: linear-gradient(135deg, rgba(20, 28, 45, 0.95), rgba(10, 14, 26, 0.95)); border: 1px solid rgba(232, 164, 74, 0.15); border-radius: 16px; padding: 40px 32px; margin: 60px 0; }
+  .quiz-title { text-align: center; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(232, 164, 74, 0.5); margin-bottom: 32px; }
+  .quiz-question { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(212, 202, 187, 0.06); }
+  .quiz-question .q-text { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 12px; }
+  .quiz-question .q-num { font-size: 0.8rem; color: rgba(212, 202, 187, 0.3); margin-bottom: 4px; }
+  .quiz-option { display: block; width: 100%; text-align: left; background: rgba(232, 164, 74, 0.04); border: 1px solid rgba(232, 164, 74, 0.12); color: var(--text); font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; padding: 10px 16px; border-radius: 8px; cursor: pointer; margin: 6px 0; transition: all 0.3s ease; }
+  .quiz-option:hover { background: rgba(232, 164, 74, 0.1); border-color: rgba(232, 164, 74, 0.3); }
+  .quiz-option.selected { background: rgba(232, 164, 74, 0.15); border-color: var(--fire); color: var(--text-bright); }
+  .quiz-option.correct { background: rgba(74, 180, 100, 0.15); border-color: #4ab464; color: #8ed69e; }
+  .quiz-option.wrong { background: rgba(180, 74, 74, 0.1); border-color: rgba(180, 74, 74, 0.3); color: rgba(212, 202, 187, 0.4); }
+  .quiz-submit { display: block; margin: 24px auto 0; background: rgba(232, 164, 74, 0.15); border: 1px solid var(--fire); color: var(--fire); font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; padding: 12px 40px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+  .quiz-submit:hover { background: rgba(232, 164, 74, 0.25); }
+  .quiz-result { text-align: center; margin-top: 24px; font-size: 1.2rem; color: var(--text-bright); display: none; }
+  .quiz-result.pass { color: #8ed69e; }
+  .quiz-result.fail { color: #e88a8a; }
+  .quiz-retry { display: none; margin: 16px auto 0; background: rgba(180, 74, 74, 0.15); border: 1px solid rgba(180, 74, 74, 0.4); color: #e88a8a; font-family: 'Cormorant Garamond', serif; font-size: 1rem; padding: 10px 32px; border-radius: 8px; cursor: pointer; }
+  .quiz-explanation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(212, 202, 187, 0.85);
+    background: rgba(232, 164, 74, 0.06);
+    border-left: 3px solid rgba(232, 164, 74, 0.3);
+    border-radius: 4px;
+  }
+  .quiz-explanation.correct-exp {
+    border-left-color: rgba(74, 180, 100, 0.4);
+    background: rgba(74, 180, 100, 0.06);
+  }
+
+  /* --- AUDIO PRONUNCIATION --- */
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    border-radius: 50%;
+    background: rgba(232, 164, 74, 0.08);
+    color: var(--fire, #e8a44a);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(232, 164, 74, 0.2); border-color: rgba(232, 164, 74, 0.5); }
+  .speak-btn:active { transform: scale(0.9); }
+  .speak-btn.speaking { background: rgba(232, 164, 74, 0.3); border-color: #e8a44a; }
+
+
+  /* --- NAVIGATION --- */
+  .nav-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 0 0 40px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid rgba(232, 164, 74, 0.2);
+    border-radius: 8px;
+    color: #e8a44a;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .nav-btn:hover { border-color: #e8a44a; background: rgba(232, 164, 74, 0.08); }
+  .nav-btn.next { margin-left: auto; background: rgba(232, 164, 74, 0.08); }
+  @media (max-width: 600px) { .nav-section { flex-direction: column; } }
+
+</style>
+<link rel="stylesheet" href="../game-engine.css">
+</head>
+<body>
+  <!-- G2G Advisory -->
+  <div style="position:fixed;top:0;right:0;z-index:200;padding:12px 16px;opacity:0.3;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.3'">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 100 100" style="opacity:0.8;">
+        <rect rx="18" width="100" height="100" fill="rgba(88,40,160,0.6)"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="white">G2G</text>
+        <line x1="20" y1="60" x2="80" y2="35" stroke="rgba(200,100,255,0.8)" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="78,33 85,30 80,40" fill="rgba(200,100,255,0.8)"/>
+      </svg>
+    </a>
+  </div>
+
+
+<canvas id="candlelight"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- ==================== TITLE ==================== -->
+  <div class="title-screen">
+    <div class="chapter-label">Chapter Eight</div>
+    <h1>Die Feder und das Pergament</h1>
+    <div class="subtitle">The Quill and the Parchment</div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+
+  <!-- ==================== SCENE 1: THE SCRIPTORIUM ==================== -->
+  <div class="scene" id="scene1">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      It is the year 770 CE. Somewhere in the heart of the Carolingian Empire — perhaps Mainz, perhaps Fulda, perhaps the monasteries scattered across what is now France and southern Germany — a monk sits bent over a wooden desk in a room lit by a single candle.
+    </p>
+
+    <p class="narrative">
+      The candle flickers. Golden particles drift in the warm light — dust motes, he thinks, or perhaps angels watching his work. The room is cold. Outside, the world speaks in a thousand tongues, many of them German. Inside this scriptorium, Latin has ruled for four hundred years. It is the language of the Church. The language of Heaven. The language in which God's word was written.
+    </p>
+
+    <p class="narrative">
+      But everything is about to change.
+    </p>
+
+    <p class="narrative">
+      The Emperor Charlemagne has issued a decree. The peasants and common folk — the farmers, the blacksmiths, the mothers holding infants — they do not understand Latin anymore. They have their own tongues. And if they cannot understand the word of God as it is preached to them, then how can they be saved?
+    </p>
+
+    <p class="narrative">
+      The decree is simple: sermons must be in the language of the people.
+    </p>
+
+    <p class="narrative">
+      This single command — from one ruler, sitting in a palace, perhaps forty miles away — will transform not just the Church but the fate of the German language itself.
+    </p>
+
+    <p class="narrative emphasis">
+      For the first time in history, someone is about to write German down.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 2: BEFORE WRITING ==================== -->
+  <div class="scene" id="scene2">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      German did not spring from writing. For a thousand years before this moment — for ten thousand years — it existed only in the mouths of people. It had no rules. No standard. No "correct" way to spell a word, because spelling did not exist. A farmer in Bavaria said words one way; a merchant in the north said them slightly differently. The language was alive, flowing, and utterly unrecorded.
+    </p>
+
+    <p class="narrative">
+      This was not a lack. It was the natural state of speech. English had the same form for the first thousand years of its existence. So did French, Spanish, Italian — all the Romance languages born from Latin. Writing comes <em>after</em> speech. Always. Speech is the true form of language; writing is merely its shadow on a wall.
+    </p>
+
+    <p class="narrative">
+      But shadows begin to matter the moment you try to pin them down.
+    </p>
+
+    <p class="narrative">
+      The instant a monk begins to write the word for "church" — a word Germans have spoken since they first encountered Christianity two centuries earlier — a decision must be made. Does he write it <em>Kirche</em> or <em>Kerche</em> or <em>Kyrche</em>? The sound could be represented in multiple ways. There was no authority to appeal to. No dictionary. No Grammar book. The monk is inventing the rules as he goes, simply by deciding: <em>This is how I will write this word.</em>
+    </p>
+
+    <p class="narrative">
+      And if the monk in the next monastery makes a different decision, then German has split. Not in speech — the peasants still sound the same to each other — but in writing. Writing creates standards. It creates rules. It creates the possibility of "correct" and "incorrect." It transforms a flexible, spoken language into something that can be taught, codified, standardized, and spread.
+    </p>
+
+    <p class="narrative">
+      This is the power and the curse of writing: it freezes a living thing.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 3: THE ABROGANS ==================== -->
+  <div class="scene" id="scene3">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Around 765 CE — fifteen years before Charlemagne's decree, or perhaps just after, the records are unclear — a monk (we will never know his name) created a document that changed everything. It was called the <em>Abrogans</em>, which simply means "the humble ones" or "those who abase themselves." It was a glossary. A dictionary, almost. A list of Latin words paired with their German equivalents.
+    </p>
+
+    <p class="narrative">
+      This was radical. This was dangerous. This was saying: <em>German words are worth writing down. German is a language of knowledge, not just of the field and the hearth.</em>
+    </p>
+
+    <p class="narrative">
+      The <em>Abrogans</em> is the first German-Latin glossary. It is, quite possibly, the first German-language text we possess that was written intentionally, deliberately, to preserve German words in a systematic way. Before this moment, there had been names written in German, there had been a few scattered words, there had been the <em>Merseburg Charms</em> (two magical spells from an earlier era). But nothing systematic. Nothing that said: <em>German is a language of learning.</em>
+    </p>
+
+    <p class="narrative">
+      When the monk writing the <em>Abrogans</em> sat down to match German words to Latin ones, he was not just translating. He was <em>creating</em>. He was deciding which variant of the word would be the "official" one. He was inventing standardized spelling, for perhaps the first time in German history. The words he chose would ripple outward. Other monks would copy his glossary. They would learn from it. Some would challenge his choices; others would adopt them. Slowly, imperceptibly, standardization would begin.
+    </p>
+
+    <p class="narrative">
+      A dictionary is a small thing — just a list of words and their meanings. But it is also an act of authority. The person making the dictionary is saying: <em>This is the correct form. This is how we spell it. This is what it means.</em> The <em>Abrogans</em> was written by a single monk, whose name is lost. But through that one monk's decisions, an invisible hand began to guide the future of the German language.
+    </p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 4: THE VOCABULARY OF CONVERSION ==================== -->
+  <div class="scene" id="scene4">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      When monks began writing German in earnest, they immediately faced a problem: German had no words for the Christian concept. It had no word for "church." No word for "monk." No word for "soul." For a thousand years, these concepts had not existed in the Germanic world. The words for them belonged to Latin, to Greek, to the languages of the Mediterranean where Christianity was born.
+    </p>
+
+    <p class="narrative">
+      The monks had two choices. They could borrow the Latin words, bringing them into German unchanged. Or they could create new German words from Germanic roots. They did both — and the words they chose reveal the depth of cultural collision that happened when a Nordic, pagan people suddenly encountered monotheistic, Mediterranean Christianity.
+    </p>
+
+    <p class="narrative">
+      Look at the words that entered German during this era:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="kirche">Kirche</span> — church. From Greek <em>kyriakós</em> ("of the Lord"), which had been borrowed into Latin as <em>ecclesia</em>... no, wait. The word actually came through a different Latin form: <em>*kyriacum</em>, a building dedicated to the Lord. The sound came to German almost unchanged. The very shape of the word — that hard Germanic "k" sound at the beginning — makes it sound tough, emphatic, almost like a command. You can hear the "ch" at the end, that same sound you hear in <em>Nacht</em> and <em>Licht</em>. Over the centuries, that "k" would soften in some regions. But the underlying word stayed.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="kloster">Kloster</span> — monastery, cloister. From Latin <em>claustrum</em>, meaning "enclosed place." The original Latin word carried all the sense of being locked away, shut off from the secular world. In German, the "cl" sound of Latin became "kl" — a shift you see in many borrowed words. The monk sitting in his cell, cut off from the world, enclosed by stone walls — that Latin concept became germanized as <em>Kloster</em>. When a German person hears the word <em>Kloster</em>, they think of a place set apart, a space of quiet study and prayer. The word carries the same weight as the Latin original.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="monch">Mönch</span> — monk. From Latin <em>monachus</em>, ultimately from Greek <em>monos</em> ("alone"). A monk is, by definition, a solitary person who has renounced the world. The Latin word <em>monachus</em> traveled into German, and the monks themselves applied it. When a man took monastic vows, he became a <em>Mönch</em>. The word carries with it the entire weight of a Christian institution that did not exist in the Germanic world before the conversion. You cannot separate the word from the thing it represents. They arrived at the same time.
+    </p>
+
+    <p class="narrative">
+      And then there is <span class="german-word" data-card="schrift">Schrift</span> — writing, script. From Latin <em>scriptum</em>, the past participle of <em>scribere</em> ("to write"). But look at how it entered German. The Latin "scr" at the beginning became the Germanic "sch" — a sound-shift that happens in many borrowed words. And yet, the original Latin word is still visible if you know how to listen. <em>Schrift</em> carries with it the very concept of writing itself, the act of making marks on parchment to preserve words. Before conversion, Germanic peoples had runes. But the kind of systematic, alphabetic writing that Christianity brought — that was <em>Schrift</em>, something new under the sun.
+    </p>
+
+    <!-- KIRCHE card -->
+    <div class="ety-card" id="card-kirche">
+      <div class="word-header">
+        <span class="word-main">Kirche</span>
+        <span class="word-pron">/ˈkɪʁçə/</span>
+      </div>
+      <div class="word-meaning">church — from Greek through Latin, a word that came with Christianity itself</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— This is a borrowed word, not inherited from PIE</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label grc">GRC</span>
+        <span class="bridge-word">κυριακόν</span>
+        <span class="bridge-note">— kyriakón — "of the Lord" (from kyrios = lord)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">ecclesia</span>
+        <span class="bridge-note">— church (from the Greek, via Latin)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kirche</span>
+        <span class="bridge-note">— German borrowed the word that came with the Christian faith itself</span>
+      </div>
+      <div class="story">
+        <em>Kirche</em> is a word that arrived with Christianity. The concept was entirely new to the Germanic peoples — they had temples and sacred groves, but not the organized, institutional "church" that Rome brought. The word itself traveled: from Greek kyriakón ("of the Lord") into Latin as a term for the building dedicated to the Lord, and then into Germanic languages as the concept itself was adopted. The hard 'k' sound of the Germanic pronunciation gives the word a commanding quality — it sounds almost like a command, appropriate for an institution that claimed authority over the soul itself.
+      </div>
+    </div>
+
+    <!-- KLOSTER card -->
+    <div class="ety-card" id="card-kloster">
+      <div class="word-header">
+        <span class="word-main">Kloster</span>
+        <span class="word-pron">/ˈklɔstɐ/</span>
+      </div>
+      <div class="word-meaning">monastery, cloister — a place enclosed and set apart from the secular world</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">claustrum</span>
+        <span class="bridge-note">— enclosed place, from claudere (to close/shut)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Kloster</span>
+        <span class="bridge-note">— Latin 'cl' became German 'kl' in borrowed words. The sense of enclosure remains.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">cloister</span>
+        <span class="bridge-note">— English borrowed the same Latin word, but without the initial sound shift</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">tu viện</span>
+        <span class="bridge-note">— from Sanskrit vihāra via Buddhist Chinese; tu = to flee/abandon the world, viện = monastery. Vietnamese adopted this compound through centuries of Buddhist contact.</span>
+      </div>
+      <div class="story">
+        <em>Kloster</em> preserves the Latin concept of enclosure — a space shut off from the secular world. In the monastery, a monk was literally separated from ordinary life. The word carries within it the entire institutional structure of Christian monasticism: the stone walls, the cells, the rule of silence, the withdrawal from the world. When a medieval German heard "Kloster," they understood not just a building, but a way of life — one that was entirely new to Germanic culture.
+      </div>
+    </div>
+
+    <!-- MÖNCH card -->
+    <div class="ety-card" id="card-monch">
+      <div class="word-header">
+        <span class="word-main">Mönch</span>
+        <span class="word-pron">/mœnç/</span>
+      </div>
+      <div class="word-meaning">monk — a man who has renounced the world to live in solitude and religious devotion</div>
+      <div class="bridge">
+        <span class="bridge-label grc">GRC</span>
+        <span class="bridge-word">μόνος</span>
+        <span class="bridge-note">— monos — alone, solitary</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">monachus</span>
+        <span class="bridge-note">— from Greek monos via Latin</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Mönch</span>
+        <span class="bridge-note">— a German word for a completely new social role brought by Christianity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">monk</span>
+        <span class="bridge-note">— English and German both borrowed the Latin word for this new concept</span>
+      </div>
+      <div class="story">
+        The word <em>Mönch</em> comes from the Greek concept of solitude (monos = alone). A monk is fundamentally a solitary figure, even when living in a monastery. The paradox of monasticism — living alone together in a community — is encoded in the word itself. For Germanic peoples, this role did not exist before Christianity. There were no monks in pagan Germanic society. The word arrived with the institution, carried in the Latin of the Church, and was adopted wholesale into German. It represents not just a person, but an entirely new social structure and way of life.
+      </div>
+    </div>
+
+    <!-- SCHRIFT card -->
+    <div class="ety-card" id="card-schrift">
+      <div class="word-header">
+        <span class="word-main">Schrift</span>
+        <span class="word-pron">/ʃʁɪft/</span>
+      </div>
+      <div class="word-meaning">writing, script — the systematic representation of language on parchment</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">scriptum</span>
+        <span class="bridge-note">— past participle of scribere (to write)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Schrift</span>
+        <span class="bridge-note">— Latin 'scr' became German 'sch'. The concept of alphabetic writing itself was new.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">script</span>
+        <span class="bridge-note">— English kept the Latinate form; German adapted it phonetically</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">thư</span>
+        <span class="bridge-note">— thư — Vietnamese word meaning letter or book; a Sino-Vietnamese cognate inherited from classical literacy traditions. Vietnamese adopted this concept through its early writing systems and cultural contact.</span>
+      </div>
+      <div class="story">
+        <em>Schrift</em> represents a profound transformation in Germanic culture. Before Christianity, Germanic peoples had runes — a writing system tied to sacred and magical purposes. But the <em>Schrift</em> that the monks brought was different: systematic, alphabetic, designed to capture and preserve language precisely. The transformation of 'scr' to 'sch' shows how Germanic phonetics adapted the borrowed Latin word. When a medieval monk wrote <em>Schrift</em>, he was writing the very word for the technology that was changing his world.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 5: GERMANIC ROOTS ==================== -->
+  <div class="scene" id="scene5">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      But not every Christian word was borrowed from Latin. Sometimes, the monks did something remarkable: they took old Germanic words and stretched them to cover new meanings. Look at:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="tinte">Tinte</span> — ink. From Latin <em>tincta</em>, meaning "dyed" or "tinted." The substance monks used was created by mixing a dark liquid (often made from oak galls and iron salts) with something to make it stick. It was, literally, dyed. But the word also carries something else: the act of <em>tinting</em> a surface. When ink touches parchment, it tints it — it changes the color. The Latin word perfectly captured the essence of what happens, and German borrowed it almost unchanged.
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="buch">Buch</span> — book. From Proto-Germanic *<em>bōkō</em>, which traces back even further. And here is something beautiful: the word is related to the English "beech," the tree. Why? Because in ancient times, before paper, before parchment, runes were carved into beech bark. The tree's bark became a surface for writing. The wooden tablets of beech became the symbol of written communication. When Germanic peoples first encountered the concept of a bound volume of pages — a "book" — they used a word that literally meant "beech bark." They were saying: <em>A book is like carved wood. A book is what you write on.</em> The word reveals the entire history of writing in the Germanic world, from runes on bark to the leather-bound manuscripts of Charlemagne's empire.
+    </p>
+
+    <p class="narrative">
+      And then there is the word that changed everything:
+    </p>
+
+    <p class="narrative">
+      <span class="german-word" data-card="pergament">Pergament</span> — parchment. From Greek <em>pergamēnē</em>, literally "from Pergamon," the city in Asia Minor that became famous for manufacturing a special writing surface. When sheepskin or goatskin is treated with lime and scraped smooth, it becomes parchment — a surface that will take ink and last for centuries. This was the material on which monks wrote. The word itself is a place name that became a common noun. Every sheet a monk wrote on was called by the name of a distant city. The word <em>Pergament</em> carries within it the entire infrastructure of medieval writing — the animals, the chemical processes, the trade routes that brought materials from across the Mediterranean world.
+    </p>
+
+    <p class="narrative">
+      When a monk sat down with quill and ink and parchment, he was surrounded by borrowed words. But he was also surrounded by the history of his people — the beech trees, the ancient runes, the Germanic languages that had developed without writing for a thousand years.
+    </p>
+
+    <!-- TINTE card -->
+    <div class="ety-card" id="card-tinte">
+      <div class="word-header">
+        <span class="word-main">Tinte</span>
+        <span class="word-pron">/ˈtɪntə/</span>
+      </div>
+      <div class="word-meaning">ink — the liquid that stains and preserves words on parchment</div>
+      <div class="bridge">
+        <span class="bridge-label lat">LAT</span>
+        <span class="bridge-word">tincta</span>
+        <span class="bridge-note">— dyed, tinted (past participle of tingere, to dye)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Tinte</span>
+        <span class="bridge-note">— German borrowed the Latin word almost unchanged</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">tint</span>
+        <span class="bridge-note">— English also has "tint" from the same Latin root, but uses "ink" (from a different source) for the substance</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">mực</span>
+        <span class="bridge-note">— mực — Vietnamese word for ink; a Sino-Vietnamese cognate inherited from classical writing traditions. Mực reflects a technology essential to manuscript cultures across East Asia.</span>
+      </div>
+      <div class="story">
+        <em>Tinte</em> comes from the Latin for "dyed" — because ink is, quite literally, a liquid dye. When a monk mixed oak gall and iron salts into a dark liquid, he was creating a dye that would permanently stain parchment. The word preserves this chemistry: <em>Tinte</em> is what tints, what colors, what marks. Without <em>Tinte</em>, the parchment was blank and useless. With it, words became permanent. The ink carried by a feather quill transformed temporary speech into permanent text.
+      </div>
+    </div>
+
+    <!-- BUCH card -->
+    <div class="ety-card" id="card-buch">
+      <div class="word-header">
+        <span class="word-main">Buch</span>
+        <span class="word-pron">/buːx/</span>
+      </div>
+      <div class="word-meaning">book — a bound collection of written pages, whose name preserves ancient Germanic memory</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*bhāgo-</span>
+        <span class="bridge-note">— possibly related to the beech tree (though the connection is debated by linguists)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pgm">PGM</span>
+        <span class="bridge-word">*bōkō</span>
+        <span class="bridge-note">— beech (the tree whose bark was used as a writing surface)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">beech</span>
+        <span class="bridge-note">— the tree. The connection to "book" is preserved only in German</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">tre (or tre giản)</span>
+        <span class="bridge-note">— tre giản — a Vietnamese compound meaning "bamboo + simple/thin." Vietnamese describes these writing artifacts through materials and imagery reflecting East Asian scribal traditions.</span>
+      </div>
+      <div class="story">
+        <em>Buch</em> is a window into the ancient Germanic world before writing. The word means "beech" — the tree whose smooth bark was carved with runes. When Germanic peoples first encountered the concept of a bound, written volume, they reached for the word that meant the material and tool of their ancient literacy. A book was what you could write on, just as beech bark was what the ancients carved runes into. The word reveals how new technologies — alphabetic writing, parchment, binding — were understood through the lens of old memories: trees, bark, the marks of runes.
+      </div>
+    </div>
+
+    <!-- PERGAMENT card -->
+    <div class="ety-card" id="card-pergament">
+      <div class="word-header">
+        <span class="word-main">Pergament</span>
+        <span class="word-pron">/pɛʁɡaˈmɛnt/</span>
+      </div>
+      <div class="word-meaning">parchment — treated animal skin that preserves writing for centuries</div>
+      <div class="bridge">
+        <span class="bridge-label grc">GRC</span>
+        <span class="bridge-word">Pergamon</span>
+        <span class="bridge-note">— a city in Asia Minor (modern Turkey) famous for parchment production</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label grc">GRC</span>
+        <span class="bridge-word">pergamēnē</span>
+        <span class="bridge-note">— literally "from Pergamon" (the place where parchment technology perfected)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Pergament</span>
+        <span class="bridge-note">— German borrowed the Greek place name and made it a common noun</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">parchment</span>
+        <span class="bridge-note">— English kept a similar form, both from the same Greek origin</span>
+      </div>
+      <div class="story">
+        <em>Pergament</em> carries within it a whole economy of medieval writing. A city name became a product name. The city of Pergamon in Asia Minor developed a method of treating sheepskin and goatskin — scraping it clean, treating it with lime, stretching it smooth — to create a writing surface superior to papyrus. This parchment was expensive, precious, worth trading over thousands of miles. When a Germanic monk received a sheet of parchment, he was holding the result of animal husbandry, chemical processing, and Mediterranean trade routes — all compressed into a word derived from the name of a distant city. Every page he wrote on was a connection to the wider world.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 6: FEDER & SEELE ==================== -->
+  <div class="scene" id="scene6">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      Some words the monks did not need to borrow. <span class="german-word" data-card="feder">Feder</span> — the quill, the feather. This is pure Germanic, related to English "feather." A quill is made from a bird feather, stripped and sharpened. The word is simple, functional, exactly what it describes. To write with a quill was to take a feather and transform it into an instrument. The word <em>Feder</em> connects the monk to the natural world — to the birds that provided the tools of his craft.
+    </p>
+
+    <p class="narrative">
+      But the most profound borrowing of the era was not Latin at all. It was something deeper. As monks began writing German, they faced a question that had never needed answering before: <em>What happens to you when you die?</em> The pagan Germanic religions had answers, yes — Valhalla, the journey to the afterlife. But the concept of the <em>soul</em> — the immaterial, immortal essence that Christianity preached — this required a word.
+    </p>
+
+    <p class="narrative">
+      The monks did not borrow a Latin word. They reached back into Germanic. <span class="german-word" data-card="seele">Seele</span> — soul. From Proto-Germanic *<em>saiwalō</em>. The root is unknown, lost to time. But the word took on a new meaning in Christian German. It became the name for that part of you that lives forever, that stands before God on Judgment Day, that angels and demons fight over. The word changed meaning — but it remained Germanic.
+    </p>
+
+    <p class="narrative">
+      And <span class="german-word" data-card="gott">Gott</span> — God. From Proto-Germanic *<em>gudą</em>, related to English "good" (from the sense of "that which is invoked" or "that which is called upon"). The word for the supreme being was not borrowed from Latin <em>deus</em> or Greek <em>theos</em>. It came from the Germanic root for "god" — the same root that had named the gods and goddesses of the pagan world. When Christians came to the Germanic lands, they took the word that had always meant "deity" and applied it to the Christian God. The pagan <em>Gott</em> became the Christian <em>Gott</em>. The word survived the conversion. In a way, it absorbed the new religion, maintaining continuity with the past.
+    </p>
+
+    <p class="narrative">
+      A quill. A feather. A soul. A God. One monk, one candle, slowly writing the German language into existence.
+    </p>
+
+    <!-- FEDER card -->
+    <div class="ety-card" id="card-feder">
+      <div class="word-header">
+        <span class="word-main">Feder</span>
+        <span class="word-pron">/ˈfeːdɐ/</span>
+      </div>
+      <div class="word-meaning">feather, quill — a pure Germanic word connecting the monk to nature's tools</div>
+      <div class="bridge">
+        <span class="bridge-label pie">PIE</span>
+        <span class="bridge-word">*pet-</span>
+        <span class="bridge-note">— to fly, to move (the root concept of feather)</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label pgm">PGM</span>
+        <span class="bridge-word">*fedrǭ</span>
+        <span class="bridge-note">— feather, from the root "to fly"</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">feather</span>
+        <span class="bridge-note">— Germanic inheritance, unchanged in meaning</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Feder</span>
+        <span class="bridge-note">— pure Germanic. When a quill was invented, Germans called it by the word for feather — because a quill IS a feather, carefully prepared.</span>
+      </div>
+      <div class="story">
+        <em>Feder</em> is pure Germanic, with no Latin borrowing. The word connects the modern technology of writing (the quill) directly to nature (the feather). It reveals something beautiful about Germanic linguistic logic: when something new needed a name, they did not invent a new word, they reused an old one. A quill is a feather. The word for feather is <em>Feder</em>. There is no separation between the natural object and the tool — they are the same thing. When a medieval monk reached for a feather, stripped the barbs, cut the tip, and dipped it in ink, he was still holding a <em>Feder</em>. The word preserves the monk's connection to the natural world, even as he engaged in the most artificial act of culture: writing.
+      </div>
+    </div>
+
+    <!-- SEELE card -->
+    <div class="ety-card" id="card-seele">
+      <div class="word-header">
+        <span class="word-main">Seele</span>
+        <span class="word-pron">/ˈzeːlə/</span>
+      </div>
+      <div class="word-meaning">soul — the immaterial essence that Christianity introduced, given a Germanic name</div>
+      <div class="bridge">
+        <span class="bridge-label pgm">PGM</span>
+        <span class="bridge-word">*saiwalō</span>
+        <span class="bridge-note">— soul, life-force. The origin is unknown, lost to prehistory.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Seele</span>
+        <span class="bridge-note">— unchanged from Proto-Germanic, but its meaning was transformed by Christianity</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">—</span>
+        <span class="bridge-note">— English has no close cognate; we borrowed "soul" from Old Norse</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">linh hồn</span>
+        <span class="bridge-note">— linh hồn — Vietnamese compound (spirit/efficacy + soul) from Sino-Vietnamese roots. Vietnamese inherited this conceptual pairing through Buddhist and classical philosophical traditions.</span>
+      </div>
+      <div class="story">
+        <em>Seele</em> is a profound example of linguistic adaptation. The word existed in Proto-Germanic, but the Christian concept of the immaterial soul — distinct from the body, judged after death, eternal — was entirely new. Germanic paganism had different ideas about death and the afterlife. Yet when the monks wrote German theology, they did not borrow the Latin word <em>anima</em>. Instead, they reached into their own Germanic inheritance and stretched the old word to cover the new concept. <em>Seele</em> became the Christian soul. The word survived the conversion. What changed was not the word, but what it meant — a transformation as profound as any conquest.
+      </div>
+    </div>
+
+    <!-- GOTT card -->
+    <div class="ety-card" id="card-gott">
+      <div class="word-header">
+        <span class="word-main">Gott</span>
+        <span class="word-pron">/ɡɔt/</span>
+      </div>
+      <div class="word-meaning">God — the Germanic word for deity, preserved when Christianity arrived</div>
+      <div class="bridge">
+        <span class="bridge-label pgm">PGM</span>
+        <span class="bridge-word">*gudą</span>
+        <span class="bridge-note">— god, deity. Related to English "good" (from the sense of "invoked" or "called upon")</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label eng">ENG</span>
+        <span class="bridge-word">good</span>
+        <span class="bridge-note">— the same root, but meaning shifted in English. "Good" was once a religious term.</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label deu">DEU</span>
+        <span class="bridge-word">Gott</span>
+        <span class="bridge-note">— the pagan Germanic word for any god or goddess, repurposed for the Christian God</span>
+      </div>
+      <div class="bridge">
+        <span class="bridge-label vie">VIE</span>
+        <span class="bridge-word vi">thần</span>
+        <span class="bridge-note">— thần — Vietnamese word for spirit or deity; a Sino-Vietnamese cognate inherited from classical philosophy and religious traditions. Vietnamese adopted this meaning through centuries of cultural contact.</span>
+      </div>
+      <div class="story">
+        <em>Gott</em> is perhaps the most important word of cultural contact. Before Christianity, Germanic peoples worshipped many gods and goddesses — Wodan, Donar, Freija — and the word <em>Gott</em> meant any deity. When Christianity came with its God — one, universal, all-powerful — the Germanic peoples did not abandon their word. They kept <em>Gott</em> and applied it to the Christian God. The pagan gods fell silent, but the word survived. What happened was not replacement but continuation. The old word absorbed the new religion. When a medieval monk said "Gott," he was using a word that had named pagan deities for thousands of years. The conversion changed the referent, but not the word. Language preserved memory even as belief transformed.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 1 ==================== -->
+  <div class="scene" id="scene-guess1">
+    <div class="guess-section">
+      <div class="prompt">
+        In the quiet of the scriptorium, a monk needs to ask a question: where is he?<br><br>
+        Can you guess what the medieval German word for "room" might be? (Hint: it's where something happens or is made.)<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(German word: Stube or Zimmer)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">stream</button>
+        <button class="guess-btn" onclick="guess(this, true)">room</button>
+        <button class="guess-btn" onclick="guess(this, false)">stone</button>
+        <button class="guess-btn" onclick="guess(this, false)">sleep</button>
+      </div>
+      <div class="guess-feedback" id="feedback1"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 7: THE POWER OF WRITING ==================== -->
+  <div class="scene" id="scene7">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      What happened in the scriptorium in those decades around 765-800 CE was not purely linguistic. It was political. It was revolutionary. By writing German down, the monks were making a statement: <em>Our language is worthy of preservation. Our language is capable of expressing truth. Our language can be standardized and taught.</em>
+    </p>
+
+    <p class="narrative">
+      The moment writing enters a language, everything changes. Speech is local, temporary, ephemeral. A word dies when the speaker dies. But writing is permanent. It can cross distances. It can survive centuries. A word written down becomes a word that others can learn, copy, and spread.
+    </p>
+
+    <p class="narrative">
+      Before this era, German was a dozen dialects, each slightly different. A speaker from Saxony would have sounded strange to a speaker from Bavaria. They could understand each other, probably, but they would notice the differences — the vowel shifts, the different words for the same things, the different grammatical endings.
+    </p>
+
+    <p class="narrative">
+      But when the monks began writing German, they had to make choices. Which dialect would they use? The dialect of Mainz? The dialect of Fulda? The dialect of the emperor's court? And whatever choice they made would become the standard — at least for the monks, at least for the Church. It would become the written form.
+    </p>
+
+    <p class="narrative">
+      Writing does not change speech. A farmer in Bavaria would still speak his local dialect. But it creates a prestige form — a version of the language that is written, official, authoritative. And over time, people begin to imitate it, to move toward it, to adopt it. Writing is a force that pulls dialect toward standardization, toward unity, toward a single "correct" form.
+    </p>
+
+    <p class="narrative">
+      This process took centuries. It was not complete by the end of the medieval period — German regional dialects remain strong even today. But it began here, in the scriptorium, with monks deciding to write down their language.
+    </p>
+
+    <p class="narrative emphasis">
+      Writing transforms language from a living, local thing into something that can be standardized, taught, and preserved for the future.
+    </p>
+  </div>
+
+  <!-- ==================== SCENE 8: THE BORROWED MIRROR ==================== -->
+  <div class="scene" id="scene8">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      While a monk in a monastery in Mainz was writing the first pages of German, thousands of miles to the east in Vietnam, scholars were grappling with a different problem: how to write a language that had been subject to centuries of foreign dominance. Vietnamese, an Austroasiatic language, had been written in Chinese characters (chữ Nôm) for over a thousand years — characters borrowed from China and repurposed to represent Vietnamese sounds. But this was a borrowed system, never quite fitting the language it tried to capture.
+    </p>
+
+    <p class="narrative">
+      The Vietnamese word for "book" is <em>thư</em> — a Sino-Vietnamese word inherited from classical literacy traditions, originally evoking bamboo slips stacked together as writing surfaces. But Vietnamese could not easily express its own sounds using the inherited character system. The system worked, but it was like trying to capture speech by constantly translating between two languages. A reader had to memorize thousands of characters and then remember the Vietnamese pronunciation for each one — an enormous burden.
+    </p>
+
+    <p class="narrative">
+      For over a thousand years, Vietnamese was imprisoned in this borrowed writing system. Chinese characters ruled the page, even though they could never truly represent the tones and sounds of Vietnamese speech. The written language was not Vietnamese — it was Vietnamese disguised as Chinese. And yet, Vietnamese survived. The language lived in the mouths of farmers and merchants, in the songs of mothers and children, waiting for someone to invent a better way to write it.
+    </p>
+
+    <p class="narrative">
+      That moment came in the 17th century, when Catholic missionaries arrived in Vietnam. A Portuguese priest named Alexandre de Rhodes looked at the Vietnamese language and the impossible burden of Chinese characters, and he had an idea: what if you used the Latin alphabet — the same alphabet used for European languages — but adapted it to capture Vietnamese tones through diacritical marks? This became <em>Chữ Quốc Ngữ</em> (the national script), the Latin-based writing system still used by Vietnamese today.
+    </p>
+
+    <p class="narrative">
+      The transformation was revolutionary. Vietnamese, which had been trapped in a borrowed Chinese system for over a thousand years, suddenly had its own alphabetic script. A child could learn to read in months instead of decades. The language could finally be written the way it sounded, with all its tones captured in marks above the letters: à, á, ả, ã, ạ. Vietnam traded the burden of memorizing thousands of characters for a flexible, phonetic alphabet that grew naturally from the language itself.
+    </p>
+
+    <p class="narrative">
+      The monk in Mainz and the Vietnamese scholar face a similar challenge: how do you write a language so that future generations can read it? The monk borrows an alphabet and uses it phonetically. The Vietnamese scholar, a thousand years later, makes the same choice — phonetic writing, but with an even greater tool: the Latin alphabet, which allows diacritical marks to capture the tone distinctions that are the very heartbeat of Vietnamese speech. Both solutions are solutions to the same human problem: <em>How do we hold our thoughts in a form that will outlast us?</em>
+    </p>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 2 ==================== -->
+  <div class="scene" id="scene-guess2">
+    <div class="guess-section">
+      <div class="prompt">
+        The monks are writing. The parchment is covered with words.<br><br>
+        Can you guess what <strong style="color: var(--german);">Tinte</strong> means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(You use it with a quill.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">feather</button>
+        <button class="guess-btn" onclick="guess(this, true)">ink</button>
+        <button class="guess-btn" onclick="guess(this, false)">parchment</button>
+        <button class="guess-btn" onclick="guess(this, false)">word</button>
+      </div>
+      <div class="guess-feedback" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE: GUESS 3 ==================== -->
+  <div class="scene" id="scene-guess3">
+    <div class="guess-section">
+      <div class="prompt">
+        The monastery is called a <strong style="color: var(--german);">Kloster</strong>.<br><br>
+        What do you think this word means?<br>
+        <span style="font-size: 0.9rem; opacity: 0.5;">(It's a place where monks live, cut off from the world.)</span>
+      </div>
+      <div class="guess-options">
+        <button class="guess-btn" onclick="guess(this, false)">kingdom</button>
+        <button class="guess-btn" onclick="guess(this, true)">cloister/monastery</button>
+        <button class="guess-btn" onclick="guess(this, false)">school</button>
+        <button class="guess-btn" onclick="guess(this, false)">castle</button>
+      </div>
+      <div class="guess-feedback" id="feedback3"></div>
+    </div>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- ==================== SCENE 9: THE CEREMONY ==================== -->
+  <div class="scene" id="scene9">
+    <div class="scene-marker"></div>
+
+    <p class="narrative">
+      The candle is burning low. The monk has finished his day's work. He looks at the page he has written. The Latin gloss has been translated. German words, in a form he chose, now sit alongside the authoritative Latin. They are validated. They have been written. They are part of the permanent record.
+    </p>
+
+    <p class="narrative">
+      Tomorrow, another monk will copy these pages. The words will spread. In fifty years, someone will be using this glossary to learn German vocabulary. In a hundred years, scholars will be arguing about the spellings, comparing different manuscripts, trying to establish which forms are most correct. In a thousand years, people reading these pages will be able to hear, in the choices this monk made, the very sound of the German language as it was spoken in the age of Charlemagne.
+    </p>
+
+    <p class="narrative">
+      The monk does not know this. He simply knows that his hand is tired, and the light is failing, and tomorrow the work continues.
+    </p>
+
+    <p class="narrative">
+      But in this moment, in this scriptorium, something irreversible has happened. A language has been written down. A sound has become a mark on parchment. The spoken word has become the written word. And once a language is written, it can never return to being purely spoken. It has entered a new form of existence.
+    </p>
+
+    <p class="narrative">
+      The quill rests.
+    </p>
+
+    <p class="narrative">
+      The ink dries.
+    </p>
+
+    <p class="narrative">
+      The words endure.
+    </p>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="quiz-container" id="quiz">
+    <div class="quiz-title">Test Your Knowledge</div>
+
+    <div class="quiz-question" data-q="0">
+      <div class="q-num">Question 1</div>
+      <div class="q-text">What was the <em>Abrogans</em> (~765 CE)?</div>
+      <button class="quiz-option" data-q="0" data-correct="0" onclick="selectQuizOption(this)">A monastery in Bavaria</button>
+      <button class="quiz-option" data-q="0" data-correct="1" onclick="selectQuizOption(this)">The first German-Latin dictionary</button>
+      <button class="quiz-option" data-q="0" data-correct="0" onclick="selectQuizOption(this)">Charlemagne's legal code</button>
+      <button class="quiz-option" data-q="0" data-correct="0" onclick="selectQuizOption(this)">A prayer book in Old High German</button>
+    </div>
+
+    <div class="quiz-question" data-q="1">
+      <div class="q-num">Question 2</div>
+      <div class="q-text"><em>Kirche</em> (church) entered German from Greek <em>kyriakón</em>. What did the Greek word originally mean?</div>
+      <button class="quiz-option" data-q="1" data-correct="0" onclick="selectQuizOption(this)">Circle (a gathering in a circle)</button>
+      <button class="quiz-option" data-q="1" data-correct="1" onclick="selectQuizOption(this)">Belonging to the Lord</button>
+      <button class="quiz-option" data-q="1" data-correct="0" onclick="selectQuizOption(this)">A stone building</button>
+      <button class="quiz-option" data-q="1" data-correct="0" onclick="selectQuizOption(this)">A place of silence</button>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div class="q-num">Question 3</div>
+      <div class="q-text">Why did Charlemagne order that sermons be given in the local language instead of Latin?</div>
+      <button class="quiz-option" data-q="2" data-correct="0" onclick="selectQuizOption(this)">He wanted to destroy the power of the Church</button>
+      <button class="quiz-option" data-q="2" data-correct="0" onclick="selectQuizOption(this)">He couldn't speak Latin himself</button>
+      <button class="quiz-option" data-q="2" data-correct="1" onclick="selectQuizOption(this)">So ordinary people could understand the Christian message</button>
+      <button class="quiz-option" data-q="2" data-correct="0" onclick="selectQuizOption(this)">Latin was dying out</button>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div class="q-num">Question 4</div>
+      <div class="q-text">The German word <em>Seele</em> (soul) comes from a Proto-Germanic root meaning what?</div>
+      <button class="quiz-option" data-q="3" data-correct="0" onclick="selectQuizOption(this)">Fire or light</button>
+      <button class="quiz-option" data-q="3" data-correct="0" onclick="selectQuizOption(this)">Breath or wind</button>
+      <button class="quiz-option" data-q="3" data-correct="1" onclick="selectQuizOption(this)">Belonging to the sea (the soul's journey across water)</button>
+      <button class="quiz-option" data-q="3" data-correct="0" onclick="selectQuizOption(this)">Shadow or reflection</button>
+    </div>
+
+    <div class="quiz-question" data-q="4">
+      <div class="q-num">Question 5</div>
+      <div class="q-text"><em>Feder</em> means both "feather" and "quill pen." What does this tell us about the history of writing?</div>
+      <button class="quiz-option" data-q="4" data-correct="0" onclick="selectQuizOption(this)">Germans invented the ballpoint pen</button>
+      <button class="quiz-option" data-q="4" data-correct="1" onclick="selectQuizOption(this)">The first pens were literally bird feathers — the tool kept the old name</button>
+      <button class="quiz-option" data-q="4" data-correct="0" onclick="selectQuizOption(this)">Monks used feathers as bookmarks</button>
+      <button class="quiz-option" data-q="4" data-correct="0" onclick="selectQuizOption(this)">Feder originally meant "thin stick"</button>
+    </div>
+
+    <div class="quiz-question" data-q="5">
+      <div class="q-num">Question 6</div>
+      <div class="q-text"><em>Tinte</em> (ink) comes from Latin <em>tincta</em>. Which English word shares the same root?</div>
+      <button class="quiz-option" data-q="5" data-correct="0" onclick="selectQuizOption(this)">tent</button>
+      <button class="quiz-option" data-q="5" data-correct="1" onclick="selectQuizOption(this)">tint</button>
+      <button class="quiz-option" data-q="5" data-correct="0" onclick="selectQuizOption(this)">tinder</button>
+      <button class="quiz-option" data-q="5" data-correct="0" onclick="selectQuizOption(this)">tin</button>
+    </div>
+
+    <div class="quiz-question" data-q="6">
+      <div class="q-num">Question 7 — Review</div>
+      <div class="q-text">From Chapter 4: Why did the Germanic tribes borrow Latin words for <em>Wein</em>, <em>Straße</em>, and <em>Mauer</em> but the Romans borrowed almost no Germanic words?</div>
+      <button class="quiz-option" data-q="6" data-correct="0" onclick="selectQuizOption(this)">Germanic languages were too difficult for Romans</button>
+      <button class="quiz-option" data-q="6" data-correct="0" onclick="selectQuizOption(this)">The Romans forbade foreign words</button>
+      <button class="quiz-option" data-q="6" data-correct="1" onclick="selectQuizOption(this)">The Germans adopted words for Roman technologies they didn't have — the power imbalance was one-directional</button>
+      <button class="quiz-option" data-q="6" data-correct="0" onclick="selectQuizOption(this)">Germanic tribes had no spoken language at the time</button>
+    </div>
+
+    <div class="quiz-question" data-q="7">
+      <div class="q-num">Question 8 — Review</div>
+      <div class="q-text">From Chapter 7: The Second Consonant Shift changed 'p' to 'pf/ff', 't' to 'ts/ss', and 'k' to 'ch.' Which pair demonstrates this?</div>
+      <button class="quiz-option" data-q="7" data-correct="0" onclick="selectQuizOption(this)">house / Haus</button>
+      <button class="quiz-option" data-q="7" data-correct="1" onclick="selectQuizOption(this)">apple / Apfel</button>
+      <button class="quiz-option" data-q="7" data-correct="0" onclick="selectQuizOption(this)">brother / Bruder</button>
+      <button class="quiz-option" data-q="7" data-correct="0" onclick="selectQuizOption(this)">star / Stern</button>
+    </div>
+
+    <button class="quiz-submit" onclick="submitQuiz(8, 80)">Check Answers</button>
+    <div class="quiz-result" id="quiz-result"></div>
+    <button class="quiz-retry" id="quiz-retry" onclick="retryQuiz()">Try Again</button>
+  </div>
+
+  <div id="post-quiz" style="display:none">
+
+  <!-- ==================== PATTERNS DISCOVERED (THIS CHAPTER) ==================== -->
+  <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+    <div class="aside-title" style="color: var(--german);">Patterns Discovered in This Chapter</div>
+    <strong style="color: var(--text-bright);">Monastic Writing</strong> — monks first wrote German down, making permanent what had only been spoken. Writing forced decisions: spelling, grammar, vocabulary all had to be standardized.<br><br>
+    <strong style="color: var(--text-bright);">The Abrogans</strong> — ~765 CE, earliest German glossary. The first systematic collection of German words, preserved by monks who understood the value of the language they spoke.<br><br>
+    <strong style="color: var(--text-bright);">Latin → German</strong> — religious words entered through the church. Kirche from Greek kyriaké. Kloster from Latin claustrum. Language reflects power: conquerors' words become foundations of the conquered language.<br><br>
+    <strong style="color: var(--text-bright);">Writing as Preservation</strong> — oral language becomes permanent record. Before writing, words lived only in memory and voice. After writing, they could outlive the speaker, the century, even the culture that created them.
+  </div>
+
+<!-- ==================== WORD COLLECTION ==================== -->
+  <div class="scene" id="scene-collection">
+    <div class="word-collection">
+      <h3>Words Gathered in Chapter Eight</h3>
+      <div class="collected-words">
+        <div class="collected-word" data-delay="0"><span class="cw-german">Kirche</span><span class="cw-english">church</span></div>
+        <div class="collected-word" data-delay="100"><span class="cw-german">Kloster</span><span class="cw-english">cloister</span></div>
+        <div class="collected-word" data-delay="200"><span class="cw-german">Mönch</span><span class="cw-english">monk</span></div>
+        <div class="collected-word" data-delay="300"><span class="cw-german">Schrift</span><span class="cw-english">writing</span></div>
+        <div class="collected-word" data-delay="400"><span class="cw-german">Feder</span><span class="cw-english">quill</span></div>
+        <div class="collected-word" data-delay="500"><span class="cw-german">Tinte</span><span class="cw-english">ink</span></div>
+        <div class="collected-word" data-delay="600"><span class="cw-german">Buch</span><span class="cw-english">book</span></div>
+        <div class="collected-word" data-delay="700"><span class="cw-german">Gott</span><span class="cw-english">God</span></div>
+        <div class="collected-word" data-delay="800"><span class="cw-german">Seele</span><span class="cw-english">soul</span></div>
+        <div class="collected-word" data-delay="900"><span class="cw-german">Pergament</span><span class="cw-english">parchment</span></div>
+      </div>
+    </div>
+
+    <div class="aside-box" style="border-left-color: rgba(232, 164, 74, 0.3); margin-top: 32px;">
+      <div class="aside-title" style="color: var(--german);">Concepts Gathered in Chapter Eight</div>
+      <strong style="color: var(--text-bright);">Monastic Writing</strong> — monks first wrote German down<br><br>
+      <strong style="color: var(--text-bright);">The Abrogans</strong> — ~765 CE, earliest German glossary<br><br>
+      <strong style="color: var(--text-bright);">Latin → German</strong> — religious words entered through the church<br><br>
+      <strong style="color: var(--text-bright);">Writing as Preservation</strong> — oral language becomes permanent record
+    </div>
+  </div>
+
+  <!-- ==================== YOUR PROGRESS ==================== -->
+    <div style="margin:48px 0;padding:36px 32px;background:linear-gradient(135deg,rgba(20,28,45,0.95),rgba(10,14,26,0.95));border:1px solid rgba(232,164,74,0.15);border-radius:16px;">
+    <div style="text-align:center;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3em;color:rgba(232,164,74,0.6);margin-bottom:28px;">Your Progress</div>
+
+    <div id="words-bar-row" style="margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('words-detail').style.display=document.getElementById('words-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Words Collected</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#e8a44a;">80 / 850 <span style="font-size:0.85rem;font-weight:400;color:rgba(232,164,74,0.6);">(9%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(232,164,74,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:9%;border-radius:7px;background:linear-gradient(90deg,#c45d2c,#e8a44a,#f4c67a);box-shadow:0 0 8px rgba(232,164,74,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all words &#9662;</div>
+    </div>
+    <div id="words-detail" style="display:none;max-height:400px;overflow-y:auto;margin-bottom:24px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(232,164,74,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Word</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Meaning</th><th style="text-align:left;padding:6px 10px;color:#e8a44a;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(232,164,74,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Kirche</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">church</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Kloster</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">cloister</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Mönch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">monk</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Schrift</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">writing</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Feder</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">quill</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Tinte</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">ink</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Buch</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">book</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Gott</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">God</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Seele</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">soul</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#e8a44a;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Pergament</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">parchment</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–7: ~70 more words · Scroll for full list</td></tr>
+      </table>
+    </div>
+
+    <div id="patterns-bar-row" style="cursor:pointer;" onclick="document.getElementById('patterns-detail').style.display=document.getElementById('patterns-detail').style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1rem;color:rgba(212,202,187,0.8);">Patterns &amp; Grammar</span>
+        <span style="font-size:1.3rem;font-weight:700;color:#9b8ec4;">19 / 145 <span style="font-size:0.85rem;font-weight:400;color:rgba(155,142,196,0.6);">(13%)</span></span>
+      </div>
+      <div style="height:14px;background:rgba(155,142,196,0.08);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);">
+        <div style="height:100%;width:13%;border-radius:7px;background:linear-gradient(90deg,#6b5b9a,#9b8ec4,#b8a8d8);box-shadow:0 0 8px rgba(155,142,196,0.3);"></div>
+      </div>
+      <div style="text-align:right;font-size:0.7rem;color:rgba(212,202,187,0.25);margin-top:4px;">Click to see all patterns &#9662;</div>
+    </div>
+    <div id="patterns-detail" style="display:none;max-height:400px;overflow-y:auto;margin-top:12px;padding:16px;background:rgba(10,14,26,0.5);border-radius:8px;border:1px solid rgba(155,142,196,0.08);">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Pattern</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Example</th><th style="text-align:left;padding:6px 10px;color:#9b8ec4;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid rgba(155,142,196,0.15);">Ch</th></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Monastic Writing</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">monks first wrote German down</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">The Abrogans</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">~765 CE, earliest German glossary</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Latin → German</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">religious words entered through church</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td style="padding:5px 10px;color:#9b8ec4;font-weight:600;border-bottom:1px solid rgba(212,202,187,0.04);">Writing as Preservation</td><td style="padding:5px 10px;color:rgba(212,202,187,0.7);border-bottom:1px solid rgba(212,202,187,0.04);">oral language becomes permanent record</td><td style="padding:5px 10px;color:rgba(212,202,187,0.4);border-bottom:1px solid rgba(212,202,187,0.04);">8</td></tr>
+        <tr><td colspan="3" style="padding:10px;text-align:center;color:rgba(212,202,187,0.3);font-style:italic;">Chapters 1–7: ~15 more patterns</td></tr>
+      </table>
+    </div>
+  </div>
+
+  </div><!-- end post-quiz -->
+
+  <!-- ==================== CHAPTER END ==================== -->
+  <div class="scene" id="scene-end">
+    <div class="chapter-end">
+      <div class="end-line"></div>
+      <p class="narrative emphasis" style="margin-bottom: 0.5em;">
+        End of Chapter Eight
+      </p>
+      <p class="narrative small" style="text-align: center;">
+        Ten words. Ten stories. The birth of written German in the glow of candlelight.<br>
+        Before this era, German was only speech. After it, German became a language of books.<br>
+        The quill has written what the voice alone could not preserve.
+      </p>
+      <div class="next-chapter">
+        <a href="chapter7.html" style="color: rgba(212, 202, 187, 0.4); text-decoration: none;">← Chapter Seven</a> |
+        <a href="chapter9.html" style="color: rgba(212, 202, 187, 0.4); text-decoration: none;">Chapter Nine →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// --- CHAPTER 8: MONKS/WRITING - CANDLELIGHT & MANUSCRIPT BORDERS ---
+const canvas = document.getElementById('candlelight');
+const ctx = canvas.getContext('2d');
+let lightParticles = [];
+let inkDrops = [];
+let candleFlame = { x: canvas.width / 2, y: canvas.height * 0.25, flicker: 0 };
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  candleFlame.x = canvas.width / 2;
+  candleFlame.y = canvas.height * 0.25;
+}
+
+function createLightParticles() {
+  lightParticles = [];
+  const count = window.innerWidth < 600 ? 50 : 100;
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height * 0.25;
+
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const distance = Math.random() * 200 + 60;
+    lightParticles.push({
+      x: centerX + Math.cos(angle) * distance,
+      y: centerY + Math.sin(angle) * distance,
+      r: Math.random() * 1.2 + 0.3,
+      alpha: Math.random() * 0.6 + 0.15,
+      flickerSpeed: Math.random() * 0.04 + 0.01,
+      flickerOffset: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawCandleFlame(time, scroll) {
+  const flicker = Math.sin(time * 0.005) * 0.4 + 0.6;
+  const scale = 1 + scroll * 0.5;
+
+  // Outer flame (darker orange)
+  ctx.fillStyle = `rgba(232, 164, 74, ${0.3 * flicker * scale})`;
+  ctx.beginPath();
+  ctx.moveTo(candleFlame.x - 18 * scale, candleFlame.y + 30);
+  ctx.quadraticCurveTo(candleFlame.x - 12 + Math.sin(time * 0.002) * 5, candleFlame.y - 40 * scale, candleFlame.x - 3, candleFlame.y - 70 * scale);
+  ctx.quadraticCurveTo(candleFlame.x + 15, candleFlame.y - 50 * scale, candleFlame.x + 18 * scale, candleFlame.y + 30);
+  ctx.closePath();
+  ctx.fill();
+
+  // Inner flame (yellow-gold)
+  ctx.fillStyle = `rgba(244, 216, 159, ${0.5 * flicker * scale})`;
+  ctx.beginPath();
+  ctx.moveTo(candleFlame.x - 10 * scale, candleFlame.y + 20);
+  ctx.quadraticCurveTo(candleFlame.x - 6 + Math.sin(time * 0.003) * 3, candleFlame.y - 20 * scale, candleFlame.x, candleFlame.y - 50 * scale);
+  ctx.quadraticCurveTo(candleFlame.x + 8, candleFlame.y - 25 * scale, candleFlame.x + 10 * scale, candleFlame.y + 20);
+  ctx.closePath();
+  ctx.fill();
+
+  // Candle body
+  ctx.fillStyle = 'rgba(200, 180, 150, 0.15)';
+  ctx.fillRect(candleFlame.x - 12, candleFlame.y + 25, 24, 60);
+}
+
+function drawManuscriptBorders(scroll) {
+  const lineColor = `rgba(184, 160, 100, ${0.1 + scroll * 0.1})`;
+  const decorWidth = 40;
+
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 1;
+
+  // Left border Celtic knot pattern
+  for (let i = 0; i < canvas.height; i += 30) {
+    ctx.beginPath();
+    ctx.arc(15, i, 8, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Right border
+  for (let i = 0; i < canvas.height; i += 30) {
+    ctx.beginPath();
+    ctx.arc(canvas.width - 15, i, 8, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Top and bottom decorative lines
+  ctx.beginPath();
+  ctx.moveTo(30, 20);
+  ctx.lineTo(canvas.width - 30, 20);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(30, canvas.height - 20);
+  ctx.lineTo(canvas.width - 30, canvas.height - 20);
+  ctx.stroke();
+}
+
+function drawFrame(time) {
+  ctx.fillStyle = 'rgba(26, 22, 16, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+  // Main light pool from candle
+  const gradient = ctx.createRadialGradient(
+    candleFlame.x, candleFlame.y, 0,
+    candleFlame.x, candleFlame.y, 350
+  );
+  gradient.addColorStop(0, `rgba(244, 216, 159, ${0.2 + scroll * 0.15})`);
+  gradient.addColorStop(0.5, `rgba(232, 164, 74, ${0.08 + scroll * 0.05})`);
+  gradient.addColorStop(1, 'rgba(26, 22, 16, 0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw flame
+  drawCandleFlame(time, scroll);
+
+  // Draw manuscript borders
+  drawManuscriptBorders(scroll);
+
+  // Draw light particles
+  lightParticles.forEach(p => {
+    const flicker = Math.sin(time * p.flickerSpeed + p.flickerOffset) * 0.3 + 0.7;
+    const alpha = p.alpha * flicker * (0.5 + scroll * 0.5);
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(244, 216, 159, ${Math.max(0, alpha)})`;
+    ctx.fill();
+  });
+
+  // Draw falling ink drops
+  if (Math.random() < 0.06) {
+    inkDrops.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 150,
+      y: candleFlame.y - 40,
+      vy: Math.random() * 0.6 + 0.3,
+      r: Math.random() * 1.2 + 0.5,
+      alpha: 0.5,
+      lifespan: Math.random() * 120 + 180,
+      age: 0
+    });
+  }
+
+  inkDrops = inkDrops.filter(d => d.age < d.lifespan);
+  inkDrops.forEach(d => {
+    d.y += d.vy;
+    d.age++;
+    d.alpha = 0.5 * (1 - d.age / d.lifespan);
+
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(42, 31, 20, ${d.alpha})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawFrame);
+}
+
+resizeCanvas();
+createLightParticles();
+requestAnimationFrame(drawFrame);
+window.addEventListener('resize', () => { resizeCanvas(); createLightParticles(); });
+
+// --- SCROLL REVEAL ---
+const scenes = document.querySelectorAll('.scene');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate collected words
+      if (entry.target.id === 'scene-collection') {
+        const words = entry.target.querySelectorAll('.collected-word');
+        words.forEach(w => {
+          const delay = parseInt(w.dataset.delay) || 0;
+          setTimeout(() => w.classList.add('show'), delay);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+scenes.forEach(s => observer.observe(s));
+
+// --- PROGRESS BAR ---
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// --- ETYMOLOGY CARDS ---
+document.querySelectorAll('.german-word').forEach(word => {
+  word.addEventListener('click', () => {
+    const cardId = 'card-' + word.dataset.card;
+    const card = document.getElementById(cardId);
+    if (card) {
+      const isOpen = card.classList.contains('open');
+      // Close all cards first
+      document.querySelectorAll('.ety-card.open').forEach(c => c.classList.remove('open'));
+      // Toggle this one
+      if (!isOpen) {
+        card.classList.add('open');
+        word.classList.add('revealed');
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    }
+  });
+});
+
+// --- GUESS INTERACTION ---
+function guess(btn, correct) {
+  const section = btn.closest('.guess-section');
+  const feedback = section.querySelector('.guess-feedback');
+  const allBtns = section.querySelectorAll('.guess-btn');
+
+  if (correct) {
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('incorrect'); });
+    feedback.textContent = 'Correct. The written word preserves what speech alone cannot.';
+    feedback.classList.add('show');
+  } else {
+    btn.classList.add('incorrect');
+    btn.style.pointerEvents = 'none';
+    feedback.textContent = 'Not quite — try again. Think of the Christian monastery.';
+    feedback.classList.add('show');
+  }
+}
+
+// --- MOBILE: prevent double-tap zoom on interactive elements ---
+document.querySelectorAll('.guess-btn, .german-word').forEach(el => {
+  el.addEventListener('touchend', e => { e.preventDefault(); el.click(); });
+});
+
+// --- MOBILE: reduce particle count on small screens for performance ---
+if (window.innerWidth < 600) {
+  createParticles.targetCount = Math.floor(createParticles.targetCount / 2);
+}
+
+// --- AUDIO PRONUNCIATION (Web Speech API) ---
+function speakGerman(text, btn) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;
+    // Try to find a German voice
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de')) || voices.find(v => v.lang.includes('de'));
+    if (deVoice) utterance.voice = deVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utterance.onend = () => btn.classList.remove('speaking');
+      utterance.onerror = () => btn.classList.remove('speaking');
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+}
+// Preload voices (some browsers need this)
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// --- ADD SPEAKER BUTTONS TO WORD HEADERS ---
+document.querySelectorAll('.ety-card').forEach(card => {
+  const wordEl = card.querySelector('.word-main');
+  if (wordEl && !card.querySelector('.speak-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.setAttribute('aria-label', 'Hear pronunciation');
+    btn.innerHTML = '🔊';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      speakGerman(wordEl.textContent.trim(), btn);
+    });
+    const header = card.querySelector('.word-header');
+    if (header) header.appendChild(btn);
+  }
+});
+
+// --- QUIZ DATA WITH EXPLANATIONS ---
+const quizData = [
+  {
+    question: "What was the Abrogans (~765 CE)?",
+    options: ["A monastery in Bavaria", "The first German-Latin dictionary", "Charlemagne's legal code", "A prayer book in Old High German"],
+    correct: 1,
+    explanation: "The Abrogans was the first systematic German-Latin dictionary, written by monks around 765 CE. Its name means 'the proud/the mighty,' reflecting pride in documenting the German language itself."
+  },
+  {
+    question: "Kirche (church) entered German from Greek kyriakón. What did the Greek word originally mean?",
+    options: ["Circle (a gathering in a circle)", "Belonging to the Lord", "A stone building", "A place of silence"],
+    correct: 1,
+    explanation: "Kyriakón comes from kyrios (lord/master), so it literally means 'belonging to the Lord.' This theological term traveled through Latin into Germanic languages during the Christianization of Europe."
+  },
+  {
+    question: "Why did Charlemagne order that sermons be given in the local language instead of Latin?",
+    options: ["He wanted to destroy the power of the Church", "He couldn't speak Latin himself", "So ordinary people could understand the Christian message", "Latin was dying out"],
+    correct: 2,
+    explanation: "Charlemagne's pragmatic decision to allow vernacular preaching reflected his goal: converting and organizing the empire. If common people couldn't understand Latin, they couldn't be fully Christianized. Language and power were intertwined."
+  },
+  {
+    question: "The German word Seele (soul) comes from a Proto-Germanic root meaning what?",
+    options: ["Fire or light", "Breath or wind", "Belonging to the sea (the soul's journey across water)", "Shadow or reflection"],
+    correct: 2,
+    explanation: "Seele originally meant something related to sailing or journeying across water, reflecting an ancient Germanic belief that the soul travels. This etymology preserves an entire metaphysical worldview in a single word."
+  },
+  {
+    question: "Feder means both 'feather' and 'quill pen.' What does this tell us about the history of writing?",
+    options: ["Germans invented the ballpoint pen", "The first pens were literally bird feathers — the tool kept the old name", "Monks used feathers as bookmarks", "Feder originally meant 'thin stick'"],
+    correct: 1,
+    explanation: "Medieval scribes actually used bird feathers as writing instruments. When pens were later invented with different materials, the word 'Feder' stayed, showing how language preserves the memory of old technologies."
+  },
+  {
+    question: "Tinte (ink) comes from Latin tincta. Which English word shares the same root?",
+    options: ["tent", "tint", "tinder", "tin"],
+    correct: 1,
+    explanation: "Tincta means 'dyed' or 'colored' (past participle of tingere). Both 'Tinte' and 'tint' come from this Latin root, showing how the concept of coloring/dyeing extended to the coloring agent used in writing."
+  },
+  {
+    question: "From Chapter 4: Why did the Germanic tribes borrow Latin words for Wein, Straße, and Mauer but the Romans borrowed almost no Germanic words?",
+    options: ["Germanic languages were too difficult for Romans", "The Romans forbade foreign words", "The Germans adopted words for Roman technologies they didn't have — the power imbalance was one-directional", "Germanic tribes had no spoken language at the time"],
+    correct: 2,
+    explanation: "Language borrowing reflects power and commerce, not linguistic quality. Germans borrowed Roman words because Romans had superior technology (wine, roads, walls). Romans had no reason to borrow Germanic words—they had nothing to learn from 'barbarians.'"
+  },
+  {
+    question: "From Chapter 7: The Second Consonant Shift changed 'p' to 'pf/ff', 't' to 'ts/ss', and 'k' to 'ch.' Which pair demonstrates this?",
+    options: ["house / Haus", "apple / Apfel", "brother / Bruder", "star / Stern"],
+    correct: 1,
+    explanation: "English 'apple' (with p) and German 'Apfel' (with pf) clearly show the Second Consonant Shift in action. The p → pf change is one of the most dramatic sound changes separating modern German from English."
+  }
+];
+
+// --- QUIZ SYSTEM ---
+function selectQuizOption(btn) {
+  const qDiv = btn.closest('.quiz-question');
+  qDiv.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitQuiz(total, threshold) {
+  let correct = 0;
+  let qIndex = 0;
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const selected = q.querySelector('.quiz-option.selected');
+    const qData = quizData[qIndex];
+    q.querySelectorAll('.quiz-option').forEach(o => {
+      o.style.pointerEvents = 'none';
+      if (o.dataset.correct === '1') o.classList.add('correct');
+      if (o.classList.contains('selected') && o.dataset.correct !== '1') o.classList.add('wrong');
+    });
+
+    // Add explanation below the question
+    if (qData && !q.querySelector('.quiz-explanation')) {
+      const explDiv = document.createElement('div');
+      explDiv.className = 'quiz-explanation';
+      if (selected && selected.dataset.correct === '1') {
+        explDiv.classList.add('correct-exp');
+      }
+      explDiv.innerHTML = '<em>' + qData.explanation + '</em>';
+      q.appendChild(explDiv);
+    }
+
+    if (selected && selected.dataset.correct === '1') correct++;
+    qIndex++;
+  });
+  const pct = Math.round((correct / total) * 100);
+  const result = document.getElementById('quiz-result');
+  const retry = document.getElementById('quiz-retry');
+  const postQuiz = document.getElementById('post-quiz');
+  document.querySelector('.quiz-submit').style.display = 'none';
+  result.style.display = 'block';
+  if (pct >= threshold) {
+    result.className = 'quiz-result pass';
+    result.innerHTML = correct + '/' + total + ' correct (' + pct + '%) — Well done! Your words are unlocked below.';
+    if (postQuiz) postQuiz.style.display = 'block';
+  } else {
+    result.className = 'quiz-result fail';
+    result.innerHTML = correct + '/' + total + ' correct (' + pct + '%) — You need ' + threshold + '% to unlock your words. Review and try again.';
+    retry.style.display = 'block';
+  }
+}
+
+function retryQuiz() {
+  document.querySelectorAll('.quiz-option').forEach(o => {
+    o.classList.remove('selected', 'correct', 'wrong');
+    o.style.pointerEvents = '';
+  });
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-retry').style.display = 'none';
+  document.querySelector('.quiz-submit').style.display = 'block';
+}
+
+</script>
+
+
+  
+        
+
+
+<div style="text-align:center;padding:20px 0 40px;opacity:0.25;">
+    <a href="https://www.g2gadvisory.co.uk/" target="_blank" rel="noopener" style="text-decoration:none;color:rgba(180,140,220,0.6);font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;">
+      A G2G Advisory Project
+    </a>
+  </div>
+
+<script src="../game-engine.js" defer></script>
+<script>const CURRENT_CHAPTER = 8;</script>
+<script src="../vocab-data.js"></script>
+<script src="../card-overlay.js"></script>
+<script src="../quiz-enhancer.js"></script>
+<script src="../progress-renderer.js?v=2"></script>
+<script src="../progress-store.js"></script>
+<script src="../nav-bar.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>
